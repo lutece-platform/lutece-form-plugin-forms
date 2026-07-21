@@ -1,64 +1,29 @@
 <@cTpl>
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
-
-    <#include "/skin/plugins/asynchronousupload/upload_commons.html" />
-    <@addRequiredJsFiles />
-
-    <#assign idName = buildEntryName(entry, entry_iteration_number)>
-    <#assign nbFiles = getMaxFiles(entry)>
-
-    <#assign hasError = false>
-    <#assign imageErrorMsg = ''>
-    <#if list_responses?? && list_responses?has_content>
-        <#assign responseError = list_responses[0]>
-        <#if responseError.entry.idEntry == entry.idEntry && responseError.entry.error?? && responseError.entry.error.isDisplayableError>
-            <#assign hasError = true>
-            <#assign respError = responseError.entry.error>
-            <#if respError.mandatoryError>
-                <#assign imageErrorMsg = '#i18n{forms.message.mandatory.entry}'>
-            <#else>
-                <#assign imageErrorMsg = respError.errorMessage>
-            </#if>
-        </#if>
-    </#if>
-
-    <#assign uploadCssClass = entry.CSSClass!''>
-    <#if hasError>
-        <#assign uploadCssClass = 'is-invalid'>
-    </#if>
-
-    <@cRow class='mb-3'>
-        <@cCol>
-            <@cLabel label=entry.title + (entry.mandatory)?then(' *', '') for=idName id='label' + entry.idEntry?c />
-        </@cCol>
-        <@cCol>
-            <@addFileInput fieldName=idName handler=uploadHandler cssClass=uploadCssClass multiple=true />
-
-            <#if !hasError && entry.helpMessage?? && entry.helpMessage != ''>
-                <@cInline class='form-control-plaintext'>${entry.helpMessage}</@cInline>
-            </#if>
-
-            <#if hasError>
-                <@cInline class='invalid-feedback d-block'>${imageErrorMsg}</@cInline>
-            </#if>
-        </@cCol>
-    </@cRow>
-
-    <#if list_responses?? && list_responses?has_content>
-        <#list list_responses as response>
-            <#if response.file?? && response.file.title?? && response.file.title != ''>
-                <#if listFiles??>
-                    <#assign listFiles = listFiles + [response.file]>
-                <#else>
-                    <#assign listFiles = [response.file]>
-                </#if>
-            </#if>
-        </#list>
-    <#else>
-        <#assign listFiles = ''>
-    </#if>
-
-    <@addUploadedFilesBox fieldName=idName handler=uploadHandler listFiles=listFiles />
-
+<#include "/skin/plugins/asynchronousupload/upload_commons.html" />
+<@addRequiredJsFiles />
+<#assign cssClass='' >
+<#assign helpMsg='' >
+<#assign errorMsg='' >
+<#if list_responses??><#list list_responses as response><#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError><#assign cssClass='is-invalid' ><#assign error = response.entry.error><#assign errorMsg><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#assign></#if></#list></#if>
+<#assign isDisabled=false >
+<#if list_responses?? && list_responses?has_content>
+<#assign response_error = list_responses[0]>
+<#assign nbFiles=list_responses?size >
+</#if>
+<#assign entryClasses=cssClass>
+<#assign entryCSSClass>${entryClasses!}<#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign idName = buildEntryName( entry, entry_iteration_number )>
+<#assign nbMaxFiles = entry.getFieldByCode('max_files').value >
+<#assign maxFileSize = entry.getFieldByCode('file_max_size').value >
+<#assign fieldName=idName >
+<#if nbMaxFiles?number = 1><#assign isMultiple=false ><#else><#assign isMultiple=true ></#if>
+<#if list_responses?? && list_responses?has_content><#list list_responses as response><#if response.file?? && response.file.title?? && response.file.title != ''><#if listFiles??><#assign listFiles = listFiles + [response.file] ><#else><#assign listFiles = [response.file] ></#if></#if></#list></#if>
+<#if !listFiles??><#assign listFiles = ''></#if>
+<#if nbMaxFiles?number = listFiles?size><#assign isDisabled=true ></#if>
+<#if entry.helpMessage?exists&&entry.helpMessage!=''><#assign helpMsg=entry.helpMessage /></#if>
+<@addFileInput fieldName=fieldName handler=uploadHandler label=entry.title! helpMsg=helpMsg errorMsg=errorMsg cssClass=entryCSSClass!?trim submitBtnName='action_doSaveStep' multiple=isMultiple type='dropzone' disabled=isDisabled required=entry.mandatory nbMaxFiles=nbMaxFiles nbFiles=nbFiles maxFileSize=maxFileSize >
+	<@addUploadedFilesBox fieldName=fieldName handler=uploadHandler listFiles=listFiles maxFiles=nbMaxFiles />
+</@addFileInput>
 </#if>
 </@cTpl>

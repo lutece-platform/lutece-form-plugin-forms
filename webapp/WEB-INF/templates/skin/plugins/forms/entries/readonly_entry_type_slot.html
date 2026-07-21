@@ -1,35 +1,26 @@
 <@cTpl>
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
-
-    <#assign idName = 'attribute' + entry.idEntry?c>
-
-    <#assign beginHour = ''>
-    <#assign endHour = ''>
+<#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<@chItem class=entryCSSClass!?trim>
+    <@cInline type='strong'>${entry.title} : </@cInline>
     <#if list_responses?has_content>
+        <#assign beginHourCode = "begin_hour">
+        <#assign endHourCode = "end_hour">
+        <#-- Filtrer et trouver les objets Response correspondants -->
         <#list list_responses as response>
-            <#if response.field?? && response.field.code == 'begin_hour'>
-                <#assign beginHour = response.toStringValueResponse!''>
+            <#if response.field.code == beginHourCode>
+                <#assign beginHour = response.toStringValueResponse>
             </#if>
-            <#if response.field?? && response.field.code == 'end_hour'>
-                <#assign endHour = response.toStringValueResponse!''>
+            <#if response.field.code == endHourCode>
+                <#assign endHour = response.toStringValueResponse>
             </#if>
         </#list>
+        <#if beginHour !='' && endHour !=''>
+            <@cInline>#i18n{forms.message.slot.preposition.from} ${beginHour} #i18n{forms.message.slot.preposition.to} ${endHour}</@cInline>
+        <#else>
+            <@cInline type='em'>#i18n{theme.labelNoDataProvided}</@cInline>
+        </#if>
     </#if>
-
-    <@cRow class='mb-3'>
-        <@cCol>
-            <@cLabel label=entry.title + (entry.mandatory)?then(' *', '') for=idName />
-        </@cCol>
-        <@cCol>
-            <@cBlock id='divSlot_' + idName>
-                <#if list_responses?has_content>
-                    <@chList class='slot-entry'>
-                        <@chItem>#i18n{forms.message.slot.preposition.from} ${beginHour} #i18n{forms.message.slot.preposition.to} ${endHour}</@chItem>
-                    </@chList>
-                </#if>
-            </@cBlock>
-        </@cCol>
-    </@cRow>
-
+</@chItem>
 </#if>
 </@cTpl>

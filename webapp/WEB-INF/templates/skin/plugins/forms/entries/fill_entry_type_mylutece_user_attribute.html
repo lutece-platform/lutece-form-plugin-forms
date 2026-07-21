@@ -1,52 +1,17 @@
 <@cTpl>
-<#assign fieldMyLuteceAttributeName = getFieldByCode(entry, "attribute_name")>
-
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
-
-    <#assign idName = buildEntryName(entry, entry_iteration_number)>
-
-    <#assign attrValue = ''>
-    <#if user??>
-        <#if mylutece_attr_template_value??>
-            <#assign attrValue = mylutece_attr_template_value>
-        <#else>
-            <#assign attrValue = user.getUserInfo(fieldMyLuteceAttributeName.value)>
-        </#if>
-    </#if>
-
-    <#assign attrErrorMsg = ''>
-    <#if list_responses??>
-        <#list list_responses as response>
-            <#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
-                <#assign respError = response.entry.error>
-                <#if respError.mandatoryError>
-                    <#assign attrErrorMsg = '#i18n{forms.message.mandatory.entry}'>
-                <#else>
-                    <#assign attrErrorMsg = respError.errorMessage>
-                </#if>
-            </#if>
-        </#list>
-    </#if>
-
-    <#assign valueClass = (entry.CSSClass!'') + ' form-control-plaintext'>
-    <#assign rowClass = 'mb-3 ' + (entry.CSSClass!'')>
-
-    <@cRow class=rowClass>
-        <@cCol>
-            <@cLabel label=entry.title + (entry.mandatory)?then(' *', '') for=idName />
-        </@cCol>
-        <@cCol>
-            <#if user??>
-                <@cInline class=valueClass>${attrValue}</@cInline>
-            </#if>
-            <#if attrErrorMsg == '' && entry.helpMessage?? && entry.helpMessage != ''>
-                <@cInline class='form-control-plaintext'>${entry.helpMessage}</@cInline>
-            </#if>
-            <#if attrErrorMsg != ''>
-                <@cInline class='invalid-feedback d-block'>${attrErrorMsg}</@cInline>
-            </#if>
-        </@cCol>
-    </@cRow>
-
+<#assign hasError = false />
+<#if list_responses??><#list list_responses as response><#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError><#assign hasError = true /><#assign error = response.entry.error></#if></#list></#if>
+<#assign fieldMyLuteceAttributeName = getFieldByCode( entry, "attribute_name" ) >
+<#assign errorMsg><#if hasError><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#if></#assign>
+<#assign helpMsg><#if entry.helpMessage?exists&&entry.helpMessage!=''>${entry.helpMessage}</#if></#assign>
+<#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign idName = buildEntryName( entry, entry_iteration_number )>
+<#if user??>
+<@cField label=entry.title! for=idName! required=entry.mandatory! class=entryCSSClass!?trim > 
+	<#assign myLutAttrValue><#if mylutece_attr_template_value??>${mylutece_attr_template_value}<#else>${user.getUserInfo(fieldMyLuteceAttributeName.value)}</#if></#assign>
+	<@cInput class='form-control bg-transparent' name=idName placeholder=placeholder required=entry.mandatory! html5Required=false readonly=true disabled=true value=myLutAttrValue helpMsg=helpMsg errorMsg=errorMsg params=fieldParams />
+</@cField>
+</#if>
 </#if>
 </@cTpl>

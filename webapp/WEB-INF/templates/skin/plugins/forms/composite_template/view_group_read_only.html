@@ -1,20 +1,13 @@
 <@cTpl>
-<#assign fieldsetClass = ''>
-<#assign fieldsetParams = ''>
-<#if id_display??>
-    <#assign fieldsetClass = 'display_field_' + id_display>
-    <#assign fieldsetParams = 'hidden'>
+<#assign classDisp><#if id_display??>display_field_${id_display}</#if><#if group.title?contains('- hidden')>visually-hidden</#if></#assign>
+<#assign param><#if id_display??> hidden </#if></#assign>
+<@chItem class='pt-m'><@cInline class=classDisp params=param>${group.title!} </@cInline>
+<#list groupContentByIteration as iterationNumber, groupContent >
+<#if groupContent?size != 0>
+<@chList class='step-group-children'>	
+<#list groupContent as childrenHtml>${childrenHtml}</#list>
+</@chList>
 </#if>
-<@cFieldset legend=group.title class=fieldsetClass params=fieldsetParams>
-    <@cBlock class='step-group-value-content'>
-        <#list groupContentByIteration as iterationNumber, groupContent>
-            <#if groupContent?size != 0>
-                <hr>
-                <#list groupContent as childrenHtml>
-                    ${childrenHtml}
-                </#list>
-            </#if>
-        </#list>
-    </@cBlock>
-</@cFieldset>
+</#list>
+</@chItem>
 </@cTpl>

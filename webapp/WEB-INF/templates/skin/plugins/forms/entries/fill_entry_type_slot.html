@@ -1,71 +1,30 @@
 <@cTpl>
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
-
-    <#assign idName = buildEntryName(entry, entry_iteration_number)>
-
-    <#assign hasError = false>
-    <#assign slotErrorMsg = ''>
-    <#if getError(list_responses, entry)??>
-        <#assign respError = getError(list_responses, entry)>
-        <#if respError.isDisplayableError>
-            <#assign hasError = true>
-            <#if respError.mandatoryError>
-                <#assign slotErrorMsg = '#i18n{forms.message.mandatory.entry}'>
-            <#else>
-                <#assign slotErrorMsg = respError.errorMessage>
-            </#if>
-        </#if>
-    </#if>
-
-    <#assign beginHour = ''>
-    <#assign endHour = ''>
-    <#if list_responses?has_content>
-        <#list list_responses as response>
-            <#if response.field?? && response.field.code == 'begin_hour'>
-                <#assign beginHour = response.toStringValueResponse!''>
-            </#if>
-            <#if response.field?? && response.field.code == 'end_hour'>
-                <#assign endHour = response.toStringValueResponse!''>
-            </#if>
-        </#list>
-    </#if>
-
-    <#assign timeClass = 'form-control' + hasError?then(' is-invalid', '')>
-
-    <@cRow class='mb-3'>
-        <@cCol>
-            <@cLabel label=entry.title + (entry.mandatory)?then(' *', '') for=idName />
-        </@cCol>
-        <@cCol>
-            <@cBlock id=idName>
-                <@cBlock class='slot-entry'>
-                    <@cLabel label='#i18n{forms.message.slot.preposition.from}' for=idName + '_begin' />
-                    <@cInput type='time' id=idName + '_begin' name=idName + '_begin' value=beginHour class=timeClass params='min="00:00" max="23:59"' />
-                    <@cLabel label='#i18n{forms.message.slot.preposition.to}' for=idName + '_end' />
-                    <@cInput type='time' id=idName + '_end' name=idName + '_end' value=endHour class=timeClass params='min="00:00" max="23:59"' />
-                </@cBlock>
-                <#if hasError>
-                    <@cInline class='invalid-feedback d-block'>${slotErrorMsg}</@cInline>
-                </#if>
-            </@cBlock>
-            <#if entry.helpMessage?? && entry.helpMessage != ''>
-                <@cInline class='form-text'>${entry.helpMessage}</@cInline>
-            </#if>
-        </@cCol>
-    </@cRow>
-
+<#assign idName = buildEntryName( entry, entry_iteration_number )>
+<#assign entryStep=0>
+<#assign legendClass=''>
+<#assign hasError = false />
+<#assign errorMsg = ''>
+<#assign entryCSSClass>form-control<#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#if list_responses??><#list list_responses as response><#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError><#assign hasError = true /><#assign error = response.entry.error></#if></#list></#if>
+<#if hasError><#assign errorMsg><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#assign></#if>
+<#assign helpMsg><#if entry.helpMessage?exists&&entry.helpMessage!=''>${entry.helpMessage}</#if></#assign>
+<#assign entryStep><#list entry.CSSClass?split(' ') as laClass><#if laClass?starts_with( 'step-' )> ${laClass?replace('step-','')!}<#break></#if></#list></#assign>
+<#if entryStep=''><#assign entryStep=0></#if>
+<#assign beginHour=''>
+<#assign beginEnd=''>
+<#assign inputParams>min="00:00" max="23:59"</#assign>
+<#if list_responses?has_content>
+<#assign inputParams=''>
+<#assign beginHourCode = 'begin_hour'>
+<#assign endHourCode = 'end_hour'>
+<#list list_responses?chunk(2) as row>
+<#if row[0].field.code == beginHourCode><#if row[0]?? && row[0].toStringValueResponse??><#assign beginHour = row[0].toStringValueResponse></#if></#if>
+<#if row[1].field.code == beginHourCode><#if row[1]?? && row[1].toStringValueResponse??><#assign beginHour = row[1].toStringValueResponse></#if></#if>
+<#if row[0].field.code == endHourCode><#if row[0]?? && row[0].toStringValueResponse??><#assign endHour = row[0].toStringValueResponse></#if></#if>
+<#if row[1].field.code == endHourCode><#if row[1]?? && row[1].toStringValueResponse??><#assign endHour = row[1].toStringValueResponse></#if></#if>
+</#list>
 </#if>
-
-<style>
-.slot-entry {
-    display: flex;
-    align-items: center;
-}
-.slot-entry > * {
-    margin-right: 10px;
-}
-.slot-entry > *:last-child {
-    margin-right: 0;
-}
-</style>
+<@cInputTimeSlot name=idName! legend=entry.title! legendClass=legendClass! beginHour=beginHour! endHour=endHour! step=entryStep! hideErrorMsg=true errorMsg=errorMsg! class=entryCSSClass!?trim html5Required=false required=entry.mandatory! helpMsg=helpMsg! params=inputParams! />
+</#if>
 </@cTpl>

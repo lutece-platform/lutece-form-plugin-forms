@@ -1,23 +1,11 @@
 <@cTpl>
 <#if !entry.onlyDisplayInBack>
-    <@cRow class='mb-3'>
-        <@cCol>
-            <@cLabel label=entry.title!'' />
-        </@cCol>
-        <#if list_responses?has_content>
-            <#list list_responses as response>
-                <@cCol>
-                    <#if entryTypeService.getResponseValueForRecap(null, null, response, null)??>
-                        ${entryTypeService.getResponseValueForRecap(null, null, response, null)}
-                    <#else>
-                        ${response.toStringValueResponse!''}
-                    </#if>
-                    <#if response.field?? && response.field.fileImage.url??>
-                        <@cImg src=response.field.fileImage.url title=response.field.title alt=response.field.title params='width="100" height="100"' />
-                    </#if>
-                </@cCol>
-            </#list>
-        </#if>
-    </@cRow>
+<#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#compress>
+<@chItem class=entryCSSClass!?trim>
+<@cInline type='strong'>${entry.title!''} :</@cInline>
+<#if list_responses?has_content><#list list_responses as response><@cInline class='em'><#if entryTypeService.getResponseValueForRecap(null, null, response, null)??>${entryTypeService.getResponseValueForRecap(null, null, response, null)}<#else>${response.toStringValueResponse!''}</#if></@cInline><#sep>, </#sep></#list></#if>
+</@chItem>
+</#compress>
 </#if>
 </@cTpl>

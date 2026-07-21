@@ -9,6 +9,6 @@
 <#assign fieldLink = getFieldByCode( entry, "link" ) >
 <#assign helpMsg><#if entry.helpMessage?exists&&entry.helpMessage!=''><@cFormHelp id=idName! label=entry.helpMessage! /></#if></#assign>
 <#if errorMsg!=''><#assign labelClass='is-invalid'></#if>
-<#assign tosLabel>${entry.title!} <@cLink label=fieldLink.value href='jsp/site/Portal.jsp?page=formsTermsOfService&id_entry=${entry.idEntry}' target='_blank'  params='onclick="javascript:openFormsTermsOfService(this.href); return false;" rel="noopener"'><@cInline class='visually-hidden visually-hidden-focusable'>[#i18n{portal.site.portal_footer.newWindow}]</@cInline></@cLink></#assign>
+<#assign tosLabel>${entry.title!} <@cLink label=fieldLink.value href='jsp/site/Portal.jsp?page=formsTermsOfService&id_entry=${entry.idEntry}' target='_blank' class='ps-xs' params='onclick="javascript:openFormsTermsOfService(this.href); return false;" rel="noopener"'><@cInline class='visually-hidden visually-hidden-focusable'>[#i18n{portal.site.portal_footer.newWindow}]</@cInline></@cLink></#assign>
 <@cCheckbox name=name! label=tosLabel id='${name}_${fieldAgreement.idField}' value='${fieldAgreement.idField!}' class='form-check mt-xs' labelClass='custom-tos ${labelClass}' inline=entry.fieldInLine! checked=(responseAgreement?? && responseAgreement.toStringValueResponse="true") helpMsg=helpMsg errorMsg=errorMsg required=true html5Required=false />
 </@cTpl>

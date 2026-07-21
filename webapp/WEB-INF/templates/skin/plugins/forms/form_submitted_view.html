@@ -1,16 +1,25 @@
 <@cTpl>
-<#if warnings?? && warnings?size gt 0>
-    <#list warnings as warning>
-        <@cAlert type='warning' title=warning.message! />
-    </#list>
+<#assign alertClass='success' />
+<#assign alertTitle><#if messageInfo??>${messageInfo?replace('<p>','')?replace('</p>','')}</#if></#assign>
+<#assign alertText='' />
+<#if warnings??>
+	<#if warnings?size gt 0 >
+		<#assign alertClass='warning' />
+		<#assign alertTitle='#i18n{portal.util.message.titleWarning}' />
+		<#assign alertText><#list warnings as warning ><#if warning.message??>${warning.message!' #i18n{portal.util.message.titleWarning} '}<br></#if></#list></#assign>
+	</#if>
 </#if>
-
-<#if messageInfo??>${messageInfo}</#if>
-
-<#assign btnLabel = '#i18n{forms.form.returnPage}'>
-<#if labelButton??>
-    <#assign btnLabel = labelButton>
-</#if>
-
-<@cBtn href=back_url class='primary btn-sm' label=btnLabel />
+<@cContainer>
+	<@cRow>
+		<@cCol>
+			<@cAlert class=alertClass title=alertTitle >${alertText}</@cAlert>
+		</@cCol>
+	</@cRow>
+	<@cRow>
+		<@cCol class='d-flex justify-content-center mt-l'>
+			<#assign backLabel><#if labelButton?? >${labelButton}<#else>#i18n{forms.form.returnPage}</#if></#assign>
+			<@cLink href=back_url label=backLabel class='btn btn-primary' />
+		</@cCol>
+	</@cRow>
+</@cContainer>
 </@cTpl>

@@ -1,9 +1,18 @@
 <@cTpl>
-<#assign commentClass = 'form-control-plaintext ' + (entry.CSSClass!'')>
-<@cBlock class=commentClass>
-    ${entry.comment}
-    <#if url_download_fo??>
-        <@cLink href=url_download_fo label=filename!'' />
-    </#if>
+<@cBlock class=entry.CSSClass!>
+${entry.comment}
+<#if filename?? && filename != ''>
+<@chList class='custom-list list-files ps-0 mt-m'>
+	<@chItem>
+		<@cLink href='${url_download_fo}' label='' title='${filename}' class='d-flex justify-content-between' >
+		<@cText type='span'>${filename!}</@cText>
+		<@cSection type='div' class="files-info">
+			<#assign ext=filename?split('.')>
+			<@cText type='span'>${ext?last}</@cText>
+		</@cSection>
+		</@cLink>
+	</@chItem>
+</@chList>
+</#if>
 </@cBlock>
 </@cTpl>

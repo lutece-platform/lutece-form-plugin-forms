@@ -1,49 +1,38 @@
 <@cTpl>
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
-
-    <#assign idName = 'attribute' + entry.idEntry?c>
-    <#assign codeGallery = getFieldByCode(entry, 'code_gallery').value>
-
-    <#assign idFileSelected = ''>
-    <#if list_responses?? && list_responses?has_content>
-        <#list list_responses as response>
-            <#if response?? && response.file??>
-                <#assign idFileSelected = response.file.idFile>
-            </#if>
-        </#list>
-    </#if>
-
-    <#assign hasError = false>
-    <#assign galleryErrorMsg = ''>
-    <#if list_responses?? && list_responses?has_content>
-        <#assign responseError = list_responses[0]>
-        <#if responseError.entry.idEntry == entry.idEntry && responseError.entry.error?? && responseError.entry.error.isDisplayableError>
-            <#assign hasError = true>
-            <#assign respError = responseError.entry.error>
-            <#if respError.mandatoryError>
-                <#assign galleryErrorMsg = '#i18n{forms.message.mandatory.entry}'>
-            <#else>
-                <#assign galleryErrorMsg = respError.errorMessage>
-            </#if>
-        </#if>
-    </#if>
-
-    <@cRow class='mb-3'>
-        <@cCol>
-            <@cLabel label=entry.title + (entry.mandatory)?then(' *', '') for=idName id='label' + entry.idEntry?c />
-        </@cCol>
-        <@cCol>
-            <#if !hasError && entry.helpMessage?? && entry.helpMessage != ''>
-                <@cText class='form-control-plaintext'>${entry.helpMessage}</@cText>
-            </#if>
-
-            <@galleryImage codeGallery=codeGallery inputName=idName idFileSelected=idFileSelected />
-
-            <#if hasError>
-                <@cInline class='invalid-feedback d-block'>${galleryErrorMsg}</@cInline>
-            </#if>
-        </@cCol>
-    </@cRow>
-
+<#assign idName = 'attribute' + entry.idEntry>
+<#assign codeGallery = getFieldByCode(entry,'code_gallery').value >
+<#assign idFileSelected = ''>
+<#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign galleryHelp><#if entry.helpMessage?exists&&entry.helpMessage!=''>${entry.helpMessage}</#if></#assign>
+<#if list_responses?? && list_responses?has_content><#list list_responses as response><#if response?? && response.file??><#assign idFileSelected = response.file.idFile /></#if></#list></#if>
+<@cRow class='mb-sm'>
+	<@cCol class=entryCSSClass!?trim>
+		<@cLabel label=entry.title for=idName id='label${entry.idEntry}' required=entry.mandatory />
+		<#if galleryHelp !=''><@cFormHelp id='help_${idName}' label=entry.helpMessage /></#if>
+		<@galleryImage codeGallery=codeGallery inputName=idName idFileSelected=idFileSelected />
+		<#if list_responses?? && list_responses?has_content>
+			<#assign response_error = list_responses[0]/>
+			<#if response_error.entry.idEntry == entry.idEntry && response_error.entry.error?? && response_error.entry.error.isDisplayableError>
+				<#assign error = response_error.entry.error><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if>
+				<@cFormError id='err_${idName}' label=error />
+			</#if>
+		</#if>
+	</@cCol>
+</@cRow>
 </#if>
+<script>
+<#if galleryHelp !='' || error !=''> 
+document.addEventListener( 'DOMContentLoaded', function() {
+	const galleryInput = document.getElementById('${idName}');
+	<#if galleryHelp !=''>
+	galleryInput.setAttribute('aria-describedby', 'help_${entry.idEntry}');
+	<#else>
+	const gallery = galleryInput.closest('.gallery-image');
+	galleryInput.setAttribute('aria-describedby', 'err_${entry.idEntry}');
+	gallery.classList.add('is-invalid');
+	</#if>
+});
+</#if>
+</script>
 </@cTpl>

@@ -1,65 +1,39 @@
 <@cTpl>
+<#include "/skin/plugins/asynchronousupload/upload_commons.html" />
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
-
-    <#include "/skin/plugins/asynchronousupload/upload_commons.html" />
-
-    <#assign idName = buildEntryName(entry, entry_iteration_number)>
-
-    <#assign hasError = false>
-    <#assign ocrErrorMsg = ''>
-    <#if list_responses?? && list_responses?has_content>
-        <#assign responseError = list_responses[0]>
-        <#if responseError.entry.idEntry == entry.idEntry && responseError.entry.error?? && responseError.entry.error.isDisplayableError>
-            <#assign hasError = true>
-            <#assign respError = responseError.entry.error>
-            <#if respError.mandatoryError>
-                <#assign ocrErrorMsg = '#i18n{forms.message.mandatory.entry}'>
-            <#else>
-                <#assign ocrErrorMsg = respError.errorMessage>
-            </#if>
-        </#if>
-    </#if>
-
-    <#assign rowClass = 'mb-3 ' + (entry.CSSClass!'')>
-    <#assign submitValue = uploadHandler.uploadSubmitPrefix + idName>
-
-    <@cRow class=rowClass>
-        <@cCol>
-            <@cLabel label=entry.title + (entry.mandatory)?then(' *', '') for=idName id='label' + entry.idEntry?c />
-        </@cCol>
-        <@cCol>
-            <@cInput type='file' name=idName class='form-control-file' />
-            <@cBtn class='primary btn-sm' type='submit' label='#i18n{forms.entryType.autoFileReading.label.process.ocr}' params='name="action_doSynchronousUploadDocument" value="${submitValue}"' />
-
-            <#if !hasError && entry.helpMessage?? && entry.helpMessage != ''>
-                <@cInline class='form-control-plaintext'>${entry.helpMessage}</@cInline>
-            </#if>
-
-            <#if hasError>
-                <@cInline class='invalid-feedback d-block'>${ocrErrorMsg}</@cInline>
-            </#if>
-        </@cCol>
-    </@cRow>
-
-    <#if list_responses?? && list_responses?has_content>
-        <#list list_responses as response>
-            <#if response.file?? && response.file.title?? && response.file.title != ''>
-                <#if listFiles??>
-                    <#assign listFiles = listFiles + [response.file]>
-                <#else>
-                    <#assign listFiles = [response.file]>
-                </#if>
-            </#if>
-        </#list>
-    </#if>
-
-    <#if !listFiles??>
-        <#assign listFiles = ''>
-    </#if>
-
-    <@addUploadedFilesBox fieldName=idName handler=uploadHandler listFiles=listFiles submitBtnName='action_doSynchronousUploadDocument' noJs=true />
-
+<#assign errorMsg = '' />
+<#assign helpMsg = '' />
+<#assign idName = buildEntryName( entry, entry_iteration_number )>
+<#assign fieldName=idName >
+<#if list_responses?? && list_responses?has_content><#assign response_error = list_responses[0]><#if response_error.entry.idEntry == entry.idEntry && response_error.entry.error?? && response_error.entry.error.isDisplayableError><#assign error = response_error.entry.error><#assign errorMsg><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#assign></#if></#if>
+<#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#if entry.helpMessage?exists&&entry.helpMessage!=''><#assign helpMsg>${entry.helpMessage}</#assign></#if>
+<@cField class=entryCSSClass!?trim label=entry.title! for=idName! required=entry.mandatory! >
+	<@cInput type='file' name=idName! class='form-control custom-file-input' helpMessage=helpMessage! errorMsg=errorMsg! required=entry.mandatory! />
+</@cField>		
+<@cRow>
+	<@cCol cols='12 col-sm-6'>
+		<@cBtn id='action_doSynchronousUploadDocument' params='name="action_doSynchronousUploadDocument" value="${uploadHandler.uploadSubmitPrefix}${fieldName}"' label='#i18n{forms.entryType.autoFileReading.label.process.ocr}' />
+	</@cCol>
+	<@cCol cols='12 col-sm-6'>
+		<canvas id="loader" width="50" height="50"></canvas>
+	</@cCol>
+</@cRow>
+<#if list_responses?? && list_responses?has_content>
+<#list list_responses as response>
+<#if response.file?? && response.file.title?? && response.file.title != ''>
+<#if listFiles??>
+<#assign listFiles = listFiles + [response.file] >
+<#else>
+<#assign listFiles = [response.file] >
 </#if>
-
+</#if>
+</#list>
+</#if>
+<#if !listFiles??><#assign listFiles = ''></#if>
+<@addUploadedFilesBox fieldName=fieldName handler=uploadHandler listFiles=listFiles noJs=true />
+</#if>
+<!-------------------------OCR template----------------------- -->
 ${ocr_code_template!}
+<!-- --------------------------------------------------------- -->
 </@cTpl>

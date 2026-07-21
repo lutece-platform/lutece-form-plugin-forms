@@ -1,31 +1,19 @@
 <@cTpl>
 <#if !entry.onlyDisplayInBack>
-
-    <#if getFieldByCode(entry, "illustration_image")??>
-        <#assign illustration_image_entry = getFieldByCode(entry, "illustration_image")>
-        <#list fields_list_by_id_entries as key, value>
-            <#if key == illustration_image_entry.idField>
-                <@cRow class='mb-3'>
-                    <@cCol>
-                        <@cImg src=value alt=illustration_image_entry.title!'' title=illustration_image_entry.title!'' />
-                    </@cCol>
-                </@cRow>
-            </#if>
-        </#list>
-    </#if>
-
-    <@cRow class='mb-3'>
-        <@cCol>
-            <@cLabel label=entry.title!'' />
-        </@cCol>
-        <#if list_responses?has_content>
-            <#list list_responses as response>
-                <@cCol>
-                    ${response.toStringValueResponse!''}
-                </@cCol>
-            </#list>
-        </#if>
-    </@cRow>
-
+<#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#compress>
+<@chItem class=entryCSSClass!?trim>
+<@cInline type='strong'>${entry.title?capitalize!''} : </@cInline>
+<#if list_responses?has_content>
+	<#list list_responses as response>
+		<#if response.toStringValueResponse!?trim != ''>
+			${response.toStringValueResponse!''}
+		<#else>
+			<@cInline type='em'>#i18n{theme.labelNoDataProvided}</@cInline>
+		</#if>
+	</#list>
+</#if>
+</@chItem>
+</#compress>
 </#if>
 </@cTpl>

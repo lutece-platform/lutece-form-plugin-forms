@@ -1,50 +1,40 @@
 <@cTpl>
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
-
-    <#assign idName = buildEntryName(entry, entry_iteration_number)>
-
-    <#assign selectErrorMsg = ''>
-    <#if list_responses??>
-        <#list list_responses as response>
-            <#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
-                <#assign respError = response.entry.error>
-                <#if respError.mandatoryError>
-                    <#assign selectErrorMsg = '#i18n{forms.message.mandatory.entry}'>
-                <#else>
-                    <#assign selectErrorMsg = respError.errorMessage>
-                </#if>
-            </#if>
-        </#list>
-    </#if>
-
-    <#assign selectClass = 'form-select ' + (entry.CSSClass!'') + (selectErrorMsg != '')?then(' is-invalid', '')>
-    <#assign selectHelp = (selectErrorMsg != '')?then('', entry.helpMessage!'')>
-
-    <@cField label=entry.title required=entry.mandatory>
-        <@cSelect name=idName id=idName class=selectClass required=entry.mandatory errorMsg=selectErrorMsg helpMsg=selectHelp>
-            <@cOption value='' label='#i18n{form.xpage.form.noValue}' />
-            <#list entry.fields as field>
-                <#if field.code == 'answer_choice'>
-                    <#assign isSelected = false>
-                    <#if list_responses?has_content>
-                        <#list list_responses as response>
-                            <#if response.entry.idEntry == entry.idEntry && response.field?? && response.field.idField == field.idField>
-                                <#assign isSelected = true>
-                                <#break>
-                            </#if>
-                        </#list>
-                    <#elseif field.defaultValue>
-                        <#assign isSelected = true>
-                    </#if>
-                    <#assign optionParams = ''>
-                    <#if field.comment?? && field.comment != ''>
-                        <#assign optionParams = 'title="${field.comment}"'>
-                    </#if>
-                    <@cOption value=field.idField?c label=field.title selected=isSelected params=optionParams />
-                </#if>
-            </#list>
-        </@cSelect>
-    </@cField>
-
+<#assign hasError = false />
+<#if list_responses??>
+<#list list_responses as response>
+<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
+<#assign hasError = true />
+<#assign error = response.entry.error>
+</#if>
+</#list>
+</#if>
+<#assign errorMsg><#if hasError><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#if></#assign>
+<#assign helpMsg><#if entry.helpMessage?exists&&entry.helpMessage!=''>${entry.helpMessage}</#if></#assign>
+<#assign idName = buildEntryName( entry, entry_iteration_number )>
+<#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<@cField class=entryCSSClass!?trim label=entry.title for=idName required=entry.mandatory > 
+	<@cSelect name=idName! required=entry.mandatory html5Required=false helpMsg=helpMsg errorMsg=errorMsg >
+		<@cOption label='#i18n{theme.labelNoValue}' value='' />
+		<#assign fieldParams=''>
+		<#list entry.fields as field>
+			<#assign isSelected=false>
+			<#if field.code == 'answer_choice'>
+				<#assign fieldComment><#if field.comment?? && field.comment != ''>${field.comment!}</#if></#assign>
+				<#if list_responses?has_content>
+					<#list list_responses as response>
+						<#if response.entry.idEntry == entry.idEntry && response.field??>
+							<#if response.field.idField == field.idField><#assign isSelected=true><#break></#if>
+						</#if>
+					</#list>
+				<#else>
+					<#if field.defaultValue><#assign isSelected=true></#if>
+				</#if>
+				<#assign fieldParams=fieldComment>
+				<@cOption label=field.title! value=field.idField! selected=isSelected params=fieldParams />
+			</#if>
+		</#list>
+	</@cSelect>
+</@cField>
 </#if>
 </@cTpl>

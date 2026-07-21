@@ -1,68 +1,27 @@
 <@cTpl>
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
-
-    <#assign idName = buildEntryName(entry, entry_iteration_number)>
-    <#assign fieldHeight = getFieldValueByCode(entry, "height")!''>
-    <#assign fieldWidth = getFieldValueByCode(entry, "width")!''>
-    <#assign placeholderValue = getFieldValueByCode(entry, "placeholder")!''>
-
-    <#assign autocompleteValue = ''>
-    <#if getFieldByCode(entry, "autocomplete")??>
-        <#assign autocompleteField = getFieldByCode(entry, "autocomplete")>
-        <#if autocompleteField.value??>
-            <#assign autocompleteValue = autocompleteField.value>
-        </#if>
-    </#if>
-
-    <#assign responseContent = ''>
-    <#assign responseHasError = false>
-    <#assign textareaErrorMsg = ''>
-    <#if list_responses?? && list_responses?has_content>
-        <#list list_responses as response>
-            <#if response.entry.idEntry == entry.idEntry>
-                <#if response.toStringValueResponse??>
-                    <#assign responseContent = response.toStringValueResponse>
-                </#if>
-                <#if response.entry.error??>
-                    <#assign responseHasError = true>
-                    <#if response.entry.error.isDisplayableError>
-                        <#assign respError = response.entry.error>
-                        <#if respError.mandatoryError>
-                            <#assign textareaErrorMsg = '#i18n{forms.message.mandatory.entry}'>
-                        <#else>
-                            <#assign textareaErrorMsg = respError.errorMessage>
-                        </#if>
-                    </#if>
-                </#if>
-            </#if>
-        </#list>
-    <#else>
-        <#assign textConfigField = getFieldByCode(entry, "text_config")>
-        <#if textConfigField.value??>
-            <#assign responseContent = textConfigField.value>
-        </#if>
-    </#if>
-
-    <#assign textareaClass = 'form-control'>
-    <#if !responseHasError && entry.CSSClass??>
-        <#assign textareaClass = entry.CSSClass + ' form-control'>
-    </#if>
-
-    <#assign textareaParams = ''>
-    <#if fieldWidth != '' && fieldWidth?number gt 0>
-        <#assign textareaParams = 'cols="' + fieldWidth?number?c + '"'>
-    </#if>
-
-    <#assign rowsValue = 0>
-    <#if fieldHeight != '' && fieldHeight?number gt 0>
-        <#assign rowsValue = fieldHeight?number>
-    </#if>
-
-    <#assign textareaHelp = (textareaErrorMsg != '')?then('', entry.helpMessage!'')>
-
-    <@cField label=entry.title required=entry.mandatory>
-        <@cTextArea name=idName id=idName class=textareaClass placeholder=placeholderValue autocomplete=autocompleteValue required=entry.mandatory rows=rowsValue params=textareaParams errorMsg=textareaErrorMsg helpMsg=textareaHelp>${responseContent}</@cTextArea>
-    </@cField>
-
+<#assign hasError = false />
+<#assign errorMsg = ''>
+<#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#if list_responses??><#list list_responses as response><#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError><#assign hasError = true /><#assign error = response.entry.error></#if></#list></#if>
+<#if hasError><#assign errorMsg><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#assign></#if>
+<#assign idName = buildEntryName( entry, entry_iteration_number )>
+<#assign field_default=getFieldByCode( entry, "text_config")>
+<#assign field_height=getFieldValueByCode( entry, "height")>
+<#assign fieldRows>${field_height!}</#assign>
+<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
+<#assign field_max_size=getFieldValueByCode( entry, "max_size") >
+<#assign field_max_size_number><#if field_max_size?number!=-1>${field_max_size?number}<#else>0</#if></#assign>
+<#assign helpMsg><#if entry.helpMessage?exists&&entry.helpMessage!=''>${entry.helpMessage!}</#if></#assign>
+<#assign field_content = '' >
+<#if list_responses?has_content><#list list_responses as response><#if response.entry.idEntry == entry.idEntry && response.toStringValueResponse??>	<#assign field_content = response.toStringValueResponse! ></#if></#list><#else><#if field_default.value?exists><#assign field_content>${field_default.value}</#assign><#else><#assign field_content=''></#if></#if>
+<@cField label=entry.title! for=idName! required=entry.mandatory! class=entryCSSClass!?trim >
+<@cTextArea name=idName placeholder=placeholder! required=entry.mandatory! html5Required=false rows=fieldRows maxlength=field_max_size_number! helpMsg=helpMsg! errorMsg=errorMsg! params=fieldParams>${field_content!}</@cTextArea>
+</@cField>
+<#-- fieldInLine means use rich text -->
+<#if entry.fieldInLine>
+<#include "/util/editor/editor.html" />
+<@initEditor />
+</#if>
 </#if>
 </@cTpl>

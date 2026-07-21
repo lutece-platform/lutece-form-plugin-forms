@@ -1,18 +1,15 @@
 <@cTpl>
-<div class="mb-3 row ${entry.cssClass!}">
-    <label class="col-12 col-form-label">${entry.title!''}</label>
-    <#if list_responses?has_content>
-    <#assign first = true>
-    <#list list_responses as response>
-        <#if first>
-            <#assign first = false>
-            <div class="col-12">
-        <#else>
-            <div class="col-12">
-        </#if>
-        ${entryTypeService.getResponseValueForRecap(entry,nullArg,response,nullArg)!''}
-        </div>
-    </#list>
-    </#if>
-</div>
+<#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#compress>
+<@chItem class=entryCSSClass!?trim>
+<@cInline type='strong'>${entry.title!''} :</@cInline>
+<#if list_responses?has_content>
+<#if list_responses?size gt 0>
+<#list list_responses as response>${entryTypeService.getResponseValueForRecap(entry,nullArg,response,nullArg)!''}</#list>
+<#else>
+<@cInline type='em'>#i18n{theme.labelNoDataProvided}</@cInline>
+</#if>
+</#if>
+</@chItem>
+</#compress>
 </@cTpl>

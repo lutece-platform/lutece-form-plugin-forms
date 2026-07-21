@@ -1,18 +1,49 @@
 <@cTpl>
 <#if !entry.onlyDisplayInBack>
-    <@cRow class='mb-3'>
-        <@cCol>
-            <@cLabel label=entry.title!'' />
-        </@cCol>
-        <#if list_responses?has_content>
-            <#list list_responses as response>
-                <@cCol>
-                    <#if response.file??>
-                        ${response.file.title} (${response.file.size} O)
-                    </#if>
-                </@cCol>
-            </#list>
-        </#if>
-    </@cRow>
+<#assign idName = buildEntryName( entry, entry_iteration_number )>
+<#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<@chItem class=entryCSSClass!?trim >
+	<@cInline type='strong' id='label_${idName!}'>${entry.title!''} :</@cInline>
+	<#if list_responses?has_content>
+		<@cInline class='ms-xs' type='strong'>${list_responses?size} #i18n{theme.labelNumberOfFiles} </@cInline><@cBtn label='' type='button' id='btn-${idName!}' class='secondary btn-mini btn-show-files py-0 ms-sm' params=' data-hide="#i18n{theme.labelHideUploadedFiles}" data-show="#i18n{theme.labelShowUploadedFiles}" aria-expanded="false" aria-controls="list_${idName!}" aria-labelledby="label_${idName}"'>#i18n{theme.labelShowUploadedFiles}</@cBtn>
+		<@chList class='list-uploaded-files visually-hidden mb-3' id='list_${idName!}' params='role="region" aria-labelledby="label_${idName}"'>
+		<#list list_responses as response>
+			<#if response.file?exists>
+				<#if response.file.size??>
+					<#assign fileSize=response.file.size>
+					<#if fileSize lt 1024 >
+						<#assign octetUnit='o'>
+						<#assign octetNumber=fileSize >
+					<#elseif fileSize lt ( 1024 * 1024 ) >
+						<#assign octetUnit='Ko'>
+						<#assign octetNumber=fileSize / 1024 >
+					<#else>
+						<#assign octetUnit='Mo'>
+						<#assign octetNumber=fileSize / (1024*1024) >
+					</#if>
+				</#if>
+				<@chItem>
+					<@cInline type='small'>${response.file.title} - ${octetNumber?string["0.##"]} ${octetUnit} ,</@cInline>
+				</@chItem>
+			</#if>
+		</#list>
+		</@chList>
+		<script>
+		document.addEventListener('DOMContentLoaded', () => {
+			button = document.getElementById('btn-${idName!}')
+				button.addEventListener('click', () => {
+				const filesList = document.getElementById('list_${idName!}')
+				if (filesList) {
+					filesList.classList.contains('visually-hidden') ? button.textContent = button.getAttribute('data-hide') : button.textContent = button.getAttribute('data-show');
+					filesList.classList.contains('visually-hidden') ? button.setAttribute('aria-expanded', 'true') : button.setAttribute('aria-expanded', 'false');
+					filesList.classList.toggle('visually-hidden');
+				}
+			});
+		});
+		</script>
+	<#else>
+		<@cInline type='em' class='ms-xs'>#i18n{theme.labelNoDataProvided}</@cInline>	
+	</#if>
+</@chItem>
 </#if>
 </@cTpl>

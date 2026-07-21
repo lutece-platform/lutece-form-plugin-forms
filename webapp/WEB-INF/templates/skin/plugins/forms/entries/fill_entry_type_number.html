@@ -1,77 +1,44 @@
 <@cTpl>
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
-
-    <#assign idName = buildEntryName(entry, entry_iteration_number)>
-
-    <#assign suffixValue = ''>
-    <#if entry.fields?? && entry.fields?has_content>
-        <#assign suffixValue = getFieldValueByCode(entry, 'suffix')!''>
-    </#if>
-
-    <#assign minValue = 0>
-    <#assign hasMin = false>
-    <#assign minField = getFieldByCode(entry, "min")>
-    <#if minField.value??>
-        <#assign minValue = minField.value?number>
-        <#assign hasMin = true>
-    </#if>
-
-    <#assign maxValue = 0>
-    <#assign hasMax = false>
-    <#assign maxField = getFieldByCode(entry, "max")>
-    <#if maxField.value??>
-        <#assign maxValue = maxField.value?number>
-        <#assign hasMax = true>
-    </#if>
-
-    <#assign placeholderValue = getFieldValueByCode(entry, "placeholder")!''>
-
-    <#assign autocompleteValue = ''>
-    <#if getFieldByCode(entry, "autocomplete")??>
-        <#assign autocompleteField = getFieldByCode(entry, "autocomplete")>
-        <#if autocompleteField.value??>
-            <#assign autocompleteValue = autocompleteField.value>
-        </#if>
-    </#if>
-
-    <#assign inputValue = ''>
-    <#assign inputErrorMsg = ''>
-    <#if list_responses?has_content>
-        <#list list_responses as response>
-            <#if response.entry.idEntry == entry.idEntry>
-                <#if response.responseValue??>
-                    <#assign inputValue = response.responseValue>
-                </#if>
-                <#if response.entry.error?? && response.entry.error.isDisplayableError>
-                    <#assign respError = response.entry.error>
-                    <#if respError.mandatoryError>
-                        <#assign inputErrorMsg = '#i18n{forms.message.mandatory.entry}'>
-                    <#else>
-                        <#assign inputErrorMsg = respError.errorMessage>
-                    </#if>
-                </#if>
-            </#if>
-        </#list>
-    <#else>
-        <#assign textConfigField = getFieldByCode(entry, "text_config")>
-        <#if textConfigField.value??>
-            <#assign inputValue = textConfigField.value>
-        </#if>
-    </#if>
-
-    <#assign inputClass = 'form-control input-sm ' + (entry.CSSClass!'')>
-    <#assign inputHelp = (inputErrorMsg != '')?then('', entry.helpMessage!'')>
-
-    <@cField label=entry.title required=entry.mandatory>
-        <#if suffixValue != ''>
-            <@cInputGroup>
-                <@cInput type='number' name=idName id=idName value=inputValue class=inputClass autocomplete=autocompleteValue placeholder=placeholderValue required=entry.mandatory min=(hasMin?then(minValue, 0)) max=(hasMax?then(maxValue, 0)) errorMsg=inputErrorMsg helpMsg=inputHelp />
-                <@cInputGroupAddonText>${suffixValue}</@cInputGroupAddonText>
-            </@cInputGroup>
-        <#else>
-            <@cInput type='number' name=idName id=idName value=inputValue class=inputClass autocomplete=autocompleteValue placeholder=placeholderValue required=entry.mandatory min=(hasMin?then(minValue, 0)) max=(hasMax?then(maxValue, 0)) errorMsg=inputErrorMsg helpMsg=inputHelp />
-        </#if>
-    </@cField>
-
+<#assign suffix='' >
+<#assign entryStep=0>
+<#assign fieldValue='' >
+<#assign fieldMax=0 >
+<#assign fieldMin=0 >
+<#assign placeholder='' >
+<#assign errorMsg='' >
+<#assign invalidClass='' >
+<#assign inputClass='form-control' >
+<#assign helpMsg><#if entry.helpMessage?exists&&entry.helpMessage!=''>${entry.helpMessage!}</#if></#assign>
+<#assign field_default=getFieldByCode( entry, "text_config")>
+<#if entry.fields?? && entry.fields?has_content><#assign suffix = getFieldValueByCode( entry, 'suffix') ></#if>
+<#assign hasError=false />
+<#if list_responses?has_content>
+<#list list_responses as response>
+<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError><#assign hasError=true ><#assign error=response.entry.error><#assign errorMsg><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#assign></#if>
+<#if response.entry.idEntry == entry.idEntry><#if response.toStringValueResponse??><#assign fieldValue=response.toStringValueResponse! ></#if></#if></#list><#else><#if field_default.value?exists><#assign fieldValue>${field_default.value}</#assign></#if></#if>
+<#assign entryStep><#list entry.CSSClass?split(' ') as laClass><#if laClass?starts_with( 'step-' )> ${laClass?replace('step-','')!}<#break></#if></#list></#assign>
+<#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#if entryStep=''><#assign entryStep=0></#if>
+<#assign field_min=getFieldByCode( entry, "min")>
+<#if field_min.value?? && field_min.value !=''><#assign fieldMin=field_min.value?number ></#if>
+<#assign field_max=getFieldByCode( entry, "max")>
+<#if field_max.value?? && field_max.value !=''><#assign fieldMax=field_max.value?number ></#if>
+<#assign idName=buildEntryName( entry, entry_iteration_number )>
+<#assign placeholder=getFieldValueByCode(entry, "placeholder") ><#assign placeholder = getFieldValueByCode(entry, "placeholder") >
+<#if hasError><#assign invalidClass='is-invalid'><#assign inputClass='form-control is-invalid'></#if>
+<@cField label=entry.title for=idName required=entry.mandatory class=entryCSSClass!?trim >
+<#if suffix!=''>
+<#if helpMsg!=''><@cFormHelp id='help_${idName!}' label=helpMsg! /></#if>
+<#if errorMsg!=''><@cFormError id='error_${idName!}' label=errorMsg! /></#if>
+<@cInputGroup class=invalidClass>	
+	<#if fieldValue?is_number><#assign fValue=fieldValue?number><#else ><#assign fValue=fieldValue?replace(suffix,'')></#if>
+	<@cInput type='number' class=inputClass name=idName! placeholder=placeholder! required=entry.mandatory! value=fValue?trim! html5Required=false max=fieldMax! min=fieldMin! step=entryStep?number />
+	<@cInputGroupAddonText class='text-muted'>${suffix}</@cInputGroupAddonText> 
+</@cInputGroup>	
+<#else>
+<@cInput type='number' name=idName! placeholder=placeholder! required=entry.mandatory! value=fieldValue! html5Required=false max=fieldMax! min=fieldMin! step=entryStep?number errorMsg=errorMsg! helpMsg=helpMsg! />
+</#if>
+</@cField>
 </#if>
 </@cTpl>

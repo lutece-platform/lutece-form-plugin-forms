@@ -48,11 +48,13 @@
 	</#if>
 </#if>
 <#assign stepParams></#assign>
-<#if !current_step_index??><#assign current_step_index=0 /></#if>
+<#if !current_step_index??>
+	<#assign current_step_index=0 />
+</#if>
 <@cStepCurrent step=current_step_index title=step.title showTitle=showTitle actionNextStep=doNextAction labelNextStep=labelNextAction actionPrevStep=doPrevAction labelPrevStep=labelPrevAction actionSaveStep=doSaveAction labelSaveStep=labelSaveAction actionSaveForBackUpStep=doSaveForBackUpAction labelForBackUpStep=labelForBackUpAction actionResetBackUpStep=doResetBackUpAction labelResetBackUpStep=labelResetBackUpAction showPrevStep=false hasSteps=hasSteps params=stepParams >
 ${stepContent}
 <#if display_captcha>
-<@cCol class='step-group'>
+<@cCol class='12' class='step-group'>
 	<@input type='hidden' name='validate_captcha' value='1' />
 	<@cRow>
 		<@cCol class='col-12 col-sm-10 offset-sm-1 col-md-6 offset-md-3'>	
@@ -61,8 +63,8 @@ ${stepContent}
 	</@cRow>
 </@cCol>
 </#if>
-<script>
 <#if user?? && form.backupEnabled>
+<script>
 window.__sessionTimeoutConfig = window.__sessionTimeoutConfig || {};
 window.__sessionTimeoutConfig.processTimeoutDuration = 600;
 window.__sessionTimeoutConfig.saveEnabled = true;
@@ -73,22 +75,7 @@ window.__sessionTimeoutConfig.saveAction = function() {
 	fd.append('action_doSaveForBackup', '');
 	return fetch(form.action, { method: 'POST', body: fd });
 };
-</#if>
-
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.step-group').forEach(function(stepGroup) {
-        const countField = stepGroup.querySelectorAll('.form-group').length;
-        const condFields = stepGroup.querySelectorAll('div[class*="display_field_"]');
-        const countCond = condFields.length;
-        const countCondVisible = Array.from(condFields).filter(function(el) {
-            return el.offsetParent !== null;
-        }).length;
-
-        if (countField === countCond && countCond > 0 && countCondVisible === 0) {
-            stepGroup.classList.add('d-none', 'step-group-collapsible');
-        }
-    });
-});
 </script>
+</#if>
 </@cStepCurrent>
 </@cTpl>

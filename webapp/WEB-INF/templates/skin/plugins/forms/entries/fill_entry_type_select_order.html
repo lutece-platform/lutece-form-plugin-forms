@@ -1,169 +1,162 @@
 <@cTpl>
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
+<#assign hasError = false />
+<#assign error = '' />
+<#if list_responses??>
+<#list list_responses as response>
+<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
+<#assign hasError = true />
+<#assign error = response.entry.error>
+</#if>
+</#list>
+</#if>
+<#assign idName = buildEntryName( entry, entry_iteration_number )>
+<#assign errorMsg><#if hasError><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#if></#assign>
+<#assign helpMsg><#if entry.helpMessage?exists&&entry.helpMessage!=''>${entry.helpMessage}. #i18n{labelSortableListHelp}<#else>#i18n{labelSortableListHelp}</#if></#assign>
+<#assign labelClass><#if hasError>main-danger-color is-invalid</#if></#assign>
+<#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<@cField class=entryCSSClass!?trim>
+	<@cLabel label=entry.title class=labelClass for=idName id='label-${idName}' required=entry.mandatory /> 
+	<#if entry.helpMessage?exists&&entry.helpMessage!=''><@cFormHelp label=helpMsg id=idName /></#if>
+	<#if hasError><@cFormError label=errorMsg id=idName /></#if>
+	<@cInput type='hidden' name='${idName}' id='${idName}' />
+	<@cBlock id='sortable-status-${entry.idEntry!}' class='visually-hidden' params='role="status" aria-live="polite" aria-atomic="true"' />
+	<@chList id='sortable_${entry.idEntry!}_1' class='list-group mt-xs ${entryClass!}' params='role="listbox" aria-labelledby="label-${idName}" aria-multiselectable="false"'>
+		<#list entry.fields as field>
+			<#if field.code == 'answer_choice'>
+				<#assign notSelected=true />
+				<#if list_responses?has_content>
+					<#list list_responses as response>
+						<#if response.entry.idEntry == entry.idEntry && response.field??>
+							<#if response.field.idField == field.idField>
+								<#assign notSelected=false />
+							</#if>
+						</#if>
+					</#list>
+				</#if>
+				<#if notSelected>
+					<@chItem id='field_${field.idField}' class='list-group-item sortable-list ' params='role="option" data-sortable-id="${field.idField}"'>${field.title}</@chItem>
+				</#if>
+			</#if>
+		</#list>
+	</@chList>
+	<#if list_responses?has_content>
+	<@chList id='sortable_${entry.idEntry!}_2' class='list-group ${entryClass!}' params='role="listbox" tabindex="0" aria-labelledby="label-${idName}" aria-multiselectable="false"'>
+		<#assign nIdx=0 />
+		<#list list_responses?sort_by('sortOrder') as response>
+			<#list entry.fields as field>
+				<#if response.field?? && response.field.idField == field.idField>
+					<@chItem id='field_${field.idField}' class='list-group-item sortable-list ${acClass!}' params='role="option" tabindex="0" data-sortable-id="${field.idField}"'>${field.title}</@chItem>
+				</#if>
+			</#list>
+		</#list>
+	</@chList>
+	</#if>
+</@cField>
+<script src="${commonsSharedPath}${commonsJsPath}lib/sortable/Sortable.min.js"></script> 
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+	let selector = '#sortable_${entry.idEntry!}_1';
+	const itemSelector = '.sortable-list';
+	if( document.querySelector('#sortable_${entry.idEntry!}_2')!=null && document.querySelector('#sortable_${entry.idEntry!}_2').children.length > 0 ){ 
+		selector = '#sortable_${entry.idEntry!}_2' 
+	}
+	const elSort = document.querySelector( selector );
+	const statusEl = document.getElementById('sortable-status-${entry.idEntry!}');
+	const movedMsg = '#i18n{portal.theme.labelSortableListMoved}';
 
-    <#assign idName = buildEntryName(entry, entry_iteration_number)>
-    <#assign sortableListType = getFieldValueByCode(entry, "sortable_list_type")!''>
-    <#assign isMultiListSelection = sortableListType == '1'>
+	function announceMove(itemName, fromPos, toPos) {
+		if (!statusEl) return;
+		statusEl.textContent = movedMsg.replace('{0}', itemName).replace('{1}', fromPos).replace('{2}', toPos);
+	}
 
-    <#assign sortableParams = ''>
-    <#if isMultiListSelection>
-        <#assign sortableParams = 'style="border: 1px solid #eee; min-height:10rem; padding:1rem;"'>
-    </#if>
+	const listSort = Sortable.create( elSort, {
+		animation: 150,
+		dataIdAttr: 'data-sortable-id',
+		onChoose: function ( evt ) {
+			evt.item.classList.add("active");
+			evt.item.setAttribute('aria-selected', true );
+			evt.from.setAttribute('aria-activedescendant', evt.item.id );
+		},
+		onUnchoose: function ( evt) {
+			evt.item.classList.remove("active");
+			evt.item.removeAttribute('aria-selected');
+		},
+		onEnd: function ( evt ) {
+			if (evt.oldIndex !== evt.newIndex) {
+				announceMove(evt.item.textContent.trim(), evt.oldIndex + 1, evt.newIndex + 1);
+			}
+		}
+	});
 
-    <#assign sortableClass = 'connectedSortable ' + (entry.CSSClass!'')>
+	function moveElement( element, direction ) {
+		// Set current element attributes
+		element.srcElement.classList.add("active");
+		element.srcElement.setAttribute('aria-selected', true );
+		element.currentTarget.setAttribute('aria-activedescendant', element.srcElement.id );
+		// bail out if we get input that we don't expect
+		if (["up", "down"].includes(direction) == false ) {
+			return false
+		}
+		if (typeof( element.srcElement.dataset.sortableId ) == 'undefined') {
+			return false
+		}
+		// `sortableId` is whatever you've set in your sortablejs config for `dataIdAttr`
+		const itemName = element.srcElement.textContent.trim();
+		let sortableId = element.srcElement.dataset.sortableId
+		let order = listSort.toArray()
+		let index = order.indexOf(sortableId)
+		const fromPos = index + 1;
+		// pull the item we're moving out of the order
+		order.splice(index, 1)
+		// put it back in at the correct position
+		if (direction == 'down') {
+			order.splice(index+1, 0, sortableId)
+		} else if (direction == 'up') {
+			order.splice(index-1, 0, sortableId)
+		}
+		listSort.sort(order, true)
+		const newIndex = listSort.toArray().indexOf(sortableId);
+		if (newIndex !== index) {
+			announceMove(itemName, fromPos, newIndex + 1);
+		}
+		document.querySelectorAll( itemSelector ).forEach(function(item){
+			item.classList.remove('active');
+			item.removeAttribute('aria-selected');
+		})
+	}
 
-    <#-- Single column (cols='12') when sorting one list, two side-by-side columns when selecting between two lists. -->
-    <#-- Each @cCol is opened and closed in the same scope: a macro tag cannot be split across #if/#else branches. -->
-    <#assign colSize = isMultiListSelection?then('12 col-md-6', '12')>
+	elSort.addEventListener('keydown', (event) => { 
+		if ( event.keyCode == 38 || event.keyCode == 40  ) {
+			event.stopPropagation()
+			event.preventDefault()
+			if ( event.keyCode == 38 ){
+				moveElement( event, 'up' )
+			} else {
+				moveElement( event, 'down' )
+			}
+			event.srcElement.focus()
+		}
+		if ( event.keyCode == 36 ){
+			event.stopPropagation()
+			event.preventDefault()
+			event.currentTarget.children[0].focus()
+		}
+		if ( event.keyCode == 35 ){
+			event.stopPropagation()
+			event.preventDefault()
+			const lastItem = event.currentTarget.childElementCount - 1
+			event.currentTarget.children[ lastItem ].focus()
+		}
+	});
 
-    <@cRow class='mb-3'>
-        <@cInput type='hidden' name=idName id=idName class='' />
-        <@cCol>
-            <@cLabel label=entry.title + (entry.mandatory)?then(' *', '') for=idName />
-        </@cCol>
-
-        <@cCol cols=colSize>
-            <#if isMultiListSelection>
-                <@cLabel label='#i18n{forms.create_entry.sortableList.availableItems}' for='sortable1' />
-            </#if>
-            <@chList id='sortable1' class=sortableClass params=sortableParams>
-                <#list entry.fields as field>
-                    <#if field.code == 'answer_choice'>
-                        <#assign notSelected = true>
-                        <#if list_responses?has_content>
-                            <#list list_responses as response>
-                                <#if response.entry.idEntry == entry.idEntry && response.field?? && response.field.idField == field.idField>
-                                    <#assign notSelected = false>
-                                </#if>
-                            </#list>
-                        </#if>
-                        <#if notSelected>
-                            <@chItem id='field_' + field.idField?c class='ui-state-default'>${field.title}</@chItem>
-                        </#if>
-                    </#if>
-                </#list>
-            </@chList>
-        </@cCol>
-
-        <@cCol cols=colSize>
-            <#if isMultiListSelection>
-                <@cLabel label='#i18n{forms.create_entry.sortableList.selectedItems}' for='sortable2' />
-            </#if>
-            <@chList id='sortable2' class=sortableClass params=sortableParams>
-                <#if list_responses?has_content>
-                    <#list list_responses?sort_by('sortOrder') as response>
-                        <#if !(isMultiListSelection && response.entry.idEntry == entry.idEntry && response.entry.error??)>
-                            <#list entry.fields as field>
-                                <#if response.field?? && response.field.idField == field.idField>
-                                    <@chItem id='field_' + field.idField?c class='ui-state-default'>${field.title}</@chItem>
-                                </#if>
-                            </#list>
-                        </#if>
-                    </#list>
-                </#if>
-            </@chList>
-
-            <#assign orderErrorMsg = ''>
-            <#if list_responses??>
-                <#list list_responses as response>
-                    <#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
-                        <#assign respError = response.entry.error>
-                        <#if respError.mandatoryError>
-                            <#assign orderErrorMsg = '#i18n{forms.message.mandatory.entry}'>
-                        <#else>
-                            <#assign orderErrorMsg = respError.errorMessage>
-                        </#if>
-                    </#if>
-                </#list>
-            </#if>
-            <#if orderErrorMsg != ''>
-                <@cInline class='invalid-feedback d-block'>${orderErrorMsg}</@cInline>
-            </#if>
-
-            <#if entry.helpMessage?? && entry.helpMessage != ''>
-                <@cInline class='form-control-plaintext'>${entry.helpMessage}</@cInline>
-            </#if>
-        </@cCol>
-    </@cRow>
-
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const sortable1 = document.getElementById('sortable1');
-        const sortable2 = document.getElementById('sortable2');
-        const hiddenInput = document.getElementById('${idName}');
-        const isMultiList = ${isMultiListSelection?c};
-        let draggedItem = null;
-
-        function enableDragAndDrop(container) {
-            if (!container) return;
-            container.querySelectorAll('li').forEach(function(item) {
-                item.setAttribute('draggable', 'true');
-                item.addEventListener('dragstart', handleDragStart);
-                item.addEventListener('dragend', handleDragEnd);
-            });
-            container.addEventListener('dragover', handleDragOver);
-            container.addEventListener('drop', handleDrop);
-        }
-
-        function handleDragStart() {
-            draggedItem = this;
-            this.classList.add('opacity-50');
-        }
-
-        function handleDragEnd() {
-            this.classList.remove('opacity-50');
-            draggedItem = null;
-        }
-
-        function handleDragOver(e) {
-            e.preventDefault();
-        }
-
-        function handleDrop(e) {
-            e.preventDefault();
-            if (!draggedItem || !this.classList.contains('connectedSortable')) return;
-            const afterElement = getDragAfterElement(this, e.clientY);
-            if (afterElement == null) {
-                this.appendChild(draggedItem);
-            } else {
-                this.insertBefore(draggedItem, afterElement);
-            }
-        }
-
-        function getDragAfterElement(container, y) {
-            const draggableElements = [...container.querySelectorAll('li:not(.opacity-50)')];
-            return draggableElements.reduce(function(closest, child) {
-                const box = child.getBoundingClientRect();
-                const offset = y - box.top - box.height / 2;
-                if (offset < 0 && offset > closest.offset) {
-                    return { offset: offset, element: child };
-                }
-                return closest;
-            }, { offset: Number.NEGATIVE_INFINITY }).element;
-        }
-
-        function serializeList(container) {
-            return Array.from(container.querySelectorAll('li')).map(function(item) {
-                return 'field[]=' + item.id.replace('field_', '');
-            }).join(';');
-        }
-
-        enableDragAndDrop(sortable1);
-        enableDragAndDrop(sortable2);
-
-        document.querySelectorAll('form').forEach(function(form) {
-            form.addEventListener('submit', function() {
-                if (isMultiList) {
-                    hiddenInput.value = serializeList(sortable2);
-                } else if (sortable2.querySelectorAll('li').length === 0) {
-                    hiddenInput.value = serializeList(sortable1);
-                } else {
-                    hiddenInput.value = serializeList(sortable2);
-                }
-            });
-        });
-    });
-    </script>
-
+	document.querySelector('form').addEventListener('submit', function(){
+		let itemList='';
+		const aSort = listSort.toArray() 
+		aSort.forEach( function(item) { itemList += 'field[]=' + item + ';'	});
+		document.getElementById('${idName}').value = itemList;
+	}); 
+});
+</script>
 </#if>
 </@cTpl>

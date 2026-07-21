@@ -1,47 +1,39 @@
 <@cTpl>
-<#assign rowsCount = getFieldValueByCode(entry, "array_row")?number>
-<#assign colsCount = getFieldValueByCode(entry, "array_column")?number>
-
-<@cRow class='mb-3'>
-    <@cCol>
-        <@cLabel label=entry.title + (entry.mandatory)?then(' *', '') for='form' + entry.idEntry?c id='form' + entry.idEntry?c />
-    </@cCol>
-    <@cCol>
-        <@cBlock class='table-responsive'>
-            <@cTable class='table-striped'>
-                <#list 1..rowsCount + 1 as i>
-                    <@cTr>
-                        <#list 1..colsCount + 1 as j>
-                            <#assign cellTitle = ''>
-                            <#assign inputValue = ''>
-                            <#list entry.fields as field>
-                                <#assign cellKey = i + '_' + j>
-                                <#if field.value == cellKey>
-                                    <#assign cellTitle = field.title!''>
-                                    <#if list_responses??>
-                                        <#list list_responses as response>
-                                            <#if response.field?has_content && response.field.value == cellKey && response.toStringValueResponse?has_content>
-                                                <#assign inputValue = response.toStringValueResponse>
-                                            </#if>
-                                        </#list>
-                                    </#if>
-                                </#if>
-                            </#list>
-                            <@cTd>
-                                <#if i == 1 && j == 1>
-                                    <@cInline type='strong'>${entry.comment}</@cInline>
-                                <#elseif i == 1 || j == 1>
-                                    ${cellTitle}
-                                <#else>
-                                    <#assign cellId = 'nIt' + entry_iteration_number + '_response_' + i + '_' + j>
-                                    <@cInput type='text' name=cellId id=cellId value=inputValue class='form-control input-sm' />
-                                </#if>
-                            </@cTd>
-                        </#list>
-                    </@cTr>
-                </#list>
-            </@cTable>
-        </@cBlock>
-    </@cCol>
-</@cRow>
+<#assign title = '' >
+<#assign inputValue = '' >
+<#assign idName = buildEntryName( entry, entry_iteration_number )>
+<#assign hasError = false />
+<#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#if list_responses??><#list list_responses as response><#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError><#assign hasError = true /><#assign error = response.entry.error></#if></#list></#if>
+<@cFieldset class=entryCSSClass!?trim legend=entry.title for=idName required=entry.mandatory > 
+<#if entry.helpMessage?exists && entry.helpMessage!=''><@cFormHelp id=idName! label=entry.helpMessage! /></#if>
+<#-- TODO : Caption à traiter -->
+<@cTable id='tbl_${idName}' caption=entry.title! >
+<#assign x=getFieldValueByCode(entry, "array_row")?number>
+<#list 1..x+1 as i>
+<@cTr>
+<#assign y=getFieldValueByCode(entry, "array_column")?number>
+<#list 1..y+1 as j>
+<@cTd>
+<#list entry.fields as field>
+<#assign value=i+"_"+j>
+<#if field.value == value>
+    <#assign title=field.title!>
+    <#assign inputValue=''>
+    <#if list_responses??>
+        <#list list_responses as response>
+            <#if response.field?has_content && response.field.value == value && response.toStringValueResponse?has_content>
+                <#assign inputValue = response.toStringValueResponse>
+            </#if>
+        </#list>
+    </#if>
+</#if>
+</#list>
+<#if j==1 && i!=1>${title!}<#elseif i == 1 && j != 1>${title!}<#elseif i == 1 && j == 1><@cInline class='font-bold'>${entry.comment}</@cInline ><#else><#assign idName = 'nIt' + entry_iteration_number +  '_response_' + i + '_' + j><@cInput name=idName! value=inputValue! /></#if>
+</@cTd>
+</#list>
+</@cTr>
+</#list>  
+</@cTable>
+</@cFieldset>
 </@cTpl>

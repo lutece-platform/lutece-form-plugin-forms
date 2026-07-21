@@ -1,56 +1,17 @@
 <@cTpl>
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
-
-    <#assign idName = buildEntryName(entry, entry_iteration_number)>
-    <#assign placeholderValue = getFieldValueByCode(entry, "placeholder")!''>
-
-    <#assign autocompleteValue = ''>
-    <#if getFieldByCode(entry, "autocomplete")??>
-        <#assign autocompleteField = getFieldByCode(entry, "autocomplete")>
-        <#if autocompleteField.value??>
-            <#assign autocompleteValue = autocompleteField.value>
-        </#if>
-    </#if>
-
-    <#assign currentValue = ''>
-    <#if getResponse(list_responses, entry)??>
-        <#assign currentResponse = getResponse(list_responses, entry)>
-        <#if currentResponse.toStringValueResponse??>
-            <#assign currentValue = currentResponse.toStringValueResponse>
-        </#if>
-    </#if>
-
-    <#assign inputErrorMsg = ''>
-    <#if list_responses??>
-        <#list list_responses as response>
-            <#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
-                <#assign respError = response.entry.error>
-                <#if respError.mandatoryError>
-                    <#if entry.errorMessage?? && entry.errorMessage != ''>
-                        <#assign inputErrorMsg = entry.errorMessage>
-                    <#else>
-                        <#assign inputErrorMsg = '#i18n{forms.message.mandatory.entry}'>
-                    </#if>
-                <#else>
-                    <#assign inputErrorMsg = respError.errorMessage>
-                </#if>
-            </#if>
-        </#list>
-    </#if>
-
-    <#assign mandatoryMsgRaw = entry.errorMessage!''>
-    <#if mandatoryMsgRaw == ''>
-        <#assign mandatoryMsgRaw = '#i18n{forms.message.mandatory.entry}'>
-    </#if>
-    <#assign mandatoryMsgJs = mandatoryMsgRaw?js_string>
-    <#assign inputParams = "oninvalid=\"this.setCustomValidity('${mandatoryMsgJs}')\" oninput=\"this.setCustomValidity('')\"">
-
-    <#assign inputClass = 'form-control input-sm ' + (entry.CSSClass!'')>
-    <#assign inputHelp = (inputErrorMsg != '')?then('', entry.helpMessage!'')>
-
-    <@cField label=entry.title required=entry.mandatory>
-        <@cInput type='tel' name=idName id=idName value=currentValue class=inputClass autocomplete=autocompleteValue placeholder=placeholderValue required=entry.mandatory params=inputParams errorMsg=inputErrorMsg helpMsg=inputHelp />
-    </@cField>
-
+<#assign hasError = false >
+<#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#if list_responses??><#list list_responses as response><#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError><#assign hasError = true /><#assign error = response.entry.error></#if></#list></#if>
+<#assign idName = buildEntryName( entry, entry_iteration_number ) >
+<#assign field = getFieldByCode( entry, "autocomplete" ) >
+<#if list_responses?has_content><#list list_responses as response><#if response.entry.idEntry == entry.idEntry><#if response.toStringValueResponse??><#assign responseValue>${response.toStringValueResponse}</#assign></#if></#if></#list><#else><#assign responseValue=''></#if>
+<#assign autoCompleteValue><#if field??>${field.value!}</#if></#assign>
+<#if hasError><#assign errorMsg><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#assign></#if>
+<#assign helpMsg><#if entry.helpMessage?exists && entry.helpMessage!=''>${entry.helpMessage!}</#if></#assign>
+<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
+<@cField class=entryCSSClass!?trim label=entry.title for=idName required=entry.mandatory >
+<@cInput type='tel' name=idName! placeholder=placeholder! required=entry.mandatory! html5Required=false value=responseValue! autocomplete=autoCompleteValue! errorMsg=errorMsg  helpMsg=helpMsg />
+</@cField>
 </#if>
 </@cTpl>

@@ -1,12 +1,3 @@
 <@cTpl>
-<#if !entry.onlyDisplayInBack>
-    <@cRow class='mb-3'>
-        <@cCol>
-            <@cText class='form-control-plaintext'>${entry.comment}</@cText>
-            <#if url_download_fo??>
-                <@cLink href=url_download_fo label=filename!'' />
-            </#if>
-        </@cCol>
-    </@cRow>
-</#if>
+<!-- ${entry.comment} -->
 </@cTpl>

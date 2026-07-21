@@ -1,142 +1,125 @@
 <@cTpl>
-<#assign idName = 'attribute' + entry.idEntry?c>
-<#if entry_iteration_number?has_content && entry_iteration_number gt 0>
-    <#assign idName = 'nIt' + entry_iteration_number + '_attribute' + entry.idEntry?c>
-</#if>
-
-<#assign imageType = 'png'>
-<#assign imageTypeField = getFieldByCode(entry, "image_type")>
-<#if imageTypeField??>
-    <#assign imageType = imageTypeField.value>
-</#if>
-
-<#assign cameraWidth = 640>
-<#assign widthField = getFieldValueByCode(entry, "width")>
-<#if widthField?? && widthField != '' && widthField?number gt 0>
-    <#assign cameraWidth = widthField?number>
-</#if>
-
-<#assign cameraHeight = 480>
-<#assign heightField = getFieldValueByCode(entry, "height")>
-<#if heightField?? && heightField != '' && heightField?number gt 0>
-    <#assign cameraHeight = heightField?number>
-</#if>
-
-<#assign initialValue = ''>
-<#assign hasError = false>
-<#assign cameraErrorMsg = ''>
+<#assign width=640>
+<#assign height=480>
+<#assign idName = 'attribute' + entry.idEntry>
+<#if entry_iteration_number?has_content && entry_iteration_number gt 0><#assign idName = 'nIt' + entry_iteration_number + '_attribute' + entry.idEntry></#if>
+<#assign field_image_type=getFieldByCode( entry, "image_type")>
+<#if field_image_type??><#assign imageType= field_image_type.value><#else><#assign imageType= "png"></#if>
+<#assign field_width=getFieldValueByCode( entry, "width")>
+<#if field_width?number &gt; 0><#assign width= field_width?number></#if>
+<#assign field_height=getFieldValueByCode( entry, "height")>
+<#if field_height?number &gt; 0><#assign height= field_height?number></#if>
+<#assign hasError = false />
 <#if list_responses??>
-    <#list list_responses as response>
-        <#if response.entry.idEntry == entry.idEntry>
-            <#if response.toStringValueResponse??>
-                <#assign initialValue = response.toStringValueResponse>
-            </#if>
-            <#if response.entry.error?? && response.entry.error.isDisplayableError>
-                <#assign hasError = true>
-                <#assign respError = response.entry.error>
-                <#if respError.mandatoryError && respError.errorMessage??>
-                    <#assign cameraErrorMsg = respError.errorMessage>
-                <#elseif respError.mandatoryError>
-                    <#assign cameraErrorMsg = '#i18n{forms.message.mandatory.entry}'>
-                <#else>
-                    <#assign cameraErrorMsg = respError.errorMessage>
-                </#if>
-            </#if>
-        </#if>
-    </#list>
+<#list list_responses as response>
+<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
+<#assign hasError = true />
+<#assign error = response.entry.error>
 </#if>
-
-<#assign hiddenClass = entry.CSSClass!'' + hasError?then(' is-invalid', '')>
-<#assign hiddenParams = 'width="' + cameraWidth?c + '" height="' + cameraHeight?c + '"'>
-<#assign videoId = 'video' + entry.idEntry?c>
-
-<@cRow class='mb-3'>
-    <@cCol>
-        <@cLabel label=entry.title + (entry.mandatory)?then(' *', '') for=idName />
-    </@cCol>
-    <@cCol>
-        <@cRow>
-            <@cCol>
-                <@cBlock id='video-wrapper' + entry.idEntry?c class='cam-wrapper'>
-                    <video id="${videoId}" width="${cameraWidth?c}" height="${cameraHeight?c}" autoplay></video>
-                    <@cBtn type='button' id='snap' + entry.idEntry?c class='primary btn-cam' label=''>
-                        <@cIcon name='camera' /> #i18n{forms.action.photo.snap}
-                    </@cBtn>
-                </@cBlock>
-                <@cBlock id='canvas-wrapper' + entry.idEntry?c class='cam-wrapper'>
-                    <canvas id="canvas${entry.idEntry?c}" width="${cameraWidth?c}" height="${cameraHeight?c}"></canvas>
-                    <@cBtn type='button' id='clear' + entry.idEntry?c class='danger btn-cam' label='' params='title="#i18n{portal.util.labelDelete}"'>
-                        <@cIcon name='x' />
-                    </@cBtn>
-                </@cBlock>
-                <@cInput type='hidden' id=idName name=idName value=initialValue class=hiddenClass params=hiddenParams />
-            </@cCol>
-        </@cRow>
-
-        <#if !hasError && entry.helpMessage?? && entry.helpMessage != ''>
-            <@cInline class='form-control-plaintext'>${entry.helpMessage}</@cInline>
-        </#if>
-
-        <#if hasError>
-            <@cInline class='invalid-feedback d-block'>${cameraErrorMsg}</@cInline>
-        </#if>
-    </@cCol>
+</#list>
+</#if>
+<#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<@cField class='camera-wrapper ${entryCSSClass!}' label=entry.title for=idName required=entry.mandatory >
+<#if entry.helpMessage?exists&&entry.helpMessage!=''><@cFormHelp id=idName! label=entry.helpMessage! /></#if>
+<#if hasError>
+<#assign errorMsg><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#assign>
+<@cInline class="is-invalid"></@cInline>
+<@cFormError id=idName label=errorMsg />
+</#if>
+<@cRow id='video-wrapper-${entry.idEntry}' >
+	<@cCol class='d-flex flex-column align-items-center justify-content-center'>
+		<video id="video-${entry.idEntry}" class="form-control-camera img-fluid"<#if width !=0> width="${width!}"</#if><#if height !=0> height="${height}"</#if> autoplay></video>
+		<@cBtn type='button' id='snap${entry.idEntry}' label='#i18n{forms.action.photo.snap}' class='primary mx-auto mt-s'>
+			<@parisIcon name='disk' /> 
+		</@cBtn>
+	</@cCol>
 </@cRow>
-
+<@cRow id='canvas-wrapper-${entry.idEntry}' >
+	<@cCol class='d-flex flex-column align-items-center justify-content-center'>
+		<canvas id="canvas-${entry.idEntry}" class="img-fluid"<#if width !=0> width="${width!}"</#if><#if height !=0> height="${height}"</#if>></canvas>
+		<@cBtn type='button' id='clear${entry.idEntry}' class='danger mx-auto mt-s' label='#i18n{portal.util.labelDelete}'>
+			<@parisIcon name='trash'  /> 
+		</@cBtn>							
+	</@cCol>
+</@cRow>
+<#assign camera_value><#if list_responses??><#list list_responses as response><#if response.entry.idEntry == entry.idEntry><#if response.toStringValueResponse??>${response.toStringValueResponse}</#if></#if></#list></#if></#assign>
+<@cInput name=idName id=idName  type='hidden' value=camera_value!'' />
+</@cField>
 <script>
-window.addEventListener('DOMContentLoaded', function() {
-    const entryId = '${entry.idEntry?c}';
-    const videoWrapper = document.getElementById('video-wrapper' + entryId);
-    const canvasWrapper = document.getElementById('canvas-wrapper' + entryId);
-    const canvas = document.getElementById('canvas' + entryId);
-    const video = document.getElementById('${videoId}');
-    const photoInput = document.getElementById('${idName}');
-    const snapBtn = document.getElementById('snap' + entryId);
-    const clearBtn = document.getElementById('clear' + entryId);
-    if (!canvas || !video || !photoInput || !snapBtn || !clearBtn) return;
+// Put event listeners into place
+window.addEventListener("DOMContentLoaded", function() {
+	// Grab elements, create settings, etc.
+	let videoWrapper${entry.idEntry} = document.getElementById('video-wrapper-${entry.idEntry}'),
+		canvasWrapper${entry.idEntry} = document.getElementById('canvas-wrapper-${entry.idEntry}'),
+		canvas${entry.idEntry} = document.getElementById('canvas-${entry.idEntry}'),
+		context${entry.idEntry} = canvas${entry.idEntry}.getContext('2d'),
+		video = document.getElementById('video-${entry.idEntry}'),
+		photo${entry.idEntry} = document.querySelector('#attribute${entry.idEntry}'),
+		img = new Image(),
+		mediaConfig${entry.idEntry} = { video: true };
 
-    const ctx = canvas.getContext('2d');
-    const width = ${cameraWidth?c};
-    const height = ${cameraHeight?c};
-    const imageMime = 'image/${imageType}';
+	canvasWrapper${entry.idEntry}.style.display = "none";
+	canvas${entry.idEntry}.style.display = "none";
+	img.src = photo${entry.idEntry}.value;
 
-    canvasWrapper.style.display = 'none';
-    canvas.style.display = 'none';
+	img.onload = function() {
+		context${entry.idEntry}.drawImage( img, 0, 0, ${width}, ${height} );
+	}	   
 
-    if (photoInput.value) {
-        const img = new Image();
-        img.onload = function() {
-            ctx.drawImage(img, 0, 0, width, height);
-        };
-        img.src = photoInput.value;
-    }
+	const errBack = function(e) {
+		console.log('An error has occurred!', e )
+	};
 
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
-            video.srcObject = stream;
-            video.play();
-        }).catch(function(e) {
-            console.log('Camera access denied or unavailable', e);
-        });
-    }
-
-    snapBtn.addEventListener('click', function(ev) {
-        ev.preventDefault();
-        canvas.style.display = 'block';
-        canvasWrapper.style.display = 'flex';
-        ctx.drawImage(video, 0, 0, width, height);
-        const dataUrl = canvas.toDataURL(imageMime, 1);
-        photoInput.value = dataUrl;
-        sessionStorage.setItem('data' + entryId, dataUrl);
-    });
-
-    clearBtn.addEventListener('click', function(ev) {
-        ev.preventDefault();
-        ctx.clearRect(0, 0, width, height);
-        photoInput.value = '';
-        canvas.style.display = 'none';
-        canvasWrapper.style.display = 'none';
-    });
-});
+	// Put video listeners into place
+	if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+		navigator.mediaDevices.getUserMedia(mediaConfig${entry.idEntry}).then(function(stream) {
+			video.srcObject = stream;
+			video.play();
+		});
+	}
+	/* Legacy code below! */
+	else if(navigator.getUserMedia) { // Standard
+		navigator.getUserMedia(mediaConfig${entry.idEntry}, function(stream) {
+			video.src = stream;
+			video.play();
+		}, errBack);
+	} else if(navigator.webkitGetUserMedia) { // WebKit-prefixed
+		navigator.webkitGetUserMedia(mediaConfig${entry.idEntry}, function(stream){
+			video.src = window.webkitURL.createObjectURL(stream);
+			video.play();
+		}, errBack);
+	} else if(navigator.mozGetUserMedia) { // Mozilla-prefixed
+		navigator.mozGetUserMedia(mediaConfig${entry.idEntry}, function(stream){
+			video.src = window.URL.createObjectURL(stream);
+			video.play();
+		}, errBack);
+	}
+	
+	// Trigger photo take
+	document.getElementById('snap${entry.idEntry}').addEventListener('click', function(ev) {
+		canvas${entry.idEntry}.style.display = "block";
+		canvasWrapper${entry.idEntry}.style.display = "flex";
+		context${entry.idEntry}.drawImage( video, 0, 0, ${width}, ${height});
+	
+		const data${entry.idEntry} = canvas${entry.idEntry}.toDataURL('image/${imageType}',1);
+		if(video.src != null && video.src !="" ){
+			photo${entry.idEntry}.setAttribute('value', data${entry.idEntry});
+		}
+		if ( video.srcObject != null) {
+			photo${entry.idEntry}.setAttribute('value', data${entry.idEntry});
+		}
+		sessionStorage.setItem('data${entry.idEntry}', data${entry.idEntry}  );
+		ev.preventDefault();
+	});
+	
+	// Trigger photo remove
+	document.getElementById('clear${entry.idEntry}').addEventListener('click', function(ev) {
+		context${entry.idEntry}.clearRect( 0, 0, ${width}, ${height});
+		photo${entry.idEntry}.setAttribute('value', "");
+		canvas${entry.idEntry}.style.display = "none";
+		canvasWrapper${entry.idEntry}.style.display = "none";
+		ev.preventDefault();
+	});
+}, false );
 </script>
 </@cTpl>

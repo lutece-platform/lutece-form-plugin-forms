@@ -1,20 +1,19 @@
 <@cTpl>
 <#if !entry.onlyDisplayInBack>
-    <@cRow class='mb-3'>
-        <@cCol>
-            <@cLabel label=entry.title!'' />
-        </@cCol>
-        <#if list_responses?has_content>
-            <#list list_responses as response>
-                <@cCol>
-                    <#if entryTypeService.getResponseValueForRecap(null, null, response, null)??>
-                        ${entryTypeService.getResponseValueForRecap(null, null, response, null)}
-                    <#else>
-                        ${response.toStringValueResponse!''}
-                    </#if>
-                </@cCol>
-            </#list>
-        </#if>
-    </@cRow>
+<#assign strResponse='' >
+<#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#compress>
+<@chItem class=entryCSSClass!?trim>
+<@cInline type='strong'>${entry.title!''} :</@cInline>
+<#if list_responses?has_content>
+	<#assign strResponse><#list list_responses as response><#if entryTypeService.getResponseValueForRecap(null, null, response, null)??>${entryTypeService.getResponseValueForRecap(null, null, response, null)}<#else>${response.toStringValueResponse!''}</#if></#list></#assign>
+	<#if list_responses?size gte 1 && strResponse?trim !=''>
+		<#list list_responses as response><@cInline>${strResponse}<#sep>,</#sep></@cInline></#list>
+	<#else>
+		<@cInline type='em'>#i18n{theme.labelNoDataProvided}</@cInline>
+	</#if>
+</#if>
+</@chItem>
+</#compress>	
 </#if>
 </@cTpl>

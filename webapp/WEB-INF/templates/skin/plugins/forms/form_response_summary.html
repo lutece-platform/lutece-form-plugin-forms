@@ -1,42 +1,66 @@
 <@cTpl>
-
-<#if warnings?? && warnings?size gt 0>
-    <#list warnings as warning>
-        <@cAlert type='warning' title=warning.message! />
-    </#list>
-</#if>
-
-<@cForm id='summary_validate' action='jsp/site/Portal.jsp?page=forms' method='post'>
-    <@cInput type='hidden' name='id_form' value=id_form class='' />
-
-    <@cBlock id='form-response-summary' class='box-body'>
-        <@cTitle level=3>${form.title!}</@cTitle>
-        <#if form.countResponses>
-            #i18n{forms.create_entry.manageField.labelFieldNumber}: ${form.currentNumberResponse}
-        </#if>
-        <#if list_summary_step_display?has_content>
-            <#list list_summary_step_display as summary_step_display>
-                ${summary_step_display}
-            </#list>
-        </#if>
-        <#if display_captcha>
-            ${captcha}
-        </#if>
-    </@cBlock>
-
-    <@cBlock class='card-footer'>
-        <#assign labelButton = '#i18n{forms.summary.validate}'>
-        <#if form.labelFinalButton?has_content>
-            <#assign labelButton = form.labelFinalButton>
-        </#if>
-        <@cInput type='hidden' name='token' value=token class='' />
-
-        <@cBtn type='submit' class='primary btn-sm' label='' params='name="action_doSaveResponseSummary"'>
-            <@cIcon name='check' /> ${labelButton}
-        </@cBtn>
-        <@cBtn href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=' + id_form?c class='secondary btn-sm' label='' params='title="#i18n{forms.summary.step.previous}"'>
-            <@cIcon name='x' /> #i18n{forms.summary.step.previous}
-        </@cBtn>
-    </@cBlock>
+<@cForm id='summary-validate' action='jsp/site/Portal.jsp?page=forms' >
+<@cInput name='id_form' value=id_form type='hidden' />
+<@cInput name='token' value=token type='hidden' />
+<@cContainer>
+	<@cRow>
+		<@cCol>
+			<@cSection class='summary-steps'>
+				<@cHeader class='d-flex align-items-center mt-m'>
+					<@cTitle level=1>#i18n{forms.modify_form.labelDisplaySummary}</@cTitle>
+					<#if form.countResponses><@cText class='ms-auto'>#i18n{forms.create_entry.manageField.labelFieldNumber} : <@cInline type='Strong'>${form.currentNumberResponse}</@cInline></@cText></#if>
+				</@cHeader >
+				<@cAlert title='#i18n{portal.theme.labelSummaryTitle}'>
+					<@cText>#i18n{portal.theme.labelSummaryText}</@cText>
+				</@cAlert> 
+				<!-- #current_step_title : Add for breadcrumbs -->
+				<#if list_summary_step_display?has_content>
+					<#list list_summary_step_display as summary_step_display>
+						${summary_step_display}
+					</#list>
+				</#if>
+			</@cSection>
+		</@cCol>
+	</@cRow>
+</@cContainer>
+<@cContainer class='summary-actions'>
+	<#if display_captcha>
+		<@cRow class='my-5'>
+			<@cCol class='col-sm-10 offset-sm-1 col-md-5 offset-md-4'>	
+				<@input type='hidden' name='validate_captcha' value='1' />
+				${captcha}
+			</@cCol>
+		</@cRow>
+	</#if>
+	<@cRow class='d-flex justify-content-center'>
+		<@cCol class='d-flex justify-content-end'>
+			<@cLink class='btn btn-secondary' href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${id_form}' label='#i18n{forms.summary.step.previous}' />
+		</@cCol>
+		<@cCol class='d-flex justify-content-start'>
+			<#assign label_button="#i18n{forms.summary.validate}" />
+			<#if form.labelFinalButton?has_content>
+				<#assign label_button=form.labelFinalButton />
+			</#if>
+			<@cBtn label=label_button class='primary' params=' name="action_doSaveResponseSummary" ' />
+		</@cCol>
+	</@cRow>
+</@cContainer>
 </@cForm>
+<script>
+if("IntersectionObserver" in window){
+	document.addEventListener('DOMContentLoaded', function() {
+		var observer = new IntersectionObserver(function(entries, observer) {
+			entries.forEach(function(entry) {
+				document.querySelector('.summary-actions').classList.toggle("actions_shadow", !entry.isIntersecting);
+			});
+		});
+		var target = document.querySelector('footer');
+		observer.observe(target);
+	});
+}
+document.addEventListener('DOMContentLoaded', () => {
+	<@cSetPageTitle title='${form.title?html} - #i18n{forms.modify_form.labelDisplaySummary}' />
+	document.querySelector('#main-banner-title').innerHTML = '${form.title?html}';
+});
+</script>
 </@cTpl>

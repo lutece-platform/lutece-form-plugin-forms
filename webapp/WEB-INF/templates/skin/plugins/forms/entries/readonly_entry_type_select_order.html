@@ -1,21 +1,19 @@
 <@cTpl>
 <#if !entry.onlyDisplayInBack>
-    <@cRow class='mb-3'>
-        <@cCol>
-            <@cLabel label=entry.title!'' />
-        </@cCol>
-        <#if list_responses?has_content>
-            <#list list_responses?sort_by('sortOrder') as response>
-                <@cCol>
-                    ${response.sortOrder}:
-                    <#if entryTypeService.getResponseValueForRecap(null, null, response, null)??>
-                        ${entryTypeService.getResponseValueForRecap(null, null, response, null)}
-                    <#else>
-                        ${response.toStringValueResponse!''}
-                    </#if>
-                </@cCol>
-            </#list>
-        </#if>
-    </@cRow>
+<#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#compress>
+<@chItem class=entryCSSClass!?trim>
+<@cInline type='strong'>${entry.title!''} :</@cInline>
+<#if list_responses?has_content>
+	<#if list_responses?size gt 0>
+		<#list list_responses?sort_by('sortOrder') as response><@cInline class='font-weight-bold ms-xs'>${response.sortOrder}</@cInline> : <@cInline class='ms-xs'><#if entryTypeService.getResponseValueForRecap(null, null, response, null)??>${entryTypeService.getResponseValueForRecap(null, null, response, null)}<#else>${response.toStringValueResponse!''}</#if></@cInline><#sep>, </#sep></#list>
+	<#else>
+		<@cInline type='em' class='ms-xs'>#i18n{theme.labelNoDataProvided}</@cInline>
+	</#if>
+<#else>
+<@cInline type='em' class='ms-xs'>#i18n{theme.labelNoDataProvided}</@cInline>
+</#if>
+</@chItem>
+</#compress>
 </#if>
 </@cTpl>

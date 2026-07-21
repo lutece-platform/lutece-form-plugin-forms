@@ -1,16 +1,18 @@
 <@cTpl>
 <@cSection class='p-2'>
     <@cTitle level=2 class='my-3'>${portlet_name!}</@cTitle>
-    <#if forms_list??>
+    <#if forms_list?? && forms_list?size gt 0>
         <#list forms_list as form>
-            <#assign formHref = 'jsp/site/Portal.jsp?page=forms&view=stepView&id_form=' + form.id?c + '&init=true'>
-            <@cLink href=formHref class='card mb-3' label=''>
+            <#assign formUrl>jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id?c}&init=true</#assign>
+            <@cLink href=formUrl class='card mb-3' label=''>
                 <@cBlock class='card-body'>
                     <@cTitle level=5 class='card-title'>${form.title!}</@cTitle>
                     <@cText class='card-text'>${form.description!}</@cText>
                 </@cBlock>
             </@cLink>
         </#list>
+    <#else>
+        <@cAlert type='warning' title='#i18n{portal.util.labelNoItem}' />
     </#if>
 </@cSection>
 </@cTpl>

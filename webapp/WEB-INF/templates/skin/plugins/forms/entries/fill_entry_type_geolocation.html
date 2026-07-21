@@ -1,191 +1,144 @@
 <@cTpl>
 <#assign editModeValue = ''>
 <#assign viewNumberValue = '1'>
+<#assign addressValue = '' />
+<#assign idAddressValue = '' />
+<#assign xValue = '' />
+<#assign yValue = '' />
+<#assign geometryValue = '' />
+<#assign hasError = false />
+<#assign entryClass=''>
+<#assign entryClass>position-relative <#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign idName = buildEntryName( entry, entry_iteration_number )>
+<#if list_responses??><#list list_responses as response><#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError><#assign hasError = true /><#assign error = response.entry.error></#if></#list></#if>
+<#assign errorMsg><#if hasError><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#if></#assign>
+<#assign helpMsg><#if entry.helpMessage?? && entry.helpMessage!=''>${entry.helpMessage}</#if></#assign>
+<#assign iterationNumber = entry_iteration_number?c >
 <#if entry.fields??>
-    <#assign addressField = getFieldValueByCode(entry, "address")>
-    <#assign viewNumberValue = getFieldValueByCode(entry, "viewNumber")>
-    <#assign editModeValue = getFieldValueByCode(entry, "editMode")>
+<#assign addressField = getFieldValueByCode( entry, "address" )>
+<#assign viewNumberValue = getFieldValueByCode( entry, "viewNumber" )>
+<#assign editModeValue = getFieldValueByCode( entry, "editMode" )>
 </#if>
-
-<#assign idName = buildEntryName(entry, entry_iteration_number)>
-<#assign iterationNumber = entry_iteration_number?c>
-<#assign hasCheckAddress = entry.CSSClass?? && entry.CSSClass?contains("checkaddress")>
-<#assign useAddressAutocomplete = entry.mapProvider?? && entry.mapProvider?has_content && (entry.mapProvider.key! == 'wsaddress' || entry.mapProvider.key! == 'openstreetmap')>
-
-<#if useAddressAutocomplete>
-    <#include "/skin/plugins/address/modules/autocomplete/include/suggestPOI.html" />
-</#if>
-
-<#assign addressValue = ''>
-<#assign idAddressValue = ''>
-<#assign xValue = ''>
-<#assign yValue = ''>
-<#assign geometryValue = ''>
-<#assign hasError = false>
-<#assign geoErrorMsg = ''>
-
-<#if getError(list_responses, entry)??>
-    <#assign respError = getError(list_responses, entry)>
-    <#if respError.isDisplayableError>
-        <#assign hasError = true>
-        <#if respError.mandatoryError>
-            <#assign geoErrorMsg = '#i18n{forms.message.mandatory.entry}'>
-        <#else>
-            <#assign geoErrorMsg = respError.errorMessage>
-        </#if>
-    </#if>
-</#if>
-
 <#if entry.mapProvider??>
+	<@cField label=entry.title! for=idName! class=entryClass required=entry.mandatory!>
+		<#if list_responses?? && list_responses?has_content>
+			<#if getResponseContainingTheFieldWithCode(list_responses, "address")??><#assign addressValue = getResponseContainingTheFieldWithCode(list_responses, "address").toStringValueResponse /></#if>
+			<#if getResponseContainingTheFieldWithCode(list_responses, "idAddress")??><#assign idAddressValue = getResponseContainingTheFieldWithCode(list_responses, "idAddress").toStringValueResponse /></#if>
+			<#if getResponseContainingTheFieldWithCode(list_responses, "X")??><#assign xValue = getResponseContainingTheFieldWithCode(list_responses, "X").toStringValueResponse /></#if>
+			<#if getResponseContainingTheFieldWithCode(list_responses, "Y")??><#assign yValue = getResponseContainingTheFieldWithCode(list_responses, "Y").toStringValueResponse /></#if>
+			<#if getResponseContainingTheFieldWithCode(list_responses, "geometry")??><#assign geometryValue = getResponseContainingTheFieldWithCode(list_responses, "geometry").toStringValueResponse /></#if>
+		</#if>
+		<#if editModeValue == '' || editModeValue?starts_with('Address') >
+			<@cInput class='form-control form-geoloc address-autocomplete ${entryClass!}' required=entry.mandatory! html5Required=false name='${idName}_address' value=addressValue! errorMsg=errorMsg helpMsg=helpMsg />
+			<@cBlock id='labelAutocomplete'></@cBlock>
+		<#else>
+			<@cInput type='hidden' name='${idName}_address' id='${idName}' value=addressValue! />
+		</#if>
+		<@cInput type='hidden' name='${idName}_idAddress' id='${idName}_idAddress' value=idAddressValue! />
+		<@cInput type='hidden' name='${idName}_x' id='${idName}_x' value=xValue! />
+		<@cInput type='hidden' name='${idName}_y' id='${idName}_y' value=yValue! />
+		<@cInput type='hidden' name='${idName}_geometry' id='${idName}_geometry' value=geometryValue! />
+		<#if entry.mapProvider?has_content>
+			<@cText params='hidden'>${entry.mapProvider.key!}</@cText>
+			<#if viewNumberValue?has_content && entry.mapProvider.getParameter(viewNumberValue?number)?? && entry.mapProvider.getParameter(viewNumberValue?number).mapParameter??>
+				<#assign map_parameter = entry.mapProvider.getParameter(viewNumberValue?number).mapParameter >
+			</#if>
+			<#if viewNumberValue?has_content && entry.mapProvider.getParameter(viewNumberValue?number)?? && entry.mapProvider.getParameter(viewNumberValue?number).addressParam?? >
+				<#assign add_parameter = entry.mapProvider.getParameter(viewNumberValue?number).addressParam >
+			</#if>
+			<#include entry.mapProvider.htmlCode />
+		</#if>
+	</@cField>
+	<#if entry.mapProvider?has_content>
+		<#if entry.mapProvider.key='wsaddress' || entry.mapProvider.key='openstreetmap'>
+			<#include "/skin/plugins/address/modules/autocomplete/include/suggestPOI.html" />
+			<@setupSuggestPOI />
+			<script>
+			function isInvalidAdress( adr ){
+				// Show error message
+				adr.classList.add('is-invalid');
+				var nextSibling = adr.nextElementSibling;
+				if (!nextSibling || !nextSibling.classList.contains('invalid-feedback')) {
+					adr.insertAdjacentHTML('afterend', '<div class="invalid-feedback">#i18n{forms.message.geolocation.checkAdress}</div>');
+				}
 
-    <#if list_responses?? && list_responses?has_content>
-        <#assign addressValue = getResponseContainingTheFieldWithCode(list_responses, "address").toStringValueResponse>
-        <#assign idAddressValue = getResponseContainingTheFieldWithCode(list_responses, "idAddress").toStringValueResponse>
-        <#assign xValue = getResponseContainingTheFieldWithCode(list_responses, "X").toStringValueResponse>
-        <#assign yValue = getResponseContainingTheFieldWithCode(list_responses, "Y").toStringValueResponse>
-        <#assign geometryValue = getResponseContainingTheFieldWithCode(list_responses, "geometry").toStringValueResponse>
-    </#if>
+				// Scroll to the input field
+				var top = adr.getBoundingClientRect().top + window.pageYOffset - 100;
+				window.scrollTo({ top: top, behavior: 'smooth' });
+			}
 
-    <#assign rowClass = 'mb-3 ' + entry.mapProvider.key!'' + ' ' + (entry.CSSClass!'')>
-    <#assign addressInputClass = 'form-geoloc' + hasError?then(' is-invalid', '')>
-    <#assign addressInputId = idName + '_address'>
+			window.addEventListener('load', function () {
+				let iterationNumber = '${entry_iteration_number}';
+				if (document.getElementById('number_iteration_geolocation') == null) {
+					let numberAddressInput = document.createElement('input');
+					numberAddressInput.type = 'hidden';
+					numberAddressInput.id = 'number_iteration_geolocation';
+					numberAddressInput.name = 'number_iteration_geolocation';
+					document.getElementById('form-validate').appendChild(numberAddressInput);
+					document.getElementById('number_iteration_geolocation').value = iterationNumber;
+				} else {
+					document.getElementById('number_iteration_geolocation').value = iterationNumber;
+				}
 
-    <@cRow class=rowClass>
-        <@cCol>
-            <@cLabel label=entry.title + (entry.mandatory)?then(' *', '') for=addressInputId + '-input' />
+				var currStep = document.querySelector('.step-current .step-content');
+				var hasCheckAdr = currStep ? currStep.querySelectorAll('input.checkaddress').length : 0;
+				var btnSendStep = currStep ? currStep.querySelector('[name="action_doSaveStep"]') : null;
 
-            <#if editModeValue == '' || editModeValue == 'Address' || editModeValue == 'Adresse'>
-                <#if useAddressAutocomplete>
-                    <@suggestPOIInput id=addressInputId name=idName + '_address' currentValue=addressValue required=entry.mandatory cssClass=addressInputClass />
-                <#else>
-                    <@cInput type='text' name=idName + '_address' id=addressInputId value=addressValue class='form-control ' + addressInputClass required=entry.mandatory />
-                </#if>
-            <#else>
-                <@cInput type='hidden' name=idName + '_address' id=idName value=addressValue required=!entry.mandatory class='' />
-            </#if>
+				var jAdresse = document.getElementById('${idName}_address');
+				var jAdresseId = document.getElementById('${idName}_idAddress');
+				var jAdresseX = document.getElementById('${idName}_x');
+				var jAdresseY = document.getElementById('${idName}_y');
+				var jAdresseGeometry = document.getElementById('${idName}_geometry');
 
-            <@cInput type='hidden' name=idName + '_idAddress' id=idName + '_idAddress' value=idAddressValue class='' />
-            <@cInput type='hidden' name=idName + '_x' id=idName + '_x' value=xValue class='' />
-            <@cInput type='hidden' name=idName + '_y' id=idName + '_y' value=yValue class='' />
-            <@cInput type='hidden' name=idName + '_geometry' id=idName + '_geometry' value=geometryValue class='' />
+				// suggestPOI est un plugin jQuery — nécessite jQuery pour l'initialisation
+				$(jAdresse).suggestPOI();
+				$(jAdresse).bind($.suggestPOI.EVT_SELECT, function( event ){
+					event.preventDefault();
+					if( event.poi != null){
+						jAdresseGeometry.value = event.poi.type;
+						jAdresseY.value = event.poi.y;
+						jAdresseX.value = event.poi.x;
+						jAdresseId.value = event.poi.id;
+						jAdresse.classList.add('wssuggest');
+						jAdresse.classList.remove('is-invalid');
+						var fb = jAdresse.nextElementSibling;
+						if (fb && fb.classList.contains('invalid-feedback')) { fb.remove(); }
+					}
+				});
 
-            <#if hasError>
-                <@cInline class='invalid-feedback'>${geoErrorMsg}</@cInline>
-            </#if>
+				if ( hasCheckAdr ){
+					// If the value has been already set
+					const addrInputValue = '${addressValue!}';
+					// Reset address validation state when user changes the input
+					jAdresse.addEventListener('input', function() {
+						jAdresse.classList.remove('wssuggest');
+						jAdresse.classList.remove('is-invalid');
+						var fb = jAdresse.nextElementSibling;
+						if (fb && fb.classList.contains('invalid-feedback')) { fb.remove(); }
+					});
 
-            <#if !hasError && entry.helpMessage?? && entry.helpMessage != ''>
-                <@cInline type='small' class='form-text text-muted'>${entry.helpMessage}</@cInline>
-            </#if>
-        </@cCol>
-    </@cRow>
+					// Reset address validation state when user changes the input
+					jAdresse.addEventListener('blur', function(e) {
+						if ( jAdresse.value && !jAdresse.classList.contains('wssuggest') && jAdresse.value.trim() !== '') {
+							e.preventDefault();
+							isInvalidAdress( jAdresse );
+						}
+					});
 
-    <#if entry.mapProvider?has_content>
-        <@cText params='hidden'>${entry.mapProvider.key!}</@cText>
-
-        <#if viewNumberValue?has_content && entry.mapProvider.getParameter(viewNumberValue?number)??>
-            <#if entry.mapProvider.getParameter(viewNumberValue?number).mapParameter??>
-                <#assign map_parameter = entry.mapProvider.getParameter(viewNumberValue?number).mapParameter>
-            </#if>
-            <#if entry.mapProvider.getParameter(viewNumberValue?number).addressParam??>
-                <#assign add_parameter = entry.mapProvider.getParameter(viewNumberValue?number).addressParam>
-            </#if>
-        </#if>
-
-        <#include entry.mapProvider.htmlCode />
-
-        <#if useAddressAutocomplete>
-            <@setupSuggestPOI />
-            <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const iterationNumber = '${entry_iteration_number}';
-                let numberIterInput = document.getElementById('number_iteration_geolocation');
-                if (!numberIterInput) {
-                    numberIterInput = document.createElement('input');
-                    numberIterInput.type = 'hidden';
-                    numberIterInput.id = 'number_iteration_geolocation';
-                    numberIterInput.name = 'number_iteration_geolocation';
-                    const formValidate = document.getElementById('form-validate');
-                    if (formValidate) {
-                        formValidate.appendChild(numberIterInput);
-                    }
-                }
-                numberIterInput.value = iterationNumber;
-
-                const hasCheckAddress = ${hasCheckAddress?c};
-                const autocompleteContainer = document.getElementById('${addressInputId}');
-                if (!autocompleteContainer) return;
-                const searchInput = autocompleteContainer.querySelector('.lutece-autocomplete-search-input');
-                const inputIdAddress = document.getElementById('${idName}_idAddress');
-                const inputX = document.getElementById('${idName}_x');
-                const inputY = document.getElementById('${idName}_y');
-                const inputGeometry = document.getElementById('${idName}_geometry');
-
-                new SuggestPOI(autocompleteContainer, { allowFreeText: !hasCheckAddress });
-
-                autocompleteContainer.addEventListener(SuggestPOI.EVT_SELECT, function(event) {
-                    const poi = event.detail.poi;
-                    if (!poi) return;
-                    inputGeometry.value = poi.type || '';
-                    inputY.value = poi.y || '';
-                    inputX.value = poi.x || '';
-                    inputIdAddress.value = poi.id || '';
-                    autocompleteContainer.classList.add('wssuggest');
-                    if (searchInput) searchInput.classList.remove('is-invalid');
-                    const feedback = autocompleteContainer.querySelector('.invalid-feedback');
-                    if (feedback) feedback.remove();
-                    enableSubmitButtons();
-                    sessionStorage.setItem('wsvalidated_${entry.idEntry}', 'done');
-                });
-
-                function setSubmitDisabled(disabled) {
-                    document.querySelectorAll('[name="action_doSaveStep"], [name="action_doSaveResponse"], [name="action_formResponseSummary"]').forEach(function(btn) {
-                        if (disabled) {
-                            btn.setAttribute('disabled', 'disabled');
-                        } else {
-                            btn.removeAttribute('disabled');
-                        }
-                    });
-                }
-                function enableSubmitButtons() { setSubmitDisabled(false); }
-                function disableSubmitButtons() { setSubmitDisabled(true); }
-
-                function showInvalidFeedback() {
-                    if (searchInput) searchInput.classList.add('is-invalid');
-                    if (!autocompleteContainer.querySelector('.invalid-feedback')) {
-                        const feedback = document.createElement('div');
-                        feedback.className = 'invalid-feedback d-block';
-                        feedback.textContent = '#i18n{forms.message.geolocation.checkAdress}';
-                        autocompleteContainer.appendChild(feedback);
-                    }
-                }
-
-                if (sessionStorage.getItem('wsvalidated_${entry.idEntry}') === 'done') {
-                    autocompleteContainer.classList.add('wssuggest');
-                    enableSubmitButtons();
-                }
-
-                if (hasCheckAddress && searchInput) {
-                    searchInput.addEventListener('input', function() {
-                        if (autocompleteContainer.classList.contains('wssuggest')) {
-                            autocompleteContainer.classList.remove('wssuggest');
-                            disableSubmitButtons();
-                        }
-                    });
-
-                    const form = autocompleteContainer.closest('form');
-                    if (form) {
-                        form.addEventListener('submit', function(e) {
-                            if (!autocompleteContainer.classList.contains('wssuggest')) {
-                                e.preventDefault();
-                                showInvalidFeedback();
-                                disableSubmitButtons();
-                            }
-                        });
-                    }
-                }
-            });
-            </script>
-        </#if>
-    </#if>
+					// Validate before submitting the form
+					if (btnSendStep) {
+						btnSendStep.addEventListener('click', function(e) {
+							// Check if address has a value but wasn't selected from autocomplete
+							if ( jAdresse.value && !jAdresse.classList.contains('wssuggest') && addrInputValue != jAdresse.value && jAdresse.value.trim() !== '') {
+								e.preventDefault();
+								isInvalidAdress( jAdresse );
+							}
+						});
+					}
+				}
+			});
+			</script>
+		</#if>
+	</#if>
 </#if>
 </@cTpl>

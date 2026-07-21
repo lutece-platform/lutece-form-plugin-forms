@@ -1,10 +1,5 @@
 <@cTpl>
-<@cBlock class='card'>
-    <@cBlock class='card-header'>
-        <@cTitle level=3 class='card-title mb-0'>${step.title}</@cTitle>
-    </@cBlock>
-    <@cBlock id='step-content' class='card-body'>
-        ${stepContent}
-    </@cBlock>
-</@cBlock>
+<@cStepDone step=step.id title=step.title idx=0 actionName=''  >
+${stepContent}
+</@cStepDone>
 </@cTpl>

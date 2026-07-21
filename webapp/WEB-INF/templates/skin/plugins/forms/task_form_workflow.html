@@ -1,27 +1,21 @@
 <@cTpl>
-<@cRow>
-    <@cCol>
-        <@cBlock class='card'>
-            <@cBlock class='card-header'>
-                <@cTitle level=2 class='card-title mb-0'>#i18n{forms.tasks_form_workflow.title}</@cTitle>
-            </@cBlock>
-            <@cBlock class='card-body'>
-                <@cForm id='form-validate' action='jsp/site/Portal.jsp?page=formsResponse' method='post' params='enctype="multipart/form-data"'>
-                    <@cInput type='hidden' name='id_action' value=id_action class='' />
-                    <@cInput type='hidden' name='id_response' value=id_form_response class='' />
-                    <@cInput type='hidden' name='token' value=token class='' />
-
-                    ${tasks_form}
-
-                    <@cRow class='mb-3'>
-                        <@cCol>
-                            <@cBtn class='primary btn-sm' type='submit' label='#i18n{workflow.tasks_form_test_workflow.button_save}' params='name="action_doSaveTaskForm"' />
-                            <@cBtn class='primary btn-sm' type='submit' label='#i18n{workflow.tasks_form_test_workflow.button_cancel}' params='name="action_doCancelTaskForm" formnovalidate' />
-                        </@cCol>
-                    </@cRow>
-                </@cForm>
-            </@cBlock>
-        </@cBlock>
-    </@cCol>
-</@cRow>
+<@cContainer>
+	<@cRow>
+		<@cCol>
+			<@cCard title='#i18n{forms.tasks_form_workflow.title}' class='mt-5'>
+				<@cForm id='form-validate' action='jsp/site/Portal.jsp' params='enctype="multipart/form-data"'>
+				<@cInput type='hidden' name='page' value='formsResponse' />
+				<@cInput type='hidden' name='id_action' value='${id_action}' />
+				<@cInput type='hidden' name='id_response' value='${id_form_response}' />
+				<@cInput type='hidden' name='token' value='${token}' />	
+				${tasks_form}
+				<@cField>
+					<@cBtn params='name="action_doSaveTaskForm"' label='#i18n{workflow.tasks_form_test_workflow.button_save}' />
+					<@cBtn params='name="action_doCancelTaskForm"' label='#i18n{workflow.tasks_form_test_workflow.button_cancel}' />
+				</@cField>
+				</@cForm>
+			</@cCard>
+		</@cCol>
+	</@cRow>
+</@cContainer>
 </@cTpl>

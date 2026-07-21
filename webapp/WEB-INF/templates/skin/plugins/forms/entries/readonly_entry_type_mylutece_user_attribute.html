@@ -1,33 +1,28 @@
 <@cTpl>
 <#if !entry.onlyDisplayInBack>
-
-    <#if mylutece_user_login?? && mylutece_user_infos_list?has_content>
-        <@cFieldset>
-            <@cLabel label='#i18n{forms.entryType.myLuteceUser.labelLogin} :' /> ${mylutece_user_login}
-            <#list mylutece_user_infos_list as user_info>
-                <@cLabel label='#i18n{portal.security.' + user_info.code + '} :' /> ${user_info.name}
-            </#list>
-        </@cFieldset>
-    <#else>
-        <#assign rowClass = 'mb-3 ' + (entry.CSSClass!'')>
-        <@cRow class=rowClass>
-            <@cCol>
-                <@cLabel label=entry.title!'' />
-            </@cCol>
-            <#if list_responses?has_content>
-                <#list list_responses as response>
-                    <@cCol>
-                        <#if form_response?? && response.entry??>
-                            <#assign userLinkHref = 'jsp/admin/plugins/forms/DoVisualisationMyLuteceUser.jsp?id_form_response=' + form_response.id?c + '&id_entry=' + response.entry.idEntry?c>
-                            <@cLink href=userLinkHref label=response.toStringValueResponse!'' />
-                        <#else>
-                            ${response.toStringValueResponse!''}
-                        </#if>
-                    </@cCol>
-                </#list>
+<#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#compress>
+<#if mylutece_user_login?? && mylutece_user_infos_list?has_content>
+<@chItem class=entryCSSClass!?trim>
+    <@cInline type='strong'>#i18n{forms.entryType.myLuteceUser.labelLogin} :</@cInline>  ${mylutece_user_login}
+    <#list mylutece_user_infos_list as user_info><@cInline class='font-weight-bold'>#i18n{portal.security.${user_info.code}} :</@cInline> ${user_info.name}</#list>
+</@chItem>
+<#else>
+<@chItem class=entryCSSClass!?trim>
+    <@cInline type='strong'>${entry.title!''} :</@cInline>
+    <#if list_responses?has_content>
+        <#list list_responses as response>
+            <#if form_response?? && response.entry??>
+                <@cLink href='jsp/admin/plugins/forms/DoVisualisationMyLuteceUser.jsp?id_form_response=${form_response.id}&amp;id_entry=${response.entry.idEntry}'>${response.toStringValueResponse!''}</@cLink>
+            <#else>
+                ${response.toStringValueResponse!''}
             </#if>
-        </@cRow>
+        </#list>
+    <#else>
+        <@cInline type='em'>#i18n{theme.labelNoDataProvided}</@cInline>  
     </#if>
-
+</@chItem>
+</#if>
+</#compress>
 </#if>
 </@cTpl>

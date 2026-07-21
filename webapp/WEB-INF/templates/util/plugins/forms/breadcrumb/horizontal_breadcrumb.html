@@ -1,14 +1,27 @@
-
-<#if list_steps?has_content>
-	<nav id="horizontal-breadcrumb" aria-label="breadcrumb">
-	  <ol class="breadcrumb">
-	  	<#list list_steps as step>
-		  	<#if step?has_next>
-		  		<li class="breadcrumb-item"><button class="btn btn-link" name="action_doGoToStep" type="submit" value="${step?index}">${step.title!}</button></li>
-		  	<#else>
-		  		<li class="breadcrumb-item active" aria-current="page">${step.title!}</li>
-		  	</#if>
-	  	</#list>
-	  </ol>
-	</nav>
+<@cTpl>
+<#if list_steps?has_content && list_steps?size gt 1>
+<@cContainer class='my-m'>
+    <@cBlock type='nav' class='breadcrumb-forms-horizontal breadcrumb-forms-stepper' params='aria-label="breadcrumb"'>
+        <@chList type='o' class='breadcrumb-forms-stepper__list'>
+            <#list list_steps as step>
+                <#if step?has_next>
+                    <@chItem class='breadcrumb-forms-step breadcrumb-forms-step--done'>
+                        <@cBtn noclass=true class='breadcrumb-forms-step__row' label='' type='submit'  params='name="action_doGoToStep" value="${step?index?c}" formnovalidate'>
+                         <@cInline class='breadcrumb-forms-step__label'>${step.title!}</@cInline>
+                        <@cInline class='breadcrumb-forms-step__marker'><@cIcon name='check' title='#i18n{portal.theme.labelStepDone}' /></@cInline>
+                        </@cBtn>
+                    </@chItem>
+                <#else>
+                    <@chItem class='breadcrumb-forms-step breadcrumb-forms-step--current' params='aria-current="step"'>
+                    <@cBlock class='breadcrumb-forms-step__row'>
+                        <@cInline class='breadcrumb-forms-step__label'>${step.title!}</@cInline>
+                        <#-- <@cInline class='breadcrumb-forms-step__marker'>${(step?index + 1)?c}</@cInline> -->
+                    </@cBlock>
+                    </@chItem>
+                </#if>
+            </#list>
+        </@chList>
+    </@cBlock>
+</@cContainer>
 </#if>
+</@cTpl>

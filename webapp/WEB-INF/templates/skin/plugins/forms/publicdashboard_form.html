@@ -1,8 +1,7 @@
 <@cTpl>
 <@cTitle level=2>#i18n{forms.publicdashboard.title}</@cTitle>
-
-<@cBlock class='table-responsive'>
-    <@cTable class='table-striped'>
+<#if list_formsresponse?? && list_formsresponse?has_content>
+    <@cTable id='forms-publicdashboard-responses' themed=false collapsible=false class='table-striped' caption='#i18n{forms.publicdashboard.title}'>
         <@cTbody>
             <#list list_formsresponse as formRep>
                 <#list formRep.steps as step>
@@ -18,5 +17,7 @@
             </#list>
         </@cTbody>
     </@cTable>
-</@cBlock>
+<#else>
+    <@cAlert type='warning' title='#i18n{portal.util.labelNoItem}' />
+</#if>
 </@cTpl>
