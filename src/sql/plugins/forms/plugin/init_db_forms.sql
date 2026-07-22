@@ -43,4 +43,4 @@ INSERT INTO core_admin_right (id_right,name,level_right,admin_url,description,is
 ('FORMS_SEARCH_INDEXATION','forms.adminFeature.manageSearchIndexation.name',1,'jsp/admin/plugins/forms/ManageFormsSearchIndexation.jsp','forms.adminFeature.manageSearchIndexation.description',0,'forms',NULL,'ti ti-settings-search',NULL,7);
 
 INSERT INTO forms_lucene_lock (index_name,instance_name,is_locked,date_begin,expired_date,uuid) VALUES
-('forms.lucene.lock',null,false,NULL,NULL,NULL);
+('forms.lucene.lock',null,0,NULL,NULL,NULL);

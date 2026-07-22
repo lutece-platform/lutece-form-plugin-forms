@@ -312,7 +312,7 @@ DROP TABLE IF EXISTS forms_lucene_lock;
 CREATE TABLE IF NOT EXISTS forms_lucene_lock (
   index_name varchar(50),
   instance_name varchar(50),
-  is_locked boolean,
+  is_locked smallint,
   date_begin timestamp,
   expired_date timestamp,
   uuid varchar(50),
