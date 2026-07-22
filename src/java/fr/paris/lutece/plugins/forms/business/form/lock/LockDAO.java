@@ -47,13 +47,13 @@ public final class LockDAO implements ILockDAO {
     // Constants
 
     private static final String SQL_QUERY_ACQUIRE = "UPDATE forms_lucene_lock set instance_name=?, is_locked=?, date_begin=?, expired_date=?, uuid=? " +
-            " where index_name=? and (is_locked=false OR expired_date<?) ";
+            " where index_name=? and (is_locked=0 OR expired_date<?) ";
 
-    private static final String SQL_QUERY_RELEASE = "UPDATE forms_lucene_lock SET is_locked=false, date_begin=NULL, expired_date=NULL WHERE uuid=? ";
+    private static final String SQL_QUERY_RELEASE = "UPDATE forms_lucene_lock SET is_locked=0, date_begin=NULL, expired_date=NULL WHERE uuid=? ";
 
     private static final String SQL_QUERY_REFRESH = "UPDATE forms_lucene_lock SET expired_date=NULL WHERE uuid=? ";
 
-    private static final String SQL_QUERY_CLOSE_ALL = "UPDATE forms_lucene_lock SET is_locked=false";
+    private static final String SQL_QUERY_CLOSE_ALL = "UPDATE forms_lucene_lock SET is_locked=0";
 
 
     @Override
