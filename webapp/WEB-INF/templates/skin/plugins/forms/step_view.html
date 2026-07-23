@@ -38,6 +38,9 @@ else {
 }
 }
 </script>
+<#if noScriptMessage?? >
+<@noScriptMessage id='form-validate' alertTitle='#i18n{forms.noscript.message}' linkIcon='' linkLabel='#i18n{forms.noscript.linkLabel}' linkUrl='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' />
+</#if>
 <form id="form-validate" action="jsp/site/Portal.jsp?page=forms" method="post" enctype="multipart/form-data">
 	<#if form.logo??>
 		<img id="form_logo" src="data:${form.logo.mimeType};base64,${form.logoBase64}" title="${form.title}" alt=""/>
