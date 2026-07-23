@@ -52,8 +52,10 @@ import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import fr.paris.lutece.plugins.forms.exception.LockException;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeNumber;
 import fr.paris.lutece.plugins.forms.service.lock.LockResult;
 import fr.paris.lutece.plugins.forms.service.lock.LuceneLockManager;
+import fr.paris.lutece.plugins.forms.util.NaturalSortKeyBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -61,6 +63,7 @@ import org.apache.lucene.document.IntPoint;
 import org.apache.lucene.document.LongPoint;
 import org.apache.lucene.document.NumericDocValuesField;
 import org.apache.lucene.document.SortedDocValuesField;
+import org.apache.lucene.document.SortedSetDocValuesField;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
@@ -122,6 +125,13 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
     @Inject
     private Instance<ILucenDocumentExternalFieldProvider> _externalFieldProviderInstance;
     private LuceneLockManager _lockManager;
+
+    /**
+     * {@link java.text.Collator}, used internally by {@link NaturalSortKeyBuilder}, is not thread-safe. A ThreadLocal
+     * gives each indexing thread its own builder instance without re-creating the underlying collators for every
+     * document.
+     */
+    private static final ThreadLocal<NaturalSortKeyBuilder> SORT_KEY_BUILDER = ThreadLocal.withInitial( NaturalSortKeyBuilder::new );
 
     /**
      * Flip-once flag set either by the heartbeat (lock lost), by the timeout guard (MS_MAX_INDEXING_DURATION
@@ -936,7 +946,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
                                 }
                             }
                             else
-                                if ( entryTypeService instanceof EntryTypeNumbering )
+                                if ( entryTypeService instanceof EntryTypeNumbering || entryTypeService instanceof EntryTypeNumber )
                                 {
                                     try
                                     {
@@ -954,7 +964,11 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
                                     if ( entryTypeService instanceof EntryTypeSelect || entryTypeService instanceof EntryTypeRadioButton || entryTypeService instanceof EntryTypeCheckBox )
                                     {
                                         doc.add( new StringField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_SELECT_SUFFIX, response.getResponseValue( ), Field.Store.YES ) );
-                                        doc.add( new SortedDocValuesField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_SELECT_SUFFIX, new BytesRef( response.getResponseValue( ) ) ) );
+
+                                        String sortIndexList = LuceneUtils.createLuceneEntryKey( strQuestionCode, response.getIterationNumber( ) );
+
+                                        doc.add( new SortedSetDocValuesField( sortIndexList,
+                                                new BytesRef( SORT_KEY_BUILDER.get( ).build( response.getResponseValue( ) ) ) ) );
                                         if ( responseField != null && StringUtils.isNotEmpty( responseField.getTitle( ) ) )
                                         {
                                             doc.add( new StringField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_SELECT_TITLE , responseField.getTitle( ), Field.Store.YES ) );
@@ -963,7 +977,9 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
                                 else
                                 {
                                     doc.add( new StringField( fieldNameBuilder.toString( ), response.getResponseValue( ), Field.Store.YES ) );
-                                    doc.add( new SortedDocValuesField( fieldNameBuilder.toString( ), new BytesRef( response.getResponseValue( ) ) ) );
+
+                                    doc.add( new SortedSetDocValuesField( fieldNameBuilder.toString( ),
+                                            new BytesRef( SORT_KEY_BUILDER.get( ).build( response.getResponseValue( ) ) ) ) );
                                 }
 
                         }
