@@ -805,7 +805,7 @@ public class FormXPage extends MVCApplication
 
         FormMessage formMessage = FormMessageHome.findByForm( form.getId( ) );
         boolean bIsEndMessageDisplayed = formMessage.getEndMessageDisplay( );
-        String strBackUrl = getBackUrl( form, bIsEndMessageDisplayed, _formResponseManager.getFormResponse( ).getId( ) );
+        String strBackUrl = getBackUrl( form, bIsEndMessageDisplayed );
         initAfterSave( request );
 
         if ( formMessage.getEndMessageDisplay( ) )
@@ -893,7 +893,7 @@ public class FormXPage extends MVCApplication
      *            {@code true} if the end message is displayed, {@code false} otherwise
      * @return the back URL
      */
-    private String getBackUrl( Form form, boolean bIsEndMessageDisplayed, int nIdFormResponse )
+    private String getBackUrl( Form form, boolean bIsEndMessageDisplayed )
     {
         if ( StringUtils.isNotEmpty( form.getReturnUrl( ) ) )
         {
