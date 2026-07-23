@@ -64,6 +64,7 @@ import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
@@ -609,7 +610,15 @@ public class FormResponseJspBean extends AbstractJspBean
 			addError( e.getMessage( ) );
 			redirectView(request, VIEW_ERROR);
 		}
-        
+        catch ( AppException e )
+        {
+            // The response has been rolled back : send the user back to the step rather than let them believe it was saved
+            AppLogService.error( "Unable to save the response of the form {}. The response has been rolled back.", form.getId( ), e );
+            addError( FormsConstants.MESSAGE_ERROR_SAVING_FORM_RESPONSE, getLocale( ) );
+            _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
+            return getStepView( request );
+        }
+
         _formService.processFormAction( form, _formResponseManager.getFormResponse( ) );
 
         Map<String, Object> model = getModel( );
