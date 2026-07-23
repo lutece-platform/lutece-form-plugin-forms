@@ -42,6 +42,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.forms.business.*;
 import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
+import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.StringUtils;
@@ -62,8 +63,6 @@ import fr.paris.lutece.plugins.forms.web.http.SynchronousHttpServletRequestWrapp
 import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
-import fr.paris.lutece.portal.business.file.FileHome;
-import fr.paris.lutece.portal.business.physicalfile.PhysicalFileHome;
 import fr.paris.lutece.portal.service.accesscontrol.AccessControlService;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.captcha.CaptchaSecurityService;
@@ -174,15 +173,7 @@ public class FormXPage extends MVCApplication
         List<Form> listFormsAll = FormHome.getFormList( );
         for ( Form form : listFormsAll )
         {
-            if ( form.isCountResponses( ) )
-            {
-                form.setCurrentNumberResponse( FormHome.getNumberOfResponseForms( form.getId( ) ) );
-            }
-            if ( form.getLogo( ) != null )
-            {
-                form.setLogo( FileHome.findByPrimaryKey( form.getLogo( ).getIdFile( ) ) );
-                form.getLogo( ).setPhysicalFile( PhysicalFileHome.findByPrimaryKey( form.getLogo( ).getPhysicalFile( ).getIdPhysicalFile( ) ) );
-            }
+            FormsResponseUtils.populateFormWithLogoAndNumberResponse( form );
         }
 
         Map<String, Object> model = getModel( );
@@ -1073,10 +1064,19 @@ public class FormXPage extends MVCApplication
         formResponse.setGuid( user.getName( ) );
         formResponse.setUpdateStatus(Timestamp.valueOf(LocalDateTime.now()));
 
-        _formService.saveFormForBackup( formResponse );
+        try
+        {
+            _formService.saveFormForBackup( formResponse );
+        }
+        catch( AppException e )
+        {
+            // The backup has been rolled back : tell the user rather than let them believe it was saved
+            AppLogService.error( "Unable to save the backup of the form {}. The backup has been rolled back.", form.getId( ), e );
+            SiteMessageService.setMessage( request, FormsConstants.MESSAGE_ERROR_SAVING_FORM_RESPONSE, SiteMessage.TYPE_ERROR );
+        }
+
         _formResponseManager.setFormResponseUpdateDate( formResponse.getUpdateStatus( ) );
         _formResponseManager.setIsResponseLoadedFromBackup(false);
-        _formService.saveFormForBackup(formResponse);
         }
         return getStepView(  request );
     }
@@ -1387,6 +1387,12 @@ public class FormXPage extends MVCApplication
         catch( MaxFormResponseException e)
         {
             SiteMessageService.setMessage( request, FormsConstants.MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM, SiteMessage.TYPE_ERROR );
+        }
+        catch( AppException e )
+        {
+            // The response has been rolled back : tell the user rather than let them believe it was saved
+            AppLogService.error( "Unable to save the response of the form {}. The response has been rolled back.", form.getId( ), e );
+            SiteMessageService.setMessage( request, FormsConstants.MESSAGE_ERROR_SAVING_FORM_RESPONSE, SiteMessage.TYPE_ERROR );
         }
 
         AccessControlService.getInstance( ).cleanSessionData( request, form.getId( ), Form.RESOURCE_TYPE );

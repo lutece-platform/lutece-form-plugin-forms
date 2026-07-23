@@ -81,6 +81,7 @@ import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServ
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.plugins.workflowcore.service.state.IStateService;
 import fr.paris.lutece.plugins.workflowcore.service.state.StateService;
+import fr.paris.lutece.portal.business.file.File;
 import fr.paris.lutece.portal.business.file.FileHome;
 import fr.paris.lutece.portal.business.physicalfile.PhysicalFileHome;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
@@ -316,9 +317,14 @@ public class FormsResponseUtils
         }
         if ( form.getLogo( ) != null )
         {
-            form.setLogo( FileHome.findByPrimaryKey( form.getLogo( ).getIdFile( ) ) );
-            form.getLogo( ).setPhysicalFile( PhysicalFileHome.findByPrimaryKey( form.getLogo( ).getPhysicalFile( ).getIdPhysicalFile( ) ) );
-    
+            File logo = FileHome.findByPrimaryKey( form.getLogo( ).getIdFile( ) );
+
+            if ( logo != null && logo.getPhysicalFile( ) != null )
+            {
+                logo.setPhysicalFile( PhysicalFileHome.findByPrimaryKey( logo.getPhysicalFile( ).getIdPhysicalFile( ) ) );
+            }
+
+            form.setLogo( logo );
         }
     }
 
