@@ -135,7 +135,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     private static final String PUBLIC_IMAGE_RESOURCE = "public_image_resource";
     private static final String ILLUSTRATION_IMAGE = "illustration_image";
     private static final FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
-    private static final int TECHNICAL_ADMIN_RIGHT_LEVEL = 1;
+    private static final int REQUIRED_ADMIN_RIGHT_LEVEL = 1;
     private Form _form;
 
     /**
@@ -605,7 +605,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         }
 
         AdminUser adminUser = AdminUserService.getAdminUser( request );
-        if ( adminUser != null && adminUser.getUserLevel( ) != TECHNICAL_ADMIN_RIGHT_LEVEL )
+        if ( adminUser != null && adminUser.getUserLevel( ) > REQUIRED_ADMIN_RIGHT_LEVEL )
         {
         	return redirect( request, AdminMessageService.getMessageUrl( request, WARNING_INSUFFICIENT_RIGHTS_LEVEL_TO_DELETE_COMPOSITE, AdminMessage.TYPE_STOP ) );
         }
