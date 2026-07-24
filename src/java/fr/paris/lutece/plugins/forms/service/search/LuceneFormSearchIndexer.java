@@ -574,6 +574,13 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         {
             Document doc = null;
             Form form = mapForms.get( formResponse.getFormId( ) );
+            if ( form == null )
+            {
+                AppLogService.error( "Skipping indexation of form response {}: associated form {} not found", formResponse.getId( ),
+                        formResponse.getFormId( ) );
+                continue;
+            }
+
             State formResponseState = null;
             if ( !_stateServiceInstance.isUnsatisfied( ) )
             {
