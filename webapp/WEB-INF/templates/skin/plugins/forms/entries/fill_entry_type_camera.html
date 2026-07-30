@@ -30,7 +30,7 @@
 	<@cCol class='d-flex flex-column align-items-center justify-content-center'>
 		<video id="video-${entry.idEntry}" class="form-control-camera img-fluid"<#if width !=0> width="${width!}"</#if><#if height !=0> height="${height}"</#if> autoplay></video>
 		<@cBtn type='button' id='snap${entry.idEntry}' label='#i18n{forms.action.photo.snap}' class='primary mx-auto mt-s'>
-			<@parisIcon name='disk' /> 
+			<@cIcon name='disk' /> 
 		</@cBtn>
 	</@cCol>
 </@cRow>
@@ -38,7 +38,7 @@
 	<@cCol class='d-flex flex-column align-items-center justify-content-center'>
 		<canvas id="canvas-${entry.idEntry}" class="img-fluid"<#if width !=0> width="${width!}"</#if><#if height !=0> height="${height}"</#if>></canvas>
 		<@cBtn type='button' id='clear${entry.idEntry}' class='danger mx-auto mt-s' label='#i18n{portal.util.labelDelete}'>
-			<@parisIcon name='trash'  /> 
+			<@cIcon name='trash'  /> 
 		</@cBtn>							
 	</@cCol>
 </@cRow>
