@@ -54,6 +54,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -65,10 +66,15 @@ public class CSVFileGenerator extends AbstractFileGenerator
     private static final int FLUSH_SIZE = 1000;
     public static final String UTF8_BOM = "\uFEFF";
 
+
     /**
      * Constructor
-     * 
-     * @param _listFormResponseItems
+     * @param formName
+     * @param formPanel
+     * @param listFormColumn
+     * @param listFormFilter
+     * @param sortConfig
+     * @param fileDescription
      */
     public CSVFileGenerator( String formName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
             FormItemSortConfig sortConfig, String fileDescription )
@@ -117,6 +123,7 @@ public class CSVFileGenerator extends AbstractFileGenerator
             if(formResponseList != null && !formResponseList.isEmpty()) {
                 int idForm = formResponseList.get(0).getFormId();
                 List<Question> listQuestions = QuestionHome.getQuestionListByIdFormInQuestionOrder(idForm);
+                listQuestions.sort( Comparator.comparingInt( Question::getExportDisplayOrder ) );
             bos.write(formResponseExport.buildCsvColumnToExport(listQuestions));
             bos.newLine();
                   for (FormResponse formResponse : formResponseList) {

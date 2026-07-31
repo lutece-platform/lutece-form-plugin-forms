@@ -61,8 +61,9 @@ public final class FormDisplayDAO implements IFormDisplayDAO
             + "WHERE d.id_step = ? AND d.composite_type = ? order by d.id_parent, d.display_order";
     private static final String SQL_QUERY_SELECT_BY_FROM_STEP_COMPOSITE = SQL_QUERY_SELECTALL + " WHERE id_form = ? AND id_step = ? AND id_composite = ?";
     private static final String SQL_QUERY_SELECT_BY_PARENT_ORDER_BY_QUESTION_EXPORT_DISPLAY_ORDER = "SELECT fd.id_display, fd.id_form, fd.id_step, fd.id_composite, fd.id_parent, fd.display_order, fd.composite_type, fd.display_depth "
-    		+ "FROM forms_display fd LEFT JOIN forms_question fq ON fd.id_composite = fq.id_question "
-    		+ "WHERE fd.id_step = ? AND id_parent = ? ORDER BY fq.export_display_order ASC";
+            + "FROM forms_display fd LEFT JOIN forms_question fq ON fd.id_composite = fq.id_question "
+            + "WHERE fd.id_step = ? AND id_parent = ? "
+            + "ORDER BY fq.export_display_order ASC, fd.display_order ASC";
     
     /**
      * {@inheritDoc }
