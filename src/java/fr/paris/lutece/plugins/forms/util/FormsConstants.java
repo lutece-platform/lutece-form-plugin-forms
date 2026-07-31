@@ -106,6 +106,8 @@ public final class FormsConstants
     public static final String MARK_DEFAULT_VALUE_WORKGROUP_KEY = "workgroup_key_default_value";
     public static final String MARK_HAS_BACKUP_RESPONSE = "hasBackupResponse";
     public static final String MARK_PROD_URL = "prod_url";
+    public static final String MARK_POSITION = "position_";
+    public static final String MARK_CODE = "code_";
 
     // Parameters
     public static final String PARAMETER_PAGE = "page";

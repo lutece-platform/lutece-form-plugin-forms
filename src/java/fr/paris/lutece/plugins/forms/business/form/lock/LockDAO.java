@@ -50,12 +50,12 @@ public class LockDAO implements ILockDAO
 {
     private static final String SQL_QUERY_ACQUIRE =
             "UPDATE forms_lucene_lock " +
-            "SET instance_name=?, is_locked=true, date_begin=CURRENT_TIMESTAMP, " +
+            "SET instance_name=?, is_locked=0, date_begin=CURRENT_TIMESTAMP, " +
             "    expired_date={fn TIMESTAMPADD(SQL_TSI_SECOND, ?, CURRENT_TIMESTAMP)}, uuid=? " +
-            "WHERE index_name=? AND (is_locked=false OR expired_date < CURRENT_TIMESTAMP)";
+            "WHERE index_name=? AND (is_locked=0 OR expired_date < CURRENT_TIMESTAMP)";
 
     private static final String SQL_QUERY_RELEASE =
-            "UPDATE forms_lucene_lock SET is_locked=false, date_begin=NULL, expired_date=NULL WHERE uuid=?";
+            "UPDATE forms_lucene_lock SET is_locked=0, date_begin=NULL, expired_date=NULL WHERE uuid=?";
 
     /**
      * Refresh ONLY if this row is still ours AND not yet expired from the DB's view.
@@ -65,11 +65,11 @@ public class LockDAO implements ILockDAO
     private static final String SQL_QUERY_REFRESH =
             "UPDATE forms_lucene_lock " +
             "SET expired_date={fn TIMESTAMPADD(SQL_TSI_SECOND, ?, CURRENT_TIMESTAMP)} " +
-            "WHERE uuid=? AND is_locked=true AND expired_date > CURRENT_TIMESTAMP";
+            "WHERE uuid=? AND is_locked=1 AND expired_date > CURRENT_TIMESTAMP";
 
     private static final String SQL_QUERY_RELEASE_BY_INSTANCE =
-            "UPDATE forms_lucene_lock SET is_locked=false, date_begin=NULL, expired_date=NULL " +
-            "WHERE instance_name=? AND is_locked=true";
+            "UPDATE forms_lucene_lock SET is_locked=0, date_begin=NULL, expired_date=NULL " +
+            "WHERE instance_name=? AND is_locked=1";
 
     @Override
     public boolean acquire( String indexName, String instanceName, String uuid, long ttlSeconds, Plugin plugin )
