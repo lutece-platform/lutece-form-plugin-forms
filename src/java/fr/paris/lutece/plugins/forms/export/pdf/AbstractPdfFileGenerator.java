@@ -215,7 +215,7 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
     {
         Step step = formResponseStep.getStep( );
 
-        List<FormDisplay> listStepFormDisplay = FormDisplayHome.getFormDisplayListByParent( step.getId( ), 0 );
+        List<FormDisplay> listStepFormDisplay = FormDisplayHome.getFormDisplayListByParentOrderByQuestionExportDisplayOrder( step.getId( ), 0 );
 
         List<PdfCell> listContent = new ArrayList<>( );
         
@@ -259,7 +259,7 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
         Group group = GroupHome.findByPrimaryKey( formDisplay.getCompositeId( ) );
         String groupName = group.getTitle( );
 
-        List<FormDisplay> listGroupDisplay = FormDisplayHome.getFormDisplayListByParent( formResponseStep.getStep( ).getId( ), formDisplay.getId( ) );
+        List<FormDisplay> listGroupDisplay = FormDisplayHome.getFormDisplayListByParentOrderByQuestionExportDisplayOrder( formResponseStep.getStep( ).getId( ), formDisplay.getId( ) );
 
         List<FormQuestionResponse> listFormQuestionResponse = FormQuestionResponseHome.getFormQuestionResponseListByFormResponse(formrResponse.getId());
    if(listFormQuestionResponse != null && !listFormQuestionResponse.isEmpty()) {

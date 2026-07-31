@@ -273,7 +273,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
      *            The URL to go to after displaying an error message
      * @return The URL to go after performing the action
      */
-    protected String processQuestionUpdate( HttpServletRequest request, String errorRetrunUrl ) throws CodeAlreadyExistsException
+    protected String processQuestionUpdate( HttpServletRequest request, String errorReturnUrl ) throws CodeAlreadyExistsException
     {
         String strIdStep = request.getParameter( FormsConstants.PARAMETER_ID_STEP );
         int nIdStep = NumberUtils.toInt( strIdStep, INTEGER_MINUS_ONE );
@@ -293,7 +293,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         int nIdEntry = _question.getIdEntry( );
         _entry = getFormDatabaseService( ).findEntryByPrimaryKey( nIdEntry );
 
-        String strError = EntryTypeServiceManager.getEntryTypeService( _entry ).getRequestData( _entry, request, getLocale( ), errorRetrunUrl );
+        String strError = EntryTypeServiceManager.getEntryTypeService( _entry ).getRequestData( _entry, request, getLocale( ), errorReturnUrl );
 
         if ( strError != null )
         {
