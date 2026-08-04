@@ -37,7 +37,7 @@
                                 </label>
                             </div>
                             <@tabPanel id='panel-question' active=true>
-                                 <@table class='forms-questions is-fullwidth'>
+                                 <@table class='forms-questions' headBody=true>
                                     <@tr>
                                         <@th sm=1></@th>
                                         <@th sm=5>#i18n{forms.manage_questions.columnTitle}</@th>
@@ -46,25 +46,30 @@
                                         <@th sm=1></@th>
                                     </@tr>
                                     <@tableHeadBodySeparator />
+                                    <#assign groupTitle='' />
                                     <#list composite_list as composite>
-                                    	<#assign group=composite.type == 'group' />
-										<#if group><#assign trClass='group tr-group' /><#else><#assign trClass='' /></#if>
+                                        <#assign group=composite.type == 'group' />
+                                        <#if group>
+                                           <#assign groupTitle=composite.title />
+                                           <#assign trClass='group tr-group' />
+                                        <#else>
+                                           <#assign trClass='' />
+                                        </#if>
                                         <@tr class=trClass>
                                             <@input type='hidden' name='own_display_id_parent' value='${composite.formDisplay.parentId}' />
                                             <@input type='hidden' name='own_display_id_composite' value='${composite.formDisplay.id}' />
-                                            <@td sm=1>
+                                            <@td sm=5 class='tr-parent'>
                                                 <#assign parentd>parent_${composite.formDisplay.id}</#assign>
                                                 <#if group>
-                                                    <div class="radio">
+                                                    <div class="radio d-inline-block me-2">
                                                         <label>
                                                             <input type="radio" id="${parentd}" name="id_parent" value="${composite.formDisplay.id}" <#if id_parent=composite.formDisplay.id>checked</#if>>
                                                             <span class="group-radio-label"></span>
                                                         </label>
                                                     </div>
                                                 </#if>
-                                            </@td>
-                                            <@td sm=5>
-                                                <#if group><label for="${parentd}"><h4></#if><#list 0..composite.formDisplay.depth as indent><#if indent_index gte 0><#if indent_has_next><@icon style='level-down-alt' class='text-primary' /><#else><@icon style='${composite.icon!}' /></#if></#if></#list>${composite.title}<#if group></h4></label></#if>
+                                                <#assign groupStyle><#if group><#else><#if groupTitle?length lt 35>style="width:auto;"</#if></#if></#assign>
+                                                <#if group><label for="${parentd}"><h4 class="truncate mb-0" style="--tw:600px" title="${composite.title}"><#else><div class="d-flex align-items-center"></#if><#list 0..composite.formDisplay.depth as indent><#if indent_index gte 0><#if indent_has_next><@icon style='corner-down-right' class='text-primary fs-3' /><@span class='text-primary truncate mb-0' params='title="${groupTitle!}" ${groupStyle!}'>${groupTitle!}</@span><@icon style='arrow-right-circle ms-2' class='text-primary fs-3' /><#else><@icon style='${composite.icon!}' /></#if></#if></#list><#if !group><span class="ms-2"></#if>${composite.title}<#if !group></span></#if><#if group></h4></label><#else></div></#if>
                                                 <@div hide=['md','lg','xl','xxl']>
 													<@btnGroup size='sm'>
                                                     <#if group>
@@ -121,9 +126,7 @@
         </@box>
     </@columns>
 </@row>
-
 <@formModal id='qModal' />
-
 <script>
 $( function(){
     $('.group-toggle').click( function(){
