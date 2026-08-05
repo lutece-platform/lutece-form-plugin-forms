@@ -190,6 +190,7 @@ public final class FormsConstants
     public static final String MESSAGE_STEP_TITLE = "forms.step.title";
     public static final String MESSAGE_ERROR_STEP_NOT_FINAL = "forms.error.step.isnot.final";
     public static final String MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM = "forms.error.form.MaxResponse";
+    public static final String MESSAGE_ERROR_SAVING_FORM_RESPONSE = "forms.error.form.savingResponse";
     public static final String MESSAGE_ERROR_INACTIVE_FORM = "forms.error.form.inactive";
     public static final String MESSAGE_LOAD_BACKUP = "forms.message.view.loadBackUp";
     public static final String MESSAGE_SUMMARY_TITLE = "forms.summary.title";

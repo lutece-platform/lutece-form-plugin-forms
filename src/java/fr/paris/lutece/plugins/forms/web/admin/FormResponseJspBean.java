@@ -68,6 +68,7 @@ import fr.paris.lutece.plugins.forms.web.StepDisplayTree;
 import fr.paris.lutece.plugins.forms.web.breadcrumb.IBreadcrumb;
 import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
@@ -374,7 +375,16 @@ public class FormResponseJspBean extends AbstractJspBean
         FormResponse formResponse = _formResponseManager.getFormResponse( );
         formResponse.setAdmin( getUser().getAccessCode( ) );
 
-        _formService.saveFormForBackup( formResponse );
+        try
+        {
+            _formService.saveFormForBackup( formResponse );
+        }
+        catch( AppException e )
+        {
+            // The backup has been rolled back : tell the user rather than let them believe it was saved
+            AppLogService.error( "Unable to save the backup of the form response. The backup has been rolled back.", e );
+            addError( FormsConstants.MESSAGE_ERROR_SAVING_FORM_RESPONSE, getLocale( ) );
+        }
 
         return getStepView(  request );
     }

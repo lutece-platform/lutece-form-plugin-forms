@@ -35,7 +35,7 @@ package fr.paris.lutece.plugins.forms.web.entrytype;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Locale;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
@@ -47,6 +47,7 @@ import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
+import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.service.entrytype.IResponseComparator;
 import fr.paris.lutece.plugins.forms.validation.IValidator;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
@@ -143,10 +144,65 @@ public class EntryTypeDefaultDataService implements IEntryDataService
         }
         else
         {
-            formQuestionResponse.setError( null );
+            // A response may be saved incomplete - that is the point of a backup or a step navigation - so the
+            // error is dropped here. A file whose content is missing is the one thing that cannot be kept : it
+            // would be stored as a file that can never be downloaded, and nothing would tell it afterwards. The
+            // error is rebuilt rather than reused : getResponseData may have returned null even for such a file.
+            formQuestionResponse.setError(
+                    hasFileWithoutContent( formQuestionResponse ) ? buildFileWithoutContentError( question, error, request.getLocale( ) ) : null );
         }
 
         return formQuestionResponse;
+    }
+
+
+    /**
+     * Tells whether a response carries a file whose content is missing.
+     *
+     * The entry types building a response from an uploaded file only create the physical file when the file passed the validation. Such a response must never be
+     * stored : the file would show its name and its size, with a download link pointing at nothing.
+     *
+     * @param formQuestionResponse
+     *            the form question response to check
+     * @return true if one of the responses carries a file without content
+     */
+    // package visibility for testing
+    boolean hasFileWithoutContent( FormQuestionResponse formQuestionResponse )
+    {
+        return formQuestionResponse.getEntryResponse( ).stream( ).anyMatch(
+                response -> response.getFile( ) != null
+                        && ( response.getFile( ).getPhysicalFile( ) == null || response.getFile( ).getPhysicalFile( ).getValue( ) == null ) );
+    }
+
+    /**
+     * Builds the error to attach when a response carries a file without content.
+     *
+     * The error returned by getResponseData is reused when present, but it may be null even for a file without content (the underlying entry type may have
+     * dropped it), so a displayable error is created as a fallback : otherwise the response would be saved silently.
+     *
+     * @param question
+     *            the question the response answers
+     * @param existingError
+     *            the error returned by getResponseData, possibly null
+     * @param locale
+     *            the locale used to localize the fallback message
+     * @return a non-null displayable error
+     */
+    // package visibility for testing
+    GenericAttributeError buildFileWithoutContentError( Question question, GenericAttributeError existingError, Locale locale )
+    {
+        if ( existingError != null )
+        {
+            return existingError;
+        }
+
+        GenericAttributeError error = new GenericAttributeError( );
+        error.setMandatoryError( false );
+        error.setIsDisplayableError( true );
+        error.setTitleQuestion( question.getTitle( ) );
+        error.setErrorMessage( I18nService.getLocalizedString( FormsConstants.MESSAGE_ERROR_SAVING_FORM_RESPONSE, locale ) );
+
+        return error;
     }
 
     /**
