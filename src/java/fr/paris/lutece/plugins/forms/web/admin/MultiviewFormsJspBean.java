@@ -176,6 +176,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         boolean bIsSessionLost = isSessionLost( );
         boolean bHasFilterParameters = hasFilterParameters( request );
         boolean bIsChangePanel = Boolean.parseBoolean( request.getParameter( PARAMETER_CHANGE_PANEL ) );
+        boolean bFormSelectionChanged = hasFormSelectionChanged( request );
 
         if ( bIsSessionLost ||  bIsChangePanel)
         {
@@ -198,13 +199,17 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
         // Build the Column for the Panel and save their values for the active panel
         initiatePaginatorProperties( request );
+        if ( bFormSelectionChanged )
+        {
+            resetCurrentPaginatorPageIndex( );
+        }
         buildFormItemSortConfiguration( request );
         buildFormPanelDisplayWithData( request, getIndexStart( ), _nItemsPerPage, _formItemSortConfig );
 
         // Build the template of each form filter display
         // if session is lost, we rebuild all filter template.
         // else, for each filter in request, we build the template of this filter
-        if ( bIsSessionLost )
+        if ( bIsSessionLost || bFormSelectionChanged )
         {
             for ( IFormFilterDisplay formFilterDisplay : _listFormFilterDisplay )
             {
@@ -563,14 +568,15 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         // Retrieve the list of all FormFilter
         List<FormFilter> listFormFilter = _listFormFilterDisplay.stream( ).map( IFormFilterDisplay::getFormFilter ).collect( Collectors.toList( ) );
 
-        User user = (User) AdminUserService.getAdminUser( request );
+        User user =  AdminUserService.getAdminUser( request );
 
         // Check in filters if the columns list has to be fetch again
-        reloadFormColumnList( listFormFilter, request.getLocale( ), (User) AdminUserService.getAdminUser( request ) );
+        reloadFormColumnList( listFormFilter, request.getLocale( ), AdminUserService.getAdminUser( request ) );
         if ( formSelectedAsChanged( request ) )
         {
             _strFormSelectedValue = request.getParameter( FormsConstants.PARAMETER_ID_FORM );
             reloadFormFilterList( listFormFilter, request );
+            listFormFilter = _listFormFilterDisplay.stream( ).map( IFormFilterDisplay::getFormFilter ).collect( Collectors.toList( ) );
         }
 
         for ( IFormPanelDisplay formPanelDisplay : _listAuthorizedFormPanelDisplay )
@@ -726,13 +732,18 @@ public class MultiviewFormsJspBean extends AbstractJspBean
      * @param request
      * @return true if the form selection has changed, false otherwise
      */
+    private boolean hasFormSelectionChanged( HttpServletRequest request )
+    {
+        String strFormSelectedNewValue = request.getParameter( FormsConstants.PARAMETER_ID_FORM );
+        return strFormSelectedNewValue != null && !strFormSelectedNewValue.equals( _strFormSelectedValue );
+    }
+
     private boolean formSelectedAsChanged( HttpServletRequest request )
     {
         String strFormSelectedNewValue = request.getParameter( FormsConstants.PARAMETER_ID_FORM );
-        boolean bIdFormHasChanged = false;
+        boolean bIdFormHasChanged = hasFormSelectionChanged( request );
         if ( strFormSelectedNewValue != null )
         {
-            bIdFormHasChanged = !strFormSelectedNewValue.equals( _strFormSelectedValue );
             _strFormSelectedValue = strFormSelectedNewValue;
         }
 
