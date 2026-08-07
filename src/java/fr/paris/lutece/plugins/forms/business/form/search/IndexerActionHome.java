@@ -95,6 +95,19 @@ public final class IndexerActionHome
     }
 
     /**
+     * Remove the indexerAction whose identifier is specified in parameter
+     *
+     * @param nIdFormResponse
+     *            The FormResponse Id
+     * @param plugin
+     *            the Plugin
+     */
+    public static void removeByFormResponse( int nIdFormResponse, Plugin plugin )
+    {
+        _dao.deleteByFormResponse( nIdFormResponse, plugin );
+    }
+
+    /**
      * Remove the list of indexerAction whose identifier is specified in parameter
      *
      * @param idList the list of IndexerActionId
