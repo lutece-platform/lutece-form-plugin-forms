@@ -41,6 +41,7 @@ import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.plugins.forms.business.FormResponseStepHome;
+import fr.paris.lutece.plugins.forms.business.form.search.IndexerActionHome;
 import fr.paris.lutece.plugins.forms.util.FormsResponseUtils;
 import fr.paris.lutece.plugins.forms.web.FormResponseData;
 import fr.paris.lutece.portal.service.security.LuteceUser;
@@ -101,6 +102,8 @@ public class FormResponseService
             FormResponseStepHome.removeByFormResponse( formResponse.getId( ) );
 
             FormResponseHome.remove( formResponse.getId( ) );
+
+            IndexerActionHome.removeByFormResponse( formResponse.getId( ), FormsPlugin.getPlugin( ) );
 
             List<Integer> listIdResource = new ArrayList<>( );
             listIdResource.add( formResponse.getId( ) );
