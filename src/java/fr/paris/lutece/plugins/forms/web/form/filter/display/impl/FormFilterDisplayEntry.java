@@ -55,6 +55,7 @@ import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterEntryConfiguration;
 import fr.paris.lutece.plugins.forms.business.form.filter.configuration.IFormFilterConfiguration;
+import fr.paris.lutece.plugins.forms.util.FormMultiviewFormsNameConstants;
 import fr.paris.lutece.plugins.forms.util.ReferenceListFactory;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.EntryFilter;
@@ -91,7 +92,7 @@ public class FormFilterDisplayEntry extends AbstractFormFilterDisplay
         Map<String, Object> mapFilterNameValues = new LinkedHashMap<>( );
 
         String strParameterName = buildElementName( PARAMETER_ENTRY_VALUE_PATTERN );
-        String[] strEntryParameterArray = request.getParameterValues( strParameterName );
+        String[] strEntryParameterArray = hasFormSelectionChanged( request ) ? null : request.getParameterValues( strParameterName );
         
         
         if ( ArrayUtils.isNotEmpty( strEntryParameterArray ) )
@@ -123,15 +124,20 @@ public class FormFilterDisplayEntry extends AbstractFormFilterDisplay
     public void buildTemplate(HttpServletRequest request, Locale locale)
     {
         String strParameterName = buildElementName( PARAMETER_ENTRY_VALUE_PATTERN );
-        manageFilterTemplate( request, createReferenceList( locale ), strParameterName );
+        int nIdForm = NumberUtils.toInt( request.getParameter( FormMultiviewFormsNameConstants.PARAMETER_ID_FORM ), -1 );
+        manageFilterTemplate( request, createReferenceList( locale, nIdForm ), strParameterName );
     }
 
     /**
      * Create the ReferenceList based on the value of the Entry for an Entry column
      * 
+     * @param locale
+     *            the locale used to display the filter label
+     * @param nIdForm
+     *            the selected form identifier, or a non-positive value for the global multiview
      * @return the ReferenceList with all values of the Entry for an Entry column
      */
-    private ReferenceList createReferenceList( Locale locale )
+    private ReferenceList createReferenceList( Locale locale, int nIdForm )
     {
         List<Entry> listIEntryToRetrieveValueFrom = new ArrayList<>( );
 
@@ -140,7 +146,7 @@ public class FormFilterDisplayEntry extends AbstractFormFilterDisplay
         {
             FormColumnEntry formColumnEntry = (FormColumnEntry) formColumn;
             List<String> listEntryCode = formColumnEntry.getListEntryCode( );
-            listIEntryToRetrieveValueFrom = getEntryListFromCode( listEntryCode );
+            listIEntryToRetrieveValueFrom = getEntryListFromCode( listEntryCode, nIdForm );
         }
         ReferenceList referenceListResult = new ReferenceList( );
         // Add the default ReferenceItem if necessary
@@ -159,22 +165,30 @@ public class FormFilterDisplayEntry extends AbstractFormFilterDisplay
      * 
      * @param listEntryCode
      *            The list of code of entry to retrieve the value from
+     * @param nIdForm
+     *            the selected form identifier, or a non-positive value for the global multiview
      * @return the list of entry built from the given list of entry code
      */
-    private static List<Entry> getEntryListFromCode( List<String> listEntryCode )
+    private static List<Entry> getEntryListFromCode( List<String> listEntryCode, int nIdForm )
     {
         List<Entry> listEntry = new ArrayList<>( );
 
         if ( !CollectionUtils.isEmpty( listEntryCode ) )
         {
-            // Retrieve the list of forms
-            List<Form> listForms = FormHome.getFormList( );
-
-            if ( !CollectionUtils.isEmpty( listForms ) )
+            if ( nIdForm > 0 )
             {
-                for ( Form form : listForms )
+                listEntry.addAll( fillEntryListFromCode( nIdForm, listEntryCode ) );
+            }
+            else
+            {
+                // In global multiview, retrieve entries from every form sharing the same question code.
+                List<Form> listForms = FormHome.getFormList( );
+                if ( !CollectionUtils.isEmpty( listForms ) )
                 {
-                    listEntry.addAll( fillEntryListFromCode( form.getId( ), listEntryCode ) );
+                    for ( Form form : listForms )
+                    {
+                        listEntry.addAll( fillEntryListFromCode( form.getId( ), listEntryCode ) );
+                    }
                 }
             }
         }

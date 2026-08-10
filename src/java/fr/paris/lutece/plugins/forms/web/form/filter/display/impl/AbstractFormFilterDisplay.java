@@ -43,6 +43,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
+import fr.paris.lutece.plugins.forms.util.FormMultiviewFormsNameConstants;
 import fr.paris.lutece.plugins.forms.web.form.filter.display.IFormFilterDisplay;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.ReferenceList;
@@ -165,6 +166,19 @@ public abstract class AbstractFormFilterDisplay implements IFormFilterDisplay
      * @return the map which contains all the parameter names and values of the filter
      */
     protected abstract Map<String, Object> getFilterDisplayMapValues( HttpServletRequest request );
+
+    /**
+     * Check whether the selected form has changed since the current filter page was displayed.
+     *
+     * @param request
+     *            the current request
+     * @return true if a different form has been selected
+     */
+    protected boolean hasFormSelectionChanged( HttpServletRequest request )
+    {
+        return !StringUtils.equals( request.getParameter( FormMultiviewFormsNameConstants.PARAMETER_ID_FORM ),
+                request.getParameter( FormMultiviewFormsNameConstants.PARAMETER_PREVIOUS_ID_FORM ) );
+    }
 
     /**
      * {@inheritDoc}
