@@ -54,15 +54,13 @@ import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterForms;
 import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterDateConfiguration;
 import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterEntryConfiguration;
-import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterFormsConfiguration;
 import fr.paris.lutece.plugins.forms.business.form.filter.configuration.IFormFilterConfiguration;
+import fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl.FormFilterFormsLuceneQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.list.FormListFacade;
 import fr.paris.lutece.plugins.forms.business.form.list.IFormListDAO;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
-import fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDateDisplayService;
-import fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDisplayService;
 import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDisplayService;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.IFormPanelDisplay;
 import fr.paris.lutece.portal.service.rbac.RBACService;
@@ -75,6 +73,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -82,6 +81,9 @@ import java.util.stream.Collectors;
  */
 public final class MultiviewFormService
 {
+    private static final String ENTRY_TYPE_DATE = "forms.entryTypeDate";
+    private static final Set<String> FILTERABLE_ENTRY_TYPES = Set.of( "forms.entryTypeCheckBox", "forms.entryTypeRadioButton", "forms.entryTypeSelect" );
+
     /**
      * Constructor
      */
@@ -239,7 +241,7 @@ public final class MultiviewFormService
         for ( IFormFilterConfiguration formFilterConfiguration : formFilterConfigurations )
         {
             FormFilter formFilter;
-            if ( formFilterConfiguration instanceof FormFilterFormsConfiguration )
+            if ( formFilterConfiguration.getFormFilterQueryPart( ) instanceof FormFilterFormsLuceneQueryPart )
             {
                 formFilter = new FormFilterForms( );
             }
@@ -334,7 +336,7 @@ public final class MultiviewFormService
     /**
      * Add the filter based on multiview config question
      * 
-     * @param mapColumns
+     * @param mapFilters
      * @param listQuestions
      * @param bGlobal
      */
@@ -358,7 +360,7 @@ public final class MultiviewFormService
 
             IEntryDisplayService displayService = EntryServiceManager.getInstance( ).getEntryDisplayService( currentQuestion.getEntry( ).getEntryType( ) );
 
-            if ( displayService instanceof EntryTypeDateDisplayService )
+            if ( ENTRY_TYPE_DATE.equals( displayService.getDisplayServiceName( ) ) )
             {
                 FormFilter formFilter = new FormFilter( );
                 IFormFilterConfiguration formFilterConfiguration = new FormFilterDateConfiguration( nPosition++, currentQuestion.getTitle( ),
@@ -368,7 +370,7 @@ public final class MultiviewFormService
                 formFilter.setFormFilterConfiguration( formFilterConfiguration );
                 mapFilters.put( currentQuestion.getCode( ), formFilter );
             }
-            if ( displayService instanceof EntryTypeDefaultDisplayService )
+            else if ( FILTERABLE_ENTRY_TYPES.contains( displayService.getDisplayServiceName( ) ) )
             {
                 FormFilter formFilter = new FormFilter( );
 

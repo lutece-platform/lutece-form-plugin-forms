@@ -91,7 +91,7 @@ public class FormFilterDisplayEntry extends AbstractFormFilterDisplay
         Map<String, Object> mapFilterNameValues = new LinkedHashMap<>( );
 
         String strParameterName = buildElementName( PARAMETER_ENTRY_VALUE_PATTERN );
-        String[] strEntryParameterArray = request.getParameterValues( strParameterName );
+        String[] strEntryParameterArray = hasFormSelectionChanged( request ) ? null : request.getParameterValues( strParameterName );
         
         
         if ( ArrayUtils.isNotEmpty( strEntryParameterArray ) )
