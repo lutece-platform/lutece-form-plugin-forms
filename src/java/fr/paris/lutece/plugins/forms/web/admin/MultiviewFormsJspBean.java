@@ -78,6 +78,7 @@ import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.form.FormDisplayFactory;
 import fr.paris.lutece.plugins.forms.web.form.column.display.IFormColumnDisplay;
 import fr.paris.lutece.plugins.forms.web.form.filter.display.IFormFilterDisplay;
+import fr.paris.lutece.plugins.forms.web.form.filter.display.impl.FormFilterDisplayEntry;
 import fr.paris.lutece.plugins.forms.web.form.filter.display.impl.FormFilterDisplayForms;
 import fr.paris.lutece.plugins.forms.web.form.multiview.util.FormListPositionComparator;
 import fr.paris.lutece.plugins.forms.web.form.multiview.util.FormListTemplateBuilder;
@@ -197,7 +198,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         {
             for ( IFormFilterDisplay formFilterDisplay : _listFormFilterDisplay )
             {
-                if ( hasFilterParameter( request, formFilterDisplay ) )
+                if ( shouldRefreshFilter( request, formFilterDisplay ) )
                 {
                     formFilterDisplay.createFormParameters( request );
                 }
@@ -235,7 +236,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         {
             for ( IFormFilterDisplay formFilterDisplay : _listFormFilterDisplay )
             {
-                if ( hasFilterParameter( request, formFilterDisplay ) )
+                if ( shouldRefreshFilter( request, formFilterDisplay ) )
                 {
                     formFilterDisplay.buildTemplate( request, getLocale( ) );
                 }
@@ -502,6 +503,21 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         return request.getParameterMap( ).containsKey( strParameterName )
                 || request.getParameterMap( ).containsKey( strParameterName + PARAMETER_DATE_FROM_SUFFIX )
                 || request.getParameterMap( ).containsKey( strParameterName + PARAMETER_DATE_TO_SUFFIX );
+    }
+
+    /**
+     * Check whether a filter must be refreshed.
+     * The first condition checks whether the request contains a value for the filter.
+     * The second condition ensures that entry filters are refreshed when all their
+     * values have been cleared, because browsers do not send unchecked fields.
+     *
+     * @param request the current request
+     * @param formFilterDisplay the filter to refresh
+     * @return true if the filter values and template must be refreshed
+     */
+    private boolean shouldRefreshFilter( HttpServletRequest request, IFormFilterDisplay formFilterDisplay )
+    {
+        return hasFilterParameter( request, formFilterDisplay ) || formFilterDisplay instanceof FormFilterDisplayEntry;
     }
 
     /**
