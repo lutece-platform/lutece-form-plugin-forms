@@ -53,13 +53,18 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.forms.business.Control;
+import fr.paris.lutece.plugins.forms.business.ControlGroup;
+import fr.paris.lutece.plugins.forms.business.ControlGroupHome;
 import fr.paris.lutece.plugins.forms.business.ControlHome;
 import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.Form;
+import fr.paris.lutece.plugins.forms.business.FormDisplay;
+import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseHome;
+import fr.paris.lutece.plugins.forms.business.LogicalOperator;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.business.Step;
@@ -339,24 +344,13 @@ public class FormsResponseUtils
         boolean bValidStep = true;
         List<FormQuestionResponse> listResponsesTemp = new ArrayList<>( );
 
-        String [ ] listConditionalQuestionsValues = request.getParameterValues( FormsConstants.PARAMETER_DISPLAYED_QUESTIONS );
+        int nIdForm = listQuestionStep.isEmpty( ) ? 0 : StepHome.findByPrimaryKey( listQuestionStep.get( 0 ).getIdStep( ) ).getIdForm( );
 
         for ( Question question : listQuestionStep )
         {
-            for ( int i = 0; i < listConditionalQuestionsValues.length; i++ )
-            {
-                String [ ] listQuestionId = listConditionalQuestionsValues [i].split( FormsConstants.SEPARATOR_UNDERSCORE );
-                if ( StringUtils.isNotEmpty( listQuestionId [0] ) && Integer.parseInt( listQuestionId [0] ) == question.getId( )
-                        && Integer.parseInt( listQuestionId [1] ) == question.getIterationNumber( ) )
-                {
-                    question.setIsVisible( true );
-                    break;
-                }
-                else
-                {
-                    question.setIsVisible( false );
-                }
-            }
+
+            question.setIsVisible( isQuestionConditionallyVisible( question, listResponsesTemp, nIdForm ) );
+
             IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
             if ( question.getEntry( ).isOnlyDisplayInBack( ) )
             {
@@ -423,6 +417,65 @@ public class FormsResponseUtils
         }        
     }
 
+
+    /**
+     * Computes, server-side, whether a question with conditional display rules should be considered visible.
+     *
+     * @param question the question being evaluated
+     * @param listResponsesTemp the responses already built for this step
+     * @param nIdForm the id of the form the question belongs to
+     * @return {@code true} if the question has no conditional display rule, or if its rule(s) are satisfied;
+     *         {@code false} otherwise
+     */
+    static boolean isQuestionConditionallyVisible( Question question, List<FormQuestionResponse> listResponsesTemp, int nIdForm )
+    {
+        FormDisplay formDisplay = FormDisplayHome.getFormDisplayByFormStepAndComposite( nIdForm, question.getIdStep( ), question.getId( ) );
+
+        if ( formDisplay == null )
+        {
+            return true;
+        }
+
+        List<Control> listConditionalControl = ControlHome.getControlByControlTargetAndType( formDisplay.getId( ), ControlType.CONDITIONAL );
+
+        if ( listConditionalControl.isEmpty( ) )
+        {
+            return true;
+        }
+
+        int nValidControlsCount = 0;
+        int nNotValidControlsCount = 0;
+        int nIdControlGroup = 0;
+
+        for ( Control control : listConditionalControl )
+        {
+            nIdControlGroup = control.getIdControlGroup( );
+
+            IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
+
+            if ( validator != null )
+            {
+                List<FormQuestionResponse> listControllingResponses = listResponsesTemp.stream( )
+                        .filter( response -> control.getListIdQuestion( ).contains( response.getQuestion( ).getId( ) ) )
+                        .collect( Collectors.toList( ) );
+
+                if ( validator.validate( listControllingResponses, control ) )
+                {
+                    nValidControlsCount++;
+                }
+                else
+                {
+                    nNotValidControlsCount++;
+                }
+            }
+
+        }
+
+        ControlGroup controlGroup = ControlGroupHome.findByPrimaryKey( nIdControlGroup ).orElse( null );
+        boolean bIsOrOperator = controlGroup != null && LogicalOperator.OR.getLabel( ).equals( controlGroup.getLogicalOperator( ).getLabel( ) );
+
+        return bIsOrOperator ? ( nValidControlsCount > 0 ) : ( nNotValidControlsCount == 0 );
+    }
 
     /**
      * If there are multiple answers for the same question ID, keep only the one with the same iteration number as the main response you want to process
