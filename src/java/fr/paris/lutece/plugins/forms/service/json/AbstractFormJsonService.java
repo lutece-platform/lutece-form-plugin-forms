@@ -80,6 +80,7 @@ import jakarta.transaction.Transactional;
 public abstract class AbstractFormJsonService
 {
     private static final String PROPERTY_COPY_STEP_TITLE = "forms.copyStep.title";
+    private static final String QUESTION_CODE_PREFIX = "question_";
 
     protected final IFormDatabaseService _formDatabaseService;
     protected ObjectMapper _objectMapper;
@@ -228,6 +229,8 @@ public abstract class AbstractFormJsonService
         Map<Integer, Integer> mapIdFields = new HashMap<>( );
 
         Map<Integer, Integer> mapIdQuestions = new HashMap<>( );
+        Set<String> setQuestionCodes = _formDatabaseService.getListQuestionByForm( newIdForm ).stream( ).map( Question::getCode )
+                .collect( Collectors.toSet( ) );
         for ( Question question : questionList )
         {
             int oldIdQuestion = question.getId( );
@@ -237,6 +240,7 @@ public abstract class AbstractFormJsonService
             entry.setResourceType( Form.RESOURCE_TYPE );
             _formDatabaseService.createEntry( entry );
             question.setIdEntry( entry.getIdEntry( ) );
+            synchronizeQuestionCode( question, entry, setQuestionCodes );
 
             List<Field> fieldList = entry.getFields( );
             for ( Field field : fieldList )
@@ -260,6 +264,46 @@ public abstract class AbstractFormJsonService
         {
             updateExportConfigWithNewQuestion( formExportConfigList, mapIdQuestions );
         }
+    }
+
+    /**
+     * Check if the question has a unique code, if not, generate an available one.
+     *
+     * @param question the imported question
+     * @param entry the imported question entry
+     * @param setQuestionCodes the codes already used in the target form
+     */
+    private void synchronizeQuestionCode( Question question, Entry entry, Set<String> setQuestionCodes )
+    {
+        String strCode = entry.getCode( );
+        if ( StringUtils.isEmpty( strCode ) || !setQuestionCodes.add( strCode ) )
+        {
+            strCode = generateAvailableQuestionCode( entry.getIdEntry( ), setQuestionCodes );
+            entry.setCode( strCode );
+            _formDatabaseService.updateEntry( entry );
+        }
+
+        question.setCode( strCode );
+    }
+
+    /**
+     * Generates a technical code that is available in the target form.
+     *
+     * @param nIdEntry the imported entry identifier
+     * @param setQuestionCodes the codes already used in the target form
+     * @return an available question code
+     */
+    private String generateAvailableQuestionCode( int nIdEntry, Set<String> setQuestionCodes )
+    {
+        String strBaseCode = QUESTION_CODE_PREFIX + nIdEntry;
+        String strCode = strBaseCode;
+        int nSuffix = 1;
+
+        while ( !setQuestionCodes.add( strCode ) )
+        {
+            strCode = strBaseCode + "_" + nSuffix++;
+        }
+        return strCode;
     }
 
     protected void importGroups( List<Group> groupList, List<FormDisplay> formDisplayList )
