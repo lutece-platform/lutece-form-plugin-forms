@@ -1,7 +1,10 @@
 -- liquibase formatted sql
+-- lutece runAfter:genericattributes
+-- LUT-33260 : formerly shipped under sql/plugins/genericattributes ; renamed with forms versions (first release shipping the script)
+
+-- formerly src/sql/plugins/genericattributes/upgrade/update_db_genericattributes-2.4.5-2.4.6.sql
 -- changeset forms:update_db_genericattributes-2.4.5-2.4.6.sql
 -- preconditions onFail:MARK_RAN onError:WARN
-ALTER TABLE genatt_entry_type MODIFY COLUMN id_type int AUTO_INCREMENT NOT NULL;
 
 INSERT INTO genatt_field ( id_entry, title, code, VALUE, default_value )
 	SELECT e.id_entry, null, 'sortable_list_type', '0', 0
