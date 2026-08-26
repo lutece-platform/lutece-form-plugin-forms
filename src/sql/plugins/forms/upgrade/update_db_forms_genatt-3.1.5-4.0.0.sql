@@ -1,5 +1,16 @@
 -- liquibase formatted sql
--- changeset forms:update_db_genericattributes-2.4.6-4.0.0.sql
+-- lutece runAfter:genericattributes
+-- LUT-33260 : formerly shipped under sql/plugins/genericattributes ; renamed with forms versions (first release shipping the script)
+
+-- formerly src/sql/plugins/genericattributes/upgrade/update_db_genericattributes-2.4.6-2.4.7.sql
+-- formerly src/sql/plugins/genericattributes/upgrade/update_db_genericattributes-2.4.6-4.0.0.sql
+-- changeset forms:update_db_genericattributes-2.4.6-2.4.7.sql logicalFilePath:sql/plugins/genericattributes/upgrade/update_db_genericattributes-2.4.6-2.4.7.sql
+-- preconditions onFail:MARK_RAN onError:WARN
+UPDATE genatt_entry_type
+SET inactive = 1
+WHERE class_name = 'forms.entryTypeGalleryImage';
+
+-- changeset forms:update_db_genericattributes-2.4.6-4.0.0.sql logicalFilePath:sql/plugins/genericattributes/upgrade/update_db_genericattributes-2.4.6-4.0.0.sql
 -- preconditions onFail:MARK_RAN onError:WARN
 UPDATE genatt_entry_type SET icon_name='dot-circle radio' WHERE class_name='forms.entryTypeRadioButton';
 UPDATE genatt_entry_type SET icon_name='check-square checkbox' WHERE class_name='forms.entryTypeCheckBox';
@@ -27,7 +38,7 @@ UPDATE genatt_entry_type SET icon_name='map-marked-alt carto' WHERE class_name='
 UPDATE genatt_entry_type SET icon_name='calendar time' WHERE class_name='forms.entryTypeSlot';
 UPDATE genatt_entry_type SET icon_name='map-marked-alt id-badge-2' WHERE class_name='forms.entryTypeSession';
 
--- changeset forms:update_db_genericattributes-2.4.6-4.0.0-rev1.sql
+-- changeset forms:update_db_genericattributes-2.4.6-4.0.0-rev1.sql logicalFilePath:sql/plugins/genericattributes/upgrade/update_db_genericattributes-2.4.6-4.0.0.sql
 UPDATE genatt_entry_type SET icon_name='dot-circle' WHERE class_name='forms.entryTypeRadioButton';
 UPDATE genatt_entry_type SET icon_name='check-square' WHERE class_name='forms.entryTypeCheckBox';
 UPDATE genatt_entry_type SET icon_name='comment' WHERE class_name='forms.entryTypeComment';
@@ -53,4 +64,3 @@ UPDATE genatt_entry_type SET icon_name='image' WHERE class_name='forms.entryType
 UPDATE genatt_entry_type SET icon_name='map-marked-alt' WHERE class_name='forms.entryTypeCartography';
 UPDATE genatt_entry_type SET icon_name='calendar' WHERE class_name='forms.entryTypeSlot';
 UPDATE genatt_entry_type SET icon_name='map-marked-alt' WHERE class_name='forms.entryTypeSession';
-
