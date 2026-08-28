@@ -1,5 +1,10 @@
 -- liquibase formatted sql
--- changeset forms:init_db_generic_attributes_forms.sql
+-- lutece runAfter:genericattributes
+-- LUT-33260 : formerly shipped under sql/plugins/genericattributes ; renamed with forms versions (first release shipping the script)
+
+-- formerly src/sql/plugins/genericattributes/plugin/init_db_generic_attributes_forms.sql
+
+-- changeset forms:init_db_generic_attributes_forms.sql logicalFilePath:sql/plugins/genericattributes/plugin/init_db_generic_attributes_forms.sql
 -- preconditions onFail:MARK_RAN onError:WARN
 --
 -- Dumping data for table genatt_entry_type

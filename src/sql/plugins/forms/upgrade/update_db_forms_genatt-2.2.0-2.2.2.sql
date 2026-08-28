@@ -1,5 +1,10 @@
 -- liquibase formatted sql
--- changeset forms:update_db_genericattributes-2.0.0-2.3.0.sql
+-- lutece runAfter:genericattributes
+-- LUT-33260 : formerly shipped under sql/plugins/genericattributes ; renamed with forms versions (first release shipping the script)
+
+-- formerly src/sql/plugins/genericattributes/upgrade/update_db_genericattributes-2.0.0-2.3.0.sql
+
+-- changeset forms:update_db_genericattributes-2.0.0-2.3.0.sql logicalFilePath:sql/plugins/genericattributes/upgrade/update_db_genericattributes-2.0.0-2.3.0.sql
 -- preconditions onFail:MARK_RAN onError:WARN
 UPDATE genatt_entry_type SET display_order=5,inactive=0 WHERE id_type=101;
 UPDATE genatt_entry_type SET display_order=6,inactive=0 WHERE id_type=102;
