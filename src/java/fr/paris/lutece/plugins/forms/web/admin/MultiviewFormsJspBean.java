@@ -60,6 +60,10 @@ import fr.paris.lutece.plugins.filegenerator.service.TemporaryFileGeneratorServi
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.MultiviewConfig;
+import fr.paris.lutece.plugins.forms.business.Question;
+import fr.paris.lutece.plugins.forms.business.QuestionHome;
+import fr.paris.lutece.plugins.forms.business.Step;
+import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.business.action.GlobalFormsAction;
 import fr.paris.lutece.plugins.forms.business.action.GlobalFormsActionHome;
 import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
@@ -72,6 +76,7 @@ import fr.paris.lutece.plugins.forms.business.form.panel.FormPanelFactory;
 import fr.paris.lutece.plugins.forms.export.ExportServiceManager;
 import fr.paris.lutece.plugins.forms.export.IFormatExport;
 import fr.paris.lutece.plugins.forms.service.FormPanelConfigIdService;
+import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
 import fr.paris.lutece.plugins.forms.service.FormsPlugin;
 import fr.paris.lutece.plugins.forms.service.MultiviewFormService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
@@ -98,10 +103,14 @@ import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.upload.MultipartItem;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
+import fr.paris.lutece.portal.util.mvc.commons.annotations.ResponseBody;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.util.filesystem.FileSystemUtil;
 import fr.paris.lutece.util.html.AbstractPaginator;
+import fr.paris.lutece.util.json.JsonResponse;
+import fr.paris.lutece.util.json.JsonUtil;
 import fr.paris.lutece.util.url.UrlItem;
+import org.apache.commons.lang3.math.NumberUtils;
 
 /**
  * Controller which manage the multiview of responses of all Forms
@@ -117,6 +126,11 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     // Actions
     private static final String ACTION_EXPORT_RESPONSES = "doExportResponses";
     private static final String ACTION_SAVE_MULTIVIEW_CONFIG = "doSaveMultiviewConfig";
+    private static final String ACTION_REORDER_COLUMNS = "doReorderMultiviewColumns";
+
+    // Json responses
+    private static final String RESPONSE_SUCCESS = "SUCCESS";
+    private static final String RESPONSE_ERROR = "ERROR";
 
     // Templates
     private static final String TEMPLATE_FORMS_MULTIVIEW = "admin/plugins/forms/multiview/forms_multiview.html";
@@ -712,8 +726,106 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     }
 
     /**
+     * Persists the multiview column order sent by the drag and drop reordering of the response table columns. Called through AJAX : the request holds one
+     * {@code multiview_column_order_<idQuestion>} parameter per question backing a reordered column, whose value is the new order of the column. After
+     * persisting, the cached column list is rebuilt so the new order is reflected on the next reload of the page.
+     *
+     * @param request
+     *         The Http request
+     * @return a JSON response ( SUCCESS or ERROR )
+     */
+    @Action( value = ACTION_REORDER_COLUMNS, securityTokenDisabled = true )
+    @ResponseBody
+    public String doReorderMultiviewColumns( HttpServletRequest request )
+    {
+        User user = (User) AdminUserService.getAdminUser( request );
+        Map<Integer, Boolean> mapCheckedForms = new HashMap<>( );
+
+        try
+        {
+            for ( Map.Entry<String, String [ ]> parameter : request.getParameterMap( ).entrySet( ) )
+            {
+                String strParameterName = parameter.getKey( );
+                String strPrefix = FormsConstants.PARAMETER_MULTIVIEW_ORDER + "_";
+                if ( !strParameterName.startsWith( strPrefix ) )
+                {
+                    continue;
+                }
+
+                int nIdQuestion = NumberUtils.toInt( strParameterName.substring( strPrefix.length( ) ), FormsConstants.DEFAULT_ID_VALUE );
+                int nOrder = NumberUtils.toInt( request.getParameter( strParameterName ), FormsConstants.DEFAULT_ID_VALUE );
+
+                if ( nIdQuestion == FormsConstants.DEFAULT_ID_VALUE || nOrder == FormsConstants.DEFAULT_ID_VALUE )
+                {
+                    continue;
+                }
+
+                Question question = QuestionHome.findByPrimaryKey( nIdQuestion );
+                if ( question == null )
+                {
+                    continue;
+                }
+
+                if ( !isAuthorizedToReorder( question, request, mapCheckedForms ) )
+                {
+                    throw new AccessDeniedException( StringUtils.EMPTY );
+                }
+
+                question.setMultiviewColumnOrder( nOrder );
+                QuestionHome.update( question );
+            }
+        }
+        catch( AccessDeniedException e )
+        {
+            return JsonUtil.buildJsonResponse( new JsonResponse( RESPONSE_ERROR ) );
+        }
+
+        // Rebuild the cached column list so the new order is reflected on the next reload of the page, without resetting the active filters. The bean is
+        // session scoped and only rebuilds its column list on session loss / panel change, so we force the rebuild here using the currently selected form.
+        int nSelectedIdForm = NumberUtils.toInt( _strFormSelectedValue, FormsConstants.DEFAULT_ID_VALUE );
+        Integer nIdForm = nSelectedIdForm != FormsConstants.DEFAULT_ID_VALUE ? nSelectedIdForm : null;
+        _listFormColumn = _formColumnFactory.buildFormColumnList( nIdForm, getLocale( ), user );
+        _listFormColumnDisplay = FormDisplayFactory.createFormColumnDisplayList( _listFormColumn );
+
+        return JsonUtil.buildJsonResponse( new JsonResponse( RESPONSE_SUCCESS ) );
+    }
+
+    /**
+     * Checks that the current admin user is allowed to modify the params of the form owning the given question. The result is cached per form id for the
+     * duration of the request to avoid redundant RBAC checks.
+     *
+     * @param question
+     *         The question whose owning form permission is checked
+     * @param request
+     *         The Http request
+     * @param mapCheckedForms
+     *         A cache of already checked form ids
+     * @return {@code true} if the user is authorized, {@code false} otherwise
+     */
+    private boolean isAuthorizedToReorder( Question question, HttpServletRequest request, Map<Integer, Boolean> mapCheckedForms )
+    {
+        Step step = StepHome.findByPrimaryKey( question.getIdStep( ) );
+        if ( step == null )
+        {
+            return false;
+        }
+
+        return mapCheckedForms.computeIfAbsent( step.getIdForm( ), id -> {
+            try
+            {
+                checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( id ), FormsResourceIdService.PERMISSION_MODIFY_PARAMS, request, null );
+                return true;
+            }
+            catch( AccessDeniedException e )
+            {
+                return false;
+            }
+        } );
+    }
+
+    /**
      * Reload the form column list form the form filter list
-     * 
+     *
      * @param listFormFilter
      *            the form filter list
      */
