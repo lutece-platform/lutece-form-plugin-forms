@@ -1,47 +1,72 @@
+<link href="css/admin/style/bootstrap4/all.min.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="js/jquery/plugins/toastr/toastr.min.css" >
+<script src="js/jquery/plugins/toastr/toastr.min.js"></script>
+<link href="js/plugins/carto/leaflet/leaflet.css" rel="stylesheet" />
+<link href="js/plugins/carto/leaflet/MarkerCluster.css" rel="stylesheet" />
+<link href="js/plugins/leaflet/leaflet/MarkerCluster.Default.css" rel="stylesheet" />
+<script type="text/javascript" src="js/plugins/carto/leaflet/leaflet-src.js"></script>
+<script type="text/javascript" src="js/plugins/carto/leaflet/leaflet.markercluster.js"></script>
+
 <@row>
     <@columns sm=3><@p class='text-right font-weight-bold'>${entry.title!''}</@p></@columns>
     <@columns sm=9>
         <@p>
-        <#assign coordinate = "" >
-        <#assign datalayer = "" >
-        <#if getResponseContainingTheFieldWithCode( list_responses, "coordinates_geojson" )?? >
-        <#assign coordinate = getResponseContainingTheFieldWithCode( list_responses, "coordinates_geojson" ).toStringValueResponse >
-        </#if>
-        <#if getResponseContainingTheFieldWithCode( list_responses, "DataLayer" )?? >
-        <#assign datalayer = getResponseContainingTheFieldWithCode( list_responses, "DataLayer" ).toStringValueResponse >
-        </#if>
+		<#assign coordinateResponse = getResponseContainingTheFieldWithCode(list_responses, "coordinates_geojson")!>
+		<#assign coordinate = coordinateResponse?has_content?then(coordinateResponse.toStringValueResponse, "")>
         </@p>
-        <#include "/skin/plugins/carto/manage_map.html" />
+        <@div class='position-relative'>
+    		<@div id='single-point-map' params='style="height: 400px; width: 100%"'></@div>
+		</@div>
     </@columns>
 </@row>        
-<script>
-//Retrieve the map object.
-var map = mapsPlaceholder.pop();
-var geojson = ${coordinate};
 
-map.whenReady(function () {
+<script type="text/javascript">
+// Init map
+(function() {
+    var defaultZoom = ${mapLoaded.defaultZoom};
+    var defautCenterMapY = ${mapLoaded.centerMapY?c};
+    var defautCenterMapX = ${mapLoaded.centerMapX?c};
+    var basemap = '${basemap}';
+    var basemap_attribution = '${basemap_attribution}';
+    var zoomMin = ${mapLoaded.zoomMin};
+    var zoomMax = ${mapLoaded.zoomMax};
 
-    if (geojson.geometry.type === "Point") {
-        var c = geojson.geometry.coordinates;
-        L.marker([c[1], c[0]]).addTo(map);
-        map.setView([c[1], c[0]], 15);
+    // Create map
+    var singlePointMap = L.map('single-point-map').setView([defautCenterMapX, defautCenterMapY], defaultZoom);
+    
+    var osm = new L.TileLayer(basemap, {
+        minZoom: zoomMin, 
+        maxZoom: zoomMax, 
+        attribution: basemap_attribution
+    }).addTo(singlePointMap);
+
+    // Get geojson
+    var geojson = ${coordinate!'{}'};
+
+    // Display the point
+    if (geojson && geojson.geometry) {
+        if (geojson.geometry.type === "Point") {
+            var c = geojson.geometry.coordinates;
+            L.marker([c[1], c[0]]).addTo(singlePointMap);
+            singlePointMap.setView([c[1], c[0]], 15);
+        }
+        else if (geojson.geometry.type === "Polygon") {
+            var coords = geojson.geometry.coordinates[0];
+            var latlngs = L.GeoJSON.coordsToLatLngs(coords);
+            var polygon = L.polygon(latlngs, {color: '#97009c', weight: 2}).addTo(singlePointMap);
+            singlePointMap.fitBounds(polygon.getBounds());
+        }
+        else if (geojson.geometry.type === "Polyline") {
+            var coords = geojson.geometry.coordinates;
+            var latlngs = L.GeoJSON.coordsToLatLngs(coords);
+            var polyline = L.polyline(latlngs, {color: '#97009c', weight: 2}).addTo(singlePointMap);
+            singlePointMap.fitBounds(polyline.getBounds());
+        }
     }
 
-    else if (geojson.geometry.type === "Polygon") {
-        var coords = geojson.geometry.coordinates[0];
-        var latlngs = L.GeoJSON.coordsToLatLngs(coords);
-        var polygon = L.polygon(latlngs).addTo(map);
-        map.fitBounds(polygon.getBounds());
-    }
+    singlePointMap.invalidateSize(true);
 
-    else if (geojson.geometry.type === "Polyline") {
-        var coords = geojson.geometry.coordinates;
-        var latlngs = L.GeoJSON.coordsToLatLngs(coords);
-        var polyline = L.polyline(latlngs).addTo(map);
-        map.fitBounds(polyline.getBounds());
-    }
-
-    map.invalidateSize(true);
-});
-
+    
+    mapsPlaceholder.push(singlePointMap);
+})();
 </script>
