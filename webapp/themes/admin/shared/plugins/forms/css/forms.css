@@ -4,6 +4,76 @@
     background-color: rgba(var(--tblr-scrollbar-color,var(--tblr-body-color-rgb)),0.16);
 }
 
+.question-item{
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding-block: .5rem;
+}
+
+.question-item .question-label{
+	display: flex;
+	width: 80%;
+}
+
+.question-item .question-controls{
+	display: flex;
+	margin-inline-start: auto;
+	margin-inline-end: 0;
+}
+
+.question-item .question-actions{
+	display: flex;
+}
+
+.question-item .question-label a:hover{
+	background-color: rgba(var(--tblr-scrollbar-color,var(--tblr-body-color-rgb)),0.1);
+	border-radius: var(--tblr-border-radius);
+}
+
+@media only screen and (max-width: 768px) {
+	.question-item{
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.question-item .question-label{
+		display: block;
+		width: auto;
+		margin-block: .5rem;
+	}
+	
+}
+
+
+@media only screen and (max-width: 576px) {
+	.question-item{
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.question-item .question-label{
+		display: block;
+		width: auto;
+		margin-block: .5rem;
+	}
+	
+	.question-item .question-controls {
+		align-items: flex-start;
+		margin: 0;
+		width: 100%;
+	}
+	
+	.question-item .question-controls .btn{
+		width: 100%;
+	}
+
+	.question-item .question-actions{
+		width: 100%;
+		margin-block: .5rem;
+	}
+}
+
 /* View response */
 .forms-response #page-header{
     position: sticky;
@@ -389,7 +459,7 @@ table.table-hover tbody tr:hover {
 
 /* RESPONSIVE FIX 								*/
 /* Small Devices, Tablets						*/
-@media only screen and (max-width :768px) {
+@media only screen and (max-width: 768px) {
 	#page-header{
 		position: initial;
 	}
