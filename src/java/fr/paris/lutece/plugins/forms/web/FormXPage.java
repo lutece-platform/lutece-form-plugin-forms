@@ -796,7 +796,7 @@ public class FormXPage extends MVCApplication
 
         FormMessage formMessage = FormMessageHome.findByForm( form.getId( ) );
         boolean bIsEndMessageDisplayed = formMessage.getEndMessageDisplay( );
-        String strBackUrl = getBackUrl( form, bIsEndMessageDisplayed, _formResponseManager.getFormResponse( ).getId( ) );
+        String strBackUrl = getBackUrl( form, bIsEndMessageDisplayed );
         initAfterSave( request );
 
         if ( formMessage.getEndMessageDisplay( ) )
@@ -884,7 +884,7 @@ public class FormXPage extends MVCApplication
      *            {@code true} if the end message is displayed, {@code false} otherwise
      * @return the back URL
      */
-    private String getBackUrl( Form form, boolean bIsEndMessageDisplayed, int nIdFormResponse )
+    private String getBackUrl( Form form, boolean bIsEndMessageDisplayed )
     {
         if ( StringUtils.isNotEmpty( form.getReturnUrl( ) ) )
         {
@@ -894,17 +894,7 @@ public class FormXPage extends MVCApplication
         {
             UrlItem url = null;
 
-            if ( form.isAuthentificationNeeded( ) )
-            {
-                url= bIsEndMessageDisplayed? new UrlItem( AppPathService.getPortalUrl( ) ):new UrlItem( "" );
-                url.addParameter( MVCUtils.PARAMETER_PAGE, FormResponseXPage.XPAGE_NAME );
-                url.addParameter( MVCUtils.PARAMETER_VIEW, FormResponseXPage.VIEW_FORM_RESPONSE );
-                url.addParameter( FormsConstants.PARAMETER_ID_RESPONSE, nIdFormResponse );
-                url.addParameter( FormsConstants.PARAMETER_ACTION_SUCCESS, "true" );
-
-            }
-            else
-            if ( bIsEndMessageDisplayed )
+            if ( form.isAuthentificationNeeded( ) ||  bIsEndMessageDisplayed)
             {
                 url = new UrlItem( getViewFullUrl( VIEW_STEP ) );
             }
