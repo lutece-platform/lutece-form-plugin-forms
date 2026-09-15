@@ -1,5 +1,6 @@
 <#include "/admin/util/editor/editor.html" />
 <#assign stepTitle=step.title!?replace("- hidden","") />
+<#assign iterationAccordionCollapsed=( group.iterationMax gt 1  )?then(false,true) />
 <@formBreadCrumb>
 	<@breadcrumbItem><@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${step.idForm}' title='#i18n{forms.create_form.button.backForm}'>${form.title}</@link></@breadcrumbItem>
 	<@breadcrumbItem><@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='#i18n{forms.create_form.button.backStep}'>${stepTitle}</@link></@breadcrumbItem>
@@ -23,7 +24,7 @@
 				<@input type='textarea' name='description' class='richtext'>${group.description!}</@input>
 			</@formGroup>
 			<@formGroup rows=2>
-				<@accordion id='iterate_group' title='#i18n{forms.create_group.buttonManageIteration}' icon='number' collapsed=true>
+				<@accordion id='iterate_group' title='#i18n{forms.create_group.buttonManageIteration}' icon='number' collapsed=iterationAccordionCollapsed>
 					<@row id='iteration_group'>
 						<@columns> 
 							<@formGroup rows=2  labelFor='iterationMin' labelKey='#i18n{forms.create_group.labelIterationMin}' helpKey='#i18n{forms.create_group.labelIterationMin.help}' rows=2>
