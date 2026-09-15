@@ -1,3 +1,105 @@
+/**
+ * Enable drag and drop reordering of the multiview response table columns.
+ * Only columns backed by questions (carrying a data-question-ids attribute) can be dragged.
+ * When the order changes it is persisted through an AJAX call to ManageFormMultiviewConfig.jsp,
+ * updating the multiview_column_order_XX value of each impacted question.
+ *
+ * @param {string} reorderUrl the JSP url handling the doReorderMultiviewColumns action
+ */
+function initMultiviewColumnDragAndDrop( reorderUrl ){
+	const table = document.querySelector('#multi-form-list table');
+	if ( !table || !table.tHead || !table.tHead.rows.length ) {
+		return;
+	}
+
+	const headerRow = table.tHead.rows[0];
+	let draggedIndex = null;
+
+	function persistColumnOrder(){
+		const params = new URLSearchParams();
+		params.append('action_doReorderMultiviewColumns', '1');
+		// The visible order of the columns becomes the new multiview_column_order value of each question
+		Array.from(headerRow.cells).forEach(function(th, position){
+			const ids = th.getAttribute('data-question-ids');
+			if ( ids ) {
+				ids.split(',').filter(Boolean).forEach(function(id){
+					params.append('multiview_column_order_' + id, position);
+				});
+			}
+		});
+
+		fetch(reorderUrl, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+			body: params.toString()
+		}).catch(function(){ /* silently ignore : order is best effort and will be recomputed on reload */ });
+	}
+
+	function moveColumn( fromIndex, toIndex ){
+		if ( fromIndex === toIndex ) {
+			return;
+		}
+		const rows = [ headerRow ].concat(Array.from(table.tBodies).flatMap(tb => Array.from(tb.rows)));
+		rows.forEach(function(row){
+			if ( row.cells.length <= Math.max(fromIndex, toIndex) ) {
+				return;
+			}
+			const moved = row.cells[fromIndex];
+			const reference = row.cells[toIndex];
+			if ( fromIndex < toIndex ) {
+				reference.after(moved);
+			} else {
+				reference.before(moved);
+			}
+		});
+	}
+
+	Array.from(headerRow.cells).forEach(function(th){
+		if ( !th.hasAttribute('data-question-ids') ) {
+			return;
+		}
+		th.setAttribute('draggable', 'true');
+		th.classList.add('multiview-draggable-col');
+		th.style.cursor = 'move';
+
+		th.addEventListener('dragstart', function(e){
+			draggedIndex = th.cellIndex;
+			e.dataTransfer.effectAllowed = 'move';
+			th.classList.add('dragging');
+		});
+
+		th.addEventListener('dragend', function(){
+			draggedIndex = null;
+			headerRow.querySelectorAll('th').forEach(function(cell){
+				cell.classList.remove('dragging', 'drag-over');
+			});
+		});
+
+		th.addEventListener('dragover', function(e){
+			if ( draggedIndex === null ) {
+				return;
+			}
+			e.preventDefault();
+			e.dataTransfer.dropEffect = 'move';
+			th.classList.add('drag-over');
+		});
+
+		th.addEventListener('dragleave', function(){
+			th.classList.remove('drag-over');
+		});
+
+		th.addEventListener('drop', function(e){
+			e.preventDefault();
+			th.classList.remove('drag-over');
+			if ( draggedIndex === null || draggedIndex === th.cellIndex ) {
+				return;
+			}
+			moveColumn(draggedIndex, th.cellIndex);
+			persistColumnOrder();
+		});
+	});
+}
+
 function redirectOnClick( element ){
     const url = element.getAttribute("data-url");
     if (url !== null) {
@@ -175,6 +277,9 @@ document.addEventListener('DOMContentLoaded', function() {
 			redirectOnClick(this);
 		});
 	});
+
+	// Enable drag and drop reordering of the response table columns
+	initMultiviewColumnDragAndDrop("jsp/admin/plugins/forms/MultiviewForms.jsp");
 
 	// Add reset button to search text
 	const searchedText = document.getElementById("searched_text");

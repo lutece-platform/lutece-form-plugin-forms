@@ -713,11 +713,11 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 </#macro>
-<#macro headerSort field title jsp_url attribute type='text' id='' hide=[]>
+<#macro headerSort field title jsp_url attribute type='text' id='' hide=[] attr=''>
 <#-- Element visibility -->
 <#local displayTitleClass = displaySettings(hide,'table-cell') />
 <#if jsp_url?contains("?")><#assign sort_url = jsp_url + "&amp;sorted_attribute_name=" + attribute + "&amp;asc_sort=" /><#else><#assign sort_url = jsp_url + "?sorted_attribute_name=" + attribute + "&amp;asc_sort=" /></#if>
-<@th class='multiview-th bg-light ${displayTitleClass!}' id='sort${id!}_${attribute!}' params='data-field="${field}"' >
+<@th class='multiview-th bg-light ${displayTitleClass!}' id='sort${id!}_${attribute!}' params='data-field="${field}" ${attr!}' >
 	<@div class='d-flex align-items-center justify-content-between'>
 		<@span class='text-truncate' params='data-bs-toggle="tooltip" title="${title}"'>${title}</@span>
 		<@sort jsp_url=jsp_url attribute=attribute type=type />
