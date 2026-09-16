@@ -201,6 +201,7 @@ document.addEventListener('DOMContentLoaded', function(){
 	document.querySelector('title').innerHTML = "${form.title?js_string}" + (stepTitle ? " - " + stepTitle : "");
 	
 	// Hide step groups that have no inputs
+	/*
 	const stepGroups = document.querySelectorAll(".step-group");
 	if( stepGroups.length > 1 ){
 		stepGroups.forEach( function( stepGroup ){
