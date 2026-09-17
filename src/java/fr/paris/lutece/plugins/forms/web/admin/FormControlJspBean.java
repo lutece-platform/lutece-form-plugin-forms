@@ -553,7 +553,7 @@ public class FormControlJspBean extends AbstractJspBean
             }
             model.put( FormsConstants.MARK_AVAILABLE_VALIDATORS, refListAvailableValidator );
 
-            if ( CollectionUtils.isNotEmpty( refListAvailableValidator ) && StringUtils.EMPTY.equals( _control.getValidatorName( ) ) )
+            if ( CollectionUtils.isNotEmpty( refListAvailableValidator ) && StringUtils.isEmpty( _control.getValidatorName( ) ) )
             {
                 _control.setValidatorName( refListAvailableValidator.get( 0 ).getCode( ) );
             }

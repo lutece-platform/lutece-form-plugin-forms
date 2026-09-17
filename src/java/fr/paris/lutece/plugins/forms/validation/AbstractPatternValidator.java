@@ -49,6 +49,7 @@ import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.regularexpression.IRegularExpressionService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import jakarta.enterprise.inject.spi.CDI;
@@ -96,15 +97,15 @@ public abstract class AbstractPatternValidator extends AbstractValidator
     @Override
     public String getJavascriptControlValue( Control control )
     {
-        RegularExpression regularExpression = RegularExpressionHome.findByPrimaryKey( Integer.valueOf( control.getValue( ) ), _plugin );
+        RegularExpression regularExpression = findRegularExpression( control );
 
-        return regularExpression.getValue( );
+        return ( regularExpression != null ) ? regularExpression.getValue( ) : StringUtils.EMPTY;
     }
 
     @Override
     public boolean validate( FormQuestionResponse questionResponse, Control control )
     {
-        RegularExpression regularExpression = RegularExpressionHome.findByPrimaryKey( Integer.valueOf( control.getValue( ) ), _plugin );
+        RegularExpression regularExpression = findRegularExpression( control );
 
         if ( regularExpression != null )
         {
@@ -120,6 +121,38 @@ public abstract class AbstractPatternValidator extends AbstractValidator
             return true;
         }
         return false;
+    }
+
+    /**
+     * Recherche l'expression reguliere referencee par le controle.
+     *
+     * <p>La valeur du controle porte l'identifiant de l'expression reguliere. Elle peut etre absente
+     * lorsque le controle a ete enregistre sans validateur confirme, auquel cas aucune regle n'est
+     * applicable : la methode renvoie {@code null} plutot que de laisser remonter une exception qui
+     * se traduirait par une erreur technique en front-office.</p>
+     *
+     * @param control
+     *            le controle portant l'identifiant de l'expression reguliere
+     * @return l'expression reguliere referencee, ou {@code null} si le controle n'en reference aucune
+     *         d'exploitable
+     */
+    private RegularExpression findRegularExpression( Control control )
+    {
+        if ( StringUtils.isEmpty( control.getValue( ) ) )
+        {
+            AppLogService.error( "Forms - Control without regular expression value : validation refused" );
+            return null;
+        }
+
+        try
+        {
+            return RegularExpressionHome.findByPrimaryKey( Integer.parseInt( control.getValue( ) ), _plugin );
+        }
+        catch( NumberFormatException e )
+        {
+            AppLogService.error( "Error number format", e );
+            return null;
+        }
     }
 
     protected abstract String getValueToValidate( Response response );

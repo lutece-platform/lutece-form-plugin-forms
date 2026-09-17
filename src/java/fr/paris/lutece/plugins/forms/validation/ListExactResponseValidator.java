@@ -82,7 +82,9 @@ public class ListExactResponseValidator extends AbstractValidator
     @Override
     public boolean validate( FormQuestionResponse questionResponse, Control control )
     {
-    	return questionResponse.getEntryResponse( ).size( ) == Integer.parseInt( control.getValue( ) );       
+        int nExactResponse = getControlValueAsInt( control );
+
+        return ( nExactResponse >= 0 ) && questionResponse.getEntryResponse( ).size( ) == nExactResponse;
     }
 
     @Override
