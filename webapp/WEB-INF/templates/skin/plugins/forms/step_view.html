@@ -130,14 +130,28 @@ function toggleRequiredAttributesByVisibility() {
 	});
 }
 
+/**
+ * Hides a step group when none of its questions is displayed, shows it otherwise.
+ * A question belongs to the group through its hidden "displayed_questions" input, which never moves.
+ * Its visible field (div[displayControl]) may have been moved into the controlling fieldset of a
+ * previous group (see view_question.html), so it is looked up in the whole document: an iterable
+ * group whose fields are all conditional keeps its title and "add iteration" button visible as
+ * long as at least one of its fields is displayed.
+ */
 function stepGroupDisplay( stepGroup ){
-	const displayControls = stepGroup.querySelectorAll('[displaycontrol]').length
-	const displayControlsInvalid = stepGroup.querySelectorAll('.control_invalid[displaycontrol]').length
-	if( displayControls === displayControlsInvalid ){
-		stepGroup.classList.add('d-none');
-	} else {
-		stepGroup.classList.remove('d-none');
-	};
+	const questionIds = Array.from( stepGroup.querySelectorAll( 'input[name="displayed_questions"]' ) ).map( input => input.id );
+	const hasDisplayedQuestion = questionIds.some( function( questionId ){
+		const field = document.querySelector( 'div[displayControl="' + questionId + '"]' );
+		return field !== null && !field.classList.contains( 'control_invalid' );
+	});
+	stepGroup.classList.toggle( 'd-none', !hasDisplayedQuestion );
+}
+
+function refreshStepGroupsDisplay(){
+	const stepGroups = document.querySelectorAll( '.step-group' );
+	if( stepGroups.length > 1 ){
+		stepGroups.forEach( stepGroupDisplay );
+	}
 }
 
 document.addEventListener('DOMContentLoaded', function(){
@@ -200,15 +214,12 @@ document.addEventListener('DOMContentLoaded', function(){
 	document.querySelector('.breadcrumb-item.active').innerHTML = "${form.title?js_string}" + (stepTitle ? " - " + stepTitle : "");
 	document.querySelector('title').innerHTML = "${form.title?js_string}" + (stepTitle ? " - " + stepTitle : "");
 	
-	// Hide step groups that have no inputs
-	/*
-	const stepGroups = document.querySelectorAll(".step-group:not(.action-group)");
-	if( stepGroups.length > 1 ){
-		stepGroups.forEach( function( stepGroup ){
-			stepGroupDisplay( stepGroup )
-		});
-	}
-    */
+	// Hide step groups whose questions are all hidden, and keep them in sync with the conditional fields
+	refreshStepGroupsDisplay();
+	const formValidate = document.getElementById( 'form-validate' );
+	[ 'change', 'input' ].forEach( function( eventType ){
+		formValidate.addEventListener( eventType, refreshStepGroupsDisplay );
+	});
 });
 </script>
 </@cTpl>
