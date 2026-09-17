@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	/* Move conditional field inside the controlling fieldset if controller is radio/checkbox */
 	(function() {
 		<#list list_control as control>
-		var ctrlInputs = getInputElement(${control.listIdQuestion[0]} + "_" + ${question.iterationNumber});
+		var ctrlInputs = getInputElement(getControlId(${control.listIdQuestion[0]}, ${question.iterationNumber}));
 		if (ctrlInputs.length > 0 && displayField) {
 			var ctrlType = ctrlInputs[0].type;
 			if (ctrlType === 'radio' || ctrlType === 'checkbox') {
@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	var targetFieldId = '${displayFieldId}';
 	<#list list_control as control>
-		var displayControl = ${control.listIdQuestion[0]} + "_" + ${question.iterationNumber},
+		var displayControl = getControlId(${control.listIdQuestion[0]}, ${question.iterationNumber}),
 		input${control.id}_${question.iterationNumber} = getInputElement(displayControl);
 		/* Set aria-controls and initial aria-expanded on controlling inputs */
 		input${control.id}_${question.iterationNumber}.forEach(function(el) {
@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function() {
 					var nValidControlsCount = 0;
 					var nNotValidControlsCount = 0;
 					<#list list_control as itemControl>
-						var displayItemControl = ${itemControl.listIdQuestion[0]} + "_" + ${question.iterationNumber},
+						var displayItemControl = getControlId(${itemControl.listIdQuestion[0]}, ${question.iterationNumber}),
 						input${itemControl.id}_${question.iterationNumber} = getInputElement(displayItemControl);
 						stepGroup = displayFieldEl ? getParentsUntil(displayFieldEl, '.step-content') : [];
 						stepGroup.forEach(function(el){
@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
 						});
 						inputValue = getFieldValue(input${itemControl.id}_${question.iterationNumber});
 						// AND condition : if at least 1 control value isn't present, do not display question
-						var controlDiv = document.querySelector("div[displayControl='${itemControl.listIdQuestion[0]}_${question.iterationNumber}']");
+						var controlDiv = document.querySelector("div[displayControl='" + displayItemControl + "']");
 						if((controlDiv && controlDiv.classList.contains("control_invalid"))	|| !validator_${itemControl.validatorName?replace('.','_')}( inputValue, '${itemControl.value}')){
 							nNotValidControlsCount++;
 						} else {

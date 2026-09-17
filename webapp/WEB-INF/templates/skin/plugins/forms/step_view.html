@@ -63,6 +63,16 @@ function getInputElement( displayControl ){
 	return elm ? Array.from(elm) : [];
 }
 
+/**
+ * Returns the displayControl id of the controlling question for the given iteration of a conditioned question.
+ * When the controlling question sits outside the iterable group it only exists in iteration 0,
+ * so every iteration of the conditioned question falls back to that one.
+ */
+function getControlId( idQuestion, iteration ){
+	const controlId = idQuestion + '_' + iteration;
+	return document.querySelector( 'div[displayControl="' + controlId + '"]' ) ? controlId : idQuestion + '_0';
+}
+
 function getFieldValue(elm) {
 	if (!elm) return null;
 	
