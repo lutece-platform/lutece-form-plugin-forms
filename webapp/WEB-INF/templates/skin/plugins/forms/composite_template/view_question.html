@@ -59,7 +59,9 @@ document.addEventListener('DOMContentLoaded', function() {
 		</#if>
 	</#if>
 	
-	/* Move conditional field inside the controlling fieldset if controller is radio/checkbox */
+	/* Move conditional field inside the controlling fieldset if controller is radio/checkbox.
+	   Only within the same step group: a field controlled from another group stays in its own group,
+	   otherwise the fields of an iterable group would all end up in the controller's group. */
 	(function() {
 		<#list list_control as control>
 		var ctrlInputs = getInputElement(getControlId(${control.listIdQuestion[0]}, ${question.iterationNumber}));
@@ -67,7 +69,8 @@ document.addEventListener('DOMContentLoaded', function() {
 			var ctrlType = ctrlInputs[0].type;
 			if (ctrlType === 'radio' || ctrlType === 'checkbox') {
 				var ctrlFieldset = ctrlInputs[0].closest('fieldset');
-				if (ctrlFieldset && !ctrlFieldset.contains(displayField)) {
+				var sameStepGroup = ctrlFieldset && ctrlFieldset.closest('.step-group') === displayField.closest('.step-group');
+				if (ctrlFieldset && sameStepGroup && !ctrlFieldset.contains(displayField)) {
 					ctrlFieldset.appendChild(displayField);
 				}
 			}
