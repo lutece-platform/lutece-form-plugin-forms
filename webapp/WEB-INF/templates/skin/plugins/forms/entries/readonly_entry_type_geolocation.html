@@ -1,6 +1,7 @@
 <@cTpl>
 <#if !entry.onlyDisplayInBack>
 <#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign entryCSSClass = entryCSSClass?is_markup_output?then(entryCSSClass?markup_string, entryCSSClass) />
 <#compress>
 <@chItem class=entryCSSClass!?trim>
 	<@cInline type='strong'>${entry.title}<#if !entry.mandatory> <@cText type='small'>#i18n{forms.create_entry.labelNotMandatory}</@cText></#if> : </@cInline>
@@ -18,7 +19,7 @@
 	<#if getResponseContainingTheFieldWithCode( list_responses, "Y" )?? >
 		<#assign responseY = getResponseContainingTheFieldWithCode( list_responses, "Y" ).toStringValueResponse >
 	</#if>
-	<#if responseX == "" || responseX == "0" || responseY == "" || responseY == "0">
+	<#if !responseX?has_content || responseX == "0" || !responseY?has_content || responseY == "0">
 		<@cInline type='em'>#i18n{forms.entryType.geolocalisation.message.noGeolocation}</@cInline>
 	<#else>
 		${(responseAddress)!}
@@ -28,7 +29,7 @@
 		<input type="hidden" id="${entry.idEntry}_y" name="${entry.idEntry}_y" value="${(responseY)!}">
 		<#assign editModeValue = "ReadOnly">
 		<#assign viewNumberValue = getFieldValueByCode( entry, "viewNumber" )>
-		<#if viewNumberValue=''><#assign viewNumberValue = "1"></#if>
+		<#if !viewNumberValue?has_content><#assign viewNumberValue = "1"></#if>
 		<#if entry.mapProvider?has_content>
 			<@cRow>
 				<@cCol>

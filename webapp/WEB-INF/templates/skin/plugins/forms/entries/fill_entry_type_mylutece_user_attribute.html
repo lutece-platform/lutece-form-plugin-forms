@@ -4,12 +4,16 @@
 <#if list_responses??><#list list_responses as response><#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError><#assign hasError = true /><#assign error = response.entry.error></#if></#list></#if>
 <#assign fieldMyLuteceAttributeName = getFieldByCode( entry, "attribute_name" ) >
 <#assign errorMsg><#if hasError><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#if></#assign>
-<#assign helpMsg><#if entry.helpMessage?exists&&entry.helpMessage!=''>${entry.helpMessage}</#if></#assign>
+<#assign errorMsg = errorMsg?is_markup_output?then(errorMsg?markup_string, errorMsg) />
+<#assign helpMsg><#if entry.helpMessage?exists&&entry.helpMessage?has_content>${entry.helpMessage}</#if></#assign>
+<#assign helpMsg = helpMsg?is_markup_output?then(helpMsg?markup_string, helpMsg) />
 <#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign entryCSSClass = entryCSSClass?is_markup_output?then(entryCSSClass?markup_string, entryCSSClass) />
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
 <#if user??>
 <@cField label=entry.title! for=idName! required=entry.mandatory! class=entryCSSClass!?trim > 
 	<#assign myLutAttrValue><#if mylutece_attr_template_value??>${mylutece_attr_template_value}<#else>${user.getUserInfo(fieldMyLuteceAttributeName.value)}</#if></#assign>
+<#assign myLutAttrValue = myLutAttrValue?is_markup_output?then(myLutAttrValue?markup_string, myLutAttrValue) />
 	<@cInput class='form-control bg-transparent' name=idName placeholder=placeholder required=entry.mandatory! html5Required=false readonly=true disabled=true value=myLutAttrValue helpMsg=helpMsg errorMsg=errorMsg params=fieldParams />
 </@cField>
 </#if>

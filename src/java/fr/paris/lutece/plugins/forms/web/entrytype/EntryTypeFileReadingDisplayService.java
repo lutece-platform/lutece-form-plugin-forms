@@ -43,6 +43,7 @@ import fr.paris.lutece.plugins.genericattributes.business.IOcrProvider;
 import fr.paris.lutece.plugins.genericattributes.business.OcrProviderManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeUpload;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
+import fr.paris.lutece.portal.service.template.HtmlMarkup;
 
 /**
  * The display service for entry type file
@@ -81,7 +82,7 @@ public class EntryTypeFileReadingDisplayService extends EntryTypeFileDisplayServ
         if ( fieldType != null )
         {
             IOcrProvider ocrProvider = OcrProviderManager.getOcrProvider( fieldType.getValue( ) );
-            model.put( MARK_OCR_CODE_TEMPLATE, ocrProvider.getHtmlCode( entry.getIdEntry( ), Form.RESOURCE_TYPE ) );
+            model.put( MARK_OCR_CODE_TEMPLATE, HtmlMarkup.of( ocrProvider.getHtmlCode( entry.getIdEntry( ), Form.RESOURCE_TYPE ) ) );
         }
         model.put( FormsConstants.QUESTION_ENTRY_MARKER, entry );
 

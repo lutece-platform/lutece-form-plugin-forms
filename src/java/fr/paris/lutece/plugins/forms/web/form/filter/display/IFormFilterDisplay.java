@@ -37,8 +37,11 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.forms.web.form.filter.IFilterable;
 import fr.paris.lutece.plugins.forms.web.form.multiview.util.IFormListPosition;
+import fr.paris.lutece.portal.service.template.HtmlMarkup;
 
 import java.util.Locale;
+
+import freemarker.template.TemplateModel;
 
 /**
  * Interface for the Filter associated to a FormColumnDisplay
@@ -67,6 +70,16 @@ public interface IFormFilterDisplay extends IFilterable, IFormListPosition
      * @return the template of the FormFilterDisplay
      */
     String getTemplate( );
+
+    /**
+     * Return the filter template as FreeMarker HTML markup.
+     *
+     * @return the filter template as markup
+     */
+    default TemplateModel getTemplateMarkup( )
+    {
+        return HtmlMarkup.of( getTemplate( ) );
+    }
 
     /**
      * Return the base template of the FormFilterDisplay, before being filled

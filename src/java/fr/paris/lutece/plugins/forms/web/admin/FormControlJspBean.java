@@ -76,6 +76,7 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.template.HtmlMarkup;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
@@ -573,7 +574,7 @@ public class FormControlJspBean extends AbstractJspBean
 
         model.put( FormsConstants.MARK_QUESTION, _question );
         model.put( FormsConstants.MARK_STEP, _step );
-        model.put( FormsConstants.MARK_CONTROL_TEMPLATE, strValidatorTemplate );
+        model.put( FormsConstants.MARK_CONTROL_TEMPLATE, HtmlMarkup.of( strValidatorTemplate ) );
         model.put( FormsConstants.MARK_CONTROL, _control );
         model.put( FormsConstants.MARK_ID_STEP, _nIdTarget );
         model.put( FormsConstants.MARK_TARGET_ID_STEP, _step.getId() );

@@ -62,7 +62,10 @@ import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.template.HtmlMarkup;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
+
+import freemarker.template.TemplateModel;
 
 /**
  * 
@@ -233,20 +236,20 @@ public class CompositeGroupDisplay implements ICompositeDisplay, Serializable
     @Override
     public String getCompositeHtml( HttpServletRequest request, List<FormQuestionResponse> listFormQuestionResponse, Locale locale, DisplayType displayType )
     {
-        List<String> listChildrenHtml = new ArrayList<>( );
+        List<TemplateModel> listChildrenHtml = new ArrayList<>( );
 
-        TreeMap<Integer, List<String>> listChildrenHtmlByIteration = new TreeMap<>();
+        TreeMap<Integer, List<TemplateModel>> listChildrenHtmlByIteration = new TreeMap<>( );
 
         for ( ICompositeDisplay child : _listChildren )
         {
             child.addModel( _model );
             String childrenHtml = child.getCompositeHtml( request, listFormQuestionResponse, locale, displayType );
-            listChildrenHtml.add( childrenHtml );
+            listChildrenHtml.add( HtmlMarkup.of( childrenHtml ) );
 
             Integer iterationNumber = child.getIterationNumber();
             if( iterationNumber != null ) {
                 listChildrenHtmlByIteration.computeIfAbsent(iterationNumber , s -> new ArrayList<>( ) );
-                listChildrenHtmlByIteration.get(iterationNumber).add(childrenHtml);
+                listChildrenHtmlByIteration.get( iterationNumber ).add( HtmlMarkup.of( childrenHtml ) );
             }
         }
 

@@ -6,7 +6,7 @@
 </#if>
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
 <#if error??><#assign groupStyle = 'error' /><#else><#assign groupStyle = '' /></#if>
-<#if entry.helpMessage?exists&&entry.helpMessage!=''>
+<#if entry.helpMessage?exists&&entry.helpMessage?has_content>
 	<#assign helpKey = entry.helpMessage />
 <#else>
 	<#assign helpKey = '' />

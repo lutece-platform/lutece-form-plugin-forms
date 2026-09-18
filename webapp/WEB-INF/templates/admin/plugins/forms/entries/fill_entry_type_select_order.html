@@ -1,7 +1,7 @@
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
 <#assign sortableListType=getFieldValueByCode( entry, "sortable_list_type" )>
 <#assign isMultiListSelection = (sortableListType?? && sortableListType=='1')>
-<#if entry.helpMessage?exists&&entry.helpMessage!=''>
+<#if entry.helpMessage?exists&&entry.helpMessage?has_content>
   <#assign helpKey=entry.helpMessage />
 </#if>
 <#if list_responses??>
@@ -22,7 +22,8 @@
 					<@box>
 						<@boxHeader title='#i18n{forms.create_entry.sortableList.availableItems}' />
 						<@boxBody class='p-3'>
-							<@listGroup id='sortable1' class="connectedSortable ${inputClass}" params='style="min-height:10rem;"'>
+							<#assign paramsAttr1>style="min-height:10rem;"</#assign>
+							<@listGroup id='sortable1' class="connectedSortable ${inputClass}" params=paramsAttr1>
 								<#list entry.fields as field>
 									<#if field.code == 'answer_choice'>
 										<#assign isSelected=false />
@@ -52,7 +53,8 @@
 					<@box>
 						<@boxHeader title='#i18n{forms.create_entry.sortableList.selectedItems}' />
 						<@boxBody class='p-3'>
-							<@listGroup id='sortable2' class="connectedSortable ${inputClass}" params='style="min-height:10rem;"'>
+							<#assign paramsAttr2>style="min-height:10rem;"</#assign>
+							<@listGroup id='sortable2' class="connectedSortable ${inputClass}" params=paramsAttr2>
 								<#if list_responses?has_content>
 									<#list list_responses?sort_by('sortOrder') as response>
 										<#if response.entry.idEntry == entry.idEntry && response.entry.error??>

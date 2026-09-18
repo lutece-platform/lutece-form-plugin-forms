@@ -3,18 +3,24 @@
 <#assign hasError = false />
 <#assign errorMsg = ''>
 <#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign entryCSSClass = entryCSSClass?is_markup_output?then(entryCSSClass?markup_string, entryCSSClass) />
 <#if list_responses??><#list list_responses as response><#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError><#assign hasError = true /><#assign error = response.entry.error></#if></#list></#if>
-<#if hasError><#assign errorMsg><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#assign></#if>
+<#if hasError><#assign errorMsg><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#assign>
+<#assign errorMsg = errorMsg?is_markup_output?then(errorMsg?markup_string, errorMsg) /></#if>
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
 <#assign field_default=getFieldByCode( entry, "text_config")>
 <#assign field_height=getFieldValueByCode( entry, "height")>
 <#assign fieldRows>${field_height!}</#assign>
+<#assign fieldRows = fieldRows?is_markup_output?then(fieldRows?markup_string, fieldRows) />
 <#assign placeholder = getFieldValueByCode(entry, "placeholder") >
 <#assign field_max_size=getFieldValueByCode( entry, "max_size") >
 <#assign field_max_size_number><#if field_max_size?number!=-1>${field_max_size?number}<#else>0</#if></#assign>
-<#assign helpMsg><#if entry.helpMessage?exists&&entry.helpMessage!=''>${entry.helpMessage!}</#if></#assign>
+<#assign field_max_size_number = field_max_size_number?is_markup_output?then(field_max_size_number?markup_string, field_max_size_number) />
+<#assign helpMsg><#if entry.helpMessage?exists&&entry.helpMessage?has_content>${entry.helpMessage!}</#if></#assign>
+<#assign helpMsg = helpMsg?is_markup_output?then(helpMsg?markup_string, helpMsg) />
 <#assign field_content = '' >
-<#if list_responses?has_content><#list list_responses as response><#if response.entry.idEntry == entry.idEntry && response.toStringValueResponse??>	<#assign field_content = response.toStringValueResponse! ></#if></#list><#else><#if field_default.value?exists><#assign field_content>${field_default.value}</#assign><#else><#assign field_content=''></#if></#if>
+<#if list_responses?has_content><#list list_responses as response><#if response.entry.idEntry == entry.idEntry && response.toStringValueResponse??>	<#assign field_content = response.toStringValueResponse! ></#if></#list><#else><#if field_default.value?exists><#assign field_content>${field_default.value}</#assign>
+<#assign field_content = field_content?is_markup_output?then(field_content?markup_string, field_content) /><#else><#assign field_content=''></#if></#if>
 <@cField label=entry.title! for=idName! required=entry.mandatory! class=entryCSSClass!?trim >
 <@cTextArea name=idName placeholder=placeholder! required=entry.mandatory! html5Required=false rows=fieldRows maxlength=field_max_size_number! helpMsg=helpMsg! errorMsg=errorMsg! params=fieldParams>${field_content!}</@cTextArea>
 </@cField>

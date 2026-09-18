@@ -1,11 +1,13 @@
 <@cTpl>
 <#compress>
 <#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign entryCSSClass = entryCSSClass?is_markup_output?then(entryCSSClass?markup_string, entryCSSClass) />
 <@chItem class=entryCSSClass!?trim>
 <@cInline type='strong'>${entry.title!''} :</@cInline>
 <#if list_responses?has_content>
-    <#assign strResponse><#list list_responses as response><#if response.toStringValueResponse?? && response.toStringValueResponse?trim !=''>${response.toStringValueResponse!}<#sep> - </#sep></#if></#list></#assign>
-    <#if strResponse?trim != ''>
+    <#assign strResponse><#list list_responses as response><#if response.toStringValueResponse?? && response.toStringValueResponse?trim?has_content>${response.toStringValueResponse!}<#sep> - </#sep></#if></#list></#assign>
+<#assign strResponse = strResponse?is_markup_output?then(strResponse?markup_string, strResponse) />
+    <#if strResponse?trim?has_content>
         <#list strResponse?keep_before_last('-')?split('-', 'r') as resp>
             <@cInline class='me-xs'>${resp?trim}<#sep> - </#sep></@cInline>
         </#list>

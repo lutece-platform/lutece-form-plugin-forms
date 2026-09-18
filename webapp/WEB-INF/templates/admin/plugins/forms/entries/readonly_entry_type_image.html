@@ -1,14 +1,17 @@
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
 <#assign entryClass>files-list <#if entry.CSSClass?contains('hidden')>hidden</#if></#assign>
+<#assign entryClass = entryClass?is_markup_output?then(entryClass?markup_string, entryClass) />
 <@li class=entryClass! >
 	<@span class='fw-bold' id='label_${idName!}'>${entry.title!''} :</@span>
 	<#if list_responses?has_content>
 		<@p>
 			<@span class='ms-xs font-italic'>#i18n{forms.entry.files.labelNumberOfFiles}</@span> 
 			<@span class='fw-bold'>${list_responses?size}</@span>
-			<@button title='#i18n{forms.entry.files.labelHideUploadedFiles}' id='btn-${idName!}' class='primary btn-show-files btn-sm ms-3' params='data-hide="#i18n{forms.entry.files.labelHideUploadedFiles}" data-show="#i18n{forms.entry.files.labelShowUploadedFiles}" aria-expanded="true" aria-controls="list_${idName!}" aria-labelledby="label_${idName}"' />
+			<#assign paramsAttr1>data-hide="#i18n{forms.entry.files.labelHideUploadedFiles}" data-show="#i18n{forms.entry.files.labelShowUploadedFiles}" aria-expanded="true" aria-controls="list_${idName!}" aria-labelledby="label_${idName}"</#assign>
+			<@button title='#i18n{forms.entry.files.labelHideUploadedFiles}' id='btn-${idName!}' class='primary btn-show-files btn-sm ms-3' params=paramsAttr1 />
 		</@p>
-		<@ul class='list-uploaded-files mb-3' id='list_${idName!}' params='role="region" aria-labelledby="label_${idName}"'>
+		<#assign paramsAttr2>role="region" aria-labelledby="label_${idName}"</#assign>
+		<@ul class='list-uploaded-files mb-3' id='list_${idName!}' params=paramsAttr2>
 		<#list list_responses as response>
 		<#if response.file?exists>
 			<#if response.file.size??>
@@ -27,8 +30,9 @@
 			<@li>
 				<@span class='font-italic'>${response.file.title!} - ${octetNumber?string["0.##"]} ${octetUnit!} ,</@span>
 				<#if response.file.mimeType?? && response.file.mimeType?contains('image')>
-					<#if response.file.url?? && response.file.url != ''>
-						<@img url='${response.file.url}' alt='${response.file.title}' class='img-fluid img-thumbnail ms-xs' params='style="max-height: 200px;"'/>
+					<#if response.file.url?? && response.file.url?has_content>
+						<#assign paramsAttr3>style="max-height: 200px;"</#assign>
+						<@img url='${response.file.url}' alt='${response.file.title}' class='img-fluid img-thumbnail ms-xs' params=paramsAttr3/>
 					</#if>
 				</#if>
 			</@li>

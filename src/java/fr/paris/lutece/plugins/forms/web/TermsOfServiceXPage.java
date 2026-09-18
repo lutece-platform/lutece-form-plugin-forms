@@ -50,16 +50,21 @@ import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
+import fr.paris.lutece.portal.service.html.XSSSanitizerException;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.SiteMessage;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.message.SiteMessageService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.template.HtmlMarkup;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
 import fr.paris.lutece.portal.util.mvc.xpage.annotations.Controller;
 import fr.paris.lutece.portal.web.xpages.XPage;
 import fr.paris.lutece.util.html.HtmlTemplate;
+
+import freemarker.template.TemplateModel;
 
 /**
  * This class is an XPage for the terms of service
@@ -159,9 +164,29 @@ public class TermsOfServiceXPage extends MVCApplication
     {
         Map<String, Object> model = getModel( );
 
-        model.put( MARK_TERMS_OF_SERVICE, strTermsOfService );
+        model.put( MARK_TERMS_OF_SERVICE, getSafeTermsOfService( strTermsOfService ) );
 
         return AppTemplateService.getTemplate( TEMPLATE_XPAGE_REQUIREMENT_FORM, locale, model );
+    }
+
+    /**
+     * Return the terms of service as sanitized FreeMarker HTML markup.
+     *
+     * @param strTermsOfService
+     *            the terms of service to display
+     * @return the sanitized terms of service, or escaped text if sanitization fails
+     */
+    private TemplateModel getSafeTermsOfService( String strTermsOfService )
+    {
+        try
+        {
+            return HtmlMarkup.ofSanitized( strTermsOfService );
+        }
+        catch( XSSSanitizerException e )
+        {
+            AppLogService.error( "Unable to sanitize the terms of service", e );
+            return HtmlMarkup.ofText( strTermsOfService );
+        }
     }
 
     /**

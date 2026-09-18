@@ -10,7 +10,7 @@ const dateControl = moment(controlValue);
 if (Array.isArray(inputValue)) {
     for (let i = 0; i < inputValue.length; i++) {
         const dateInput = moment(inputValue[i]);
-        if (!(dateInput.valueOf() ${operation} dateControl.valueOf())) {
+        if (!(dateInput.valueOf() <#noautoesc>${operation}</#noautoesc> dateControl.valueOf())) {
             return false;
         }
     }
@@ -18,4 +18,4 @@ if (Array.isArray(inputValue)) {
 }
 
 const dateInput = moment(inputValue);
-return dateInput ${operation} dateControl;
+return dateInput <#noautoesc>${operation}</#noautoesc> dateControl;

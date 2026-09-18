@@ -8,11 +8,15 @@
 		<@formTabs tab="questions" >
 			<@tabContent>
 				<@tabPanel id='tabpanel' active=true>
-					<@table id='list' headBody=true  class='table-striped mb-3' params=' data-toggle="table" data-group-by="true" data-group-by-field="step" data-icon-prefix="bootstrap-table" data-search="true" data-show-columns="true"'>
+					<#assign paramsAttr1> data-toggle="table" data-group-by="true" data-group-by-field="step" data-icon-prefix="bootstrap-table" data-search="true" data-show-columns="true"</#assign>
+					<@table id='list' headBody=true  class='table-striped mb-3' params=paramsAttr1>
 						<@tr>
-							<@th params='data-field="step"'>#i18n{forms.manage_question_response.step}</@th>
-							<@th params='data-field="title"'>#i18n{forms.manage_question_response.columnTitle}</@th>
-							<@th params='data-sortable="true" data-field="status"'>#i18n{forms.manage_question_response.status} (Publi&eacute; / Non publi&eacute;)</@th>
+							<#assign paramsAttr2>data-field="step"</#assign>
+							<@th params=paramsAttr2>#i18n{forms.manage_question_response.step}</@th>
+							<#assign paramsAttr3>data-field="title"</#assign>
+							<@th params=paramsAttr3>#i18n{forms.manage_question_response.columnTitle}</@th>
+							<#assign paramsAttr4>data-sortable="true" data-field="status"</#assign>
+							<@th params=paramsAttr4>#i18n{forms.manage_question_response.status} (Publi&eacute; / Non publi&eacute;)</@th>
 						</@tr>
 						<@tableHeadBodySeparator />	
 						<#list questionList as question>
@@ -22,6 +26,7 @@
 								<@td>${question.title!}</@td>
 								<@td>
 									<#assign status><#if question?has_content && question.published!>Publié<#else>Non publié</#if></#assign>
+<#assign status = status?is_markup_output?then(status?markup_string, status) />
 									<@formGroup labelFor='published' labelKey=status>
 										<@checkBox orientation='switch' name='questionPublished' id='${question.id}' value='${question.id}' checked=(question?has_content && question.published!) />
 									</@formGroup>

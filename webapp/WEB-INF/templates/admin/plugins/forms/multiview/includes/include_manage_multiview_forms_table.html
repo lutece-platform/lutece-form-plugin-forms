@@ -11,7 +11,7 @@ ${multiviewmap!''}
 		<#assign dataParams>data-url="${redirect_details_base_url}&id_form_response=${form_response_line_template.idFormResponse}"</#assign>
 		<@tr params=dataParams>
 			<#if form_response_line_template.formColumnCellTemplateList?has_content>
-				<#list form_response_line_template.formColumnCellTemplateList as form_column_cell_template>
+		<#list form_response_line_template.formColumnCellMarkupList as form_column_cell_template>
 					${form_column_cell_template}
 				</#list>
 			</#if>

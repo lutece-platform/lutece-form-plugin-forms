@@ -4,13 +4,15 @@
          <@tform type='inline'>
 				<@formGroup labelFor='plugin_type' labelKey='#i18n{portal.system.manage_plugins.buttonFilter}' hideLabel=['all'] formStyle='inline'>
 					<@inputGroup>
-						<@input type='text' name='search_forms' id='search_forms' placeHolder='#i18n{portal.system.manage_plugins.buttonFilter}' params='autocomplete="off" addons' />
+						<#assign paramsAttr1>autocomplete="off" addons</#assign>
+						<@input type='text' name='search_forms' id='search_forms' placeHolder='#i18n{portal.system.manage_plugins.buttonFilter}' params=paramsAttr1 />
 						<@button color='primary' title='#i18n{portal.system.manage_plugins.buttonFilter}' buttonIcon='filter' hideTitle=['all'] />
 					</@inputGroup>
 				</@formGroup>
 			</@tform>
             <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=createCategory" id="create_category" useIframe=true targetElement="#create_category" btnIcon="plus" btnTitle="#i18n{forms.manageFormCategory.buttonAdd}" title="#i18n{forms.createFormCategory.title}" />
-            <#-- <@aButton href='jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=createCategory' buttonIcon='plus' title='#i18n{forms.manageFormCategory.buttonAdd}' hideTitle=['xs','sm'] color='primary' hideTitle=['xs','sm','md','lg'] params='data-bs-toggle="offcanvas" data-bs-target="#modify_category" data-bs-scroll="true" data-bs-backdrop="false" data-url="jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=createCategory"' /> -->
+            <#assign paramsAttr2>data-bs-toggle="offcanvas" data-bs-target="#modify_category" data-bs-scroll="true" data-bs-backdrop="false" data-url="jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=createCategory"</#assign>
+            <#-- <@aButton href='jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=createCategory' buttonIcon='plus' title='#i18n{forms.manageFormCategory.buttonAdd}' hideTitle=['xs','sm'] color='primary' hideTitle=['xs','sm','md','lg'] params=paramsAttr2 /> -->
         </@pageHeader>
         <@manageFeature>
         <#if form_category_list?size != 0>

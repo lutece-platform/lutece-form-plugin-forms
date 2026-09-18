@@ -12,16 +12,22 @@
 </#if>
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
 <#assign errorMsg><#if hasError><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#if></#assign>
-<#assign helpMsg><#if entry.helpMessage?exists&&entry.helpMessage!=''>${entry.helpMessage}. #i18n{labelSortableListHelp}<#else>#i18n{labelSortableListHelp}</#if></#assign>
+<#assign errorMsg = errorMsg?is_markup_output?then(errorMsg?markup_string, errorMsg) />
+<#assign helpMsg><#if entry.helpMessage?exists&&entry.helpMessage?has_content>${entry.helpMessage}. #i18n{labelSortableListHelp}<#else>#i18n{labelSortableListHelp}</#if></#assign>
+<#assign helpMsg = helpMsg?is_markup_output?then(helpMsg?markup_string, helpMsg) />
 <#assign labelClass><#if hasError>main-danger-color is-invalid</#if></#assign>
+<#assign labelClass = labelClass?is_markup_output?then(labelClass?markup_string, labelClass) />
 <#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign entryCSSClass = entryCSSClass?is_markup_output?then(entryCSSClass?markup_string, entryCSSClass) />
 <@cField class=entryCSSClass!?trim>
 	<@cLabel label=entry.title class=labelClass for=idName id='label-${idName}' required=entry.mandatory /> 
-	<#if entry.helpMessage?exists&&entry.helpMessage!=''><@cFormHelp label=helpMsg id=idName /></#if>
+	<#if entry.helpMessage?exists&&entry.helpMessage?has_content><@cFormHelp label=helpMsg id=idName /></#if>
 	<#if hasError><@cFormError label=errorMsg id=idName /></#if>
 	<@cInput type='hidden' name='${idName}' id='${idName}' />
-	<@cBlock id='sortable-status-${entry.idEntry!}' class='visually-hidden' params='role="status" aria-live="polite" aria-atomic="true"' />
-	<@chList id='sortable_${entry.idEntry!}_1' class='list-group mt-xs ${entryClass!}' params='role="listbox" aria-labelledby="label-${idName}" aria-multiselectable="false"'>
+	<#assign paramsAttr1>role="status" aria-live="polite" aria-atomic="true"</#assign>
+	<@cBlock id='sortable-status-${entry.idEntry!}' class='visually-hidden' params=paramsAttr1 />
+	<#assign paramsAttr2>role="listbox" aria-labelledby="label-${idName}" aria-multiselectable="false"</#assign>
+	<@chList id='sortable_${entry.idEntry!}_1' class='list-group mt-xs ${entryClass!}' params=paramsAttr2>
 		<#list entry.fields as field>
 			<#if field.code == 'answer_choice'>
 				<#assign notSelected=true />
@@ -35,18 +41,21 @@
 					</#list>
 				</#if>
 				<#if notSelected>
-					<@chItem id='field_${field.idField}' class='list-group-item sortable-list ' params='role="option" data-sortable-id="${field.idField}"'>${field.title}</@chItem>
+					<#assign paramsAttr3>role="option" data-sortable-id="${field.idField}"</#assign>
+					<@chItem id='field_${field.idField}' class='list-group-item sortable-list ' params=paramsAttr3>${field.title}</@chItem>
 				</#if>
 			</#if>
 		</#list>
 	</@chList>
 	<#if list_responses?has_content>
-	<@chList id='sortable_${entry.idEntry!}_2' class='list-group ${entryClass!}' params='role="listbox" tabindex="0" aria-labelledby="label-${idName}" aria-multiselectable="false"'>
+	<#assign paramsAttr4>role="listbox" tabindex="0" aria-labelledby="label-${idName}" aria-multiselectable="false"</#assign>
+	<@chList id='sortable_${entry.idEntry!}_2' class='list-group ${entryClass!}' params=paramsAttr4>
 		<#assign nIdx=0 />
 		<#list list_responses?sort_by('sortOrder') as response>
 			<#list entry.fields as field>
 				<#if response.field?? && response.field.idField == field.idField>
-					<@chItem id='field_${field.idField}' class='list-group-item sortable-list ${acClass!}' params='role="option" tabindex="0" data-sortable-id="${field.idField}"'>${field.title}</@chItem>
+					<#assign paramsAttr5>role="option" tabindex="0" data-sortable-id="${field.idField}"</#assign>
+					<@chItem id='field_${field.idField}' class='list-group-item sortable-list ${acClass!}' params=paramsAttr5>${field.title}</@chItem>
 				</#if>
 			</#list>
 		</#list>

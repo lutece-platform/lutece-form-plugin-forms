@@ -1,7 +1,7 @@
 <#include "/skin/plugins/asynchronousupload/upload_commons.html" />
 <#if list_responses?? && list_responses?has_content>
   <#list list_responses as response>
-    <#if response.file?? && response.file.title?? && response.file.title != ''>
+    <#if response.file?? && response.file.title?? && response.file.title?has_content>
       <#if listFiles??>
         <#assign listFiles = listFiles + [response.file] >
       <#else>
