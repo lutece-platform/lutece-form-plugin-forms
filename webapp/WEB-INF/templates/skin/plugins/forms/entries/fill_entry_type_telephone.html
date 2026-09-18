@@ -2,13 +2,18 @@
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
 <#assign hasError = false >
 <#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign entryCSSClass = entryCSSClass?is_markup_output?then(entryCSSClass?markup_string, entryCSSClass) />
 <#if list_responses??><#list list_responses as response><#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError><#assign hasError = true /><#assign error = response.entry.error></#if></#list></#if>
 <#assign idName = buildEntryName( entry, entry_iteration_number ) >
 <#assign field = getFieldByCode( entry, "autocomplete" ) >
-<#if list_responses?has_content><#list list_responses as response><#if response.entry.idEntry == entry.idEntry><#if response.toStringValueResponse??><#assign responseValue>${response.toStringValueResponse}</#assign></#if></#if></#list><#else><#assign responseValue=''></#if>
+<#if list_responses?has_content><#list list_responses as response><#if response.entry.idEntry == entry.idEntry><#if response.toStringValueResponse??><#assign responseValue>${response.toStringValueResponse}</#assign>
+<#assign responseValue = responseValue?is_markup_output?then(responseValue?markup_string, responseValue) /></#if></#if></#list><#else><#assign responseValue=''></#if>
 <#assign autoCompleteValue><#if field??>${field.value!}</#if></#assign>
-<#if hasError><#assign errorMsg><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#assign></#if>
-<#assign helpMsg><#if entry.helpMessage?exists && entry.helpMessage!=''>${entry.helpMessage!}</#if></#assign>
+<#assign autoCompleteValue = autoCompleteValue?is_markup_output?then(autoCompleteValue?markup_string, autoCompleteValue) />
+<#if hasError><#assign errorMsg><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#assign>
+<#assign errorMsg = errorMsg?is_markup_output?then(errorMsg?markup_string, errorMsg) /></#if>
+<#assign helpMsg><#if entry.helpMessage?exists && entry.helpMessage?has_content>${entry.helpMessage!}</#if></#assign>
+<#assign helpMsg = helpMsg?is_markup_output?then(helpMsg?markup_string, helpMsg) />
 <#assign placeholder = getFieldValueByCode(entry, "placeholder") >
 <@cField class=entryCSSClass!?trim label=entry.title for=idName required=entry.mandatory >
 <@cInput type='tel' name=idName! placeholder=placeholder! required=entry.mandatory! html5Required=false value=responseValue! autocomplete=autoCompleteValue! errorMsg=errorMsg  helpMsg=helpMsg />

@@ -4,12 +4,14 @@
 <#assign codeGallery = getFieldByCode(entry,'code_gallery').value >
 <#assign idFileSelected = ''>
 <#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
-<#assign galleryHelp><#if entry.helpMessage?exists&&entry.helpMessage!=''>${entry.helpMessage}</#if></#assign>
+<#assign entryCSSClass = entryCSSClass?is_markup_output?then(entryCSSClass?markup_string, entryCSSClass) />
+<#assign galleryHelp><#if entry.helpMessage?exists&&entry.helpMessage?has_content>${entry.helpMessage}</#if></#assign>
+<#assign galleryHelp = galleryHelp?is_markup_output?then(galleryHelp?markup_string, galleryHelp) />
 <#if list_responses?? && list_responses?has_content><#list list_responses as response><#if response?? && response.file??><#assign idFileSelected = response.file.idFile /></#if></#list></#if>
 <@cRow class='mb-sm'>
 	<@cCol class=entryCSSClass!?trim>
 		<@cLabel label=entry.title for=idName id='label${entry.idEntry}' required=entry.mandatory />
-		<#if galleryHelp !=''><@cFormHelp id='help_${idName}' label=entry.helpMessage /></#if>
+		<#if galleryHelp?has_content><@cFormHelp id='help_${idName}' label=entry.helpMessage /></#if>
 		<@galleryImage codeGallery=codeGallery inputName=idName idFileSelected=idFileSelected />
 		<#if list_responses?? && list_responses?has_content>
 			<#assign response_error = list_responses[0]/>
@@ -22,10 +24,10 @@
 </@cRow>
 </#if>
 <script>
-<#if galleryHelp !='' || error !=''> 
+<#if galleryHelp?has_content || error?has_content> 
 document.addEventListener( 'DOMContentLoaded', function() {
 	const galleryInput = document.getElementById('${idName}');
-	<#if galleryHelp !=''>
+	<#if galleryHelp?has_content>
 	galleryInput.setAttribute('aria-describedby', 'help_${entry.idEntry}');
 	<#else>
 	const gallery = galleryInput.closest('.gallery-image');

@@ -1,5 +1,6 @@
 <@h level=2>${step.title!}</@h>
-<@listGroup class='list-group-flush step' id='step-${step.id}' params=' tabindex=0 data-title="${step.title!}"'>
+<#assign paramsAttr1> tabindex=0 data-title="${step.title!}"</#assign>
+<@listGroup class='list-group-flush step' id='step-${step.id}' params=paramsAttr1>
 <@listGroupItem>
 ${stepContent}
 </@listGroupItem>

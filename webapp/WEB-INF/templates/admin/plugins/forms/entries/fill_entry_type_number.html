@@ -43,7 +43,7 @@
 	<@inputGroup>
 		<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
 		<@input type='number' name='${idName}' id='${idName}' class='${entry.CSSClass!}' value=inputValue min=min max=max params=autocomplete placeHolder=placeholder/>
-		<#if suffix!=''>
+		<#if suffix?has_content>
 			<@inputGroupItem type='text'>${suffix}</@inputGroupItem>
 		</#if>
 	</@inputGroup>

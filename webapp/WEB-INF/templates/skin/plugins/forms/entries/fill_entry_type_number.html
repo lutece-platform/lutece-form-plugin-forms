@@ -9,28 +9,33 @@
 <#assign errorMsg='' >
 <#assign invalidClass='' >
 <#assign inputClass='form-control' >
-<#assign helpMsg><#if entry.helpMessage?exists&&entry.helpMessage!=''>${entry.helpMessage!}</#if></#assign>
+<#assign helpMsg><#if entry.helpMessage?exists&&entry.helpMessage?has_content>${entry.helpMessage!}</#if></#assign>
+<#assign helpMsg = helpMsg?is_markup_output?then(helpMsg?markup_string, helpMsg) />
 <#assign field_default=getFieldByCode( entry, "text_config")>
 <#if entry.fields?? && entry.fields?has_content><#assign suffix = getFieldValueByCode( entry, 'suffix') ></#if>
 <#assign hasError=false />
 <#if list_responses?has_content>
 <#list list_responses as response>
-<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError><#assign hasError=true ><#assign error=response.entry.error><#assign errorMsg><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#assign></#if>
-<#if response.entry.idEntry == entry.idEntry><#if response.toStringValueResponse??><#assign fieldValue=response.toStringValueResponse! ></#if></#if></#list><#else><#if field_default.value?exists><#assign fieldValue>${field_default.value}</#assign></#if></#if>
+<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError><#assign hasError=true ><#assign error=response.entry.error><#assign errorMsg><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#assign>
+<#assign errorMsg = errorMsg?is_markup_output?then(errorMsg?markup_string, errorMsg) /></#if>
+<#if response.entry.idEntry == entry.idEntry><#if response.toStringValueResponse??><#assign fieldValue=response.toStringValueResponse! ></#if></#if></#list><#else><#if field_default.value?exists><#assign fieldValue>${field_default.value}</#assign>
+<#assign fieldValue = fieldValue?is_markup_output?then(fieldValue?markup_string, fieldValue) /></#if></#if>
 <#assign entryStep><#list entry.CSSClass?split(' ') as laClass><#if laClass?starts_with( 'step-' )> ${laClass?replace('step-','')!}<#break></#if></#list></#assign>
+<#assign entryStep = entryStep?is_markup_output?then(entryStep?markup_string, entryStep) />
 <#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
-<#if entryStep=''><#assign entryStep=0></#if>
+<#assign entryCSSClass = entryCSSClass?is_markup_output?then(entryCSSClass?markup_string, entryCSSClass) />
+<#if !entryStep?has_content><#assign entryStep=0></#if>
 <#assign field_min=getFieldByCode( entry, "min")>
-<#if field_min.value?? && field_min.value !=''><#assign fieldMin=field_min.value?number ></#if>
+<#if field_min.value?? && field_min.value?has_content><#assign fieldMin=field_min.value?number ></#if>
 <#assign field_max=getFieldByCode( entry, "max")>
-<#if field_max.value?? && field_max.value !=''><#assign fieldMax=field_max.value?number ></#if>
+<#if field_max.value?? && field_max.value?has_content><#assign fieldMax=field_max.value?number ></#if>
 <#assign idName=buildEntryName( entry, entry_iteration_number )>
 <#assign placeholder=getFieldValueByCode(entry, "placeholder") ><#assign placeholder = getFieldValueByCode(entry, "placeholder") >
 <#if hasError><#assign invalidClass='is-invalid'><#assign inputClass='form-control is-invalid'></#if>
 <@cField label=entry.title for=idName required=entry.mandatory class=entryCSSClass!?trim >
-<#if suffix!=''>
-<#if helpMsg!=''><@cFormHelp id='help_${idName!}' label=helpMsg! /></#if>
-<#if errorMsg!=''><@cFormError id='error_${idName!}' label=errorMsg! /></#if>
+<#if suffix?has_content>
+<#if helpMsg?has_content><@cFormHelp id='help_${idName!}' label=helpMsg! /></#if>
+<#if errorMsg?has_content><@cFormError id='error_${idName!}' label=errorMsg! /></#if>
 <@cInputGroup class=invalidClass>	
 	<#if fieldValue?is_number><#assign fValue=fieldValue?number><#else ><#assign fValue=fieldValue?replace(suffix,'')></#if>
 	<@cInput type='number' class=inputClass name=idName! placeholder=placeholder! required=entry.mandatory! value=fValue?trim! html5Required=false max=fieldMax! min=fieldMin! step=entryStep?number />

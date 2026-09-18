@@ -8,7 +8,8 @@
 			<@tform type='inline'>
 				<@formGroup labelFor='plugin_type' labelKey='#i18n{portal.system.manage_plugins.buttonFilter}' hideLabel=['all'] formStyle='inline'>
 					<@inputGroup>
-						<@input type='text' name='search_step' id='search_step' placeHolder='#i18n{portal.system.manage_plugins.buttonFilter}' params='autocomplete="off" addons' />
+						<#assign paramsAttr1>autocomplete="off" addons</#assign>
+						<@input type='text' name='search_step' id='search_step' placeHolder='#i18n{portal.system.manage_plugins.buttonFilter}' params=paramsAttr1 />
 						<@button color='primary' title='#i18n{portal.system.manage_plugins.buttonFilter}' buttonIcon='filter' hideTitle=['all'] />
 					</@inputGroup>
 				</@formGroup>
@@ -16,9 +17,11 @@
 			<#if form.active>
 				<#if extendableResourceActionsHtml?? && extendableResourceActionsHtml?has_content>${extendableResourceActionsHtml!}</#if>
 				<@button type='button' id='forms-action' class='mx-2' title='#i18n{forms.dashboard.row_actions}' buttonIcon='cog' dropdownMenu=true >
-					<@aButton color='default dropdown-item justify-content-start' href='${prod_url}jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.FOLink.label} ${form.title} [#i18n{portal.site.portal_footer.newWindow}]' params='target="_blank"' buttonIcon='external-link' />
+					<#assign paramsAttr2>target="_blank"</#assign>
+					<@aButton color='default dropdown-item justify-content-start' href='${prod_url}jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.FOLink.label} ${form.title} [#i18n{portal.site.portal_footer.newWindow}]' params=paramsAttr2 buttonIcon='external-link' />
 					<@aButton color='default dropdown-item justify-content-start' href='jsp/admin/plugins/forms/ManageFormResponse.jsp?view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.BOLink.label} ${form.title}' buttonIcon='text-plus' />
-					<@aButton color='default dropdown-item justify-content-start' href='jsp/admin/plugins/forms/MultiviewForms.jsp?current_selected_panel=forms&id_form=${form.id}' title='#i18n{forms.manageForm.MultiviewLink.label} [#i18n{portal.site.portal_footer.newWindow}]' params='target="_blank"' buttonIcon='list-alt' />
+					<#assign paramsAttr3>target="_blank"</#assign>
+					<@aButton color='default dropdown-item justify-content-start' href='jsp/admin/plugins/forms/MultiviewForms.jsp?current_selected_panel=forms&id_form=${form.id}' title='#i18n{forms.manageForm.MultiviewLink.label} [#i18n{portal.site.portal_footer.newWindow}]' params=paramsAttr3 buttonIcon='list-alt' />
 					<#if form.breadcrumbName=='forms-breadcrumbaccordion.breadcrumbAccordion'>
 					<@aButton color='default dropdown-item justify-content-start' href='jsp/admin/plugins/forms/modules/breadcrumbaccordion/ManageBreadcrumbAccordion.jsp?view=modifyBreadcrumb&id_form=${form.id}' title='#i18n{module.forms.breadcrumbaccordion.manage_breadcrumbAccordion.title}' buttonIcon='stack' />
 					</#if>
@@ -66,7 +69,8 @@
 						</#if>
 						<@columns class='col-auto gap-2'>
 							<@offcanvas id="import-json" title="#i18n{forms.manageForm.buttonImport}" position="end" btnTitle="#i18n{forms.manage_steps.buttonImport}" btnIcon="upload" hideTitle=['xs','sm']>
-								<@tform id='importJsonModal' method='post' name='upload_form' action='jsp/admin/plugins/forms/ManageSteps.jsp' params='enctype="multipart/form-data"'>
+								<#assign paramsAttr4>enctype="multipart/form-data"</#assign>
+								<@tform id='importJsonModal' method='post' name='upload_form' action='jsp/admin/plugins/forms/ManageSteps.jsp' params=paramsAttr4>
 									<@input type="hidden" name="token" value = "${token}" />
 									<@input type='hidden' name='id_form' value='${form.id}' />
 									<@formGroup labelKey='#i18n{forms.manageForm.labelImportFile}' helpKey='#i18n{forms.manageForm.labelImportFile.help}' rows=2>
@@ -92,7 +96,7 @@
 									<#if step.final><@tag color='warning' class='ms-2 fs-5'>#i18n{forms.manage_steps.columnFinal}</@tag> <#assign hasFinal=1 ></#if>
 									</@h>
 								</@link>
-								<#if step.description !=''><@div class='text-truncate'>${step.description!}</@div></#if>
+								<#if step.description?has_content><@div class='text-truncate'>${step.description!}</@div></#if>
 								<#if transition_list??>
 								<#assign stepTransition = transition_list?filter( transition -> transition.fromStep = step.id ) />
 								<#if stepTransition?? && stepTransition?size gt 0>
@@ -140,7 +144,7 @@
 					<#else>
 						<#assign msg="" />				
 					</#if>
-					<#if msg?? && msg != '' &&  step_list?size gt 0><@alert color='warning' title=msg! iconTitle='alert-triangle' dismissible=true /></#if>
+					<#if msg?? && msg?has_content &&  step_list?size gt 0><@alert color='warning' title=msg! iconTitle='alert-triangle' dismissible=true /></#if>
 					<@paginationAdmin paginator=paginator combo=1 showcount=0 />
 				<#else>
 					<@empty subtitle='#i18n{forms.multiviewForms.view_record_history.history_empty}' title='#i18n{forms.manage_steps.warning.no.initial.final}' />
@@ -173,7 +177,8 @@
 							</@offcanvas>
 						</#if>
 						<@offcanvas id="import-json" title="#i18n{forms.manageForm.buttonImport}" position="end" btnTitle="#i18n{forms.manage_steps.buttonImport}" btnIcon="upload" >
-							<@tform id='importJsonModal' method='post' name='upload_form' action='jsp/admin/plugins/forms/ManageSteps.jsp' params='enctype="multipart/form-data"'>
+							<#assign paramsAttr5>enctype="multipart/form-data"</#assign>
+							<@tform id='importJsonModal' method='post' name='upload_form' action='jsp/admin/plugins/forms/ManageSteps.jsp' params=paramsAttr5>
 								<@input type="hidden" name="token" value = "${token}" />
 								<@input type='hidden' name='id_form' value='${form.id}' />
 								<@formGroup labelKey='#i18n{forms.manageForm.labelImportFile}' helpKey='#i18n{forms.manageForm.labelImportFile.help}' rows=2>

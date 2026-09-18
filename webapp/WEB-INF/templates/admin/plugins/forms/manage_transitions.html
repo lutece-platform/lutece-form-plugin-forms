@@ -8,9 +8,12 @@
 		<@pageHeader title='${form.title!}'>
         <#if form.active>
             <@button type='button' id='forms-action' title='#i18n{forms.dashboard.row_actions}' buttonIcon='cog me-1' dropdownMenu=true >
-                <@aButton color='default dropdown-item justify-content-start' href='jsp/admin/plugins/forms/ManageFormResponse.jsp?view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.BOLink.label} ${form.title} [#i18n{portal.site.portal_footer.newWindow}]' params='target="_blank"' buttonIcon='text-plus me-1' />
-                <@aButton color='default dropdown-item justify-content-start' href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.FOLink.label} ${form.title} [#i18n{portal.site.portal_footer.newWindow}]' params='target="_blank"' buttonIcon='external-link me-1' />
-                <@aButton color='default dropdown-item justify-content-start' href='jsp/admin/plugins/forms/MultiviewForms.jsp?current_selected_panel=forms&id_form=${form.id}' title='#i18n{forms.manageForm.MultiviewLink.label} [#i18n{portal.site.portal_footer.newWindow}]' params='target="_blank"' buttonIcon='list-alt me-1' />
+                <#assign paramsAttr1>target="_blank"</#assign>
+                <@aButton color='default dropdown-item justify-content-start' href='jsp/admin/plugins/forms/ManageFormResponse.jsp?view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.BOLink.label} ${form.title} [#i18n{portal.site.portal_footer.newWindow}]' params=paramsAttr1 buttonIcon='text-plus me-1' />
+                <#assign paramsAttr2>target="_blank"</#assign>
+                <@aButton color='default dropdown-item justify-content-start' href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.FOLink.label} ${form.title} [#i18n{portal.site.portal_footer.newWindow}]' params=paramsAttr2 buttonIcon='external-link me-1' />
+                <#assign paramsAttr3>target="_blank"</#assign>
+                <@aButton color='default dropdown-item justify-content-start' href='jsp/admin/plugins/forms/MultiviewForms.jsp?current_selected_panel=forms&id_form=${form.id}' title='#i18n{forms.manageForm.MultiviewLink.label} [#i18n{portal.site.portal_footer.newWindow}]' params=paramsAttr3 buttonIcon='list-alt me-1' />
             </@button>
         </#if>
         </@pageHeader>
@@ -73,6 +76,7 @@
                             <#assign controlIcon='plus' />
                             <#assign controlTitle='#i18n{forms.manage_questions.action.addControl}' />
                             <#assign transitionClass> <#if transition.priority! == 1> border-primary border-2</#if></#assign>
+<#assign transitionClass = transitionClass?is_markup_output?then(transitionClass?markup_string, transitionClass) />
                             <@box class='card-transition ${transitionClass!}'>
                                 <#assign transitionTitle> <@tag color='info' class='me-2'>#i18n{forms.manage_transitions.columnPriority} ${transition.priority!}</@tag> 
                                 <#-- <@icon style='arrow-right-circle' /> -->
