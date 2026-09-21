@@ -8,10 +8,13 @@
 <#assign hasError = false />
 <#assign entryClass=''>
 <#assign entryClass>position-relative <#list entry.CSSClass?split(' ') as laClass>${laClass!}</#list></#assign>
+<#assign entryClass = entryClass?is_markup_output?then(entryClass?markup_string, entryClass) />
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
 <#if list_responses??><#list list_responses as response><#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError><#assign hasError = true /><#assign error = response.entry.error></#if></#list></#if>
 <#assign errorMsg><#if hasError><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#if></#assign>
-<#assign helpMsg><#if entry.helpMessage?? && entry.helpMessage!=''>${entry.helpMessage}</#if></#assign>
+<#assign errorMsg = errorMsg?is_markup_output?then(errorMsg?markup_string, errorMsg) />
+<#assign helpMsg><#if entry.helpMessage?? && entry.helpMessage?has_content>${entry.helpMessage}</#if></#assign>
+<#assign helpMsg = helpMsg?is_markup_output?then(helpMsg?markup_string, helpMsg) />
 <#assign iterationNumber = entry_iteration_number?c >
 <#assign hasCheckAddress = entry.CSSClass?? && entry.CSSClass?contains("checkaddress") />
 <#if entry.fields??>
@@ -33,7 +36,7 @@
         <#assign geometryValue = getResponseContainingTheFieldWithCode(list_responses, "geometry").toStringValueResponse />
         <#if getError( list_responses, entry )?? ><#assign error = getError( list_responses, entry ) ></#if>
     </#if>
-    <#if editModeValue == '' || editModeValue?starts_with('Address') || editModeValue?starts_with('Adresse')>
+    <#if !editModeValue?has_content || editModeValue?starts_with('Address') || editModeValue?starts_with('Adresse')>
         <#if useAddressAutocomplete>
             <@suggestPOIInput id="${idName}_address" name="${idName}_address" currentValue="${addressValue!}" required=entry.mandatory cssClass="form-geoloc<#if hasError> is-invalid</#if>" />
         <#else>
@@ -49,7 +52,7 @@
     <#if hasError>
         <@div class="invalid-feedback"><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></@div>
     </#if>
-    <#if entry.helpMessage?exists&&entry.helpMessage!=''><small class="form-text text-muted">${entry.helpMessage}</small></#if>
+    <#if entry.helpMessage?exists&&entry.helpMessage?has_content><small class="form-text text-muted">${entry.helpMessage}</small></#if>
     <#if entry.mapProvider?has_content>
         <@p params='hidden'>${entry.mapProvider.key!}</@p>
         <#if viewNumberValue?has_content && entry.mapProvider.getParameter(viewNumberValue?number)?? && entry.mapProvider.getParameter(viewNumberValue?number).mapParameter??>

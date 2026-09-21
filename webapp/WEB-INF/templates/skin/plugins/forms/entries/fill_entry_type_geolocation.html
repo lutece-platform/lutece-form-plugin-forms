@@ -9,10 +9,13 @@
 <#assign hasError = false />
 <#assign entryClass=''>
 <#assign entryClass>position-relative <#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign entryClass = entryClass?is_markup_output?then(entryClass?markup_string, entryClass) />
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
 <#if list_responses??><#list list_responses as response><#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError><#assign hasError = true /><#assign error = response.entry.error></#if></#list></#if>
 <#assign errorMsg><#if hasError><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#if></#assign>
-<#assign helpMsg><#if entry.helpMessage?? && entry.helpMessage!=''>${entry.helpMessage}</#if></#assign>
+<#assign errorMsg = errorMsg?is_markup_output?then(errorMsg?markup_string, errorMsg) />
+<#assign helpMsg><#if entry.helpMessage?? && entry.helpMessage?has_content>${entry.helpMessage}</#if></#assign>
+<#assign helpMsg = helpMsg?is_markup_output?then(helpMsg?markup_string, helpMsg) />
 <#assign iterationNumber = entry_iteration_number?c >
 <#if entry.fields??>
 <#assign addressField = getFieldValueByCode( entry, "address" )>
@@ -28,7 +31,7 @@
 			<#if getResponseContainingTheFieldWithCode(list_responses, "Y")??><#assign yValue = getResponseContainingTheFieldWithCode(list_responses, "Y").toStringValueResponse /></#if>
 			<#if getResponseContainingTheFieldWithCode(list_responses, "geometry")??><#assign geometryValue = getResponseContainingTheFieldWithCode(list_responses, "geometry").toStringValueResponse /></#if>
 		</#if>
-		<#if editModeValue == '' || editModeValue?starts_with('Address') >
+		<#if !editModeValue?has_content || editModeValue?starts_with('Address') >
 			<@cInput class='form-control form-geoloc address-autocomplete ${entryClass!}' required=entry.mandatory! html5Required=false name='${idName}_address' value=addressValue! errorMsg=errorMsg helpMsg=helpMsg />
 			<@cBlock id='labelAutocomplete'></@cBlock>
 		<#else>

@@ -13,7 +13,7 @@
                         <@cListItem class='mb-s'>
                             ${questionResponse.question.title!} :
                             <#list questionResponse.entryResponse as response>
-                                <#if response.responseValue?? && response.responseValue !=''><@cInline type='strong' class='ms-sm'>${response.responseValue!}</@cInline></#if>
+                                <#if response.responseValue?? && response.responseValue?has_content><@cInline type='strong' class='ms-sm'>${response.responseValue!}</@cInline></#if>
                             </#list>
                         </@cListItem>
                         </#list>

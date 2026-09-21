@@ -1,17 +1,20 @@
 <@cTpl>
 <#if list_steps?has_content && list_steps?size gt 1>
-<@cBlock type='nav' class='breadcrumb-forms-vertical breadcrumb-forms-stepper' params='aria-label="breadcrumb"'>
+<#assign paramsAttr1>aria-label="breadcrumb"</#assign>
+<@cBlock type='nav' class='breadcrumb-forms-vertical breadcrumb-forms-stepper' params=paramsAttr1>
     <@chList type='o' class='breadcrumb-forms-stepper__list'>
         <#list list_steps as step>
             <#if step?has_next>
                 <@chItem class='breadcrumb-forms-step breadcrumb-forms-step--done'>
-                    <@cBtn noclass=true class='breadcrumb-forms-step__row' type='submit' label='' params='name="action_doGoToStep" value="${step?index?c}" formnovalidate'>
+                    <#assign paramsAttr2>name="action_doGoToStep" value="${step?index?c}" formnovalidate</#assign>
+                    <@cBtn noclass=true class='breadcrumb-forms-step__row' type='submit' label='' params=paramsAttr2>
                         <@cInline class='breadcrumb-forms-step__label'>${step.title!}</@cInline>
                         <@cInline class='breadcrumb-forms-step__marker'><@cIcon name='check' title='#i18n{portal.theme.labelStepDone}' /></@cInline>
                     </@cBtn>
                 </@chItem>
             <#else>
-                <@chItem class='breadcrumb-forms-step breadcrumb-forms-step--current' params='aria-current="step"'>
+                <#assign paramsAttr3>aria-current="step"</#assign>
+                <@chItem class='breadcrumb-forms-step breadcrumb-forms-step--current' params=paramsAttr3>
                     <@cBlock class='breadcrumb-forms-step__row'>
                         <@cInline class='breadcrumb-forms-step__label'>${step.title!}</@cInline>
                         <@cInline class='breadcrumb-forms-step__marker'>${(step?index + 1)?c}</@cInline>

@@ -1,7 +1,9 @@
 <#assign stepTitle=step.title!?replace("- hidden","") />
-<@box color='primary' id='step-${step.id}' class='step-group' params=' tabindex=0 data-title="${stepTitle}"'>
+<#assign paramsAttr1> tabindex=0 data-title="${stepTitle}"</#assign>
+<@box color='primary' id='step-${step.id}' class='step-group' params=paramsAttr1>
 <@boxHeader title='${stepTitle} - ${form.title}' boxTools=true>
-<@button type='button' color='link' params=' data-toggle="collapse" data-target="#box-step-content-${step.id}" aria-expanded="false" aria-controls="box-step-content-${step.id}"'>
+<#assign paramsAttr2> data-toggle="collapse" data-target="#box-step-content-${step.id}" aria-expanded="false" aria-controls="box-step-content-${step.id}"</#assign>
+<@button type='button' color='link' params=paramsAttr2>
     <@icon style='minus-square' />
 </@button>
 </@boxHeader>

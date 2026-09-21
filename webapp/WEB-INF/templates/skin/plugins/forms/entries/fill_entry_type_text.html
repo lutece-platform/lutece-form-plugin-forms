@@ -13,16 +13,22 @@
 <#assign field_width=getFieldValueByCode( entry, "width")>
 <#assign field_default=getFieldByCode( entry, "text_config")>
 <#assign errorMsg><#if hasError><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#if></#assign>
-<#assign helpMsg><#if entry.helpMessage?exists&&entry.helpMessage!=''>${entry.helpMessage}</#if></#assign>
+<#assign errorMsg = errorMsg?is_markup_output?then(errorMsg?markup_string, errorMsg) />
+<#assign helpMsg><#if entry.helpMessage?exists&&entry.helpMessage?has_content>${entry.helpMessage}</#if></#assign>
+<#assign helpMsg = helpMsg?is_markup_output?then(helpMsg?markup_string, helpMsg) />
 <#assign field_value=''>
 <#assign field_max_size=getFieldValueByCode( entry, "max_size") >
 <#assign field_autocomplete = getFieldByCode( entry, "autocomplete" )!{} >
 <#assign entryAutocomplete><#if field_autocomplete?? && field_autocomplete.value??>autocomplete="${field_autocomplete.value}"</#if></#assign>
 <#assign field_max_size_number><#if field_max_size?number!=-1>${field_max_size?number}<#else>0</#if></#assign>
-<#if list_responses?has_content><#list list_responses as response><#if response.entry.idEntry == entry.idEntry><#if response.toStringValueResponse??><#assign fieldValue>${response.toStringValueResponse}</#assign></#if></#if></#list><#else><#if field_default.value?exists><#assign fieldValue>${field_default.value}</#assign><#else><#assign fieldValue=''></#if></#if>
-<#assign fieldParams><#if field_width!?number gt 0> style="width:${field_width?number}px;"</#if><#if entryAutocomplete=''>${entryAutocomplete}</#if></#assign>
+<#assign field_max_size_number = field_max_size_number?is_markup_output?then(field_max_size_number?markup_string, field_max_size_number) />
+<#if list_responses?has_content><#list list_responses as response><#if response.entry.idEntry == entry.idEntry><#if response.toStringValueResponse??><#assign fieldValue>${response.toStringValueResponse}</#assign>
+<#assign fieldValue = fieldValue?is_markup_output?then(fieldValue?markup_string, fieldValue) /></#if></#if></#list><#else><#if field_default.value?exists><#assign fieldValue>${field_default.value}</#assign>
+<#assign fieldValue = fieldValue?is_markup_output?then(fieldValue?markup_string, fieldValue) /><#else><#assign fieldValue=''></#if></#if>
+<#assign fieldParams><#if field_width!?number gt 0> style="width:${field_width?number}px;"</#if><#if !entryAutocomplete?has_content>${entryAutocomplete}</#if></#assign>
 <#assign placeholder = getFieldValueByCode(entry, "placeholder") >
 <#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign entryCSSClass = entryCSSClass?is_markup_output?then(entryCSSClass?markup_string, entryCSSClass) />
 <@cField label=entry.title! for=idName! required=entry.mandatory! class=entryCSSClass!?trim > 
 	<@cInput name=idName placeholder=placeholder required=entry.mandatory! html5Required=false value=fieldValue?string maxlength=field_max_size_number?number helpMsg=helpMsg errorMsg=errorMsg params=fieldParams />
 </@cField>

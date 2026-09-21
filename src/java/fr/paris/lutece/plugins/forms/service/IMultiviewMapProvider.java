@@ -33,6 +33,10 @@
  */
 package fr.paris.lutece.plugins.forms.service;
 
+import fr.paris.lutece.portal.service.template.HtmlMarkup;
+
+import freemarker.template.TemplateModel;
+
 /**
  * Forms service for providing an interactive map on the multiview page to be implemented by modules
  *
@@ -48,4 +52,14 @@ public interface IMultiviewMapProvider
      * interface, we may need to replace it with a more general mapping interface.
      */
     String getMapTemplate( );
+
+    /**
+     * Return the map template as FreeMarker HTML markup.
+     *
+     * @return the map template as markup
+     */
+    default TemplateModel getMapTemplateMarkup( )
+    {
+        return HtmlMarkup.of( getMapTemplate( ) );
+    }
 }

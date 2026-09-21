@@ -1,6 +1,7 @@
 <@cTpl>
 <#assign alertClass='success' />
 <#assign alertTitle><#if messageInfo??>${messageInfo?replace('<p>','')?replace('</p>','')}</#if></#assign>
+<#assign alertTitle = alertTitle?is_markup_output?then(alertTitle?markup_string, alertTitle) />
 <#assign alertText='' />
 <#if warnings??>
 	<#if warnings?size gt 0 >
@@ -18,6 +19,7 @@
 	<@cRow>
 		<@cCol class='d-flex justify-content-center mt-l'>
 			<#assign backLabel><#if labelButton?? >${labelButton}<#else>#i18n{forms.form.returnPage}</#if></#assign>
+<#assign backLabel = backLabel?is_markup_output?then(backLabel?markup_string, backLabel) />
 			<@cLink href=back_url label=backLabel class='btn btn-primary' />
 		</@cCol>
 	</@cRow>

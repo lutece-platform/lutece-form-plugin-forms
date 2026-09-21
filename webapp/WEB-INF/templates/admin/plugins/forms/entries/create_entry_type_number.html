@@ -37,7 +37,8 @@ ${breadcrumb_template}
 							<@input type='text' name='placeholder' id='placeholder' value='' maxlength=100 />
 						</@formGroup>
 						<@formGroup labelFor='autocomplete' labelKey='#i18n{forms.create_entry.labelAutocomplete}' helpKey='#i18n{forms.create_entry.labelHelpMessageAutocomplete}'>
-							<@input type='text' name='autocomplete' id='autocomplete' params=' list="autocompleteList"' />
+							<#assign paramsAttr1> list="autocompleteList"</#assign>
+							<@input type='text' name='autocomplete' id='autocomplete' params=paramsAttr1 />
 							<datalist id="autocompleteList"><option value="off"><option value="on"></datalist>
 						</@formGroup>
 						<@formGroup labelFor='value' labelKey='#i18n{forms.create_entry.labelValueDefault}'>
@@ -72,7 +73,8 @@ ${breadcrumb_template}
 							<@checkBox orientation='switch' labelFor='is_indexed' labelKey='#i18n{forms.create_entry.labelResponsesIndexed}' name='is_indexed' id='is_indexed' value='1' checked=true />
 						</@formGroup>
 						<@formGroup>
-							<@checkBox orientation='switch' labelFor='anonymizable' labelKey='#i18n{forms.create_entry.labelAnonymizable}' name='anonymizable' id='anonymizable' value='1' params='onchange="javascript:changeVisilityAnonymizePattern();"' />
+							<#assign paramsAttr2>onchange="javascript:changeVisilityAnonymizePattern();"</#assign>
+							<@checkBox orientation='switch' labelFor='anonymizable' labelKey='#i18n{forms.create_entry.labelAnonymizable}' name='anonymizable' id='anonymizable' value='1' params=paramsAttr2 />
 						</@formGroup>
 						<@formGroup labelFor='anonymize_pattern' id="anonymize_pattern_group" labelKey='#i18n{forms.create_entry.labelAnonymizePattern}' helpKey='${anonymization_help_message}' >
 							<@input type='text' name='anonymize_pattern' id='anonymize_pattern' maxlength=255 />

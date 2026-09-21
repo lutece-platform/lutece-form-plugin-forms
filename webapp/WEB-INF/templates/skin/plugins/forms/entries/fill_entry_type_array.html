@@ -4,9 +4,10 @@
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
 <#assign hasError = false />
 <#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign entryCSSClass = entryCSSClass?is_markup_output?then(entryCSSClass?markup_string, entryCSSClass) />
 <#if list_responses??><#list list_responses as response><#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError><#assign hasError = true /><#assign error = response.entry.error></#if></#list></#if>
 <@cFieldset class=entryCSSClass!?trim legend=entry.title for=idName required=entry.mandatory > 
-<#if entry.helpMessage?exists && entry.helpMessage!=''><@cFormHelp id=idName! label=entry.helpMessage! /></#if>
+<#if entry.helpMessage?exists && entry.helpMessage?has_content><@cFormHelp id=idName! label=entry.helpMessage! /></#if>
 <#-- TODO : Caption à traiter -->
 <@cTable id='tbl_${idName}' caption=entry.title! >
 <#assign x=getFieldValueByCode(entry, "array_row")?number>

@@ -5,7 +5,7 @@
   <#if field.code == 'answer_choice'>
   <#assign idName = buildEntryName( entry, entry_iteration_number )>
   <#if entry.fieldInLine><#assign style = 'inline' /><#else><#assign style = 'vertical' /></#if>
-  <#if field.comment?? && field.comment != ''><#assign title= "${field.comment}" /><#else><#assign title = '' /></#if>
+  <#if field.comment?? && field.comment?has_content><#assign title= "${field.comment}" /><#else><#assign title = '' /></#if>
   <#if list_responses?? && list_responses?has_content>
     <#list list_responses as response>
       <#if response.entry.idEntry == entry.idEntry && response.field??>
@@ -18,7 +18,8 @@
   <#if !field.noDisplayTitle><#assign labelKey>${field.title}<#if field.fileImage?has_content><@img url=field.fileImage.url! alt=field.title! class='img-thumbnail thumbnail-md mx-2' /></#if></#assign><#else><#assign labelKey = '' /></#if>
   <#if field.conditionalQuestions?exists&&field.conditionalQuestions?size!=0>
     <#assign idConditional = 'div' + field.idField>
-    <#assign params='onclick="doCheckboxEffect(this.checked,${idConditional}.id);"' />
+    <#assign paramsAttr1>onclick="doCheckboxEffect(this.checked,${idConditional}.id);"</#assign>
+    <#assign params=paramsAttr1 />
   <#else>
     <#assign params = '' />
   </#if>
@@ -30,12 +31,12 @@
       </#list>
     </#if>
   </#if>
-  <#if !entry.fieldInLine&&entry.helpMessage?exists&&entry.helpMessage!=''>
+  <#if !entry.fieldInLine&&entry.helpMessage?exists&&entry.helpMessage?has_content>
     <@formHelp>entry.helpMessage</@formHelp>
   </#if>
 </#if>
 </#list>
-<#if entry.fieldInLine&&entry.helpMessage?exists&&entry.helpMessage!=''>
+<#if entry.fieldInLine&&entry.helpMessage?exists&&entry.helpMessage?has_content>
   <@formHelp>${entry.helpMessage}</@formHelp>
 </#if>  
 <#if inLine>

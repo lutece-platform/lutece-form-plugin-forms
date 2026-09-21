@@ -61,6 +61,7 @@ import fr.paris.lutece.plugins.forms.web.form.column.display.impl.FormColumnDisp
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.template.HtmlMarkup;
 import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import jakarta.enterprise.inject.Instance;
@@ -160,7 +161,7 @@ public final class FormListTemplateBuilder
                         strRedirectionDetailsBaseUrl ) );
                 }
                 model.put( MARK_FROM_RESPONSE_GEOJSON_POINT_LIST, listGeoJsonPoints );
-                model.put( MARK_MULTIVIEWMAP, maybeMapProvider.get( ).getMapTemplate( ) );
+                model.put( MARK_MULTIVIEWMAP, maybeMapProvider.get( ).getMapTemplateMarkup( ) );
 
                 listFormColumnLineTemplatePaginated = buildFormColumnLineTemplateList( listFormColumnLineTemplate, listIdFormResponsePaginated );
             }
@@ -169,7 +170,8 @@ public final class FormListTemplateBuilder
                 listFormColumnLineTemplatePaginated = buildFormColumnLineTemplateList( listFormColumnDisplay, listFormResponseItemPaginated, locale );
             }
 
-            model.put( MARK_FORM_RESPONSE_COLUMN_HEADER_TEMPLATE_LIST, listFormColumnHeaderTemplate );
+            model.put( MARK_FORM_RESPONSE_COLUMN_HEADER_TEMPLATE_LIST,
+                    listFormColumnHeaderTemplate.stream( ).map( HtmlMarkup::of ).collect( Collectors.toList( ) ) );
             model.put( MARK_FROM_RESPONSE_ITEM_LIST, listFormResponseItemPaginated );
             model.put( MARK_FORM_RESPONSE_LINE_TEMPLATE_LIST, listFormColumnLineTemplatePaginated );
             model.put( MARK_FORM_RESPONSE_DETAILS_REDIRECT_BASE_URL, strRedirectionDetailsBaseUrl );

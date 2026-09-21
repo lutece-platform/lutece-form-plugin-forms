@@ -4,7 +4,8 @@
 		<@pageHeader title='#i18n{forms.action.multiviewConfig.labelKey}' />
 		<@box class='p-0'>
 			<@boxBody>
-			<@tform method='post' name='save_multiview_config' action='jsp/admin/plugins/forms/MultiviewForms.jsp' params='enctype="multipart/form-data"'>
+			<#assign paramsAttr1>enctype="multipart/form-data"</#assign>
+			<@tform method='post' name='save_multiview_config' action='jsp/admin/plugins/forms/MultiviewForms.jsp' params=paramsAttr1>
 				<@messages errors=errors />
 				<@row>
 					<@columns xs=12 sm=4>
