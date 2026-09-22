@@ -65,6 +65,7 @@ import fr.paris.lutece.plugins.forms.business.action.GlobalFormsActionHome;
 import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnFactory;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
+import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnFormResponseDateUpdate;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterForms;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
@@ -560,19 +561,23 @@ public class MultiviewFormsJspBean extends AbstractJspBean
             }
         }
 
-        IFormFilterDisplay defaultFormFilterDisplay = _listFormFilterDisplay.stream().filter(fd ->
-                fd.getFormFilter() != null
-                        && fd.getFormFilter().getFormFilterConfiguration() != null
-                        && FormResponseSearchItem.FIELD_DATE_CREATION.equals(fd.getFormFilter().getFormFilterConfiguration().getFormFilterName())).findFirst().orElse(null);
+        _formItemSortConfig = buildDefaultFormItemSortConfig( );
+    }
 
-        if (defaultFormFilterDisplay !=null )
-        {
-            _formItemSortConfig = new FormItemSortConfig( defaultFormFilterDisplay.getPosition(), defaultFormFilterDisplay.getFormFilter().getFormFilterConfiguration().getFormFilterName(), true );
-        }
-        else
-        {
-            _formItemSortConfig = new FormItemSortConfig( -1, null, true );
-        }
+    /**
+     * Build the default sort configuration of the form response list: most recently updated responses first
+     * 
+     * @return the default sort configuration
+     */
+    private FormItemSortConfig buildDefaultFormItemSortConfig( )
+    {
+        int nColumnPosition = _listFormColumnDisplay.stream( )
+                .filter( columnDisplay -> columnDisplay.getFormColumn( ) instanceof FormColumnFormResponseDateUpdate )
+                .map( IFormColumnDisplay::getPosition )
+                .findFirst( )
+                .orElse( -1 );
+
+        return new FormItemSortConfig( nColumnPosition, FormResponseSearchItem.FIELD_DATE_UPDATE, false );
     }
 
     /**
