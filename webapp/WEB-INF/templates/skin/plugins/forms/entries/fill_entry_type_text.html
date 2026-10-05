@@ -4,7 +4,7 @@
 <#assign imageCode=''>
 <#assign illustration_image_entry=getFieldByCode( entry, "illustration_image")>
 <#assign image_id = illustration_image_entry.value>
-<#list fields_list_by_id_entries as key, value><#if key = illustration_image_entry.idField><#assign imageCode><@cImg src=value alt='illustration_image_entry.title' labelDescribedBy='illustration_image_entry.title' showLabelDescribedBy=true /></#assign></#if></#list></#if>
+<#list fields_list_by_id_entries as key, value><#if key = illustration_image_entry.idField><#assign imageCode><@cImg src=value alt='illustration_image_entry.title' /></#assign></#if></#list></#if>
 <#assign hasError = false />
 <#if list_responses??><#list list_responses as response><#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError><#assign hasError = true /><#assign error = response.entry.error></#if></#list></#if>
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
@@ -25,6 +25,7 @@
 <#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
 <@cField label=entry.title! for=idName! required=entry.mandatory! class=entryCSSClass!?trim > 
 	<@cInput name=idName placeholder=placeholder required=entry.mandatory! html5Required=false value=fieldValue?string maxlength=field_max_size_number?number helpMsg=helpMsg errorMsg=errorMsg params=fieldParams />
+	<#if imageCode?has_content>${imageCode!}</#if>
 </@cField>
 <#assign confirmField=getFieldByCode( entry, "confirm_field")>
 <#if confirmField.value?boolean >

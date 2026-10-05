@@ -3,7 +3,7 @@
 <#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
 <#compress>
 <@chItem class=entryCSSClass!?trim>
-<@cInline type='strong'>${entry.title?capitalize!''} : </@cInline>
+<@cInline type='strong'>${entry.title!''} : </@cInline>
 <#if list_responses?has_content>
 	<#list list_responses as response>
 		<#if response.toStringValueResponse!?trim != ''>
