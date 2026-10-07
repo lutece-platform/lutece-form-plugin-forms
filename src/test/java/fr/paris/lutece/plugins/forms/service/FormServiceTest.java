@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.service;
 
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -65,6 +66,7 @@ import fr.paris.lutece.plugins.genericattributes.business.EntryTypeHome;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
 import fr.paris.lutece.portal.business.file.File;
+import fr.paris.lutece.portal.business.physicalfile.PhysicalFile;
 import fr.paris.lutece.portal.business.rbac.RBACRole;
 import fr.paris.lutece.portal.business.right.Right;
 import fr.paris.lutece.portal.business.user.AdminUser;
@@ -293,6 +295,10 @@ public class FormServiceTest extends LuteceTestCase {
         file.setExtension( "txt" );
         file.setMimeType( "text/plain" );
         file.setSize( 12 );
+
+        PhysicalFile physicalFile = new PhysicalFile( );
+        physicalFile.setValue( "test content".getBytes( StandardCharsets.UTF_8 ) );
+        file.setPhysicalFile( physicalFile );
         
     	_response = new Response( );
     	_response.setEntry( entry );
