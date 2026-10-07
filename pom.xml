@@ -9,7 +9,7 @@
     <groupId>fr.paris.lutece.plugins</groupId>
     <artifactId>plugin-forms</artifactId>
     <packaging>lutece-plugin</packaging>
-    <version>4.0.2-SNAPSHOT</version>
+    <version>4.0.2-beta-04</version>
     <name>Lutece forms plugin</name>
     <repositories>
         <repository>
