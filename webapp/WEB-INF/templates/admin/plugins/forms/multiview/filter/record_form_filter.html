@@ -1,6 +1,7 @@
 <#if filter_list?has_content>
 <@formGroup formStyle='inline' class='forms-filter  w-100 order-1' labelKey='${filter_label!\'\'}' labelFor=filter_name rows=2>
 <@input type='hidden' name='forms_previous_id_form' value='${forms_previous_id_form!-1}' />
-<@select name=filter_name id=filter_name default_value='${filter_list_value!-1}' items=filter_list params=' onchange="this.form.submit()"' />
+<#assign paramsAttr1> onchange="this.form.submit()"</#assign>
+<@select name=filter_name id=filter_name default_value='${filter_list_value!-1}' items=filter_list params=paramsAttr1 />
 </@formGroup>
 </#if>

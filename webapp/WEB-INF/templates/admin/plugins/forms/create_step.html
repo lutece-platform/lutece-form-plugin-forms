@@ -1,4 +1,5 @@
-<@tform method='post' name='create_step' id='create_step' action='jsp/admin/plugins/forms/ManageSteps.jsp' params=' target="_top"'>
+<#assign paramsAttr1> target="_top"</#assign>
+<@tform method='post' name='create_step' id='create_step' action='jsp/admin/plugins/forms/ManageSteps.jsp' params=paramsAttr1>
 <@input type='hidden' id='id_form' name='id_form' value=step.idForm />
 <@formGroup labelFor='title' labelKey='#i18n{forms.create_step.labelTitle}' helpKey='#i18n{forms.create_step.labelTitle.help}' mandatory=true  rows=2 >
     <@input type='text' name='title' id='step-title' value='${step.title!}' />

@@ -6,9 +6,11 @@
 		<@card class='mb-1'>
 			<@row class='align-items-center'>
 				<@div class='col ps-0'>
-					<@h level=3 class='mb-0 d-flex align-items-center' params='title="#i18n{portal.util.labelModify} ${form.title}"'>
+					<#assign paramsAttr1>title="#i18n{portal.util.labelModify} ${form.title}"</#assign>
+					<@h level=3 class='mb-0 d-flex align-items-center' params=paramsAttr1>
 						<#if !form.active><@icon style='times' class='text-danger fs-2' title='#i18n{portal.util.labelDisabled}' /><#else><@icon style='check' class='text-success fs-2' title='#i18n{portal.util.labelEnabled}' /></#if>
-						<@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}' label='${form.title}' class='d-inline-block text-truncate' params='style="max-width:180px"' />
+						<#assign paramsAttr2>style="max-width:180px"</#assign>
+						<@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}' label='${form.title}' class='d-inline-block text-truncate' params=paramsAttr2 />
 					</@h>
 				</@div>
 				<@div class='col-auto d-flex align-items-center'>
@@ -57,7 +59,8 @@
         <#--
 		<@row>
 			<@columns xs=12 md=8>
-				<@h level=3 class='d-inline-block truncate' params='title="${form.title}" style="--tw:300px"'>
+				<#assign paramsAttr3>title="${form.title}" style="--tw:300px"</#assign>
+				<@h level=3 class='d-inline-block truncate' params=paramsAttr3>
 					<#if !form.active><@icon style='times' class='text-danger' title='#i18n{portal.util.labelDisabled}' />	<#else>	<@icon style='check' class='text-success' title='#i18n{portal.util.labelEnabled}' /></#if>
 					<@tag class='mx-2 fs-5' title='#i18n{forms.dashboard.row_responses}'> ${form.currentNumberResponse}</@tag>
 					${form.title}
@@ -80,7 +83,8 @@
 					<#assign inactiveBypass='&ts='+timestamp+'&token='+inactiveBypassTokens[form.id?string]>
 					<#assign color='warning'>
 				</#if>
-				<@aButton href='${prod_url}jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true${inactiveBypass}' title='#i18n{forms.manageForm.FOLink.label} ${form.title}' params='target="_blank"' buttonIcon='external-link' hideTitle=['all'] class='btn btn-outline-secondary d-none d-xl-inline-block' color=color />
+				<#assign paramsAttr4>target="_blank"</#assign>
+				<@aButton href='${prod_url}jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true${inactiveBypass}' title='#i18n{forms.manageForm.FOLink.label} ${form.title}' params=paramsAttr4 buttonIcon='external-link' hideTitle=['all'] class='btn btn-outline-secondary d-none d-xl-inline-block' color=color />
 			</@columns>
 		</@row>
 		-->

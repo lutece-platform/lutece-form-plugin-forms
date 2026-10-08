@@ -18,7 +18,8 @@
         <#if history_information.user_history?exists>
           <em>${history_information.user_history.firstName!} ${history_information.user_history.lastName!}</em>
           <#if adminAvatar>
-            <@img class='fa direct-chat-img' url='servlet/plugins/adminavatar/avatar?id_user=${history_information.user_history.userId!}' alt='Avatar' title='Avatar' params=' arai-hidden="true" ' />
+            <#assign paramsAttr1> arai-hidden="true" </#assign>
+            <@img class='fa direct-chat-img' url='servlet/plugins/adminavatar/avatar?id_user=${history_information.user_history.userId!}' alt='Avatar' title='Avatar' params=paramsAttr1 />
           <#else>
             <@icon style='user' />
           </#if>

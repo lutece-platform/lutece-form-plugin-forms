@@ -170,7 +170,7 @@
 -->
 <#function getMaxFiles entry>
 <#assign fieldMaxFiles = getFieldValueByCode( entry, "max_files" )>
-<#if fieldMaxFiles?? && fieldMaxFiles != "">
+<#if fieldMaxFiles?? && fieldMaxFiles?has_content>
 <#return fieldMaxFiles>
 </#if>
 <#return "1">
@@ -182,7 +182,7 @@
 -->
 <#function getFileMaxSize entry>
 <#assign fieldFileMaxSize = getFieldValueByCode( entry, "file_max_size" )>
-<#if fieldFileMaxSize?? && fieldFileMaxSize != "">
+<#if fieldFileMaxSize?? && fieldFileMaxSize?has_content>
 <#return fieldFileMaxSize>
 <#else>
 <#if getField( entry, "option" )??>
@@ -262,10 +262,11 @@
 		</#if>
 	</#if>
 </#if>
-<#if typeToast?? && typeToast != ''><@initToast><@addToast content=messageToast class='bg-${typeToast} text-${typeToast}-fg' /></@initToast></#if>
+<#if typeToast?? && typeToast?has_content><@initToast><@addToast content=messageToast class='bg-${typeToast} text-${typeToast}-fg' /></@initToast></#if>
 </#macro>    
 <#macro formBreadCrumb home='jsp/admin/plugins/forms/ManageForms.jsp' homeLabel=false>
-<@breadcrumbs id='breadforms' params=' style="margin-bottom:1em; background-color:transparent;"'>
+<#local paramsAttr1> style="margin-bottom:1em; background-color:transparent;"</#local>
+<@breadcrumbs id='breadforms' params=paramsAttr1>
 	<@breadcrumbItem>
 		<@link href=home title='#i18n{forms.form.returnPage} #i18n{forms.manageForm.title}'>
 			<@icon style='home' />
@@ -294,7 +295,7 @@
 <#macro formsButton okAction='' viewAction='' rows=1>
 <@button type='submit' id='action_${okAction}' name='action_${okAction}' buttonIcon='check' title='#i18n{portal.admin.message.buttonValidate}' class='form-validation' />
 <#nested>
-<#if viewAction !=''>
+<#if viewAction?has_content>
 	<@button type='submit' name='view_${viewAction}' title='#i18n{portal.admin.message.buttonCancel}' cancel=true buttonIcon='times' class='form-validation' />
 </#if>
 </#macro>
@@ -717,9 +718,11 @@ document.addEventListener('DOMContentLoaded', function() {
 <#-- Element visibility -->
 <#local displayTitleClass = displaySettings(hide,'table-cell') />
 <#if jsp_url?contains("?")><#assign sort_url = jsp_url + "&amp;sorted_attribute_name=" + attribute + "&amp;asc_sort=" /><#else><#assign sort_url = jsp_url + "?sorted_attribute_name=" + attribute + "&amp;asc_sort=" /></#if>
-<@th class='multiview-th bg-light ${displayTitleClass!}' id='sort${id!}_${attribute!}' params='data-field="${field}"' >
+<#local paramsAttr2>data-field="${field}"</#local>
+<@th class='multiview-th bg-light ${displayTitleClass!}' id='sort${id!}_${attribute!}' params=paramsAttr2 >
 	<@div class='d-flex align-items-center justify-content-between'>
-		<@span class='text-truncate' params='data-bs-toggle="tooltip" title="${title}"'>${title}</@span>
+		<#local paramsAttr3>data-bs-toggle="tooltip" title="${title}"</#local>
+		<@span class='text-truncate' params=paramsAttr3>${title}</@span>
 		<@sort jsp_url=jsp_url attribute=attribute type=type />
 	</@div>
 </@th>

@@ -4,6 +4,7 @@
 <#assign field_width=getFieldValueByCode( entry, "width")>
 <#if field_width?number &gt; 0><#assign width=field_width?number></#if>
 <#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign entryCSSClass = entryCSSClass?is_markup_output?then(entryCSSClass?markup_string, entryCSSClass) />
 <#compress>
 <@chItem class=entryCSSClass!?trim>
 <@cInline class='me-2' type='strong'>${entry.title!''} :</@cInline>
@@ -12,7 +13,8 @@
 	<#list list_responses as response>
 		<#if response.file?exists>
 			<#assign hasFile=true>
-			<@cImg src='' alt="${entry.title!''}" id='img${entry.idEntry}' title="${entry.title!''}" class="img-fluid img-responsive img-thumbnail" params=' style="width:${width};"' />
+			<#assign paramsAttr1> style="width:${width};"</#assign>
+			<@cImg src='' alt="${entry.title!''}" id='img${entry.idEntry}' title="${entry.title!''}" class="img-fluid img-responsive img-thumbnail" params=paramsAttr1 />
 		<#else>
 			<@cInline type='em'>#i18n{theme.labelNoDataProvided}</@cInline>
 		</#if>

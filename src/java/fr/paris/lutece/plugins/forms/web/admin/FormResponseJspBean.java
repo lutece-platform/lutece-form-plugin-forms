@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.forms.web.admin;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.enterprise.inject.literal.NamedLiteral;
@@ -68,6 +69,7 @@ import fr.paris.lutece.plugins.forms.web.StepDisplayTree;
 import fr.paris.lutece.plugins.forms.web.breadcrumb.IBreadcrumb;
 import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.template.HtmlMarkup;
 import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
@@ -669,10 +671,10 @@ public class FormResponseJspBean extends AbstractJspBean
     {
         FormsResponseUtils.populateFormWithLogoAndNumberResponse(form);
         model.put( FormsConstants.MARK_FORM, form );
-        model.put( FormsConstants.MARK_FORM_TOP_BREADCRUMB, _breadcrumb.getTopHtml( request, _formResponseManager ) );
-        model.put( FormsConstants.MARK_FORM_BOTTOM_BREADCRUMB, _breadcrumb.getBottomHtml( request, _formResponseManager ) );
-        model.put( STEP_HTML_MARKER,
-                _stepDisplayTree.getCompositeHtml( request, _formResponseManager.findAllResponses( ), getLocale( ), DisplayType.SUBMIT_BACKOFFICE ) );
+        model.put( FormsConstants.MARK_FORM_TOP_BREADCRUMB, HtmlMarkup.of( _breadcrumb.getTopHtml( request, _formResponseManager ) ) );
+        model.put( FormsConstants.MARK_FORM_BOTTOM_BREADCRUMB, HtmlMarkup.of( _breadcrumb.getBottomHtml( request, _formResponseManager ) ) );
+        model.put( STEP_HTML_MARKER, HtmlMarkup.of(
+                _stepDisplayTree.getCompositeHtml( request, _formResponseManager.findAllResponses( ), getLocale( ), DisplayType.SUBMIT_BACKOFFICE ) ) );
         
         fillCommons( model );
     }
@@ -690,7 +692,8 @@ public class FormResponseJspBean extends AbstractJspBean
         List<Step> listValidatedStep = _formResponseManager.getValidatedSteps( );
 
         List<String> listStepHtml = FormsResponseUtils.buildStepsHtml( request, listValidatedStep, _formResponseManager, false );
-        mapFormResponseSummaryModel.put( MARK_LIST_SUMMARY_STEP_DISPLAY, listStepHtml );
+        mapFormResponseSummaryModel.put( MARK_LIST_SUMMARY_STEP_DISPLAY,
+                listStepHtml.stream( ).map( HtmlMarkup::of ).collect( Collectors.toList( ) ) );
         fillCommons( mapFormResponseSummaryModel );
         return mapFormResponseSummaryModel;
     }

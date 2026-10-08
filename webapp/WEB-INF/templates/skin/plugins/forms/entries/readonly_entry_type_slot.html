@@ -1,6 +1,7 @@
 <@cTpl>
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
 <#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign entryCSSClass = entryCSSClass?is_markup_output?then(entryCSSClass?markup_string, entryCSSClass) />
 <@chItem class=entryCSSClass!?trim>
     <@cInline type='strong'>${entry.title} : </@cInline>
     <#if list_responses?has_content>
@@ -15,7 +16,7 @@
                 <#assign endHour = response.toStringValueResponse>
             </#if>
         </#list>
-        <#if beginHour !='' && endHour !=''>
+        <#if beginHour?has_content && endHour?has_content>
             <@cInline>#i18n{forms.message.slot.preposition.from} ${beginHour} #i18n{forms.message.slot.preposition.to} ${endHour}</@cInline>
         <#else>
             <@cInline type='em'>#i18n{theme.labelNoDataProvided}</@cInline>

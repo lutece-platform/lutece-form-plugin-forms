@@ -40,6 +40,9 @@ import java.util.Map;
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.web.form.multiview.util.IFormListPosition;
+import fr.paris.lutece.portal.service.template.HtmlMarkup;
+
+import freemarker.template.TemplateModel;
 
 /**
  * Interface for Filter of a FormPanelDisplay
@@ -81,6 +84,16 @@ public interface IFormPanelDisplay extends IFormListPosition
      * @return the template of the FormPanelDisplay
      */
     String getTemplate( );
+
+    /**
+     * Return the panel template as FreeMarker HTML markup.
+     *
+     * @return the panel template as markup
+     */
+    default TemplateModel getTemplateMarkup( )
+    {
+        return HtmlMarkup.of( getTemplate( ) );
+    }
 
     /**
      * Return the formPanel of the FormPanelDisplay

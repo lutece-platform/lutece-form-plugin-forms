@@ -74,6 +74,7 @@ import fr.paris.lutece.portal.service.message.SiteMessageService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.security.SecurityTokenService;
+import fr.paris.lutece.portal.service.template.HtmlMarkup;
 import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
@@ -241,7 +242,7 @@ public class FormResponseXPage extends MVCApplication
             Map<String, Object> model = new LinkedHashMap<>( );
             model.put( MARK_ID_FORM_RESPONSE, String.valueOf( nIdFormResponse ) );
             model.put( MARK_ID_ACTION, String.valueOf( nIdAction ) );
-            model.put( MARK_TASK_FORM, strHtmlTasksForm );
+            model.put( MARK_TASK_FORM, HtmlMarkup.of( strHtmlTasksForm ) );
             model.put( SecurityTokenService.MARK_TOKEN, _securityTokenService.getToken( request, ACTION_SAVE_TASK_FORM ) );
 
             XPage xPage = getXPage( TEMPLATE_TASK_FORM_RESPONSE, locale, model );

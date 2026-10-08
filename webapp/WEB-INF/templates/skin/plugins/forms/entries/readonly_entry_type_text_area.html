@@ -1,6 +1,7 @@
 <@cTpl>
 <#if !entry.onlyDisplayInBack>
 <#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign entryCSSClass = entryCSSClass?is_markup_output?then(entryCSSClass?markup_string, entryCSSClass) />
 <@chItem class=entryCSSClass!?trim>
 <#compress>
 <@cInline type='strong'>${entry.title!''} :</@cInline>

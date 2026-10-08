@@ -38,7 +38,8 @@ ${breadcrumb_template}
 							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
 						</@formGroup>
 						<@formGroup>
-							<@checkBox orientation='switch' labelFor='anonymizable' labelKey='#i18n{forms.create_entry.labelAnonymizable}' name='anonymizable' id='anonymizable' value='1' params='onchange="javascript:changeVisilityAnonymizePattern();"' />
+							<#assign paramsAttr1>onchange="javascript:changeVisilityAnonymizePattern();"</#assign>
+							<@checkBox orientation='switch' labelFor='anonymizable' labelKey='#i18n{forms.create_entry.labelAnonymizable}' name='anonymizable' id='anonymizable' value='1' params=paramsAttr1 />
 						</@formGroup>
 						<@formGroup labelFor='anonymize_pattern' id="anonymize_pattern_group" labelKey='#i18n{forms.create_entry.labelAnonymizePattern}' helpKey='${anonymization_help_message}' >
 							<@input type='text' name='anonymize_pattern' id='anonymize_pattern' maxlength=255 />

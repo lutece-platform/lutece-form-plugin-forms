@@ -41,7 +41,8 @@
 			<#if form.labelFinalButton?has_content>
 				<#assign label_button=form.labelFinalButton />
 			</#if>
-			<@cBtn label=label_button class='primary' params=' name="action_doSaveResponseSummary" ' />
+			<#assign paramsAttr1> name="action_doSaveResponseSummary" </#assign>
+			<@cBtn label=label_button class='primary' params=paramsAttr1 />
 		</@cCol>
 	</@cRow>
 </@cContainer>
@@ -59,8 +60,10 @@ if("IntersectionObserver" in window){
 	});
 }
 document.addEventListener('DOMContentLoaded', () => {
-	<@cSetPageTitle title='${form.title?html} - #i18n{forms.modify_form.labelDisplaySummary}' />
-	document.querySelector('#main-banner-title').innerHTML = '${form.title?html}';
+	<#noautoesc>
+	<@cSetPageTitle title=( form.title + ' - ' + i18n( 'forms.modify_form.labelDisplaySummary' ) )?js_string />
+	document.querySelector('#main-banner-title').textContent = '${form.title?js_string}';
+	</#noautoesc>
 });
 </script>
 </@cTpl>

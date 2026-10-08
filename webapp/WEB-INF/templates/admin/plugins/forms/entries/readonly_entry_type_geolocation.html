@@ -18,7 +18,7 @@
         <#if getResponseContainingTheFieldWithCode( list_responses, "Y" )?? >
         <#assign responseY = getResponseContainingTheFieldWithCode( list_responses, "Y" ).toStringValueResponse >
         </#if>
-        <#if responseX == "" || responseX == "0" || responseY == "" || responseY == "0">
+        <#if !responseX?has_content || responseX == "0" || !responseY?has_content || responseY == "0">
         #i18n{forms.entryType.geolocalisation.message.noGeolocation}
         <#else>
         ${(responseAddress)!}

@@ -6,7 +6,8 @@
             <@p>
             <#if response.field??>${response.field.title!''}
 	            <#if response.field.fileImage.url??>
-					<@img url=response.field.fileImage.url title=response.field.title alt=response.field.title params='width="100" height="100"' />
+					<#assign paramsAttr1>width="100" height="100"</#assign>
+					<@img url=response.field.fileImage.url title=response.field.title alt=response.field.title params=paramsAttr1 />
 				</#if>
             <#else>
                 ${response.responseValue!''}

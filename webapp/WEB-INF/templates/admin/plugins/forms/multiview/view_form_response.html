@@ -9,7 +9,9 @@
     <#if resource_actions.workflow_action_list?has_content>
 		<@div class="d-grid gap-2 position-relative mt-3">
 			<#list resource_actions.workflow_action_list as action>
-				<@aButton class='btn-block is-fullwidth my-1' href='jsp/admin/plugins/forms/ManageDirectoryFormResponseDetails.jsp?action=doProcessAction&amp;id_action=${action.id}&amp;id_form_response=${form_response.id}' >
+				<#local hrefEnt1>jsp/admin/plugins/forms/ManageDirectoryFormResponseDetails.jsp?action=doProcessAction&amp;id_action=${action.id}&amp;id_form_response=${form_response.id}</#local>
+<#local hrefEnt1 = hrefEnt1?is_markup_output?then(hrefEnt1?markup_string, hrefEnt1) />
+				<@aButton class='btn-block is-fullwidth my-1' href=hrefEnt1 >
 					<@img class='img-circle img-action' url='image?resource_type=workflow_icon_img&id=${action.icon.id}' title=action.name alt=action.name /> ${action.name}  
 				</@aButton>
 			</#list>
@@ -21,7 +23,8 @@
     </#if>
 </#if>
 </#macro>
-<@pageContainer params='data-feature="#i18n{forms.adminFeature.manageForms.name}"' class='forms-response' >
+<#assign paramsAttr1>data-feature="#i18n{forms.adminFeature.manageForms.name}"</#assign>
+<@pageContainer params=paramsAttr1 class='forms-response' >
     <@pageColumn>
 		<@pageHeader title='#i18n{forms.multiviewForms.responseDetails.title} ${form_response.id!} ${form.title!}' />
 		<@formBreadCrumb>
@@ -33,8 +36,10 @@
 			<@div id='toc'>
 				<@box id='toc-box'>
 					<@boxHeader id='toc-box-header' title=form.title boxTools=true>
-						<@icon style='arrow-right' id='toc-side-toggle' title='#i18n{forms.multiviewForms.responseDetails.hide.steps}' params=' role="button"' />
-						<@icon style='layout-sidebar-right-expand' id='toc-compress-toggle' title='#i18n{forms.multiviewForms.responseDetails.hide.steps}' params=' role="button"' />
+						<#assign paramsAttr2> role="button"</#assign>
+						<@icon style='arrow-right' id='toc-side-toggle' title='#i18n{forms.multiviewForms.responseDetails.hide.steps}' params=paramsAttr2 />
+						<#assign paramsAttr3> role="button"</#assign>
+						<@icon style='layout-sidebar-right-expand' id='toc-compress-toggle' title='#i18n{forms.multiviewForms.responseDetails.hide.steps}' params=paramsAttr3 />
 					</@boxHeader>
 					<@boxBody>
 						<@div id='step-toc'>
@@ -45,18 +50,22 @@
 			</@div> 
 			<@box id='form-detail-header'>
 				<@boxBody>
-				<@icon style='layout-sidebar-left-expand' id='toc-expand-toggle' title='#i18n{forms.multiviewForms.responseDetails.show.steps}' params=' role="button"' />
+				<#assign paramsAttr4> role="button"</#assign>
+				<@icon style='layout-sidebar-left-expand' id='toc-expand-toggle' title='#i18n{forms.multiviewForms.responseDetails.show.steps}' params=paramsAttr4 />
 				<@row>
-					<@columns sm=8 id='steps-content' params='data-bs-spy="scroll" data-bs-target="#step-toc-list" data-bs-smooth-scroll="true"'>
+					<#assign paramsAttr5>data-bs-spy="scroll" data-bs-target="#step-toc-list" data-bs-smooth-scroll="true"</#assign>
+					<@columns sm=8 id='steps-content' params=paramsAttr5>
 						<#if list_multiview_step_display?has_content>
 							<#list list_multiview_step_display as multiview_step_display>
 								${multiview_step_display}
 							</#list>
 						</#if>
 						<#if comment??>
-							<@box color='primary' class='step-group' id='step-comment' params=' tabindex=0 data-title="#i18n{module.forms.extend.response.comment.title}"'>
+							<#assign paramsAttr6> tabindex=0 data-title="#i18n{module.forms.extend.response.comment.title}"</#assign>
+							<@box color='primary' class='step-group' id='step-comment' params=paramsAttr6>
 								<@boxHeader title='#i18n{module.forms.extend.response.comment.title}' boxTools=true>
-									<@button color='link' buttonIcon='minus-square' params='data-toggle="collapse" data-target="#box-step-content-comment" aria-expanded="false" aria-controls="box-step-content-comment"' />
+									<#assign paramsAttr7>data-toggle="collapse" data-target="#box-step-content-comment" aria-expanded="false" aria-controls="box-step-content-comment"</#assign>
+									<@button color='link' buttonIcon='minus-square' params=paramsAttr7 />
 								</@boxHeader>
 								<@boxBody id='box-step-content-comment' class='collapse show'>
 									<@fieldSet class='fieldset-group' legend='#i18n{module.forms.extend.response.comment.subtitle}' legendClass='sr-only' fieldsetId='group-comment' fieldsetParams=' tabindex=0'>
@@ -66,9 +75,11 @@
 							</@box>
 						</#if>
 						<#if rating??>
-							<@box color='primary' class='step-group' id='step-rating' params=' tabindex=0 data-title="#i18n{module.forms.extend.response.rating.title}"'>
+							<#assign paramsAttr8> tabindex=0 data-title="#i18n{module.forms.extend.response.rating.title}"</#assign>
+							<@box color='primary' class='step-group' id='step-rating' params=paramsAttr8>
 								<@boxHeader title='#i18n{module.forms.extend.response.rating.title}' boxTools=true>
-									<@button color='link' buttonIcon='minus-square' params='data-toggle="collapse" data-target="#box-step-content-rating" aria-expanded="false" aria-controls="box-step-content-rating"' />
+									<#assign paramsAttr9>data-toggle="collapse" data-target="#box-step-content-rating" aria-expanded="false" aria-controls="box-step-content-rating"</#assign>
+									<@button color='link' buttonIcon='minus-square' params=paramsAttr9 />
 								</@boxHeader>
 								<@boxBody id='box-step-content-rating' class='collapse show'>
 								<@fieldSet class='fieldset-group' legend='#i18n{module.forms.extend.response.rating.subtitle}' legendClass='sr-only' fieldsetId='group-rating' fieldsetParams=' tabindex=0'>
@@ -78,9 +89,11 @@
 							</@box>
 						</#if>
 						<#if follow??>
-							<@box color='primary' class='step-group' id='step-follow' params=' tabindex=0 data-title="#i18n{module.forms.extend.response.follow.title}"'>
+							<#assign paramsAttr10> tabindex=0 data-title="#i18n{module.forms.extend.response.follow.title}"</#assign>
+							<@box color='primary' class='step-group' id='step-follow' params=paramsAttr10>
 								<@boxHeader title='#i18n{module.forms.extend.response.follow.title}' boxTools=true>
-									<@button color='link' buttonIcon='minus-square' params='data-toggle="collapse" data-target="#box-step-content-follow" aria-expanded="false" aria-controls="box-step-content-follow"' />
+									<#assign paramsAttr11>data-toggle="collapse" data-target="#box-step-content-follow" aria-expanded="false" aria-controls="box-step-content-follow"</#assign>
+									<@button color='link' buttonIcon='minus-square' params=paramsAttr11 />
 								</@boxHeader>
 								<@boxBody id='box-step-content-follow' class='collapse show'>
 									<@fieldSet class='fieldset-group' legend='#i18n{module.forms.extend.response.follow.subtitle}' legendClass='sr-only' fieldsetId='group-follow' fieldsetParams=' tabindex=0'>
@@ -90,9 +103,11 @@
 							</@box>
 						</#if>
 						<#if feedback??>
-							<@box color='primary' class='step-group' id='step-feedback' params=' tabindex=0 data-title="#i18n{module.forms.extend.response.feedback.title}"'>
+							<#assign paramsAttr12> tabindex=0 data-title="#i18n{module.forms.extend.response.feedback.title}"</#assign>
+							<@box color='primary' class='step-group' id='step-feedback' params=paramsAttr12>
 								<@boxHeader title='#i18n{module.forms.extend.response.feedback.title}' boxTools=true>
-									<@button color='link' buttonIcon='minus-square' params='data-toggle="collapse" data-target="#box-step-content-feedback" aria-expanded="false" aria-controls="box-step-content-feedback"' />
+									<#assign paramsAttr13>data-toggle="collapse" data-target="#box-step-content-feedback" aria-expanded="false" aria-controls="box-step-content-feedback"</#assign>
+									<@button color='link' buttonIcon='minus-square' params=paramsAttr13 />
 								</@boxHeader>
 								<@boxBody id='box-step-content-feedback' class='collapse show'>
 									<@fieldSet class='fieldset-group' legend='#i18n{module.forms.extend.response.feedback.subtitle}' legendClass='sr-only' fieldsetId='group-feedback' fieldsetParams=' tabindex=0'>

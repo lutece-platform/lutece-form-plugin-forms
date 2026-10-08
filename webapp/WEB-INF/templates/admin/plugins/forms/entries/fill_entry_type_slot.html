@@ -24,11 +24,13 @@
                     <@columns xs=6 sm=4 md=3 xl=2>
                         <@formLabel for='${idName}_begin'>#i18n{forms.message.slot.preposition.from}</@formLabel>
                         <#assign beginClass>form-control<#if hasError> is-invalid</#if></#assign>
+<#assign beginClass = beginClass?is_markup_output?then(beginClass?markup_string, beginClass) />
                         <@input type='html5time' class=beginClass id='${idName}_begin' name='${idName}_begin' value=beginHour! />
                     </@columns>
                     <@columns xs=6 sm=4 md=3 xl=2>
                         <@formLabel for="${idName}_end">#i18n{forms.message.slot.preposition.to}</@formLabel>
                         <#assign endClass>form-control<#if hasError> is-invalid</#if></#assign>
+<#assign endClass = endClass?is_markup_output?then(endClass?markup_string, endClass) />
                         <@input type='html5time' class=endClass id='${idName}_end' name='${idName}_end' value=endHour! />
                     </@columns>
                 </#list>
@@ -45,6 +47,6 @@
                 <#if hasError><@p class='invalid-feedback'><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></@p></#if>
             </#if>
         </@row>
-        <#if entry.helpMessage?exists && entry.helpMessage != ''><p class="form-text text-muted">${entry.helpMessage}</p> </#if>
+        <#if entry.helpMessage?exists && entry.helpMessage?has_content><p class="form-text text-muted">${entry.helpMessage}</p> </#if>
     </@formGroup>
 </#if>

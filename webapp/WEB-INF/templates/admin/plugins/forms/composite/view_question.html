@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			<#assign validNames = validNames + [validator.validatorBeanName] />
 			function validator_${validator.validatorBeanName?replace('.','_')}(inputValue,controlValue)
 			{
-				${validator.getJavascriptValidation()!'return true;'}
+				<#noautoesc>${validator.getJavascriptValidation()!'return true;'}</#noautoesc>
 			}
 		</#if>
 	</#list>

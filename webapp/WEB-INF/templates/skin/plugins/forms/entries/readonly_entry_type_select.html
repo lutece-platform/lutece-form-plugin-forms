@@ -2,12 +2,14 @@
 <#if !entry.onlyDisplayInBack>
 <#assign strResponse='' >
 <#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign entryCSSClass = entryCSSClass?is_markup_output?then(entryCSSClass?markup_string, entryCSSClass) />
 <#compress>
 <@chItem class=entryCSSClass!?trim>
 <@cInline type='strong'>${entry.title!''} :</@cInline>
 <#if list_responses?has_content>
 	<#assign strResponse><#list list_responses as response><#if entryTypeService.getResponseValueForRecap(null, null, response, null)??>${entryTypeService.getResponseValueForRecap(null, null, response, null)}<#else>${response.toStringValueResponse!''}</#if></#list></#assign>
-	<#if list_responses?size gte 1 && strResponse?trim !=''>
+<#assign strResponse = strResponse?is_markup_output?then(strResponse?markup_string, strResponse) />
+	<#if list_responses?size gte 1 && strResponse?trim?has_content>
 		<#list list_responses as response><@cInline>${strResponse}<#sep>,</#sep></@cInline></#list>
 	<#else>
 		<@cInline type='em'>#i18n{theme.labelNoDataProvided}</@cInline>

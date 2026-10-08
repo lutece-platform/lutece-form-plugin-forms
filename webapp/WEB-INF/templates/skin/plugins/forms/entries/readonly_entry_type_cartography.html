@@ -1,5 +1,6 @@
 <@cTpl>
 <#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign entryCSSClass = entryCSSClass?is_markup_output?then(entryCSSClass?markup_string, entryCSSClass) />
 <#compress>
 <#if list_responses?has_content>
 <@chItem class=entryCSSClass!?trim>
@@ -27,7 +28,7 @@ window.addEventListener('load', function() {
     
     var geojson = ${coordinate};
    	
-   	if ( geojson["geometry"]["type"] == "Point" ) {
+	if ( geojson["geometry"]["type"] == "Point" ) {
         var coordinates = geojson["geometry"]["coordinates"];
         var marker = L.marker([coordinates[1],coordinates[0]]).addTo(map);
     }

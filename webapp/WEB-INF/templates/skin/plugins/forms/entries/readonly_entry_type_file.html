@@ -3,12 +3,15 @@
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
 <#assign filesList = []>
 <#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign entryCSSClass = entryCSSClass?is_markup_output?then(entryCSSClass?markup_string, entryCSSClass) />
 <@chItem class=entryCSSClass!?trim >
 	<@cInline type='strong' id='label_${idName!}'>${entry.title!''} :</@cInline>
 	<#if list_responses?has_content>
 		<@cInline class='d-inline-block ms-xs me-m' type='strong'>${i18n("portal.theme.labelNumberOfFiles", list_responses?size )}</@cInline>
-		<@cBtn label='' type='button' id='btn-${idName!}' class='secondary btn-mini btn-show-files py-0' params=' data-hide="#i18n{portal.theme.labelHideUploadedFiles}" data-show="#i18n{portal.theme.labelShowUploadedFiles}" aria-expanded="false" aria-controls="list_${idName!}" aria-labelledby="label_${idName}"'>#i18n{portal.theme.labelShowUploadedFiles}</@cBtn>
-		<@chList class='list-uploaded-files visually-hidden mb-3' id='list_${idName!}' params='role="region" aria-labelledby="label_${idName}"'>
+		<#assign paramsAttr1> data-hide="#i18n{portal.theme.labelHideUploadedFiles}" data-show="#i18n{portal.theme.labelShowUploadedFiles}" aria-expanded="false" aria-controls="list_${idName!}" aria-labelledby="label_${idName}"</#assign>
+		<@cBtn label='' type='button' id='btn-${idName!}' class='secondary btn-mini btn-show-files py-0' params=paramsAttr1>#i18n{portal.theme.labelShowUploadedFiles}</@cBtn>
+		<#assign paramsAttr2>role="region" aria-labelledby="label_${idName}"</#assign>
+		<@chList class='list-uploaded-files visually-hidden mb-3' id='list_${idName!}' params=paramsAttr2>
 		<#list list_responses as response>
 		<#if response.file?exists>
 			<#if response.file.size??>

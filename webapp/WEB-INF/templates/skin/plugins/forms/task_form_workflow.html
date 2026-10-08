@@ -3,15 +3,18 @@
 	<@cRow>
 		<@cCol>
 			<@cCard title='#i18n{forms.tasks_form_workflow.title}' class='mt-5'>
-				<@cForm id='form-validate' action='jsp/site/Portal.jsp' params='enctype="multipart/form-data"'>
+				<#assign paramsAttr1>enctype="multipart/form-data"</#assign>
+				<@cForm id='form-validate' action='jsp/site/Portal.jsp' params=paramsAttr1>
 				<@cInput type='hidden' name='page' value='formsResponse' />
 				<@cInput type='hidden' name='id_action' value='${id_action}' />
 				<@cInput type='hidden' name='id_response' value='${id_form_response}' />
 				<@cInput type='hidden' name='token' value='${token}' />	
 				${tasks_form}
 				<@cField>
-					<@cBtn params='name="action_doSaveTaskForm"' label='#i18n{workflow.tasks_form_test_workflow.button_save}' />
-					<@cBtn params='name="action_doCancelTaskForm"' label='#i18n{workflow.tasks_form_test_workflow.button_cancel}' />
+					<#assign paramsAttr2>name="action_doSaveTaskForm"</#assign>
+					<@cBtn params=paramsAttr2 label='#i18n{workflow.tasks_form_test_workflow.button_save}' />
+					<#assign paramsAttr3>name="action_doCancelTaskForm"</#assign>
+					<@cBtn params=paramsAttr3 label='#i18n{workflow.tasks_form_test_workflow.button_cancel}' />
 				</@cField>
 				</@cForm>
 			</@cCard>

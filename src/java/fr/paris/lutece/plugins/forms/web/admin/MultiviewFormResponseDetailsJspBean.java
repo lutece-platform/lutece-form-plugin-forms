@@ -86,6 +86,7 @@ import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.portal.service.template.HtmlMarkup;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
@@ -447,7 +448,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         Map<String, Object> model = getModel( );
         model.put( MARK_ID_FORM_RESPONSE, nIdFormResponse );
         model.put( MARK_ID_ACTION, nIdAction );
-        model.put( MARK_TASK_FORM, strHtmlTasksForm );
+        model.put( MARK_TASK_FORM, HtmlMarkup.of( strHtmlTasksForm ) );
 
         return getPage( MESSAGE_MULTIVIEW_FORM_RESPONSE_TITLE, TEMPLATE_TASK_FORM, model );
     }

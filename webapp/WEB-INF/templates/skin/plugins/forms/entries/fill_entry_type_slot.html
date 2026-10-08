@@ -6,11 +6,15 @@
 <#assign hasError = false />
 <#assign errorMsg = ''>
 <#assign entryCSSClass>form-control<#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign entryCSSClass = entryCSSClass?is_markup_output?then(entryCSSClass?markup_string, entryCSSClass) />
 <#if list_responses??><#list list_responses as response><#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError><#assign hasError = true /><#assign error = response.entry.error></#if></#list></#if>
-<#if hasError><#assign errorMsg><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#assign></#if>
-<#assign helpMsg><#if entry.helpMessage?exists&&entry.helpMessage!=''>${entry.helpMessage}</#if></#assign>
+<#if hasError><#assign errorMsg><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#assign>
+<#assign errorMsg = errorMsg?is_markup_output?then(errorMsg?markup_string, errorMsg) /></#if>
+<#assign helpMsg><#if entry.helpMessage?exists&&entry.helpMessage?has_content>${entry.helpMessage}</#if></#assign>
+<#assign helpMsg = helpMsg?is_markup_output?then(helpMsg?markup_string, helpMsg) />
 <#assign entryStep><#list entry.CSSClass?split(' ') as laClass><#if laClass?starts_with( 'step-' )> ${laClass?replace('step-','')!}<#break></#if></#list></#assign>
-<#if entryStep=''><#assign entryStep=0></#if>
+<#assign entryStep = entryStep?is_markup_output?then(entryStep?markup_string, entryStep) />
+<#if !entryStep?has_content><#assign entryStep=0></#if>
 <#assign beginHour=''>
 <#assign beginEnd=''>
 <#assign inputParams>min="00:00" max="23:59"</#assign>

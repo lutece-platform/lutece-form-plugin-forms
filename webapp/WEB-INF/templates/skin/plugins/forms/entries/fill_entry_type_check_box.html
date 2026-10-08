@@ -12,11 +12,13 @@
 <#list entry.fields as field><#if field.code == 'answer_choice'><#assign nbCheckbox+=1></#if></#list>
 <#list entry.fields as field><#if field.noDisplayTitle><#if nbCheckbox == 1><#assign legendClass+=' visually-hidden'><#else><#assign labelCheckClass=' visually-hidden'></#if></#if></#list>
 <#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign entryCSSClass = entryCSSClass?is_markup_output?then(entryCSSClass?markup_string, entryCSSClass) />
 <#if nbCheckbox gt 1>
 <@cFormCheckGroup legend='${entry.title}' id='${entry.idEntry}' legendClass=legendClass class=entryCSSClass!?trim required=entry.mandatory >
-	<#if entry.helpMessage?exists&&entry.helpMessage!=''><@cFormHelp id=idName! label=entry.helpMessage! /></#if>
+	<#if entry.helpMessage?exists&&entry.helpMessage?has_content><@cFormHelp id=idName! label=entry.helpMessage! /></#if>
 	<#if hasError>
 	<#assign errorMsg><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#assign>
+<#assign errorMsg = errorMsg?is_markup_output?then(errorMsg?markup_string, errorMsg) />
 	<@cFormError id=idName label=errorMsg />
 	</#if>
 	<#list entry.fields as field>
@@ -25,7 +27,9 @@
 			<#if field.noDisplayTitle><#assign hasTitle=false></#if>
 			<#assign idName = buildEntryName( entry, entry_iteration_number )>
 			<#assign title><#if hasTitle>${field.title}<#else><#if nbCheckbox == 1>${entry.title}</#if></#if> </#assign>
+<#assign title = title?is_markup_output?then(title?markup_string, title) />
 			<#assign labelClass><#if field.noDisplayTitle && nbCheckbox gt 1>visually-hidden-focusable</#if></#assign>
+<#assign labelClass = labelClass?is_markup_output?then(labelClass?markup_string, labelClass) />
 			<#if list_responses?? && list_responses?has_content>
 				<#list list_responses as response>
 					<#if response.entry.idEntry == entry.idEntry && response.field??>
@@ -35,18 +39,20 @@
 			<#else>
 				<#if field.defaultValue><#assign isChecked=true></#if>
 			</#if> 
-			<#assign fieldParams><#if field.comment?? && field.comment != ''>title="${field.comment}"</#if><#if field.conditionalQuestions?exists&&field.conditionalQuestions?size!=0><#assign idName='div'><#if entry_iteration_number?has_content ><#assign idName = 'div_nIt' + entry_iteration_number + '_'></#if><#assign idConditional = idName + field.idField> onclick="doCheckboxEffect(this.checked,${idConditional}.id);"</#if></#assign>
+			<#assign fieldParams><#if field.comment?? && field.comment?has_content>title="${field.comment}"</#if><#if field.conditionalQuestions?exists&&field.conditionalQuestions?size!=0><#assign idName='div'><#if entry_iteration_number?has_content ><#assign idName = 'div_nIt' + entry_iteration_number + '_'></#if><#assign idConditional = idName + field.idField> onclick="doCheckboxEffect(this.checked,${idConditional}.id);"</#if></#assign>
 			<#assign isRequiredLabel=(!hasTitle && entry.mandatory) >
 			<@cCheckbox name=idName! label=title labelClass=labelClass id='${idName}_${field.idField}' value='${field.idField!}' inline=entry.fieldInLine! checked=isChecked required=entry.mandatory! html5Required=false showRequiredLabel=isRequiredLabel params=fieldParams />
-			<#if field.fileImage.url??><@cImg src=field.fileImage.url alt=field.title params='style="height:80px;width:80px"' /></#if>
+			<#assign paramsAttr1>style="height:80px;width:80px"</#assign>
+			<#if field.fileImage.url??><@cImg src=field.fileImage.url alt=field.title params=paramsAttr1 /></#if>
 		</#if>
 	</#list>
 	<#if inLine><#if list_entry_children??><#list list_entry_children as children><#if children.conditionalEntries??>${children.conditionalEntries}</#if></#list></#if></#if>
 </@cFormCheckGroup>
 <#else>
-	<#if entry.helpMessage?exists&&entry.helpMessage!=''><@cFormHelp id=idName! label=entry.helpMessage! /></#if>
+	<#if entry.helpMessage?exists&&entry.helpMessage?has_content><@cFormHelp id=idName! label=entry.helpMessage! /></#if>
 	<#if hasError>
 	<#assign errorMsg><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#assign>
+<#assign errorMsg = errorMsg?is_markup_output?then(errorMsg?markup_string, errorMsg) />
 	<@cFormError id=idName label=errorMsg />
 	</#if>
 	<#list entry.fields as field>
@@ -55,7 +61,9 @@
 			<#if field.noDisplayTitle><#assign hasTitle=false></#if>
 			<#assign idName = buildEntryName( entry, entry_iteration_number )>
 			<#assign title><#if hasTitle>${field.title}<#else>${entry.title}</#if></#assign>
+<#assign title = title?is_markup_output?then(title?markup_string, title) />
 			<#assign labelClass><#if field.noDisplayTitle>${labelCheckClass}</#if></#assign>
+<#assign labelClass = labelClass?is_markup_output?then(labelClass?markup_string, labelClass) />
 			<#if list_responses?? && list_responses?has_content>
 				<#list list_responses as response>
 					<#if response.entry.idEntry == entry.idEntry && response.field??>
@@ -65,10 +73,11 @@
 			<#else>
 				<#if field.defaultValue><#assign isChecked=true></#if>
 			</#if> 
-			<#assign fieldParams><#if field.comment?? && field.comment != ''>title="${field.comment}"</#if><#if field.conditionalQuestions?exists&&field.conditionalQuestions?size!=0><#assign idName='div'><#if entry_iteration_number?has_content ><#assign idName = 'div_nIt' + entry_iteration_number + '_'></#if><#assign idConditional = idName + field.idField> onclick="doCheckboxEffect(this.checked,${idConditional}.id);"</#if></#assign>
+			<#assign fieldParams><#if field.comment?? && field.comment?has_content>title="${field.comment}"</#if><#if field.conditionalQuestions?exists&&field.conditionalQuestions?size!=0><#assign idName='div'><#if entry_iteration_number?has_content ><#assign idName = 'div_nIt' + entry_iteration_number + '_'></#if><#assign idConditional = idName + field.idField> onclick="doCheckboxEffect(this.checked,${idConditional}.id);"</#if></#assign>
 			<#assign isRequiredLabel=(!hasTitle && entry.mandatory) >
 			<@cCheckbox name=idName! label=title labelClass=labelClass id='${idName}_${field.idField}' value='${field.idField!}' inline=entry.fieldInLine! checked=isChecked errorMsg=errorMsg required=entry.mandatory! html5Required=false showRequiredLabel=isRequiredLabel params=fieldParams />
-			<#if field.fileImage.url??><@cImg src=field.fileImage.url alt=field.title params='style="height:80px;width:80px"' /></#if>
+			<#assign paramsAttr2>style="height:80px;width:80px"</#assign>
+			<#if field.fileImage.url??><@cImg src=field.fileImage.url alt=field.title params=paramsAttr2 /></#if>
 		</#if>
 	</#list>
 	<#if inLine><#if list_entry_children??><#list list_entry_children as children><#if children.conditionalEntries??>${children.conditionalEntries}</#if></#list></#if></#if>

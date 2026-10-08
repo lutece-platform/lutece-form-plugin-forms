@@ -1,13 +1,15 @@
 <@cTpl>
 <#if !entry.onlyDisplayInBack>
 <#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign entryCSSClass = entryCSSClass?is_markup_output?then(entryCSSClass?markup_string, entryCSSClass) />
 <@chItem class=entryCSSClass!?trim>
 <#compress>
 <@cInline type='strong'>${entry.title!''} :</@cInline>
 <#if list_responses?has_content>
 <#if list_responses?size = 1>
 	<#assign responseContent><#list list_responses as response><#if entryTypeService.getResponseValueForRecap(null, null, response, null)??>${entryTypeService.getResponseValueForRecap(null, null, response, null)}<#else>${response.toStringValueResponse!''}</#if></#list></#assign>
-	<#if responseContent?trim = ''>
+<#assign responseContent = responseContent?is_markup_output?then(responseContent?markup_string, responseContent) />
+	<#if !responseContent?trim?has_content>
 		<@cInline type='em'>#i18n{theme.labelNoDataProvided}</@cInline>
 	<#else>
 		<#list list_responses as response><@cInline><#if entryTypeService.getResponseValueForRecap(null, null, response, null)??>${entryTypeService.getResponseValueForRecap(null, null, response, null)}<#else>${response.toStringValueResponse!''}</#if></@cInline><#sep>,</#sep></#list>

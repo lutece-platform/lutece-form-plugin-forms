@@ -8,7 +8,8 @@
 		<@box>
 			<@boxBody class='container'>
 				<!-- #current_step : Add for breadcrumbs -->
-				<@tform id='form-validate' action='jsp/admin/plugins/forms/ManageFormResponse.jsp' params='enctype="multipart/form-data"'>
+				<#assign paramsAttr1>enctype="multipart/form-data"</#assign>
+				<@tform id='form-validate' action='jsp/admin/plugins/forms/ManageFormResponse.jsp' params=paramsAttr1>
 					<#if messageInfo??><@cAlert id='save-step-status' title='${messageInfo}' /></#if>
 					<#if form.countResponses>
 					<@stepDone step='0' title='#i18n{forms.multiviewForms.view_record_history.information}' idx=0 actionName='' >

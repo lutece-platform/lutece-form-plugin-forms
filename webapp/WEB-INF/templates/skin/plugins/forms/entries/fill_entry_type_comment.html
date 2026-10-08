@@ -1,7 +1,7 @@
 <@cTpl>
 <@cBlock class=entry.CSSClass!>
 ${entry.comment}
-<#if filename?? && filename != ''>
+<#if filename?? && filename?has_content>
 <@chList class='custom-list list-files ps-0 mt-m'>
 	<@chItem>
 		<@cLink href='${url_download_fo}' label='' title='${filename}' class='d-flex justify-content-between' >

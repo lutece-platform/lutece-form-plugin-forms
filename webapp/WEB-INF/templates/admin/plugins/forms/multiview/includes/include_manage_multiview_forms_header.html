@@ -1,5 +1,5 @@
 <@input type='hidden' name='current_selected_panel' value='${current_selected_panel!""}' />
-<#if form_filter_list?has_content><#list form_filter_list as form_filter>${form_filter.template!''}</#list></#if>
+<#if form_filter_list?has_content><#list form_filter_list as form_filter>${form_filter.templateMarkup}</#list></#if>
 <@formGroup class='forms-filter order-3' formStyle=''>
 	<@row>
 		<@columns>

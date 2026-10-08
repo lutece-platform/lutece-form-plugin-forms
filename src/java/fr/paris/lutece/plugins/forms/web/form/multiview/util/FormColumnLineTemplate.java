@@ -35,6 +35,11 @@ package fr.paris.lutece.plugins.forms.web.form.multiview.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import fr.paris.lutece.portal.service.template.HtmlMarkup;
+
+import freemarker.template.TemplateModel;
 
 /**
  * This class represent a line of the Multiview Forms table
@@ -75,6 +80,16 @@ public class FormColumnLineTemplate
     public List<String> getFormColumnCellTemplateList( )
     {
         return _listFormColumnCellTemplate;
+    }
+
+    /**
+     * Return the list of column cell templates as FreeMarker HTML markup.
+     *
+     * @return the list of column cell templates as markup
+     */
+    public List<TemplateModel> getFormColumnCellMarkupList( )
+    {
+        return _listFormColumnCellTemplate.stream( ).map( HtmlMarkup::of ).collect( Collectors.toList( ) );
     }
 
     /**

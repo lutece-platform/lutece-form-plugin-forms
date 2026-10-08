@@ -3,8 +3,11 @@
 <#assign default = ''>
 <#assign hasError = false />
 <#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
-<#if list_responses??><#list list_responses as response><#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError><#assign hasError = true /><#assign error = response.entry.error><#assign errorMsg><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#assign></#if></#list></#if>
-<#assign helpMsg><#if entry.helpMessage?exists && entry.helpMessage!=''>${entry.helpMessage}</#if></#assign>
+<#assign entryCSSClass = entryCSSClass?is_markup_output?then(entryCSSClass?markup_string, entryCSSClass) />
+<#if list_responses??><#list list_responses as response><#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError><#assign hasError = true /><#assign error = response.entry.error><#assign errorMsg><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#assign>
+<#assign errorMsg = errorMsg?is_markup_output?then(errorMsg?markup_string, errorMsg) /></#if></#list></#if>
+<#assign helpMsg><#if entry.helpMessage?exists && entry.helpMessage?has_content>${entry.helpMessage}</#if></#assign>
+<#assign helpMsg = helpMsg?is_markup_output?then(helpMsg?markup_string, helpMsg) />
 <#if getResponse( list_responses, entry )?? > <#assign response = getResponse( list_responses, entry ) ></#if>
 <#assign idName = buildEntryName( entry, entry_iteration_number ) >
 <#assign placeholder = getFieldValueByCode(entry, "placeholder") >

@@ -1,12 +1,14 @@
 <@cTpl>
 <#if !entry.onlyDisplayInBack>
 <#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign entryCSSClass = entryCSSClass?is_markup_output?then(entryCSSClass?markup_string, entryCSSClass) />
 <@chItem class=entryCSSClass!?trim>
 <#compress>
 <@cInline type='strong'>${entry.title!''} : </@cInline>
 <#if list_responses?has_content>
 	<#assign strResponse><#list list_responses as response><#if response.responseValue??>${response.responseValue?number?number_to_date}<#else>${response.toStringValueResponse!''}</#if></#list></#assign>	
-	<#if list_responses?size gt 0 && strResponse?trim !='' >
+<#assign strResponse = strResponse?is_markup_output?then(strResponse?markup_string, strResponse) />
+	<#if list_responses?size gt 0 && strResponse?trim?has_content >
 		${strResponse}
 	<#else>
 		<@cInline type='em'>#i18n{theme.labelNoDataProvided}</@cInline>

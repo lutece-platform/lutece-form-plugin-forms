@@ -1,4 +1,5 @@
-<@tform method='post' name='modify_form' action="jsp/admin/plugins/forms/ManageForms.jsp" params=' target="_top"'>
+<#assign paramsAttr1> target="_top"</#assign>
+<@tform method='post' name='modify_form' action="jsp/admin/plugins/forms/ManageForms.jsp" params=paramsAttr1>
 <@messages errors=errors />
 <@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
 <#-- problem with populate method because it puts the value of checkbox to false -->

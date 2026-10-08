@@ -4,10 +4,12 @@
     <@box>
         <@boxHeader title='#i18n{forms.portlet.formsList.titleAvailableFormsList}' boxTools=true />
         <@boxBody class='p-3'>
-            <@listGroup id='form-available' params='style="min-height:15rem;"'>
+            <#local paramsAttr1>style="min-height:15rem;"</#local>
+            <@listGroup id='form-available' params=paramsAttr1>
             <#if available_forms_list?? && available_forms_list?size gt 0>
                 <#list available_forms_list as aForm>
-                <@listGroupItem id=aForm.id!?string class='bg-gray-100 border border-gray-300 min-h-40 d-flex justify-content-between' params='draggable="true" tabindex="0"'>
+                <#local paramsAttr2>draggable="true" tabindex="0"</#local>
+                <@listGroupItem id=aForm.id!?string class='bg-gray-100 border border-gray-300 min-h-40 d-flex justify-content-between' params=paramsAttr2>
                   <@span>${aForm.title}</@span> <@icon style='arrows-move ms-auto' />
                 </@listGroupItem>
               </#list>
@@ -24,10 +26,12 @@
     <@box>
         <@boxHeader title='#i18n{forms.portlet.formsList.titlePublishedFormsList}' />
         <@boxBody class='p-3'>
-            <@listGroup id='form-published' params='style="min-height:15rem;"'>
+            <#local paramsAttr3>style="min-height:15rem;"</#local>
+            <@listGroup id='form-published' params=paramsAttr3>
             <#if published_forms_list?? && published_forms_list?size gt 0>
                 <#list published_forms_list as pForm>
-                    <@listGroupItem id=pForm.id!?string class='bg-gray-100 border border-gray-300 min-h-40 d-flex justify-content-between' params='draggable="true" tabindex="0"'>
+                    <#local paramsAttr4>draggable="true" tabindex="0"</#local>
+                    <@listGroupItem id=pForm.id!?string class='bg-gray-100 border border-gray-300 min-h-40 d-flex justify-content-between' params=paramsAttr4>
                       <@span>${pForm.title}</@span> <@icon style='arrows-move ms-auto' />
                     </@listGroupItem>
                 </#list>

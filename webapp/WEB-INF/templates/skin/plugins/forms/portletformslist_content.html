@@ -4,6 +4,7 @@
     <#if forms_list?? && forms_list?size gt 0>
         <#list forms_list as form>
             <#assign formUrl>jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id?c}&init=true</#assign>
+<#assign formUrl = formUrl?is_markup_output?then(formUrl?markup_string, formUrl) />
             <@cLink href=formUrl class='card mb-3' label=''>
                 <@cBlock class='card-body'>
                     <@cTitle level=5 class='card-title'>${form.title!}</@cTitle>

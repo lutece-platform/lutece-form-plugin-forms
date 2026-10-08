@@ -20,7 +20,9 @@
 			<#list list_responses as response>
 				<@p>
 					<#if form_response?? && response.entry??>
-						<@link href='jsp/admin/plugins/forms/DoVisualisationMyLuteceUser.jsp?id_form_response=${form_response.id}&amp;id_entry=${response.entry.idEntry}'>
+						<#assign hrefEnt1>jsp/admin/plugins/forms/DoVisualisationMyLuteceUser.jsp?id_form_response=${form_response.id}&amp;id_entry=${response.entry.idEntry}</#assign>
+<#assign hrefEnt1 = hrefEnt1?is_markup_output?then(hrefEnt1?markup_string, hrefEnt1) />
+						<@link href=hrefEnt1>
 							${response.toStringValueResponse!''}
 						</@link>
 					<#else>

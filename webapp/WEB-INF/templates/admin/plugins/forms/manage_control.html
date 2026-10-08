@@ -2,9 +2,11 @@
 <@messages infos=infos />
 <@div class='d-flex justify-content-end mb-3'>
 <#if nextStepTitle??>
-    <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&id_step=${step.id!}&nextStepTitle=${nextStepTitle!}" targetElement="#modify_transition_control'  buttonIcon='plus' title='#i18n{forms.manage_questions.action.addControl}' />
+    <#assign hrefAttr1>jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&id_step=${step.id!}&nextStepTitle=${nextStepTitle!}" targetElement="#modify_transition_control</#assign>
+    <@aButton href=hrefAttr1  buttonIcon='plus' title='#i18n{forms.manage_questions.action.addControl}' />
 <#else>
-   <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&id_step=${step.id!}" targetElement="#modify_transition_control" id="modify-control-${step.id!}' buttonIcon='plus' title='#i18n{forms.manage_questions.action.addControl}'/>
+   <#assign hrefAttr2>jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&id_step=${step.id!}" targetElement="#modify_transition_control" id="modify-control-${step.id!}</#assign>
+   <@aButton href=hrefAttr2 buttonIcon='plus' title='#i18n{forms.manage_questions.action.addControl}'/>
 </#if>
 </@div>
 <#if control_list?size gt 0>
@@ -19,7 +21,8 @@
             <#else>
                 <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&id_control=${control.id}&id_step=${step.id!}' title='#i18n{forms.manage_questions.action.control}' hideTitle=['all'] buttonIcon='pencil'/> 
             </#if>
-            <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${control.id}' title='#i18n{forms.manage_controls.action.removeControl}' hideTitle=['all'] buttonIcon='trash' color='danger' params=' target="_top"' />
+            <#assign paramsAttr3> target="_top"</#assign>
+            <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${control.id}' title='#i18n{forms.manage_controls.action.removeControl}' hideTitle=['all'] buttonIcon='trash' color='danger' params=paramsAttr3 />
         </@span>
     </@li>
     </#list>

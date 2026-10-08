@@ -19,10 +19,12 @@
 </#list>
 </#if>
 <#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign entryCSSClass = entryCSSClass?is_markup_output?then(entryCSSClass?markup_string, entryCSSClass) />
 <@cField class='camera-wrapper ${entryCSSClass!}' label=entry.title for=idName required=entry.mandatory >
-<#if entry.helpMessage?exists&&entry.helpMessage!=''><@cFormHelp id=idName! label=entry.helpMessage! /></#if>
+<#if entry.helpMessage?exists&&entry.helpMessage?has_content><@cFormHelp id=idName! label=entry.helpMessage! /></#if>
 <#if hasError>
 <#assign errorMsg><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#assign>
+<#assign errorMsg = errorMsg?is_markup_output?then(errorMsg?markup_string, errorMsg) />
 <@cInline class="is-invalid"></@cInline>
 <@cFormError id=idName label=errorMsg />
 </#if>
@@ -43,6 +45,7 @@
 	</@cCol>
 </@cRow>
 <#assign camera_value><#if list_responses??><#list list_responses as response><#if response.entry.idEntry == entry.idEntry><#if response.toStringValueResponse??>${response.toStringValueResponse}</#if></#if></#list></#if></#assign>
+<#assign camera_value = camera_value?is_markup_output?then(camera_value?markup_string, camera_value) />
 <@cInput name=idName id=idName  type='hidden' value=camera_value!'' />
 </@cField>
 <script>
@@ -102,7 +105,7 @@ window.addEventListener("DOMContentLoaded", function() {
 		context${entry.idEntry}.drawImage( video, 0, 0, ${width}, ${height});
 	
 		const data${entry.idEntry} = canvas${entry.idEntry}.toDataURL('image/${imageType}',1);
-		if(video.src != null && video.src !="" ){
+		if(video.src != null && video.src?has_content ){
 			photo${entry.idEntry}.setAttribute('value', data${entry.idEntry});
 		}
 		if ( video.srcObject != null) {

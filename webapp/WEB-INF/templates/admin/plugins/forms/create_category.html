@@ -1,7 +1,8 @@
 <@pageContainer>
     <@pageColumn>
 		<@pageHeader title='#i18n{forms.createFormCategory.title}' />
-		<@tform class='form' method='post' name='create_category' action='jsp/admin/plugins/forms/ManageFormsCategories.jsp'  params='target="_top"'>
+		<#assign paramsAttr1>target="_top"</#assign>
+		<@tform class='form' method='post' name='create_category' action='jsp/admin/plugins/forms/ManageFormsCategories.jsp'  params=paramsAttr1>
 			<@formGroup labelFor='title' labelKey='#i18n{forms.create_form_category.labelName}' mandatory=true>
 				<@input type='text' name='name' id='name' value=category.name!'' maxlength=255 />
 			</@formGroup>

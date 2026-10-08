@@ -14,7 +14,8 @@
 				<@manageFeatureItemColumn flex=false>#i18n{forms.modify_control.labelValidator} : ${validator.validatorDisplayName}</@manageFeatureItemColumn>
 				<@manageFeatureItemColumn align='end'>
 					<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyConditionControl&id_control=${condition_control.control.id}' title='#i18n{forms.manage_questions.action.control}' hideTitle=['all'] buttonIcon='pencil' />
-					<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${condition_control.control.id}&id_step=${id_step!}&id_rm_question=${condition_control.control.id}' title='#i18n{forms.manage_controls.action.removeControl}' hideTitle=['all'] buttonIcon='trash' color='danger' params=' target="_top"' />
+					<#assign paramsAttr1> target="_top"</#assign>
+					<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${condition_control.control.id}&id_step=${id_step!}&id_rm_question=${condition_control.control.id}' title='#i18n{forms.manage_controls.action.removeControl}' hideTitle=['all'] buttonIcon='trash' color='danger' params=paramsAttr1 />
 				</@manageFeatureItemColumn>
 			</@manageFeatureItem>
 		</#list>

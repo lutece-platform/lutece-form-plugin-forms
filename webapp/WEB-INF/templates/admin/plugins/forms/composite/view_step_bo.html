@@ -1,6 +1,9 @@
-<#if current_step_index?? && current_step_index=0><#assign current_step_index = ' &gt; ' /></#if>
+<#assign current_step_indexEnt1> &gt; </#assign>
+<#assign current_step_indexEnt1 = current_step_indexEnt1?is_markup_output?then(current_step_indexEnt1?markup_string, current_step_indexEnt1) />
+<#if current_step_index?? && current_step_index=0><#assign current_step_index=current_step_indexEnt1 /></#if>
 <@box class='step step-current' id='step-${step.id}'>
-	<@boxHeader title=step.title params='data-step="${current_step_index!}"' />
+	<#assign paramsAttr1>data-step="${current_step_index!}"</#assign>
+	<@boxHeader title=step.title params=paramsAttr1 />
 	<@boxBody id='step-content'>
     ${stepContent}
     <input type="hidden" name="token" value = "${token!}">

@@ -81,6 +81,7 @@ import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.security.SecurityTokenHandler;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.template.HtmlMarkup;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
@@ -206,7 +207,8 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         model.put( FormsConstants.MARK_FORM, _form );
         model.put( MARK_ADD_FILE_COMMENT, true );
         model.put( MARK_ACTION, JSP_MANAGE_QUESTIONS );
-        model.put( FormsConstants.MARK_BREADCRUMBS, AppTemplateService.getTemplate( TEMPLATE_BREADCRUMBS, request.getLocale( ), model ).getHtml( ) );
+        model.put( FormsConstants.MARK_BREADCRUMBS,
+                HtmlMarkup.of( AppTemplateService.getTemplate( TEMPLATE_BREADCRUMBS, request.getLocale( ), model ).getHtml( ) ) );
 
         IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( _entry );
         HtmlTemplate template = AppTemplateService.getTemplate( entryTypeService.getTemplateCreate( _entry, false ), getLocale( ), model );
@@ -389,7 +391,8 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         model.put( FormsConstants.MARK_FORM, _form );
         model.put( MARK_ADD_FILE_COMMENT, true );
         model.put( MARK_ACTION, JSP_MANAGE_QUESTIONS );
-        model.put( FormsConstants.MARK_BREADCRUMBS, AppTemplateService.getTemplate( TEMPLATE_BREADCRUMBS, request.getLocale( ), model ).getHtml( ) );
+        model.put( FormsConstants.MARK_BREADCRUMBS,
+                HtmlMarkup.of( AppTemplateService.getTemplate( TEMPLATE_BREADCRUMBS, request.getLocale( ), model ).getHtml( ) ) );
         
         for( Field field : FieldHome.getFieldListByIdEntry( _question.getEntry().getIdEntry( ) ) )
         {

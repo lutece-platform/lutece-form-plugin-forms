@@ -2,11 +2,14 @@
 <#if !entry.onlyDisplayInBack>
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
 <#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign entryCSSClass = entryCSSClass?is_markup_output?then(entryCSSClass?markup_string, entryCSSClass) />
 <@chItem class=entryCSSClass!?trim >
 	<@cInline type='strong' id='label_${idName!}'>${entry.title!''} :</@cInline>
 	<#if list_responses?has_content>
-		<@cInline class='ms-xs' type='strong'>${list_responses?size} #i18n{theme.labelNumberOfFiles} </@cInline><@cBtn label='' type='button' id='btn-${idName!}' class='secondary btn-mini btn-show-files py-0 ms-sm' params=' data-hide="#i18n{theme.labelHideUploadedFiles}" data-show="#i18n{theme.labelShowUploadedFiles}" aria-expanded="false" aria-controls="list_${idName!}" aria-labelledby="label_${idName}"'>#i18n{theme.labelShowUploadedFiles}</@cBtn>
-		<@chList class='list-uploaded-files visually-hidden mb-3' id='list_${idName!}' params='role="region" aria-labelledby="label_${idName}"'>
+		<#assign paramsAttr1> data-hide="#i18n{theme.labelHideUploadedFiles}" data-show="#i18n{theme.labelShowUploadedFiles}" aria-expanded="false" aria-controls="list_${idName!}" aria-labelledby="label_${idName}"</#assign>
+		<@cInline class='ms-xs' type='strong'>${list_responses?size} #i18n{theme.labelNumberOfFiles} </@cInline><@cBtn label='' type='button' id='btn-${idName!}' class='secondary btn-mini btn-show-files py-0 ms-sm' params=paramsAttr1>#i18n{theme.labelShowUploadedFiles}</@cBtn>
+		<#assign paramsAttr2>role="region" aria-labelledby="label_${idName}"</#assign>
+		<@chList class='list-uploaded-files visually-hidden mb-3' id='list_${idName!}' params=paramsAttr2>
 		<#list list_responses as response>
 			<#if response.file?exists>
 				<#if response.file.size??>

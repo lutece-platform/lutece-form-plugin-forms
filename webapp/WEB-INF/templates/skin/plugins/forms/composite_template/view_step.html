@@ -25,21 +25,25 @@
 <#if !step.initial >
 <#assign doPrevAction='action_doReturnStep'>
 <#assign labelPrevAction>#i18n{forms.step.previous}</#assign>
+<#assign labelPrevAction = labelPrevAction?is_markup_output?then(labelPrevAction?markup_string, labelPrevAction) />
 </#if>
 <#if step.final>
 	<#assign labelSaveAction>#i18n{forms.step.save}</#assign>
+<#assign labelSaveAction = labelSaveAction?is_markup_output?then(labelSaveAction?markup_string, labelSaveAction) />
 	<#if form.labelFinalButton?has_content>
 		<#assign labelSaveAction=form.labelFinalButton />
 	</#if>
 	<#if form.displaySummary>
 		<#assign doSaveAction='action_formResponseSummary' />
 		<#assign labelSaveAction>#i18n{forms.step.see.summary}</#assign>
+<#assign labelSaveAction = labelSaveAction?is_markup_output?then(labelSaveAction?markup_string, labelSaveAction) />
 	<#else>
 		<#assign doSaveAction='action_doSaveResponse' />
 	</#if>
 <#else>
 	<#assign doNextAction='action_doSaveStep' />
 	<#assign labelNextAction>#i18n{forms.step.next}</#assign>
+<#assign labelNextAction = labelNextAction?is_markup_output?then(labelNextAction?markup_string, labelNextAction) />
 </#if>
 <#if user?? && form.backupEnabled>
 	<#assign doSaveForBackUpAction='action_doSaveForBackup' />
@@ -48,6 +52,7 @@
 	</#if>
 </#if>
 <#assign stepParams></#assign>
+<#assign stepParams = stepParams?is_markup_output?then(stepParams?markup_string, stepParams) />
 <#if !current_step_index??>
 	<#assign current_step_index=0 />
 </#if>

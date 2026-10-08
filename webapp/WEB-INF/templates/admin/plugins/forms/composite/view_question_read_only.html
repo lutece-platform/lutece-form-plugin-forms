@@ -1,4 +1,4 @@
-<#if question.visible && questionContent?? && questionContent?trim != ''>
+<#if question.visible && questionContent?? && questionContent?has_content>
 <li class="list-group-item<#if id_display??> display_field_${id_display}</#if>" displayControl="${question.id}_${question.iterationNumber}">
 ${questionContent}
 </li>

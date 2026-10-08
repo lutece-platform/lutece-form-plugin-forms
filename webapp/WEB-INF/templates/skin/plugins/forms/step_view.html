@@ -2,11 +2,13 @@
 <#if dskey('portal.theme.site_property.bannerForm.showFormImg.checkbox')?number=1 && form.logo??><style>.banner{ background: transparent url("data:${form.logo.mimeType};base64,${form.logoBase64}") top left/contain no-repeat !important; }</style></#if>
 <#if dskey('portal.theme.site_property.bannerForm.showFormTitle.checkbox')?number=0><style>.banner > header > h1{ display: none !important; }</style></#if>
 <@cBreadCrumb home='Accueil'>
-	<@chItem class='breadcrumb-item active' params='aria-current="page"' />
+	<#assign paramsAttr1>aria-current="page"</#assign>
+	<@chItem class='breadcrumb-item active' params=paramsAttr1 />
 </@cBreadCrumb>
 <!-- #current_step : Add for breadcrumbs -->
 <#if noScriptMessage?? ><@noScriptMessage id='form-validate' alertTitle='#i18n{forms.noscript.message}' linkIcon='' linkLabel='#i18n{forms.noscript.linkLabel}' linkUrl='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' /></#if>
-<@cForm id='form-validate' action='jsp/site/Portal.jsp?page=forms' params='enctype="multipart/form-data" data-form-theme-validation="true"'>
+<#assign paramsAttr2>enctype="multipart/form-data" data-form-theme-validation="true"</#assign>
+<@cForm id='form-validate' action='jsp/site/Portal.jsp?page=forms' params=paramsAttr2>
 <#if warnings??>
 <@cContainer>
 	<#if warnings?size gt 0 >
@@ -18,6 +20,7 @@
 		<#list warnings as warning ><#if warning.message??>${warning.message!' #i18n{portal.util.message.titleWarning} '}</#if></#list>
 	</#if>
 	</#assign>
+<#assign messageWarning = messageWarning?is_markup_output?then(messageWarning?markup_string, messageWarning) />
 		<@cAlert type='warning' class='mb-m' id='messages_warnings_div' title=messageWarning! dismissible=true />
 	</#if>
 </@cContainer>

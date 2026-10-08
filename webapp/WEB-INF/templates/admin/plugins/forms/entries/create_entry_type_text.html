@@ -33,7 +33,8 @@ ${breadcrumb_template}
 							<@input type='text' name='placeholder' id='placeholder' value='' maxlength=100 />
 						</@formGroup>
 						<@formGroup labelFor='autocomplete' labelKey='#i18n{forms.create_entry.labelAutocomplete}' helpKey='#i18n{forms.create_entry.labelHelpMessageAutocomplete}'>
-							<@input type='text' name='autocomplete' id='autocomplete' params=' list="autocompleteList"' />
+							<#assign paramsAttr1> list="autocompleteList"</#assign>
+							<@input type='text' name='autocomplete' id='autocomplete' params=paramsAttr1 />
 							<datalist id="autocompleteList"><option value="off"><option value="on"><option value="name"></datalist>
 						</@formGroup>
 						<@formGroup labelFor='value' labelKey='#i18n{forms.create_entry.labelValueDefault}'>
@@ -49,7 +50,8 @@ ${breadcrumb_template}
 							<@input type='text' name='max_size_enter' id='max_size_enter' value=getName('max_size_enter',list_param_default_values) />
 						</@formGroup>
 						<@formGroup>
-							<@checkBox orientation='switch' labelFor='confirm_field' labelKey='#i18n{forms.create_entry.labelConfirmField}' name='confirm_field' id='confirm_field' value='1' params='onchange="javascript:changeVisilityConfirmFieldTitle();"' />
+							<#assign paramsAttr2>onchange="javascript:changeVisilityConfirmFieldTitle();"</#assign>
+							<@checkBox orientation='switch' labelFor='confirm_field' labelKey='#i18n{forms.create_entry.labelConfirmField}' name='confirm_field' id='confirm_field' value='1' params=paramsAttr2 />
 						</@formGroup>
 						<@formGroup labelFor='confirm_field_title' id="confirm_field_title_group" labelKey='#i18n{forms.create_entry.labelConfirmFieldTitle}' >
 							<@input type='text' name='confirm_field_title' id='confirm_field_title' maxlength=255 />
@@ -64,7 +66,8 @@ ${breadcrumb_template}
 							<@checkBox orientation='switch' labelFor='is_indexed' labelKey='#i18n{forms.create_entry.labelResponsesIndexed}' name='is_indexed' id='is_indexed' value='1' checked=true />
 						</@formGroup>
 						<@formGroup>
-							<@checkBox orientation='switch' labelFor='anonymizable' labelKey='#i18n{forms.create_entry.labelAnonymizable}' name='anonymizable' id='anonymizable' value='1' params='onchange="javascript:changeVisilityAnonymizePattern();"' />
+							<#assign paramsAttr3>onchange="javascript:changeVisilityAnonymizePattern();"</#assign>
+							<@checkBox orientation='switch' labelFor='anonymizable' labelKey='#i18n{forms.create_entry.labelAnonymizable}' name='anonymizable' id='anonymizable' value='1' params=paramsAttr3 />
 						</@formGroup>
 						<@formGroup labelFor='anonymize_pattern' id="anonymize_pattern_group" labelKey='#i18n{forms.create_entry.labelAnonymizePattern}' helpKey='${anonymization_help_message}' >
 							<@input type='text' name='anonymize_pattern' id='anonymize_pattern' maxlength=255 />

@@ -9,10 +9,12 @@
 <#assign style = '' />
 <#else>
 <#assign checked = false />
-<#assign style = 'style="display:none;"' />
+<#assign styleAttr1>style="display:none;"</#assign>
+<#assign style=styleAttr1 />
 </#if>
 <@formGroup labelFor='is_iterable' labelKey='#i18n{forms.create_entry.labelIteration}' rows=2>
-	<@checkBox orientation='switch' id='checkbox_is_iterable' name='is_iterable' value='true' checked=checked params='onclick="javascript:displayHideIteration();"' />
+	<#assign paramsAttr2>onclick="javascript:displayHideIteration();"</#assign>
+	<@checkBox orientation='switch' id='checkbox_is_iterable' name='is_iterable' value='true' checked=checked params=paramsAttr2 />
 </@formGroup>
 <@formGroup labelFor='nb_iterations' labelKey='#i18n{forms.create_entry.labelNbIteration}' helpKey='#i18n{forms.create_entry.labelHelpNbIteration}' id='iterationNumber' mandatory=true params=style rows=2>
 	<@input type='text' name='nb_iterations' value='${nbIteration}' maxlength=5 />

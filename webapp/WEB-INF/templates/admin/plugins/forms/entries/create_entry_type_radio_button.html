@@ -30,7 +30,8 @@ ${breadcrumb_template}
 							<@input type='textarea' name='comment'></@input>
 						</@formGroup>
 						<@formGroup>
-							<@checkBox orientation='switch' labelFor='use_ref_list' labelKey='#i18n{forms.create_entry.labelUseRefList}' name='use_ref_list' id='use_ref_list' value='1' params='onchange="javascript:changeVisibilityRefListSelect();"' />
+							<#assign paramsAttr1>onchange="javascript:changeVisibilityRefListSelect();"</#assign>
+							<@checkBox orientation='switch' labelFor='use_ref_list' labelKey='#i18n{forms.create_entry.labelUseRefList}' name='use_ref_list' id='use_ref_list' value='1' params=paramsAttr1 />
 						</@formGroup>
 						<@formGroup labelFor='select_ref_list' id="use_ref_list_group" labelKey='#i18n{forms.create_entry.labelUseRefListSelect}' >
 							<@select name='select_ref_list' items=ref_list_select />
