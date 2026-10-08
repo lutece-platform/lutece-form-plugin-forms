@@ -29,7 +29,7 @@
 						</#if>
 				   </@formGroup>
 				   <@row id='iteration_group'>
-						<@columns offsetLg=3 md=3 lg=3> 
+						<@columns md=4 lg=4>
 							<@formGroup labelFor='iterationMin' labelKey='#i18n{forms.create_group.labelIterationMin}' helpKey='#i18n{forms.create_group.labelIterationMin.help}' rows=2>
 								<@row>
 									<@columns md=4 lg=4 xl=3>
@@ -37,11 +37,11 @@
 									</@columns>
 								</@row>
 							</@formGroup>
-							<@formGroup labelFor='iterationAddLabel' labelKey='#i18n{forms.create_group.labelIterationAddLabel}' helpKey='#i18n{forms.create_group.labelIterationAddLabel.help}' rows=2>
+							<@formGroup labelFor='iterationAddLabel' labelKey='#i18n{forms.create_group.labelIterationAddLabel}' helpKey='#i18n{forms.create_group.labelIterationAddLabel.help}'>
 								<@input type='text' name='iterationAddLabel' value='${group.iterationAddLabel!}' />
 							</@formGroup>
 						</@columns>
-						<@columns md=3 lg=3>
+						<@columns md=4 lg=4>
 							<@formGroup labelFor='iterationMax' labelKey='#i18n{forms.create_group.labelIterationMax}' helpKey='#i18n{forms.create_group.labelIterationMax.help}' rows=2>
 								<@row>
 									<@columns md=4 lg=4 xl=3>
@@ -49,7 +49,7 @@
 									</@columns>
 								</@row>
 							</@formGroup>
-							<@formGroup labelFor='iterationRemoveLabel' labelKey='#i18n{forms.create_group.labelIterationRemoveLabel}' helpKey='#i18n{forms.create_group.labelIterationRemoveLabel.help}' rows=2>
+							<@formGroup labelFor='iterationRemoveLabel' labelKey='#i18n{forms.create_group.labelIterationRemoveLabel}' helpKey='#i18n{forms.create_group.labelIterationRemoveLabel.help}'>
 								<@input type='text' name='iterationRemoveLabel' value='${group.iterationRemoveLabel!}' />
 							</@formGroup> 
 						</@columns>
