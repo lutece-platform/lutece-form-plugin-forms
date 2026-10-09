@@ -97,6 +97,9 @@ public class FormResponseJspBean extends AbstractJspBean
 	private static final String ACTION_SAVE_FORM_RESPONSE_SUMMARY = "doSaveResponseSummary";
     private static final String ACTION_ADD_ITERATION = "addIteration";
     private static final String ACTION_REMOVE_ITERATION = "removeIteration";
+
+    // Security token shared by the step form and the summary: the same form posts several actions (save the step, summary, add an iteration...)
+    private static final String SECURITY_TOKEN_FORM_RESPONSE = "formResponse";
 	
 	// Templates
 	private static final String TEMPLATE_VIEW_STEP = "/admin/plugins/forms/step_view.html";
@@ -135,7 +138,7 @@ public class FormResponseJspBean extends AbstractJspBean
      * @return the view step content
      * 
      */
-    @View( value = VIEW_STEP )
+    @View( value = VIEW_STEP, securityTokenAction = SECURITY_TOKEN_FORM_RESPONSE )
     public String getStepView( HttpServletRequest request )
     {
 
@@ -253,7 +256,7 @@ public class FormResponseJspBean extends AbstractJspBean
      *            The Http request
      * @return the view
      */
-    @Action( value = ACTION_SAVE_STEP )
+    @Action( value = ACTION_SAVE_STEP, securityTokenAction = SECURITY_TOKEN_FORM_RESPONSE )
     public String doSaveStep( HttpServletRequest request )
     {
     	try
@@ -281,7 +284,7 @@ public class FormResponseJspBean extends AbstractJspBean
      *            The Http request
      * @return the view
      */
-    @Action( value = ACTION_SAVE_FORM_RESPONSE )
+    @Action( value = ACTION_SAVE_FORM_RESPONSE, securityTokenAction = SECURITY_TOKEN_FORM_RESPONSE )
     public String doSaveFormResponse( HttpServletRequest request )
     {
         Form form = null;
@@ -359,7 +362,7 @@ public class FormResponseJspBean extends AbstractJspBean
      *            The Http request
      * @return the View
      */
-    @Action( value = ACTION_SAVE_FOR_BACKUP )
+    @Action( value = ACTION_SAVE_FOR_BACKUP, securityTokenAction = SECURITY_TOKEN_FORM_RESPONSE )
     public String doSaveForBackup( HttpServletRequest request )
     {
         try
@@ -396,7 +399,7 @@ public class FormResponseJspBean extends AbstractJspBean
      *            The Http request
      * @return the View
      */
-    @Action( value = ACTION_RESET_BACKUP )
+    @Action( value = ACTION_RESET_BACKUP, securityTokenAction = SECURITY_TOKEN_FORM_RESPONSE )
     public String doResetBackup( HttpServletRequest request )
     {
         Form form = null;       
@@ -422,7 +425,7 @@ public class FormResponseJspBean extends AbstractJspBean
      *            The request
      * @return the summary page
      */
-    @Action( value = ACTION_FORM_RESPONSE_SUMMARY )
+    @Action( value = ACTION_FORM_RESPONSE_SUMMARY, securityTokenAction = SECURITY_TOKEN_FORM_RESPONSE )
     public String doFormResponseSummary( HttpServletRequest request )
     {
         Form form = null;
@@ -455,7 +458,7 @@ public class FormResponseJspBean extends AbstractJspBean
      *            The Http request
      * @return the view
      */
-    @Action( value = ACTION_SAVE_FORM_RESPONSE_SUMMARY, securityTokenDisabled = true )
+    @Action( value = ACTION_SAVE_FORM_RESPONSE_SUMMARY, securityTokenAction = SECURITY_TOKEN_FORM_RESPONSE )
     public synchronized String doSaveFormResponseSummary( HttpServletRequest request )
     {
         Form form = null;
@@ -479,7 +482,7 @@ public class FormResponseJspBean extends AbstractJspBean
      *            the request
      * @return the XPage
      */
-    @Action( value = ACTION_ADD_ITERATION )
+    @Action( value = ACTION_ADD_ITERATION, securityTokenAction = SECURITY_TOKEN_FORM_RESPONSE )
     public synchronized String doAddIteration( HttpServletRequest request )
     {
         try
@@ -509,7 +512,7 @@ public class FormResponseJspBean extends AbstractJspBean
      *            the request
      * @return the XPage
      */
-    @Action( value = ACTION_REMOVE_ITERATION )
+    @Action( value = ACTION_REMOVE_ITERATION, securityTokenAction = SECURITY_TOKEN_FORM_RESPONSE )
     public synchronized String doRemoveIteration( HttpServletRequest request )
     {
         try
