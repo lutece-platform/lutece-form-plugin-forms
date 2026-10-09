@@ -62,7 +62,18 @@ public class VerticalBreadcrumb implements IBreadcrumb
     private final String _strBreadcrumbDisplayBeanName;
 
     /**
-     * Constructor of the HorizontalBreadcrumb
+     * No-args constructor required by CDI to create the client proxy of this normal-scoped bean.
+     * Without it, the proxy held by the {@code @SessionScoped} FormXPage cannot be deserialized
+     * on another cluster member (WELD-001435) and the user's form session is lost.
+     */
+    protected VerticalBreadcrumb( )
+    {
+        _strBreadcrumbBeanName = null;
+        _strBreadcrumbDisplayBeanName = null;
+    }
+
+    /**
+     * Constructor of the VerticalBreadcrumb
      * 
      * @param strBreadcrumbName
      *            The breadcrumb bean name

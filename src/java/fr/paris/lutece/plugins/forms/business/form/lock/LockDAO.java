@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.forms.business.form.lock;
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
+import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.util.sql.DAOUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 
@@ -50,9 +51,19 @@ public class LockDAO implements ILockDAO
 {
     private static final String SQL_QUERY_ACQUIRE =
             "UPDATE forms_lucene_lock " +
-            "SET instance_name=?, is_locked=0, date_begin=CURRENT_TIMESTAMP, " +
+            "SET instance_name=?, is_locked=1, date_begin=CURRENT_TIMESTAMP, " +
             "    expired_date={fn TIMESTAMPADD(SQL_TSI_SECOND, ?, CURRENT_TIMESTAMP)}, uuid=? " +
             "WHERE index_name=? AND (is_locked=0 OR expired_date < CURRENT_TIMESTAMP)";
+
+    private static final String SQL_QUERY_SELECT_BY_NAME =
+            "SELECT index_name FROM forms_lucene_lock WHERE index_name=?";
+
+    /**
+     * Lock rows are created on demand (one per lock name, e.g. {@code forms.quota.form.42}):
+     * only the Lucene index lock row is shipped by the SQL scripts.
+     */
+    private static final String SQL_QUERY_INSERT =
+            "INSERT INTO forms_lucene_lock ( index_name, is_locked ) VALUES ( ?, 0 )";
 
     private static final String SQL_QUERY_RELEASE =
             "UPDATE forms_lucene_lock SET is_locked=0, date_begin=NULL, expired_date=NULL WHERE uuid=?";
@@ -73,6 +84,56 @@ public class LockDAO implements ILockDAO
 
     @Override
     public boolean acquire( String indexName, String instanceName, String uuid, long ttlSeconds, Plugin plugin )
+    {
+        if ( tryAcquire( indexName, instanceName, uuid, ttlSeconds, plugin ) )
+        {
+            return true;
+        }
+        if ( exists( indexName, plugin ) )
+        {
+            // The row exists and is held by another instance
+            return false;
+        }
+        createIfAbsent( indexName, plugin );
+        return tryAcquire( indexName, instanceName, uuid, ttlSeconds, plugin );
+    }
+
+    /**
+     * Creates the lock row. Another cluster member may create the same row concurrently: the primary key
+     * rejects the second insert, which is ignored as long as the row exists afterwards.
+     *
+     * @param indexName
+     *            the lock name
+     * @param plugin
+     *            the plugin
+     */
+    private void createIfAbsent( String indexName, Plugin plugin )
+    {
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin ) )
+        {
+            daoUtil.setString( 1, indexName );
+            daoUtil.executeUpdate( );
+        }
+        catch( AppException e )
+        {
+            if ( !exists( indexName, plugin ) )
+            {
+                throw e;
+            }
+        }
+    }
+
+    private boolean exists( String indexName, Plugin plugin )
+    {
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_NAME, plugin ) )
+        {
+            daoUtil.setString( 1, indexName );
+            daoUtil.executeQuery( );
+            return daoUtil.next( );
+        }
+    }
+
+    private boolean tryAcquire( String indexName, String instanceName, String uuid, long ttlSeconds, Plugin plugin )
     {
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_ACQUIRE, Statement.RETURN_GENERATED_KEYS, plugin ) )
         {
