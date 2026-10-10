@@ -88,7 +88,7 @@
                                                         <input type="radio" id="${parentd}" name="id_parent" value="${composite.formDisplay.id!}" <#if id_parent=composite.formDisplay.id>checked</#if>>
                                                     </label>
                                                     <@cInline>
-                                                    <@offcanvas id="offcanvasFieldType" btnIcon="plus" btnTitle="#i18n{forms.manage_questions.buttonAdd}" title="#i18n{forms.manage_questions.buttonAdd}" size="sm">
+                                                    <@offcanvas id="offcanvasFieldType-${composite.formDisplay.id!}" btnIcon="plus" class="offcanvas-field" btnTitle="#i18n{forms.manage_questions.buttonAdd}" title="#i18n{forms.manage_questions.buttonAdd}" size="sm" >
                                                         <@row class='row-cols-2 g-2'>
                                                             <#list entry_type_list?filter( item-> item.group=false) as item>
                                                             <@columns>
