@@ -56,6 +56,16 @@ public class LuceneLockManagerDB implements LuceneLockManager
 
     private final ILockDAO _lockDao;
 
+    /**
+     * Constructor required by CDI: Weld checks that a normal-scoped bean is proxyable when it re-creates the client proxy of a session read on
+     * another cluster member, otherwise WELD-001435 and the session bean of the user is lost. Only used by the proxy, which delegates to the
+     * contextual instance.
+     */
+    protected LuceneLockManagerDB( )
+    {
+        _lockDao = null;
+    }
+
     @Inject
     LuceneLockManagerDB( ILockDAO lockDao )
     {

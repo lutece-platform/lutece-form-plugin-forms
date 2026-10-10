@@ -85,6 +85,16 @@ public abstract class AbstractFormJsonService
     protected final IFormDatabaseService _formDatabaseService;
     protected ObjectMapper _objectMapper;
 
+    /**
+     * Constructor required by CDI: Weld checks that every type of a normal-scoped bean is proxyable when it re-creates the client proxy of a
+     * session read on another cluster member (the forms back office bean keeps this service), otherwise WELD-001435 and the bean of the user is
+     * lost. Only used by the proxy, which delegates to the contextual instance.
+     */
+    protected AbstractFormJsonService( )
+    {
+        this( null );
+    }
+
     protected AbstractFormJsonService( IFormDatabaseService formDatabaseService )
     {
         _formDatabaseService = formDatabaseService;
