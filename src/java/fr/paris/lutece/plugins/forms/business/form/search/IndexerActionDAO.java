@@ -64,7 +64,7 @@ public class IndexerActionDAO implements IIndexerActionDAO
      * {@inheritDoc}
      */
     @Override
-    public synchronized void insert( IndexerAction indexerAction, Plugin plugin )
+    public void insert( IndexerAction indexerAction, Plugin plugin )
     {
 
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, plugin ) )
