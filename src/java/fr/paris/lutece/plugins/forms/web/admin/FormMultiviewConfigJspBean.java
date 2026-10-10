@@ -232,7 +232,7 @@ public class FormMultiviewConfigJspBean extends AbstractJspBean
     }
 
     /**
-     * Checks whether a question is considered filterable based on its entry type service 
+     * Checks whether a question is considered filterable based on its entry type service
      *
      * @param entryTypeService
      *         The entry type service to check

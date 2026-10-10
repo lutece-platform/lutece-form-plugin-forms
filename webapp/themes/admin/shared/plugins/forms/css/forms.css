@@ -107,6 +107,15 @@ table.table-hover tbody tr:hover {
 	max-width: 150px;
 }
 
+/* Multiview - Drag and drop column reordering */
+.multiview-draggable-col.dragging {
+	opacity: 0.4;
+}
+
+.multiview-draggable-col.drag-over {
+	border-left: 3px solid var(--tblr-primary);
+}
+
 .th-active {
 	background-color: var(--tblr-primary);
 }
