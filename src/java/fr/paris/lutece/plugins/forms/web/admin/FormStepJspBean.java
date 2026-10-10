@@ -323,11 +323,17 @@ public class FormStepJspBean extends AbstractJspBean
             return redirectToViewManageForm( request );
         }
 
-        _step = ( _step != null ) ? _step : new Step( );
+        boolean bNewStep = ( _step == null );
+        _step = bNewStep ? new Step( ) : _step;
         _step.setIdForm( nIdForm );
         if ( StepHome.getInitialStep( nIdForm ) == null )
         {
             _step.setInitial( true );
+            if ( bNewStep )
+            {
+                // First step: a single step form by default, unchecking "final" starts a multi-step form
+                _step.setFinal( true );
+            }
         }
 
         Map<String, Object> model = getModel( );
@@ -379,11 +385,12 @@ public class FormStepJspBean extends AbstractJspBean
             _step.setFinal( false );
 
         }
-        // Cas 2 : première étape (aucune étape initiale existante) + case décochée → formulaire mono-étape
+        // Cas 2 : première étape (aucune étape initiale existante) : elle est initiale, et finale si la case est cochée.
+        // La case "multi-étapes" a disparu du gabarit : forcer l'étape finale empêchait de créer un formulaire multi-étapes
+        // (aucune liaison ne peut partir d'une étape finale).
         else if ( initialStep == null )
         {
             _step.setInitial( true );
-            _step.setFinal( true );
         }
 
         List<Step> finalsStepsList = StepHome.getFinalsStep( _step.getIdForm( ) );
