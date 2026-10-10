@@ -98,7 +98,8 @@ public class FormResponseJspBean extends AbstractJspBean
     private static final String ACTION_ADD_ITERATION = "addIteration";
     private static final String ACTION_REMOVE_ITERATION = "removeIteration";
 
-    // Security token shared by the step form and the summary: the same form posts several actions (save the step, summary, add an iteration...)
+    // Security token shared by the step form and the summary: the same form posts several actions (save the step, summary, add an iteration...).
+    // The navigation actions (previous step, go to step) are not checked, but they render the step form: they must generate its token too.
     private static final String SECURITY_TOKEN_FORM_RESPONSE = "formResponse";
 	
 	// Templates
@@ -307,7 +308,7 @@ public class FormResponseJspBean extends AbstractJspBean
      *            The Http request
      * @return the View
      */
-    @Action( value = ACTION_PREVIOUS_STEP, securityTokenDisabled = true )
+    @Action( value = ACTION_PREVIOUS_STEP, securityTokenDisabled = true, securityTokenAction = SECURITY_TOKEN_FORM_RESPONSE )
     public String doReturnStep( HttpServletRequest request )
     {
         try
@@ -334,7 +335,7 @@ public class FormResponseJspBean extends AbstractJspBean
      *            The Http request
      * @return the View
      */
-    @Action( value = ACTION_GO_TO_STEP, securityTokenDisabled = true )
+    @Action( value = ACTION_GO_TO_STEP, securityTokenDisabled = true, securityTokenAction = SECURITY_TOKEN_FORM_RESPONSE )
     public String doGoToStep( HttpServletRequest request )
     {
         try
@@ -626,7 +627,8 @@ public class FormResponseJspBean extends AbstractJspBean
         catch ( MaxFormResponseException e )
         {
 			addError( e.getMessage( ) );
-			redirectView(request, VIEW_ERROR);
+			// The response is not saved: no form action on it
+			return redirectView( request, VIEW_ERROR );
 		}
         
         _formService.processFormAction( form, _formResponseManager.getFormResponse( ) );

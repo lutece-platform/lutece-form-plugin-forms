@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2025, City of Paris
+ * Copyright (c) 2002-2026, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -50,12 +50,14 @@ import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 public class FormResponseJspBeanTokenTest
 {
     private static final String VIEW_STEP = "stepView";
-    // Navigation actions: they only move between steps
+    // Navigation actions: not checked, but they render the step form
     private static final Set<String> ACTIONS_WITHOUT_TOKEN = Set.of( "doReturnStep", "doGoToStep" );
 
     /**
      * The step form and the summary post several actions with the single token of the page. The token filter checks it under the securityTokenAction of
      * the action: every checked action must share the key of the step view, otherwise the first post fails ("Invalid security token for action").
+     * Every invoked action also generates the token of the page it renders under its securityTokenAction: the navigation actions, which render the
+     * step form without being checked, must use the same key, otherwise the next post after "previous step" is refused.
      */
     @Test
     public void testActionsShareTheTokenOfTheStepView( )
@@ -74,10 +76,13 @@ public class FormResponseJspBeanTokenTest
         for ( Method method : FormResponseJspBean.class.getDeclaredMethods( ) )
         {
             Action action = method.getAnnotation( Action.class );
-            if ( action != null && !ACTIONS_WITHOUT_TOKEN.contains( action.value( ) ) )
+            if ( action != null )
             {
-                assertFalse( action.securityTokenDisabled( ), action.value( ) + " must check the security token" );
                 assertEquals( strViewKey, action.securityTokenAction( ), action.value( ) + " must share the token of the step view" );
+                if ( !ACTIONS_WITHOUT_TOKEN.contains( action.value( ) ) )
+                {
+                    assertFalse( action.securityTokenDisabled( ), action.value( ) + " must check the security token" );
+                }
             }
         }
     }
