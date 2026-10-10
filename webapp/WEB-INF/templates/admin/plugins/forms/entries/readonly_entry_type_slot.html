@@ -5,13 +5,15 @@
 			<#if list_responses?has_content>
 				<#assign beginHourCode = "begin_hour">
 				<#assign endHourCode = "end_hour">
+				<#assign beginHour = ''>
+				<#assign endHour = ''>
 				<#-- Filtrer et trouver les objets Response correspondants -->
 				<#list list_responses as response>
 					<#if response.field.code == beginHourCode>
-						<#assign beginHour = response.toStringValueResponse>
+						<#assign beginHour = response.toStringValueResponse!''>
 					</#if>
 					<#if response.field.code == endHourCode>
-						<#assign endHour = response.toStringValueResponse>
+						<#assign endHour = response.toStringValueResponse!''>
 					</#if>
 				</#list>
 
