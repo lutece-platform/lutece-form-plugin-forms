@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.forms.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -112,8 +113,11 @@ public class FormService
 
     private static final String QUOTA_LOCK_PREFIX = "forms.quota.form.";
     private static final long QUOTA_LOCK_TIMEOUT_MS = 30_000L;
-    private static final int QUOTA_LOCK_MAX_RETRIES = 5;
-    private static final long QUOTA_LOCK_BACKOFF_MS = 100L;
+    // A submission holds the lock for the count, the insert and the commit: concurrent submissions wait their turn
+    // (bounded wait, growing backoff with jitter so that instances do not retry in step)
+    private static final long QUOTA_LOCK_MAX_WAIT_MS = 10_000L;
+    private static final long QUOTA_LOCK_MIN_BACKOFF_MS = 50L;
+    private static final long QUOTA_LOCK_MAX_BACKOFF_MS = 500L;
 
     @Inject
     private IFormWorkflowService _formWorkflowService;
@@ -215,15 +219,17 @@ public class FormService
     }
 
     /**
-     * Acquire the quota lock for this form. Retries briefly on contention so two simultaneous
-     * submissions serialise cleanly; gives up after a short window and treats sustained
-     * contention as if the quota were reached (safer than accepting an unguarded insert).
+     * Acquire the quota lock for this form. Waits on contention so that simultaneous submissions serialise cleanly; gives up after
+     * a bounded wait and treats sustained contention as if the quota were reached (safer than accepting an unguarded insert).
+     * The lock is acquired outside any transaction (autocommit), so that the lock row is visible to the other instances.
      */
     private LockResult acquireQuotaLock( Form form )
     {
         String lockName = QUOTA_LOCK_PREFIX + form.getId( );
         LockException lastFailure = null;
-        for ( int attempt = 0; attempt < QUOTA_LOCK_MAX_RETRIES; attempt++ )
+        long lDeadline = System.currentTimeMillis( ) + QUOTA_LOCK_MAX_WAIT_MS;
+        long lBackoff = QUOTA_LOCK_MIN_BACKOFF_MS;
+        while ( true )
         {
             try
             {
@@ -232,9 +238,14 @@ public class FormService
             catch ( LockException e )
             {
                 lastFailure = e;
+                if ( System.currentTimeMillis( ) + lBackoff > lDeadline )
+                {
+                    break;
+                }
                 try
                 {
-                    Thread.sleep( QUOTA_LOCK_BACKOFF_MS );
+                    Thread.sleep( lBackoff / 2 + ThreadLocalRandom.current( ).nextLong( lBackoff / 2 + 1 ) );
+                    lBackoff = Math.min( lBackoff * 2, QUOTA_LOCK_MAX_BACKOFF_MS );
                 }
                 catch ( InterruptedException ie )
                 {
