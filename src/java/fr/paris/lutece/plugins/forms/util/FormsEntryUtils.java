@@ -35,12 +35,14 @@ package fr.paris.lutece.plugins.forms.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import fr.paris.lutece.plugins.forms.service.FormsPlugin;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.EntryType;
 import fr.paris.lutece.plugins.genericattributes.business.EntryTypeHome;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
+import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.util.ReferenceList;
 
 /**
@@ -60,7 +62,7 @@ public final class FormsEntryUtils
 
     /**
      * Return an instance of IEntry function of type entry
-     * 
+     *
      * @param nIdType
      *            the entry type id
      * @return an instance of IEntry function of type entry
@@ -80,7 +82,7 @@ public final class FormsEntryUtils
 
     /**
      * Return the index in the list of the field whose key is specified in parameter
-     * 
+     *
      * @param nIdField
      *            the key of the field
      * @param listField
@@ -106,7 +108,7 @@ public final class FormsEntryUtils
 
     /**
      * Build a reference list with the different entry types excluding Group and MyLuteceUser
-     * 
+     *
      * @return reference list of entry type
      */
     public static ReferenceList initRefListEntryType( )
@@ -127,7 +129,7 @@ public final class FormsEntryUtils
 
     /**
      * Build a list with the different entry types excluding Group and MyLuteceUser
-     * 
+     *
      * @return list of entry type
      */
     public static List<EntryType> initListEntryType( )
@@ -148,7 +150,7 @@ public final class FormsEntryUtils
 
     /**
      * Finds a field with the specified code in the specified entry
-     * 
+     *
      * @param entry
      *            the entry
      * @param strCode
@@ -173,5 +175,35 @@ public final class FormsEntryUtils
         }
 
         return fieldFound;
+    }
+
+    /**
+     * Check if there is a difference between the current value and the new value in a form.
+     * @param listResponseReference List of current responses.
+     * @param listResponseNew List of new responses.
+     * @return true if the value is changed, false otherwise.
+     */
+    public static boolean isFirstResponseValueChanged( List<Response> listResponseReference, List<Response> listResponseNew )
+    {
+        String strResponseReference = getFirstResponseValue( listResponseReference );
+        String strResponseNew = getFirstResponseValue( listResponseNew );
+
+        return !Objects.equals( strResponseReference, strResponseNew );
+    }
+
+    /**
+     * Get the first response value of the list given in parameter.
+     * Return null if the list is null there is no value in it.
+     * @param listResponses List of responses
+     * @return the first response value of the list given in parameter
+     */
+    public static String getFirstResponseValue( List<Response> listResponses )
+    {
+        if ( listResponses == null || listResponses.isEmpty( ) || listResponses.get( 0 ) == null )
+        {
+            return null;
+        }
+
+        return listResponses.get( 0 ).getResponseValue( );
     }
 }
