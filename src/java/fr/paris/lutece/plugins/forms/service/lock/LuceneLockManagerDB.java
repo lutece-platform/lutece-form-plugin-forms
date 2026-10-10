@@ -53,6 +53,9 @@ import java.util.UUID;
 public class LuceneLockManagerDB implements LuceneLockManager
 {
     private static final Plugin _plugin = PluginService.getPlugin( "forms" );
+    // Set when the instance stops: a daemon run still going on (indexing) must not take a lock after the locks of the
+    // instance were released, it would stay held until its TTL expires
+    private volatile boolean _bStopping;
 
     private final ILockDAO _lockDao;
 
@@ -75,6 +78,10 @@ public class LuceneLockManagerDB implements LuceneLockManager
     @Override
     public LockResult acquireLock( String indexName, long timeoutMs ) throws LockException
     {
+        if ( _bStopping )
+        {
+            throw new LockException( );
+        }
         String uuid = UUID.randomUUID( ).toString( );
         long ttlSeconds = toCeilSeconds( timeoutMs );
 
@@ -132,6 +139,7 @@ public class LuceneLockManagerDB implements LuceneLockManager
     @PreDestroy
     void releaseOwnLocksOnShutdown( )
     {
+        _bStopping = true;
         try
         {
             int released = releaseOwnInstanceLocks( );
