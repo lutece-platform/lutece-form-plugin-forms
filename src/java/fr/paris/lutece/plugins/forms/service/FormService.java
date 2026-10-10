@@ -35,11 +35,13 @@ package fr.paris.lutece.plugins.forms.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Event;
+import jakarta.enterprise.event.NotificationOptions;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
@@ -632,6 +634,29 @@ public class FormService
         return formResponseManager;
     }
 
+    /**
+     * Fires a form response event to the asynchronous observers. While the server stops, its executor refuses new tasks:
+     * the observers are then notified in the current thread, so that a response saved during the shutdown is still
+     * indexed and the request does not fail
+     *
+     * @param event
+     *            the event
+     * @param formResponseEvent
+     *            the form response event
+     */
+    static void fireAsync( Event<FormResponseEvent> event, FormResponseEvent formResponseEvent )
+    {
+        try
+        {
+            event.fireAsync( formResponseEvent );
+        }
+        catch( RejectedExecutionException e )
+        {
+            AppLogService.info( "Executor unavailable (server stopping): form response event {} notified in the current thread", formResponseEvent.getFormResponseId( ) );
+            event.fireAsync( formResponseEvent, NotificationOptions.ofExecutor( Runnable::run ) );
+        }
+    }
+
     // FORM RESPONSE CREATION
     /**
      * Fire the create event on given form Response
@@ -643,7 +668,7 @@ public class FormService
     {
     	FormResponseEvent formResponseEvent = new FormResponseEvent( formResponse.getId( ) );
         
-    	_formResponseEvent.select( FormResponseEvent.class, new TypeQualifier( EventAction.CREATE ) ).fireAsync( formResponseEvent );
+    	fireAsync( _formResponseEvent.select( FormResponseEvent.class, new TypeQualifier( EventAction.CREATE ) ), formResponseEvent );
     }
 
     /**
@@ -686,7 +711,7 @@ public class FormService
     {
         FormResponseEvent formResponseEvent = new FormResponseEvent( formResponse.getId( ), updateDateFormResponse );
 
-        _formResponseEvent.select( FormResponseEvent.class, new TypeQualifier( EventAction.UPDATE ) ).fireAsync( formResponseEvent );
+        fireAsync( _formResponseEvent.select( FormResponseEvent.class, new TypeQualifier( EventAction.UPDATE ) ), formResponseEvent );
     }
 
     /**
@@ -717,7 +742,7 @@ public class FormService
     {
         FormResponseEvent formResponseEvent = new FormResponseEvent( formResponse.getId( ) );
         
-    	_formResponseEvent.select( FormResponseEvent.class, new TypeQualifier( EventAction.REMOVE ) ).fireAsync( formResponseEvent );
+    	fireAsync( _formResponseEvent.select( FormResponseEvent.class, new TypeQualifier( EventAction.REMOVE ) ), formResponseEvent );
     }
 
     /**
