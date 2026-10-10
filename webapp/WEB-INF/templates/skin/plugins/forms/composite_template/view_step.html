@@ -18,8 +18,8 @@
 <#assign labelForBackUpAction='' />
 <#assign doResetBackUpAction='' />
 <#assign labelResetBackupAction='' />
-<@cInput type='hidden' name='token' value=token!'' class='' />
-<@cInput type='hidden' name='page' value='forms' class='' />
+<@cInput type='hidden' name='token' id='step-token' value=token!'' class='' />
+<@cInput type='hidden' name='page' id='step-page' value='forms' class='' />
 <@cInput type='hidden' name='id_form' value=step.idForm?c class='' />
 <@cInput type='hidden' name='id_step' value=step.id?c class='' />
 <#if !step.initial >

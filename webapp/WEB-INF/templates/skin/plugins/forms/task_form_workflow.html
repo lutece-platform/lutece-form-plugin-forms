@@ -4,10 +4,10 @@
 		<@cCol>
 			<@cCard title='#i18n{forms.tasks_form_workflow.title}' class='mt-5'>
 				<@cForm id='form-validate' action='jsp/site/Portal.jsp' params='enctype="multipart/form-data"'>
-				<@cInput type='hidden' name='page' value='formsResponse' />
+				<@cInput type='hidden' name='page' id='task-form-page' value='formsResponse' />
 				<@cInput type='hidden' name='id_action' value='${id_action}' />
 				<@cInput type='hidden' name='id_response' value='${id_form_response}' />
-				<@cInput type='hidden' name='token' value='${token}' />	
+				<@cInput type='hidden' name='token' id='task-form-token' value='${token}' />	
 				${tasks_form}
 				<@cField>
 					<@cBtn params='name="action_doSaveTaskForm"' label='#i18n{workflow.tasks_form_test_workflow.button_save}' />
