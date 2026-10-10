@@ -68,6 +68,7 @@ import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.business.export.FormExportConfigHome;
 import fr.paris.lutece.plugins.forms.exception.LockException;
 import fr.paris.lutece.plugins.forms.exception.MaxFormResponseException;
+import fr.paris.lutece.plugins.forms.exception.QuotaLockTimeoutException;
 import fr.paris.lutece.plugins.forms.service.event.FormResponseEvent;
 import fr.paris.lutece.plugins.forms.service.lock.FormsDistributedLockManager;
 import fr.paris.lutece.plugins.forms.service.lock.LockResult;
@@ -255,7 +256,7 @@ public class FormService
                 }
             }
         }
-        throw new MaxFormResponseException(
+        throw new QuotaLockTimeoutException(
                 "Could not acquire quota lock for form " + form.getId( ) + " (contention timeout)", lastFailure );
     }
 

@@ -58,6 +58,7 @@ import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.exception.FormNotFoundException;
 import fr.paris.lutece.plugins.forms.exception.MaxFormResponseException;
+import fr.paris.lutece.plugins.forms.exception.QuotaLockTimeoutException;
 import fr.paris.lutece.plugins.forms.exception.QuestionValidationException;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler;
@@ -624,6 +625,12 @@ public class FormResponseJspBean extends AbstractJspBean
         {
 			_formService.saveFormResponse( _formResponseManager.getFormResponse( ) );
 		} 
+        catch ( QuotaLockTimeoutException e )
+        {
+            // Too many simultaneous submissions: the quota is not necessarily reached, the user can try again
+            addError( FormsConstants.MESSAGE_ERROR_QUOTA_BUSY, getLocale( ) );
+            return redirectView( request, VIEW_ERROR );
+        }
         catch ( MaxFormResponseException e )
         {
 			addError( e.getMessage( ) );

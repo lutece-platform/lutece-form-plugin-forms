@@ -54,6 +54,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.forms.exception.FormNotFoundException;
 import fr.paris.lutece.plugins.forms.exception.MaxFormResponseException;
+import fr.paris.lutece.plugins.forms.exception.QuotaLockTimeoutException;
 import fr.paris.lutece.plugins.forms.exception.QuestionValidationException;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeAutomaticFileReading;
@@ -1381,6 +1382,11 @@ public class FormXPage extends MVCApplication
         try
         {
             _formService.saveForm( form, formResponse );
+        }
+        catch( QuotaLockTimeoutException e )
+        {
+            // Too many simultaneous submissions: the quota is not necessarily reached, the user can try again
+            SiteMessageService.setMessage( request, FormsConstants.MESSAGE_ERROR_QUOTA_BUSY, SiteMessage.TYPE_ERROR );
         }
         catch( MaxFormResponseException e)
         {
