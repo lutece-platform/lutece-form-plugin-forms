@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2025, City of Paris
+ * Copyright (c) 2002-2026, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -80,28 +81,32 @@ public class NormalScopedBeansProxyableTest
     {
         Path classes = Path.of( FormXPage.class.getProtectionDomain( ).getCodeSource( ).getLocation( ).toURI( ) );
         List<String> violations = new ArrayList<>( );
+        List<Path> classFiles;
         try ( Stream<Path> files = Files.walk( classes ) )
         {
-            for ( Path file : (Iterable<Path>) files.filter( f -> f.toString( ).endsWith( ".class" ) && !f.toString( ).contains( "$" ) )::iterator )
+            classFiles = files.filter( f -> f.toString( ).endsWith( ".class" ) && !f.toString( ).contains( "$" ) ).toList( );
+        }
+        assertFalse( classFiles.isEmpty( ), "No compiled class found in " + classes );
+        for ( Path file : classFiles )
+        {
+            String strName = classes.relativize( file ).toString( ).replace( '/', '.' ).replaceAll( "\\.class$", "" );
+            Class<?> clazz;
+            try
             {
-                String strName = classes.relativize( file ).toString( ).replace( '/', '.' ).replaceAll( "\\.class$", "" );
-                Class<?> clazz;
-                try
+                clazz = Class.forName( strName, false, getClass( ).getClassLoader( ) );
+            }
+            catch( ClassNotFoundException | LinkageError e )
+            {
+                violations.add( strName + " (cannot be loaded: " + e + ")" );
+                continue;
+            }
+            if ( NORMAL_SCOPES.stream( ).anyMatch( clazz::isAnnotationPresent ) )
+            {
+                for ( Class<?> c = clazz; c != null && c != Object.class; c = c.getSuperclass( ) )
                 {
-                    clazz = Class.forName( strName, false, getClass( ).getClassLoader( ) );
-                }
-                catch( ClassNotFoundException | LinkageError e )
-                {
-                    continue;
-                }
-                if ( NORMAL_SCOPES.stream( ).anyMatch( clazz::isAnnotationPresent ) )
-                {
-                    for ( Class<?> c = clazz; c != null && c != Object.class; c = c.getSuperclass( ) )
+                    if ( !hasNonPrivateNoArgsConstructor( c ) )
                     {
-                        if ( !hasNonPrivateNoArgsConstructor( c ) )
-                        {
-                            violations.add( clazz.getName( ) + ( c == clazz ? "" : " (super class " + c.getName( ) + ")" ) );
-                        }
+                        violations.add( clazz.getName( ) + ( c == clazz ? "" : " (super class " + c.getName( ) + ")" ) );
                     }
                 }
             }

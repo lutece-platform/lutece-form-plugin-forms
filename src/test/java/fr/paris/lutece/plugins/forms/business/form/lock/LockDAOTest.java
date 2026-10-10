@@ -33,16 +33,26 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.lock;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import fr.paris.lutece.plugins.forms.service.FormsPlugin;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.test.LuteceTestCase;
+import fr.paris.lutece.util.sql.DAOUtil;
 import jakarta.inject.Inject;
 
 /**
@@ -60,9 +70,24 @@ public class LockDAOTest extends LuteceTestCase
         return FormsPlugin.getPlugin( );
     }
 
+    private static final String LOCK_NAME_PREFIX = "test.lock.";
+
     private static String newLockName( )
     {
-        return "test.lock." + UUID.randomUUID( ).toString( ).substring( 0, 8 );
+        return LOCK_NAME_PREFIX + UUID.randomUUID( ).toString( ).substring( 0, 8 );
+    }
+
+    /**
+     * Removes the lock rows created by the tests.
+     */
+    @AfterEach
+    protected void removeTestLocks( )
+    {
+        try ( DAOUtil daoUtil = new DAOUtil( "DELETE FROM forms_lucene_lock WHERE index_name LIKE ?", plugin( ) ) )
+        {
+            daoUtil.setString( 1, LOCK_NAME_PREFIX + "%" );
+            daoUtil.executeUpdate( );
+        }
     }
 
     private static String newUuid( )
@@ -124,5 +149,44 @@ public class LockDAOTest extends LuteceTestCase
         assertTrue( _lockDao.acquire( lockName, "node-a", newUuid( ), -1, plugin( ) ) );
         assertTrue( _lockDao.acquire( lockName, "node-b", newUuid( ), TTL_SECONDS, plugin( ) ),
                 "An expired lock must be reclaimable" );
+    }
+
+    /**
+     * Instances acquiring a lock whose row does not exist yet at the same time: the row is created once and only one of them gets the lock.
+     *
+     * @throws Exception
+     *             if a thread fails
+     */
+    @Test
+    public void testConcurrentFirstAcquisition( ) throws Exception
+    {
+        String lockName = newLockName( );
+        int nThreads = 8;
+        CountDownLatch start = new CountDownLatch( 1 );
+        ExecutorService executor = Executors.newFixedThreadPool( nThreads );
+        try
+        {
+            List<Future<Boolean>> results = new ArrayList<>( );
+            for ( int i = 0; i < nThreads; i++ )
+            {
+                String strInstance = "node-" + i;
+                Callable<Boolean> acquire = ( ) -> {
+                    start.await( );
+                    return _lockDao.acquire( lockName, strInstance, newUuid( ), TTL_SECONDS, plugin( ) );
+                };
+                results.add( executor.submit( acquire ) );
+            }
+            start.countDown( );
+            int nAcquired = 0;
+            for ( Future<Boolean> result : results )
+            {
+                nAcquired += Boolean.TRUE.equals( result.get( ) ) ? 1 : 0;
+            }
+            assertEquals( 1, nAcquired, "Exactly one instance must get the lock" );
+        }
+        finally
+        {
+            executor.shutdownNow( );
+        }
     }
 }
