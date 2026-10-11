@@ -34,7 +34,17 @@
 package fr.paris.lutece.plugins.forms.service.lock;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.Test;
 
@@ -44,57 +54,129 @@ import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.test.LuteceTestCase;
 
 /**
- * Once the instance stops, no lock is taken: a daemon run still going on must not hold a lock released by the shutdown
+ * Once the instance stops, it holds no lock: a daemon run still going on must not hold a lock after the shutdown released
+ * the locks of the instance, the other instances would wait for its expiry (15 minutes for the index writer before the lease
+ * was shortened) without indexing anything
  */
 public class LuceneLockManagerDBShutdownTest extends LuteceTestCase
 {
+    private static final String LOCK = "test.lock";
+
     @Test
-    public void testNoAcquisitionAfterShutdown( ) throws Exception
+    public void testNoLockTakenAfterShutdown( ) throws Exception
     {
-        CountingDAO dao = new CountingDAO( );
+        TableDAO dao = new TableDAO( );
         LuceneLockManagerDB manager = new LuceneLockManagerDB( dao );
 
-        manager.releaseLock( manager.acquireLock( "test.lock", 60_000L ) );
-        assertEquals( 1, dao._nAcquire );
+        manager.releaseLock( manager.acquireLock( LOCK, 60_000L ) );
+        assertNull( dao.holder( LOCK ) );
 
         manager.releaseOwnLocksOnShutdown( );
-        assertEquals( 1, dao._nReleaseByInstance );
-        assertThrows( LockException.class, ( ) -> manager.acquireLock( "test.lock", 60_000L ) );
-        assertEquals( 1, dao._nAcquire, "the database is not asked for a lock once the instance stops" );
+        assertThrows( LockException.class, ( ) -> manager.acquireLock( LOCK, 60_000L ) );
+        assertNull( dao.holder( LOCK ), "the stopped instance still holds the lock" );
+    }
+
+    @Test
+    public void testLockTakenDuringShutdownIsReleased( ) throws Exception
+    {
+        TableDAO dao = new TableDAO( );
+        LuceneLockManagerDB manager = new LuceneLockManagerDB( dao );
+        dao._acquireStarted = new CountDownLatch( 1 );
+        dao._acquireMayWrite = new CountDownLatch( 1 );
+
+        ExecutorService executor = Executors.newSingleThreadExecutor( );
+        try
+        {
+            // An indexing run asks for the lock; its statement is still running when the instance stops
+            Future<?> acquisition = executor.submit( ( ) -> manager.acquireLock( LOCK, 60_000L ) );
+            assertTrue( dao._acquireStarted.await( 10, TimeUnit.SECONDS ) );
+            manager.releaseOwnLocksOnShutdown( );
+            dao._acquireMayWrite.countDown( );
+
+            try
+            {
+                acquisition.get( 10, TimeUnit.SECONDS );
+            }
+            catch( java.util.concurrent.ExecutionException e )
+            {
+                assertTrue( e.getCause( ) instanceof LockException );
+            }
+            assertNull( dao.holder( LOCK ), "the lock taken while the instance stopped stays held until its expiry" );
+        }
+        finally
+        {
+            executor.shutdownNow( );
+        }
     }
 
     /**
-     * DAO granting every lock and counting the calls
+     * The lock table in memory: the instance holding each lock
      */
-    private static class CountingDAO implements ILockDAO
+    private static class TableDAO implements ILockDAO
     {
-        private int _nAcquire;
-        private int _nReleaseByInstance;
+        private final Map<String, String> _mapHolders = new ConcurrentHashMap<>( );
+        private final Map<String, String> _mapIndexByUuid = new ConcurrentHashMap<>( );
+        private volatile CountDownLatch _acquireStarted;
+        private volatile CountDownLatch _acquireMayWrite;
+
+        String holder( String indexName )
+        {
+            return _mapHolders.get( indexName );
+        }
 
         @Override
         public boolean acquire( String indexName, String instanceName, String uuid, long ttlSeconds, Plugin plugin )
         {
-            _nAcquire++;
+            if ( _acquireStarted != null )
+            {
+                _acquireStarted.countDown( );
+                try
+                {
+                    _acquireMayWrite.await( 10, TimeUnit.SECONDS );
+                }
+                catch( InterruptedException e )
+                {
+                    Thread.currentThread( ).interrupt( );
+                    return false;
+                }
+            }
+            if ( _mapHolders.putIfAbsent( indexName, instanceName ) != null )
+            {
+                return false;
+            }
+            _mapIndexByUuid.put( uuid, indexName );
             return true;
         }
 
         @Override
         public void release( String uuid, Plugin plugin )
         {
-            // nothing to release
+            String indexName = _mapIndexByUuid.remove( uuid );
+            if ( indexName != null )
+            {
+                _mapHolders.remove( indexName );
+            }
         }
 
         @Override
         public boolean refresh( String uuid, long ttlSeconds, Plugin plugin )
         {
-            return true;
+            return _mapIndexByUuid.containsKey( uuid );
         }
 
         @Override
         public int releaseByInstance( String instanceName, Plugin plugin )
         {
-            _nReleaseByInstance++;
-            return 0;
+            int nReleased = 0;
+            for ( Map.Entry<String, String> entry : _mapHolders.entrySet( ) )
+            {
+                if ( entry.getValue( ).equals( instanceName ) && _mapHolders.remove( entry.getKey( ), instanceName ) )
+                {
+                    _mapIndexByUuid.values( ).remove( entry.getKey( ) );
+                    nReleased++;
+                }
+            }
+            return nReleased;
         }
     }
 }

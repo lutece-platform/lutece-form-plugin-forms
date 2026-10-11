@@ -87,6 +87,13 @@ public class LuceneLockManagerDB implements LuceneLockManager
 
         if ( _lockDao.acquire( indexName, FormsInstanceId.VALUE, uuid, ttlSeconds, _plugin ) )
         {
+            if ( _bStopping )
+            {
+                // The instance stopped while the lock was being taken: the shutdown may have released the locks of the
+                // instance before this one was written
+                _lockDao.release( uuid, _plugin );
+                throw new LockException( );
+            }
             // The real expired_date lives DB-side now; expose a best-effort local estimate so
             // callers keep a roughly-correct handle (not used for any safety-critical decision).
             Timestamp estimatedExpiry = Timestamp.from( Instant.now( ).plusSeconds( ttlSeconds ) );
