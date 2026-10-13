@@ -92,6 +92,7 @@ import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
 import fr.paris.lutece.portal.util.mvc.xpage.annotations.Controller;
 import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 import fr.paris.lutece.portal.web.xpages.XPage;
+import fr.paris.lutece.portal.service.template.HtmlMarkup;
 import fr.paris.lutece.util.url.UrlItem;
 
 /**
@@ -463,10 +464,9 @@ public class FormXPage extends MVCApplication
 
         FormsResponseUtils.populateFormWithLogoAndNumberResponse(form);
         model.put( FormsConstants.MARK_FORM, form );
-        model.put( STEP_HTML_MARKER,
-                _stepDisplayTree.getCompositeHtml( request, _formResponseManager.findAllResponses( ), getLocale( request ), DisplayType.EDITION_FRONTOFFICE ) );
-        model.put( FormsConstants.MARK_FORM_TOP_BREADCRUMB, _breadcrumb.getTopHtml( request, _formResponseManager ) );
-        model.put( FormsConstants.MARK_FORM_BOTTOM_BREADCRUMB, _breadcrumb.getBottomHtml( request, _formResponseManager ) );
+        model.put( STEP_HTML_MARKER, HtmlMarkup.of( _stepDisplayTree.getCompositeHtml( request, _formResponseManager.findAllResponses( ), getLocale( request ), DisplayType.EDITION_FRONTOFFICE ) ) );
+        model.put( FormsConstants.MARK_FORM_TOP_BREADCRUMB, HtmlMarkup.of( _breadcrumb.getTopHtml( request, _formResponseManager ) ) );
+        model.put( FormsConstants.MARK_FORM_BOTTOM_BREADCRUMB, HtmlMarkup.of( _breadcrumb.getBottomHtml( request, _formResponseManager ) ) );
         if ( bypassInactiveState( form, request ) )
         {
             addWarning( MESSAGE_WARNING_INACTIVE_STATE_BYPASSED, getLocale( request ) );
@@ -646,7 +646,7 @@ public class FormXPage extends MVCApplication
 
         if ( displayCaptcha )
         {
-            model.put( MARK_CAPTCHA, _captchaService.get( ).getHtmlCode( ) );
+            model.put( MARK_CAPTCHA, HtmlMarkup.of( _captchaService.get( ).getHtmlCode( ) ) );
         }
         model.put( SecurityTokenService.MARK_TOKEN, _securityTokenService.getToken( request, ACTION_SAVE_FORM_RESPONSE ) );
         String strTitleForm = I18nService.getLocalizedString( FormsConstants.MESSAGE_SUMMARY_TITLE, new String [ ] {
@@ -678,7 +678,7 @@ public class FormXPage extends MVCApplication
         List<Step> listValidatedStep = _formResponseManager.getValidatedSteps( );
 
         List<String> listStepHtml = FormsResponseUtils.buildStepsHtml( request, listValidatedStep, _formResponseManager, true );
-        mapFormResponseSummaryModel.put( MARK_LIST_SUMMARY_STEP_DISPLAY, listStepHtml );
+        mapFormResponseSummaryModel.put( MARK_LIST_SUMMARY_STEP_DISPLAY, HtmlMarkup.ofAll( listStepHtml ) );
         return mapFormResponseSummaryModel;
     }
 
@@ -900,7 +900,7 @@ public class FormXPage extends MVCApplication
      */
     private String getBackUrl( Form form, boolean bIsEndMessageDisplayed )
     {
-        if ( StringUtils.isNotEmpty( form.getReturnUrl( ) ) )
+        if ( FormsUtils.isSafeReturnUrl( form.getReturnUrl( ) ) )
         {
             return form.getReturnUrl( );
         }

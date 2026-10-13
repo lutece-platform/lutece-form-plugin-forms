@@ -36,7 +36,10 @@ package fr.paris.lutece.plugins.forms.util;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
+
+import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.Step;
@@ -138,5 +141,26 @@ public class FormsUtils
             }
         }
         return listIdNextSteps;
+    }
+
+    /**
+     * Tells whether the return URL of a form can be written as a link: a relative URL, or an http(s) one. Escaping does
+     * not stop a URL in another scheme (javascript:, data:) from running when the link is followed.
+     *
+     * @param strUrl
+     *            the return URL entered in the form settings
+     * @return true if the URL is relative or http(s)
+     */
+    public static boolean isSafeReturnUrl( String strUrl )
+    {
+        if ( strUrl == null || strUrl.isBlank( ) )
+        {
+            return false;
+        }
+        String strTrimmed = strUrl.strip( ).toLowerCase( Locale.ROOT );
+        int nColon = strTrimmed.indexOf( ':' );
+        int nPathStart = StringUtils.indexOfAny( strTrimmed, "/?#" );
+
+        return nColon < 0 || ( nPathStart >= 0 && nPathStart < nColon ) || strTrimmed.startsWith( "http://" ) || strTrimmed.startsWith( "https://" );
     }
 }

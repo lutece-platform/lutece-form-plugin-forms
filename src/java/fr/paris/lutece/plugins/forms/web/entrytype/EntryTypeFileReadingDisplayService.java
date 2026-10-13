@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.web.entrytype;
 
+import fr.paris.lutece.portal.service.template.HtmlMarkup;
 import java.util.Map;
 
 import fr.paris.lutece.plugins.forms.business.Form;
@@ -81,7 +82,7 @@ public class EntryTypeFileReadingDisplayService extends EntryTypeFileDisplayServ
         if ( fieldType != null )
         {
             IOcrProvider ocrProvider = OcrProviderManager.getOcrProvider( fieldType.getValue( ) );
-            model.put( MARK_OCR_CODE_TEMPLATE, ocrProvider.getHtmlCode( entry.getIdEntry( ), Form.RESOURCE_TYPE ) );
+            model.put( MARK_OCR_CODE_TEMPLATE, HtmlMarkup.of( ocrProvider.getHtmlCode( entry.getIdEntry( ), Form.RESOURCE_TYPE ) ) );
         }
         model.put( FormsConstants.QUESTION_ENTRY_MARKER, entry );
 
