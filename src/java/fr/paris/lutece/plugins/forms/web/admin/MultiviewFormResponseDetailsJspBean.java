@@ -79,6 +79,7 @@ import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.plugins.forms.web.form.response.view.FormResponseViewModelProcessorFactory;
 import fr.paris.lutece.plugins.forms.web.form.response.view.IFormResponseViewModelProcessor;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
+import fr.paris.lutece.plugins.workflowcore.exception.ResourceWorkflowLockedException;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.user.AdminUserHome;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
@@ -151,6 +152,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
     private static final String MESSAGE_ACCESS_DENIED = "Acces denied";
     private static final String MESSAGE_MULTIVIEW_FORM_RESPONSE_TITLE = "forms.multiviewForms.pageTitle";
     private static final String MESSAGE_ACTION_ERROR = "forms.multiviewForms.action.error";
+    private static final String MESSAGE_ACTION_LOCKED = "forms.multiviewForms.action.locked";
 
     // Variables
     private Map<String, String> _mapFilterValues = new LinkedHashMap<>( );
@@ -495,7 +497,15 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         }
         catch( AppException e )
         {
-            AppLogService.error( "Error processing action for id response '" + nIdFormResponse + "' - cause : " + e.getMessage( ), e );
+            if ( e.getCause( ) instanceof ResourceWorkflowLockedException )
+            {
+                // Another action is in progress on this response (other agent, other instance) or its state has changed
+                addError( MESSAGE_ACTION_LOCKED, locale );
+            }
+            else
+            {
+                AppLogService.error( "Error processing action for id response '" + nIdFormResponse + "' - cause : " + e.getMessage( ), e );
+            }
         }
 
         // Redirect to the correct view
@@ -532,7 +542,14 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
             }
             catch( AppException e )
             {
-                AppLogService.error( "Error processing action for record " + nIdFormResponse, e );
+                if ( e.getCause( ) instanceof ResourceWorkflowLockedException )
+                {
+                    addError( MESSAGE_ACTION_LOCKED, getLocale( ) );
+                }
+                else
+                {
+                    AppLogService.error( "Error processing action for record " + nIdFormResponse, e );
+                }
             }
         }
         else
