@@ -1,6 +1,6 @@
 <@cTpl>
 <@cBlock class=entry.CSSClass!>
-${entry.comment}
+${richText( entry.comment )}
 <#if filename?? && filename != ''>
 <@chList class='custom-list list-files ps-0 mt-m'>
 	<@chItem>

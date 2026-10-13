@@ -1,10 +1,10 @@
 <@cTpl>
 <#compress>
-<#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign entryCSSClass = ( entry.CSSClass?split(' ') )?map( ecc -> ( !ecc?contains('col') )?then( ' ' + ( ecc )?string + ' ', '' ) )?join( '' ) />
 <@chItem class=entryCSSClass!?trim>
 <@cInline type='strong'>${entry.title!''} :</@cInline>
 <#if list_responses?has_content>
-    <#assign strResponse><#list list_responses as response><#if response.toStringValueResponse?? && response.toStringValueResponse?trim !=''>${response.toStringValueResponse!}<#sep> - </#sep></#if></#list></#assign>
+    <#assign strResponse = '' /><#list list_responses as response><#if response.toStringValueResponse?? && response.toStringValueResponse?trim !=''><#assign strResponse = strResponse + response.toStringValueResponse + response?has_next?then( ' - ', '' ) /></#if></#list>
     <#if strResponse?trim != ''>
         <#list strResponse?keep_before_last('-')?split('-', 'r') as resp>
             <@cInline class='me-xs'>${resp?trim}<#sep> - </#sep></@cInline>

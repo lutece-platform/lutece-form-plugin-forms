@@ -72,7 +72,7 @@
                         <#list transition_list as transition>
                             <#assign controlIcon='plus' />
                             <#assign controlTitle='#i18n{forms.manage_questions.action.addControl}' />
-                            <#assign transitionClass> <#if transition.priority! == 1> border-primary border-2</#if></#assign>
+                            <#assign transitionClass = ' ' + ( transition.priority! == 1 )?then( ' border-primary border-2', '' ) />
                             <@box class='card-transition ${transitionClass!}'>
                                 <#assign transitionTitle> <@tag color='info' class='me-2'>#i18n{forms.manage_transitions.columnPriority} ${transition.priority!}</@tag> 
                                 <#-- <@icon style='arrow-right-circle' /> -->
@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function(e) {
 
     let stepList = [];
     try {
-        stepList = JSON.parse(sessionStorage.getItem('stepList${step.idForm}')) || [];
+        stepList = JSON.parse(sessionStorage.getItem('stepList${step.idForm?js_string?no_esc}')) || [];
     } catch (e) {
         stepList = [];
     }

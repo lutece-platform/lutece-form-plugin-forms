@@ -6,7 +6,7 @@
 <#assign defaultRegionField = getFieldByCode( entry, "defaultRegion" ) >
 <@select name="defaultRegion" id="defaultRegion">
 <#list entryTypeService.supportedRegionCodes as region>
-<@option label=region?html value=region?html selected=(region == defaultRegionField.value) />
+<@option label=region value=region selected=(region == defaultRegionField.value) />
 </#list>
 </@select>
 </@formGroup>

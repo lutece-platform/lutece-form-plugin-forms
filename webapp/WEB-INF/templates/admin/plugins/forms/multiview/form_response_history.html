@@ -9,7 +9,7 @@
       </@h>
       <#if history_information.task_information_list?size gt 0>
         <#list history_information.task_information_list as task_information>
-        <@p>${task_information!}</@p>
+        <@p>${( task_information!'' )?no_esc}</@p>
         </#list>
       <#else>
         <@p>#i18n{forms.multiviewForms.view_record_history.no_information}</@p>

@@ -3,8 +3,8 @@
 <#assign idName = 'attribute' + entry.idEntry>
 <#assign codeGallery = getFieldByCode(entry,'code_gallery').value >
 <#assign idFileSelected = ''>
-<#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
-<#assign galleryHelp><#if entry.helpMessage?exists&&entry.helpMessage!=''>${entry.helpMessage}</#if></#assign>
+<#assign entryCSSClass = ( entry.CSSClass?split(' ') )?map( ecc -> ( !ecc?contains('col') )?then( ' ' + ( ecc )?string + ' ', '' ) )?join( '' ) />
+<#assign galleryHelp = ( entry.helpMessage?exists&&entry.helpMessage!='' )?then( ( entry.helpMessage )?string, '' ) />
 <#if list_responses?? && list_responses?has_content><#list list_responses as response><#if response?? && response.file??><#assign idFileSelected = response.file.idFile /></#if></#list></#if>
 <@cRow class='mb-sm'>
 	<@cCol class=entryCSSClass!?trim>
@@ -24,12 +24,12 @@
 <script>
 <#if galleryHelp !='' || error !=''> 
 document.addEventListener( 'DOMContentLoaded', function() {
-	const galleryInput = document.getElementById('${idName}');
+	const galleryInput = document.getElementById('${idName?js_string?no_esc}');
 	<#if galleryHelp !=''>
-	galleryInput.setAttribute('aria-describedby', 'help_${entry.idEntry}');
+	galleryInput.setAttribute('aria-describedby', 'help_${entry.idEntry?js_string?no_esc}');
 	<#else>
 	const gallery = galleryInput.closest('.gallery-image');
-	galleryInput.setAttribute('aria-describedby', 'err_${entry.idEntry}');
+	galleryInput.setAttribute('aria-describedby', 'err_${entry.idEntry?js_string?no_esc}');
 	gallery.classList.add('is-invalid');
 	</#if>
 });

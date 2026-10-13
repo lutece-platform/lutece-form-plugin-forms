@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
 				<#if selectCodeGallery??>
 				var codeGallery = document.getElementById('code_gallery');
 				if (codeGallery) {
-					codeGallery.value = '${selectCodeGallery!}';
+					codeGallery.value = '${( selectCodeGallery! )?js_string?no_esc}';
 				}
 				</#if>
 			});
