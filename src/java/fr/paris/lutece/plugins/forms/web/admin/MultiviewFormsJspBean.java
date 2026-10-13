@@ -107,6 +107,7 @@ import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.ResponseBody;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
+import fr.paris.lutece.portal.service.template.HtmlMarkup;
 import fr.paris.lutece.util.filesystem.FileSystemUtil;
 import fr.paris.lutece.util.html.AbstractPaginator;
 import fr.paris.lutece.util.json.JsonResponse;
@@ -305,7 +306,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
             strTableTemplate = FormListTemplateBuilder.buildTableTemplate( _listFormColumnDisplay, _formPanelDisplayActive.getFormResponseItemList( ),
                     getLocale( ), strRedirectionDetailsBaseUrl, strSortUrl, getPaginator( ).getPageItems( ) );
         }
-        model.put( MARK_TABLE_TEMPLATE, strTableTemplate );
+        model.put( MARK_TABLE_TEMPLATE, HtmlMarkup.of( strTableTemplate ) );
 
         // Add the list of all form panel
         model.put( MARK_FORM_PANEL_LIST, _listAuthorizedFormPanelDisplay );

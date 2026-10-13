@@ -92,6 +92,7 @@ import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.utils.MVCUtils;
+import fr.paris.lutece.portal.service.template.HtmlMarkup;
 import fr.paris.lutece.util.ReferenceItem;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.url.UrlItem;
@@ -257,7 +258,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         List<String> listStepDisplayTree = buildFormStepDisplayTreeList( request, listSteps, formResponse );
         listSteps.stream( ).forEach( step -> mapSteps.put( step.getId( ), step ) );
 
-        mapFormResponseDetailsModel.put( MARK_LIST_MULTIVIEW_STEP_DISPLAY, listStepDisplayTree );
+        mapFormResponseDetailsModel.put( MARK_LIST_MULTIVIEW_STEP_DISPLAY, HtmlMarkup.ofAll( listStepDisplayTree ) );
         mapFormResponseDetailsModel.put( MARK_MAP_MULTIVIEW_STEP_REF_LIST, mapSteps );
 
         int nIdWorkflow = form.getIdWorkflow( );
@@ -280,9 +281,8 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
 
             mapFormResponseDetailsModel.put( MARK_RESOURCE_ACTIONS, resourceActions );
             mapFormResponseDetailsModel.put( MARK_HISTORY_WORKFLOW_ENABLED, bHistoryEnabled );
-            mapFormResponseDetailsModel.put( MARK_RESOURCE_HISTORY,
-            		_workflowService.getDisplayDocumentHistory( formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ), request, getLocale( ),
-                            mapFormResponseDetailsModel, TEMPLATE_FORM_RESPONSE_HISTORY, null ) );
+            mapFormResponseDetailsModel.put( MARK_RESOURCE_HISTORY, HtmlMarkup.of( _workflowService.getDisplayDocumentHistory( formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ), request, getLocale( ),
+                            mapFormResponseDetailsModel, TEMPLATE_FORM_RESPONSE_HISTORY, null ) ) );
         }
 
         return mapFormResponseDetailsModel;
@@ -475,7 +475,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         Map<String, Object> model = getModel( );
         model.put( MARK_ID_FORM_RESPONSE, nIdFormResponse );
         model.put( MARK_ID_ACTION, nIdAction );
-        model.put( MARK_TASK_FORM, strHtmlTasksForm );
+        model.put( MARK_TASK_FORM, HtmlMarkup.of( strHtmlTasksForm ) );
 
         return getPage( MESSAGE_MULTIVIEW_FORM_RESPONSE_TITLE, TEMPLATE_TASK_FORM, model );
     }
