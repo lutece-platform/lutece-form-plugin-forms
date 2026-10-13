@@ -1,14 +1,14 @@
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
-<#assign entryClass>files-list <#if entry.CSSClass?contains('hidden')>hidden</#if></#assign>
+<#assign entryClass = 'files-list ' + ( entry.CSSClass?contains('hidden') )?then( 'hidden', '' ) />
 <@li class=entryClass! >
 	<@span class='fw-bold' id='label_${idName!}'>${entry.title!''} :</@span>
 	<#if list_responses?has_content>
 		<@p>
 			<@span class='ms-xs font-italic'>#i18n{forms.entry.files.labelNumberOfFiles}</@span> 
 			<@span class='fw-bold'>${list_responses?size}</@span>
-			<@button title='#i18n{forms.entry.files.labelHideUploadedFiles}' id='btn-${idName!}' class='primary btn-show-files btn-sm ms-3' params='data-hide="#i18n{forms.entry.files.labelHideUploadedFiles}" data-show="#i18n{forms.entry.files.labelShowUploadedFiles}" aria-expanded="true" aria-controls="list_${idName!}" aria-labelledby="label_${idName}"' />
+			<@button title='#i18n{forms.entry.files.labelHideUploadedFiles}' id='btn-${idName!}' class='primary btn-show-files btn-sm ms-3' attrs={'data-hide': "#i18n{forms.entry.files.labelHideUploadedFiles}", 'data-show': "#i18n{forms.entry.files.labelShowUploadedFiles}", 'aria-expanded': "true", 'aria-controls': "list_${idName!}", 'aria-labelledby': "label_${idName}"} />
 		</@p>
-		<@ul class='list-uploaded-files mb-3' id='list_${idName!}' params='role="region" aria-labelledby="label_${idName}"'>
+		<@ul class='list-uploaded-files mb-3' id='list_${idName!}' attrs={'role': "region", 'aria-labelledby': "label_${idName}"}>
 		<#list list_responses as response>
 		<#if response.file?exists>
 			<#if response.file.size??>
@@ -37,9 +37,9 @@
 		</@ul>
 		<script>
 			document.addEventListener('DOMContentLoaded', () => {
-				button = document.getElementById('btn-${idName!}')
+				button = document.getElementById('btn-${( idName! )?js_string?no_esc}')
 					button.addEventListener('click', () => {
-					const filesList = document.getElementById('list_${idName!}')
+					const filesList = document.getElementById('list_${( idName! )?js_string?no_esc}')
 					if (filesList) {
 						filesList.classList.toggle('visually-hidden');
 						filesList.classList.contains('visually-hidden') ? button.textContent = button.getAttribute('data-show') : button.textContent = button.getAttribute('data-hide');

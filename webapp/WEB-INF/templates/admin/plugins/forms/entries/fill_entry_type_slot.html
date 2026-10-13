@@ -23,12 +23,12 @@
                     </#if>
                     <@columns xs=6 sm=4 md=3 xl=2>
                         <@formLabel for='${idName}_begin'>#i18n{forms.message.slot.preposition.from}</@formLabel>
-                        <#assign beginClass>form-control<#if hasError> is-invalid</#if></#assign>
+                        <#assign beginClass = 'form-control' + ( hasError )?then( ' is-invalid', '' ) />
                         <@input type='html5time' class=beginClass id='${idName}_begin' name='${idName}_begin' value=beginHour! />
                     </@columns>
                     <@columns xs=6 sm=4 md=3 xl=2>
                         <@formLabel for="${idName}_end">#i18n{forms.message.slot.preposition.to}</@formLabel>
-                        <#assign endClass>form-control<#if hasError> is-invalid</#if></#assign>
+                        <#assign endClass = 'form-control' + ( hasError )?then( ' is-invalid', '' ) />
                         <@input type='html5time' class=endClass id='${idName}_end' name='${idName}_end' value=endHour! />
                     </@columns>
                 </#list>

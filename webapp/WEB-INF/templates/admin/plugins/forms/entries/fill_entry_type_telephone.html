@@ -7,7 +7,7 @@
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
 <#assign field = getFieldByCode( entry, "autocomplete" ) >
 <#if field?? && field.value??>
-	<#assign autocomplete = "autocomplete=${field.value}" />
+	<#assign autocomplete>autocomplete="${field.value}"</#assign>
 <#else>
 	<#assign autocomplete = "" />
 </#if>

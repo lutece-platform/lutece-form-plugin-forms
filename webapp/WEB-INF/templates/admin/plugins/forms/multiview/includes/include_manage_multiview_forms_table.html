@@ -12,7 +12,7 @@ ${multiviewmap!''}
 		<@tr params=dataParams>
 			<#if form_response_line_template.formColumnCellTemplateList?has_content>
 				<#list form_response_line_template.formColumnCellTemplateList as form_column_cell_template>
-					${form_column_cell_template}
+					${form_column_cell_template?no_esc}
 				</#list>
 			</#if>
 		</@tr>
@@ -25,14 +25,14 @@ ${multiviewmap!''}
 <#if form_response_geojson_point_list?has_content>
 <script id="geojson_points" type="application/json">{
 	"type" : "FeatureCollection",
-	"features" : [<#list form_response_geojson_point_list as point>${point?replace("</","<\\/")}<#if point_has_next>,</#if></#list>]
+	"features" : [<#list form_response_geojson_point_list as point>${point?replace("</","<\\/")?no_esc}<#if point_has_next>,</#if></#list>]
 }
 </script>
 </#if>
 <#if form_response_line_template_list?has_content>
 <#assign response_map = form_response_line_template_list?map(form_response_line_template -> form_response_line_template.idFormResponse)>
 <script>
-sessionStorage.setItem('multiview_current_list', '${response_map?join(",")}' );
-sessionStorage.setItem('multiview_base_url', '${redirect_details_base_url}' );
+sessionStorage.setItem('multiview_current_list', '${( response_map?join(",") )?js_string?no_esc}' );
+sessionStorage.setItem('multiview_base_url', '${redirect_details_base_url?js_string?no_esc}' );
 </script>
 </#if>

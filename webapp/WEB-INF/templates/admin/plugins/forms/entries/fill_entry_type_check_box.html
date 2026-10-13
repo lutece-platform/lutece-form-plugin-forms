@@ -18,7 +18,7 @@
   <#if !field.noDisplayTitle><#assign labelKey>${field.title}<#if field.fileImage?has_content><@img url=field.fileImage.url! alt=field.title! class='img-thumbnail thumbnail-md mx-2' /></#if></#assign><#else><#assign labelKey = '' /></#if>
   <#if field.conditionalQuestions?exists&&field.conditionalQuestions?size!=0>
     <#assign idConditional = 'div' + field.idField>
-    <#assign params='onclick="doCheckboxEffect(this.checked,${idConditional}.id);"' />
+    <#assign params>onclick="doCheckboxEffect(this.checked,${idConditional}.id);"</#assign>
   <#else>
     <#assign params = '' />
   </#if>

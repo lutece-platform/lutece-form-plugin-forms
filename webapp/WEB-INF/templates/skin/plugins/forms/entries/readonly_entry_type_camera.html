@@ -3,7 +3,7 @@
 <#assign hasFile=false>
 <#assign field_width=getFieldValueByCode( entry, "width")>
 <#if field_width?number &gt; 0><#assign width=field_width?number></#if>
-<#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign entryCSSClass = ( entry.CSSClass?split(' ') )?map( ecc -> ( !ecc?contains('col') )?then( ' ' + ( ecc )?string + ' ', '' ) )?join( '' ) />
 <#compress>
 <@chItem class=entryCSSClass!?trim>
 <@cInline class='me-2' type='strong'>${entry.title!''} :</@cInline>
@@ -12,7 +12,7 @@
 	<#list list_responses as response>
 		<#if response.file?exists>
 			<#assign hasFile=true>
-			<@cImg src='' alt="${entry.title!''}" id='img${entry.idEntry}' title="${entry.title!''}" class="img-fluid img-responsive img-thumbnail" params=' style="width:${width};"' />
+			<@cImg src='' alt="${entry.title!''}" id='img${entry.idEntry}' title="${entry.title!''}" class="img-fluid img-responsive img-thumbnail" attrs={'style': "width:${width};"} />
 		<#else>
 			<@cInline type='em'>#i18n{portal.theme.labelNoDataProvided}</@cInline>
 		</#if>
@@ -25,9 +25,9 @@
 <#if hasFile>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-	const dataImg = sessionStorage.getItem('data${entry.idEntry}');
+	const dataImg = sessionStorage.getItem('data${entry.idEntry?js_string?no_esc}');
 	if (dataImg !== null && dataImg !== "") {
-		document.getElementById('img${entry.idEntry}').setAttribute('src', dataImg);
+		document.getElementById('img${entry.idEntry?js_string?no_esc}').setAttribute('src', dataImg);
 	}
 });
 </script>

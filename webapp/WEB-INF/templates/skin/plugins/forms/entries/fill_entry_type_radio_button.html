@@ -18,20 +18,20 @@
 </#if>
 <#list entry.fields as field><#if field.code == 'answer_choice'><#assign nbRadio+=1></#if></#list>
 <#list entry.fields as field><#if field.noDisplayTitle><#assign hasTitle=false><#assign legendClass+=' visually-hidden'></#if></#list>
-<#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign entryCSSClass = ( entry.CSSClass?split(' ') )?map( ecc -> ( !ecc?contains('col') )?then( ' ' + ( ecc )?string + ' ', '' ) )?join( '' ) />
 <#if nbRadio gt 1>
 <@cFormCheckGroup legend=entry.title id=entry.idEntry?string legendClass=legendClass class=entryCSSClass!?trim required=entry.mandatory >
 <#if entry.helpMessage?exists&&entry.helpMessage!=''><@cFormHelp id=idName! label=entry.helpMessage! /></#if>
 	<#if hasError>
-	<#assign errorMsg><#if error.mandatoryError><#if entry.errorMessage?has_content>${entry.errorMessage}<#else>#i18n{forms.message.mandatory.entry}</#if><#else>${error.errorMessage}</#if></#assign>
+	<#assign errorMsg = ( error.mandatoryError )?then( entry.errorMessage?has_content?then( ( entry.errorMessage )?string, '#i18n{forms.message.mandatory.entry}' ), ( error.errorMessage )?string ) />
 	<@cFormError id=idName label=errorMsg />
 	</#if>
 	<#list entry.fields as field>
 		<#assign isChecked=false >
 		<#if field.code == 'answer_choice'>
 			<#assign idName = buildEntryName( entry, entry_iteration_number )>
-			<#assign title><#if hasTitle>${field.title}<#else>${entry.title}</#if></#assign>
-			<#assign labelClass><#if field.noDisplayTitle> visually-hidden-focusable</#if></#assign>
+			<#assign title = ( hasTitle )?then( ( field.title )?string, ( entry.title )?string ) />
+			<#assign labelClass = ( field.noDisplayTitle )?then( ' visually-hidden-focusable', '' ) />
 			<#if list_responses?? && list_responses?has_content>
 				<#list list_responses as response>
 					<#if response.entry.idEntry == entry.idEntry && response.field??>
@@ -52,15 +52,15 @@
 <#else>
 <#if entry.helpMessage?exists&&entry.helpMessage!=''><@cFormHelp id=idName! label=entry.helpMessage! /></#if>
 	<#if hasError>
-	<#assign errorMsg><#if error.mandatoryError><#if entry.errorMessage?has_content>${entry.errorMessage}<#else>#i18n{forms.message.mandatory.entry}</#if><#else>${error.errorMessage}</#if></#assign>
+	<#assign errorMsg = ( error.mandatoryError )?then( entry.errorMessage?has_content?then( ( entry.errorMessage )?string, '#i18n{forms.message.mandatory.entry}' ), ( error.errorMessage )?string ) />
 	<@cFormError id=idName label=errorMsg />
 	</#if>
 	<#list entry.fields as field>
 		<#assign isChecked=false >
 		<#if field.code == 'answer_choice'>
 			<#assign idName = buildEntryName( entry, entry_iteration_number )>
-			<#assign title><#if hasTitle>${field.title}<#else>${entry.title}</#if></#assign>
-			<#assign labelClass><#if field.noDisplayTitle> visually-hidden-focusable</#if></#assign>
+			<#assign title = ( hasTitle )?then( ( field.title )?string, ( entry.title )?string ) />
+			<#assign labelClass = ( field.noDisplayTitle )?then( ' visually-hidden-focusable', '' ) />
 			<#if list_responses?? && list_responses?has_content>
 				<#list list_responses as response>
 					<#if response.entry.idEntry == entry.idEntry && response.field??>

@@ -9,16 +9,16 @@
 <#assign errorMsg='' >
 <#assign invalidClass='' >
 <#assign inputClass='form-control' >
-<#assign helpMsg><#if entry.helpMessage?exists&&entry.helpMessage!=''>${entry.helpMessage!}</#if></#assign>
+<#assign helpMsg = ( entry.helpMessage?exists&&entry.helpMessage!='' )?then( ( entry.helpMessage!'' )?string, '' ) />
 <#assign field_default=getFieldByCode( entry, "text_config")>
 <#if entry.fields?? && entry.fields?has_content><#assign suffix = getFieldValueByCode( entry, 'suffix') ></#if>
 <#assign hasError=false />
 <#if list_responses?has_content>
 <#list list_responses as response>
-<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError><#assign hasError=true ><#assign error=response.entry.error><#assign errorMsg><#if error.mandatoryError><#if entry.errorMessage?has_content>${entry.errorMessage}<#else>#i18n{forms.message.mandatory.entry}</#if><#else>${error.errorMessage}</#if></#assign></#if>
-<#if response.entry.idEntry == entry.idEntry><#if response.toStringValueResponse??><#assign fieldValue=response.toStringValueResponse! ></#if></#if></#list><#else><#if field_default.value?exists><#assign fieldValue>${field_default.value}</#assign></#if></#if>
-<#assign entryStep><#list entry.CSSClass?split(' ') as laClass><#if laClass?starts_with( 'step-' )> ${laClass?replace('step-','')!}<#break></#if></#list></#assign>
-<#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError><#assign hasError=true ><#assign error=response.entry.error><#assign errorMsg = ( error.mandatoryError )?then( entry.errorMessage?has_content?then( ( entry.errorMessage )?string, '#i18n{forms.message.mandatory.entry}' ), ( error.errorMessage )?string ) /></#if>
+<#if response.entry.idEntry == entry.idEntry><#if response.toStringValueResponse??><#assign fieldValue=response.toStringValueResponse! ></#if></#if></#list><#else><#if field_default.value?exists><#assign fieldValue = ( field_default.value )?string /></#if></#if>
+<#assign entryStepClasses = entry.CSSClass?split(' ')?filter( laClass -> laClass?starts_with( 'step-' ) ) /><#assign entryStep = entryStepClasses?has_content?then( entryStepClasses?first?replace( 'step-', '' ), '' ) />
+<#assign entryCSSClass = ( entry.CSSClass?split(' ') )?map( ecc -> ( !ecc?contains('col') )?then( ' ' + ( ecc )?string + ' ', '' ) )?join( '' ) />
 <#if entryStep=''><#assign entryStep=0></#if>
 <#assign field_min=getFieldByCode( entry, "min")>
 <#if field_min.value?? && field_min.value !=''><#assign fieldMin=field_min.value?number ></#if>

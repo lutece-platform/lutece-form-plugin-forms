@@ -3,13 +3,13 @@
 <#assign hasError = false />
 <#if list_responses??><#list list_responses as response><#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError><#assign hasError = true /><#assign error = response.entry.error></#if></#list></#if>
 <#assign fieldMyLuteceAttributeName = getFieldByCode( entry, "attribute_name" ) >
-<#assign errorMsg><#if hasError><#if error.mandatoryError><#if entry.errorMessage?has_content>${entry.errorMessage}<#else>#i18n{forms.message.mandatory.entry}</#if><#else>${error.errorMessage}</#if></#if></#assign>
-<#assign helpMsg><#if entry.helpMessage?exists&&entry.helpMessage!=''>${entry.helpMessage}</#if></#assign>
-<#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign errorMsg = ( hasError )?then( ( error.mandatoryError )?then( entry.errorMessage?has_content?then( ( entry.errorMessage )?string, '#i18n{forms.message.mandatory.entry}' ), ( error.errorMessage )?string ), '' ) />
+<#assign helpMsg = ( entry.helpMessage?exists&&entry.helpMessage!='' )?then( ( entry.helpMessage )?string, '' ) />
+<#assign entryCSSClass = ( entry.CSSClass?split(' ') )?map( ecc -> ( !ecc?contains('col') )?then( ' ' + ( ecc )?string + ' ', '' ) )?join( '' ) />
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
 <#if user??>
 <@cField label=entry.title! for=idName! required=entry.mandatory! class=entryCSSClass!?trim > 
-	<#assign myLutAttrValue><#if mylutece_attr_template_value??>${mylutece_attr_template_value}<#else>${user.getUserInfo(fieldMyLuteceAttributeName.value)}</#if></#assign>
+	<#assign myLutAttrValue = ( mylutece_attr_template_value?? )?then( ( mylutece_attr_template_value )?string, ( user.getUserInfo(fieldMyLuteceAttributeName.value) )?string ) />
 	<@cInput class='form-control bg-transparent' name=idName placeholder=placeholder required=entry.mandatory! html5Required=false readonly=true disabled=true value=myLutAttrValue helpMsg=helpMsg errorMsg=errorMsg params=fieldParams />
 </@cField>
 </#if>

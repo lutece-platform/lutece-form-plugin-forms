@@ -2,7 +2,7 @@
 <@table>
     <@tr>
         <#list form_response_line_template.formColumnCellTemplateList as form_column_cell_template>
-            ${form_column_cell_template}
+            ${form_column_cell_template?no_esc}
         </#list>
     </@tr>
 </@table>

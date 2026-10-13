@@ -5,7 +5,7 @@
         <#list list_steps as step>
             <#if step?has_next>
                 <@chItem class='breadcrumb-forms-step breadcrumb-forms-step--done'>
-                    <@cBtn noclass=true class='breadcrumb-forms-step__row' type='submit' label='' params='name="action_doGoToStep" value="${step?index?c}" formnovalidate'>
+                    <@cBtn noclass=true class='breadcrumb-forms-step__row' type='submit' label='' attrs={'name': "action_doGoToStep", 'value': ( step?index?c ), 'formnovalidate': true}>
                         <@cInline class='breadcrumb-forms-step__label'>${step.title!}</@cInline>
                         <@cInline class='breadcrumb-forms-step__marker'><@cIcon name='check' title='#i18n{portal.theme.labelStepDone}' /></@cInline>
                     </@cBtn>

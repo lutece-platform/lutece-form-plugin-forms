@@ -42,7 +42,7 @@
 var mapData = [];
 /* this script is running for each iteration and we want to instantiate the map only at the last one */
 window.onload = function () {
-    let iterationNumber = '${entry_iteration_number}';
+    let iterationNumber = '${entry_iteration_number?js_string?no_esc}';
     if (document.getElementById('number_iteration_geolocation') == null) {
         let numberAddressInput = document.createElement('input');
         numberAddressInput.type = 'hidden';
@@ -55,7 +55,7 @@ window.onload = function () {
     }
     if (parseInt(document.getElementById('number_iteration_geolocation').value) === document.getElementsByName("leafletMap").length - 1) {
         for (let i = 0; i < document.getElementsByName("leafletMap").length; i++) {
-            const prefix = "nIt" + i + "_attribute" + "${entry.idEntry}";
+            const prefix = "nIt" + i + "_attribute" + "${entry.idEntry?js_string?no_esc}";
             const idMap = prefix + '_gmap';
             let lat = 48.853;
             let lon = 2.35;

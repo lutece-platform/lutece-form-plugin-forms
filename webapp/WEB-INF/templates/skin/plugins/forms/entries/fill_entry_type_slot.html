@@ -5,15 +5,15 @@
 <#assign legendClass=''>
 <#assign hasError = false />
 <#assign errorMsg = ''>
-<#assign entryCSSClass>form-control<#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign entryCSSClass = 'form-control' + ( entry.CSSClass?split(' ') )?map( ecc -> ( !ecc?contains('col') )?then( ' ' + ( ecc )?string + ' ', '' ) )?join( '' ) />
 <#if list_responses??><#list list_responses as response><#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError><#assign hasError = true /><#assign error = response.entry.error></#if></#list></#if>
-<#if hasError><#assign errorMsg><#if error.mandatoryError><#if entry.errorMessage?has_content>${entry.errorMessage}<#else>#i18n{forms.message.mandatory.entry}</#if><#else>${error.errorMessage}</#if></#assign></#if>
-<#assign helpMsg><#if entry.helpMessage?exists&&entry.helpMessage!=''>${entry.helpMessage}</#if></#assign>
+<#if hasError><#assign errorMsg = ( error.mandatoryError )?then( entry.errorMessage?has_content?then( ( entry.errorMessage )?string, '#i18n{forms.message.mandatory.entry}' ), ( error.errorMessage )?string ) /></#if>
+<#assign helpMsg = ( entry.helpMessage?exists&&entry.helpMessage!='' )?then( ( entry.helpMessage )?string, '' ) />
 <#assign entryStepClasses = entry.CSSClass?split(' ')?filter( laClass -> laClass?starts_with( 'step-' ) ) /><#assign entryStep = entryStepClasses?has_content?then( entryStepClasses?first?replace( 'step-', '' ), '' ) />
 <#if entryStep=''><#assign entryStep=0></#if>
 <#assign beginHour=''>
 <#assign beginEnd=''>
-<#assign inputParams>min="00:00" max="23:59"</#assign>
+<#assign inputParams = 'min="00:00" max="23:59"' />
 <#if list_responses?has_content>
 <#assign inputParams=''>
 <#assign beginHourCode = 'begin_hour'>
