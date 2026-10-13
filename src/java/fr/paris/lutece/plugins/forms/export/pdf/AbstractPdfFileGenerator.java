@@ -45,7 +45,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
+import fr.paris.lutece.portal.service.html.XSSSanitizerException;
+import fr.paris.lutece.portal.service.html.XSSSanitizerService;
+import fr.paris.lutece.plugins.genericattributes.business.Field;
 import org.apache.commons.lang3.StringUtils;
+
+import freemarker.core.HTMLOutputFormat;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Entities.EscapeMode;
@@ -339,7 +344,7 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
      *            the form question response
      * @param iteration
      *            the iteration
-     * @return the response value
+     * @return the response values, as HTML: the text is escaped, an image is an img element
      */
     private List<String> getResponseValue( FormQuestionResponse formQuestionResponse, int iteration )
     {
@@ -360,11 +365,11 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
 
             if ( aggrement )
             {
-                listResponseValue.add( I18nService.getLocalizedString( KEY_LABEL_YES, I18nService.getDefaultLocale( ) ) );
+                listResponseValue.add( escape( I18nService.getLocalizedString( KEY_LABEL_YES, I18nService.getDefaultLocale( ) ) ) );
             }
             else
             {
-                listResponseValue.add( I18nService.getLocalizedString( KEY_LABEL_NO, I18nService.getDefaultLocale( ) ) );
+                listResponseValue.add( escape( I18nService.getLocalizedString( KEY_LABEL_NO, I18nService.getDefaultLocale( ) ) ) );
             }
             return listResponseValue;
 
@@ -407,18 +412,73 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
 				} catch (FileServiceException e) {
 					AppLogService.error(e);
 				}
-                listResponseValue.add( fileImage != null ? fileImage.getTitle( ) : StringUtils.EMPTY);
+                listResponseValue.add( escape( fileImage != null ? fileImage.getTitle( ) : StringUtils.EMPTY ) );
             }
 
             if ( strResponseValue != null )
             {
-                listResponseValue.add( strResponseValue );
+                listResponseValue.add( isRichText( entry ) ? sanitize( strResponseValue ) : escape( strResponseValue ) );
             }
         }
 
         return listResponseValue;
     }
     
+    /**
+     * Tells whether the answers to an entry are rich text (a text area with a rich text editor).
+     *
+     * @param entry
+     *            the entry
+     * @return true for rich text
+     */
+    private static boolean isRichText( Entry entry )
+    {
+        Field fieldRichText = entry.getFieldByCode( IEntryTypeService.FIELD_RICHTEXT );
+
+        return fieldRichText != null && Boolean.parseBoolean( fieldRichText.getValue( ) );
+    }
+
+    /**
+     * Sanitizes a rich text answer written in the HTML of a PDF cell: its formatting is kept, a script is removed, and
+     * so is an image that is not embedded (data:), which the PDF renderer would fetch from the server (SSRF). It is
+     * escaped when it cannot be sanitized.
+     *
+     * @param strHtml
+     *            the answer, may be null
+     * @return the sanitized HTML, null for null
+     */
+    private static String sanitize( String strHtml )
+    {
+        if ( strHtml == null )
+        {
+            return null;
+        }
+        try
+        {
+            Document document = Jsoup.parseBodyFragment( XSSSanitizerService.sanitize( strHtml ) );
+            document.select( "img:not([src^=data:])" ).remove( );
+
+            return document.body( ).html( );
+        }
+        catch( XSSSanitizerException e )
+        {
+            AppLogService.error( "Unable to sanitize a rich text answer of the PDF export", e );
+            return escape( strHtml );
+        }
+    }
+
+    /**
+     * Escapes a text written in the HTML of a PDF cell, which also holds the img elements of the images.
+     *
+     * @param strText
+     *            the text, may be null
+     * @return the escaped text, null for null
+     */
+    private static String escape( String strText )
+    {
+        return strText == null ? null : HTMLOutputFormat.INSTANCE.escapePlainText( strText );
+    }
+
     protected void generatePdfFile(Path directoryFile, HtmlTemplate htmltemplate, String fileName) throws PdfConverterServiceException, IOException
     {
     	try ( OutputStream outputStream = Files.newOutputStream( directoryFile.resolve( fileName + EXTENSION_PDF ) ) )

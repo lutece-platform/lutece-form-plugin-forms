@@ -84,6 +84,7 @@ import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.web.util.LocalizedPaginator;
+import fr.paris.lutece.portal.service.template.HtmlMarkup;
 import fr.paris.lutece.util.ReferenceItem;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.AbstractPaginator;
@@ -586,7 +587,7 @@ public class FormControlJspBean extends AbstractJspBean
 
         model.put( FormsConstants.MARK_QUESTION, _question );
         model.put( FormsConstants.MARK_STEP, _step );
-        model.put( FormsConstants.MARK_CONTROL_TEMPLATE, strValidatorTemplate );
+        model.put( FormsConstants.MARK_CONTROL_TEMPLATE, HtmlMarkup.of( strValidatorTemplate ) );
         model.put( FormsConstants.MARK_CONTROL, _control );
         model.put( FormsConstants.MARK_ID_STEP, _nIdTarget );
         model.put( FormsConstants.MARK_TARGET_ID_STEP, _step.getId() );

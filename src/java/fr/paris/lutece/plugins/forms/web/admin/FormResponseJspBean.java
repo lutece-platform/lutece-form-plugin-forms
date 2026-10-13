@@ -64,6 +64,7 @@ import fr.paris.lutece.plugins.forms.exception.QuestionValidationException;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.plugins.forms.util.FormsUtils;
 import fr.paris.lutece.plugins.forms.util.FormsResponseUtils;
 import fr.paris.lutece.plugins.forms.web.FormResponseManager;
 import fr.paris.lutece.plugins.forms.web.StepDisplayTree;
@@ -75,6 +76,7 @@ import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
+import fr.paris.lutece.portal.service.template.HtmlMarkup;
 import fr.paris.lutece.util.url.UrlItem;
 
 @SessionScoped
@@ -692,10 +694,9 @@ public class FormResponseJspBean extends AbstractJspBean
     {
         FormsResponseUtils.populateFormWithLogoAndNumberResponse(form);
         model.put( FormsConstants.MARK_FORM, form );
-        model.put( FormsConstants.MARK_FORM_TOP_BREADCRUMB, _breadcrumb.getTopHtml( request, _formResponseManager ) );
-        model.put( FormsConstants.MARK_FORM_BOTTOM_BREADCRUMB, _breadcrumb.getBottomHtml( request, _formResponseManager ) );
-        model.put( STEP_HTML_MARKER,
-                _stepDisplayTree.getCompositeHtml( request, _formResponseManager.findAllResponses( ), getLocale( ), DisplayType.SUBMIT_BACKOFFICE ) );
+        model.put( FormsConstants.MARK_FORM_TOP_BREADCRUMB, HtmlMarkup.of( _breadcrumb.getTopHtml( request, _formResponseManager ) ) );
+        model.put( FormsConstants.MARK_FORM_BOTTOM_BREADCRUMB, HtmlMarkup.of( _breadcrumb.getBottomHtml( request, _formResponseManager ) ) );
+        model.put( STEP_HTML_MARKER, HtmlMarkup.of( _stepDisplayTree.getCompositeHtml( request, _formResponseManager.findAllResponses( ), getLocale( ), DisplayType.SUBMIT_BACKOFFICE ) ) );
         
         fillCommons( model );
     }
@@ -713,7 +714,7 @@ public class FormResponseJspBean extends AbstractJspBean
         List<Step> listValidatedStep = _formResponseManager.getValidatedSteps( );
 
         List<String> listStepHtml = FormsResponseUtils.buildStepsHtml( request, listValidatedStep, _formResponseManager, false );
-        mapFormResponseSummaryModel.put( MARK_LIST_SUMMARY_STEP_DISPLAY, listStepHtml );
+        mapFormResponseSummaryModel.put( MARK_LIST_SUMMARY_STEP_DISPLAY, HtmlMarkup.ofAll( listStepHtml ) );
         fillCommons( mapFormResponseSummaryModel );
         return mapFormResponseSummaryModel;
     }
@@ -769,7 +770,7 @@ public class FormResponseJspBean extends AbstractJspBean
      */
     private String getBackUrl( Form form, boolean bIsEndMessageDisplayed )
     {
-        if ( StringUtils.isNotEmpty( form.getReturnUrl( ) ) )
+        if ( FormsUtils.isSafeReturnUrl( form.getReturnUrl( ) ) )
         {
             return form.getReturnUrl( );
         }

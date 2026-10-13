@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import jakarta.enterprise.inject.spi.CDI;
 import jakarta.servlet.http.HttpServletRequest;
@@ -63,6 +64,7 @@ import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import fr.paris.lutece.portal.service.template.HtmlMarkup;
 
 /**
  * 
@@ -252,8 +254,9 @@ public class CompositeGroupDisplay implements ICompositeDisplay, Serializable
 
         _model.put( MARK_VISIBLE, this.isVisible() || displayType == DisplayType.RESUBMIT_FRONTOFFICE || displayType == DisplayType.COMPLETE_FRONTOFFICE );
         _model.put( MARK_GROUP, _group );
-        _model.put( MARK_GROUP_CONTENT, listChildrenHtml );
-        _model.put( MARK_GROUP_CONTENT_BY_ITERATION, listChildrenHtmlByIteration );
+        _model.put( MARK_GROUP_CONTENT, HtmlMarkup.ofAll( listChildrenHtml ) );
+        _model.put( MARK_GROUP_CONTENT_BY_ITERATION, listChildrenHtmlByIteration.entrySet( ).stream( )
+                .collect( Collectors.toMap( Map.Entry::getKey, entry -> HtmlMarkup.ofAll( entry.getValue( ) ), ( first, second ) -> first, TreeMap::new ) ) );
         _model.put( FormsConstants.PARAMETER_ID_GROUP, _formDisplay.getId( ) );
         _model.put( MARK_IS_ITERABLE, isIterable( ) );
         _model.put( MARK_NB_BASE_CHILDREN, _nNbBaseChildren );
