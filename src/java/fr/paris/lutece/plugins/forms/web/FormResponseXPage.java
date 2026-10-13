@@ -82,6 +82,7 @@ import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
 import fr.paris.lutece.portal.util.mvc.xpage.annotations.Controller;
 import fr.paris.lutece.portal.web.xpages.XPage;
+import fr.paris.lutece.portal.service.template.HtmlMarkup;
 
 /**
  *
@@ -243,7 +244,7 @@ public class FormResponseXPage extends MVCApplication
             Map<String, Object> model = new LinkedHashMap<>( );
             model.put( MARK_ID_FORM_RESPONSE, String.valueOf( nIdFormResponse ) );
             model.put( MARK_ID_ACTION, String.valueOf( nIdAction ) );
-            model.put( MARK_TASK_FORM, strHtmlTasksForm );
+            model.put( MARK_TASK_FORM, HtmlMarkup.of( strHtmlTasksForm ) );
             model.put( SecurityTokenService.MARK_TOKEN, _securityTokenService.getToken( request, ACTION_SAVE_TASK_FORM ) );
 
             XPage xPage = getXPage( TEMPLATE_TASK_FORM_RESPONSE, locale, model );
