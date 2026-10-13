@@ -1,7 +1,7 @@
 <@cTpl>
-<#assign classDisp><#if id_display??>display_field_${id_display}_${question.iterationNumber}</#if></#assign>
+<#assign classDisp = ( id_display?? )?then( 'display_field_' + ( id_display )?string + '_' + ( question.iterationNumber )?string, '' ) />
 <#assign param>displayControl="${question.id}_${question.iterationNumber}" </#assign>
-<#assign entryCSSClass>${classDisp} mt-3<#if question.entry.CSSClass??><#if question.entry.CSSClass?trim?starts_with('col-')> ${question.entry.CSSClass}<#else> col-12</#if></#if></#assign>
+<#assign entryCSSClass = ( classDisp )?string + ' mt-3' + ( question.entry.CSSClass?? )?then( ( question.entry.CSSClass?trim?starts_with('col-') )?then( ' ' + ( question.entry.CSSClass )?string, ' col-12' ), '' ) />
 <@cCol class=entryCSSClass params=param>
 	${questionContent}
 </@cCol>
@@ -15,7 +15,7 @@
 				<#if !validNames?seq_contains(validator.validatorBeanName)>
 					<#assign validNames = validNames + [validator.validatorBeanName] />
 					function validator_${validator.validatorBeanName?replace('.','_')}(inputValue,controlValue){
-						${validator.getJavascriptValidation()!'return true;'}
+						${( validator.getJavascriptValidation()!'return true;' )?no_esc}
 					}
 				</#if>
 			</#list>
@@ -35,8 +35,8 @@
 				return parents;
 			}
 
-			const displayField = Array.from(document.querySelectorAll('.display_field_${id_display!''}_${question.iterationNumber}'));
-			const hiddenInput = document.getElementById('${question.id}_${question.iterationNumber}');
+			const displayField = Array.from(document.querySelectorAll('.display_field_${( id_display!'' )?js_string?no_esc}_${question.iterationNumber?js_string?no_esc}'));
+			const hiddenInput = document.getElementById('${question.id?js_string?no_esc}_${question.iterationNumber?js_string?no_esc}');
 
 			// descendants of the display field matching the given selector
 			function findWithin( selector ){
@@ -61,7 +61,7 @@
 			<#if other_step_validation??>
 				<#if other_step_validation>
 					displayField.forEach(function(el){ el.style.display = ''; });
-					if ( hiddenInput !== null ){ hiddenInput.value = '${question.id}_${question.iterationNumber}'; }
+					if ( hiddenInput !== null ){ hiddenInput.value = '${question.id?js_string?no_esc}_${question.iterationNumber?js_string?no_esc}'; }
 				<#else>
 					displayField.forEach(function(el){ el.style.display = 'none'; });
 					findWithin('[required]').forEach(function(el){ el.setAttribute('requireddisabled',''); el.removeAttribute('required'); });
@@ -90,7 +90,7 @@
 						const inputValue = getFieldValue(inputItem);
 						const ctrlDiv = document.querySelector("div[displayControl='" + displayItemControl + "']");
 						if( ( ctrlDiv !== null && ctrlDiv.classList.contains("control_invalid") )
-								|| !validator_${itemControl.validatorName?replace('.','_')}( inputValue, '${itemControl.value?js_string}') )
+								|| !validator_${itemControl.validatorName?replace('.','_')}( inputValue, '${itemControl.value?js_string?no_esc}') )
 						{
 							nNotValidControlsCount++;
 						} else {
@@ -109,14 +109,14 @@
 						displayField.forEach(function(el){ el.classList.remove("control_invalid"); el.style.display = ''; });
 						findWithin("[requireddisabled]").forEach(function(el){ el.setAttribute("required",""); el.removeAttribute("requireddisabled"); });
 						if( hasCollapse && toCollapse !== null ){ toCollapse.style.display = ''; }
-						if ( hiddenInput !== null ){ hiddenInput.value = '${question.id}_${question.iterationNumber}'; }
+						if ( hiddenInput !== null ){ hiddenInput.value = '${question.id?js_string?no_esc}_${question.iterationNumber?js_string?no_esc}'; }
 					} else {
 						displayField.forEach(function(el){ el.classList.add("control_invalid"); el.style.display = 'none'; });
 						findWithin("[required]").forEach(function(el){ el.setAttribute("requireddisabled",""); el.removeAttribute("required"); });
 						if( hasCollapse && toCollapse !== null ){ toCollapse.style.display = 'none'; }
 						if ( hiddenInput !== null ){ hiddenInput.value = ''; }
 					}
-					const currentInput = getInputElement("${question.id}_${question.iterationNumber}");
+					const currentInput = getInputElement("${question.id?js_string?no_esc}_${question.iterationNumber?js_string?no_esc}");
 					if ( currentInput[0] !== undefined && currentInput[0].type !== 'file' ){
 						currentInput.forEach(function(el){ el.dispatchEvent(new Event('change')); });
 					}

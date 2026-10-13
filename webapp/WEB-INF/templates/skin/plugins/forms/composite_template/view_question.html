@@ -1,9 +1,9 @@
 <@cTpl>
-<#assign classDisp><#if question??>display_field_${question.id}_${question.iterationNumber}</#if></#assign>
-<#assign displayFieldId>df_${question.id}_${question.iterationNumber}</#assign>
+<#assign classDisp = ( question?? )?then( 'display_field_' + ( question.id )?string + '_' + ( question.iterationNumber )?string, '' ) />
+<#assign displayFieldId = 'df_' + ( question.id )?string + '_' + ( question.iterationNumber )?string />
 <#assign param>displayControl="${question.id}_${question.iterationNumber}" id="${displayFieldId}"</#assign>
-<#assign entryCSSClass><#if question.entry.CSSClass??><#if question.entry.CSSClass?trim?starts_with('col-')>${question.entry.CSSClass}<#else>col-12</#if></#if> ${classDisp}</#assign>
-<#if questionContent?? && questionContent != ''>
+<#assign entryCSSClass = ( question.entry.CSSClass?? )?then( ( question.entry.CSSClass?trim?starts_with('col-') )?then( ( question.entry.CSSClass )?string, 'col-12' ), '' ) + ' ' + ( classDisp )?string />
+<#if questionContent?? && questionContent?has_content>
 <@cCol class=entryCSSClass params=param>${questionContent!}</@cCol>
 <#if list_validator??>
 <@cInput name='displayed_questions' id='${question.id}_${question.iterationNumber}' class='' value='' type='hidden' /> 
@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			<#assign validNames = validNames + [validator.validatorBeanName] />
 			function validator_${validator.validatorBeanName?replace('.','_')}(inputValue,controlValue)
 			{
-				${validator.getJavascriptValidation()!'return true;'}
+				${( validator.getJavascriptValidation()!'return true;' )?no_esc}
 			}
 		</#if>
 	</#list>
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	var hasCollapse=false, 
 		toCollapse=null,
-		displayFieldEl = document.querySelector('.display_field_${question.id!''}_${question.iterationNumber}'),
+		displayFieldEl = document.querySelector('.display_field_${( question.id!'' )?js_string?no_esc}_${question.iterationNumber?js_string?no_esc}'),
 		stepGroup = displayFieldEl ? getParentsUntil(displayFieldEl, '.step-content') : [];
 	stepGroup.forEach(function(el){
 		if( el.classList.contains('step-group-collapsible') ){
@@ -40,12 +40,12 @@ document.addEventListener('DOMContentLoaded', function() {
 			toCollapse = el;
 		}
 	});
-	var displayField = document.querySelector('.display_field_${question.id!''}_${question.iterationNumber}');
+	var displayField = document.querySelector('.display_field_${( question.id!'' )?js_string?no_esc}_${question.iterationNumber?js_string?no_esc}');
 	var bOtherStepValidated = true;
 	<#if other_step_validation??>
 		<#if other_step_validation>
 			if (displayField) displayField.style.display = '';
-			document.getElementById('${question.id}_${question.iterationNumber}').value = '${question.id}_${question.iterationNumber}';
+			document.getElementById('${question.id?js_string?no_esc}_${question.iterationNumber?js_string?no_esc}').value = '${question.id?js_string?no_esc}_${question.iterationNumber?js_string?no_esc}';
 		<#else>
 			if (displayField) {
 				displayField.style.display = 'none';
@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
 					el.removeAttribute("required");
 				});
 			}
-			document.getElementById('${question.id}_${question.iterationNumber}').value = '';
+			document.getElementById('${question.id?js_string?no_esc}_${question.iterationNumber?js_string?no_esc}').value = '';
 			bOtherStepValidated = false;
 		</#if>
 	</#if>
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		</#list>
 	})();
 
-	var targetFieldId = '${displayFieldId}';
+	var targetFieldId = '${displayFieldId?js_string?no_esc}';
 	<#list list_control as control>
 		var displayControl = getControlId(${control.listIdQuestion[0]}, ${question.iterationNumber}),
 		input${control.id}_${question.iterationNumber} = getInputElement(displayControl);
@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
 						inputValue = getFieldValue(input${itemControl.id}_${question.iterationNumber});
 						// AND condition : if at least 1 control value isn't present, do not display question
 						var controlDiv = document.querySelector("div[displayControl='" + displayItemControl + "']");
-						if((controlDiv && controlDiv.classList.contains("control_invalid"))	|| !validator_${itemControl.validatorName?replace('.','_')}( inputValue, '${itemControl.value}')){
+						if((controlDiv && controlDiv.classList.contains("control_invalid"))	|| !validator_${itemControl.validatorName?replace('.','_')}( inputValue, '${itemControl.value?js_string?no_esc}')){
 							nNotValidControlsCount++;
 						} else {
 							nValidControlsCount++;
@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
 							});
 						}
 						if( hasCollapse && toCollapse ){ toCollapse.style.display = ''; }; // Show parent group if is in a collapse step-group
-						document.getElementById('${question.id}_${question.iterationNumber}').value = '${question.id}_${question.iterationNumber}';
+						document.getElementById('${question.id?js_string?no_esc}_${question.iterationNumber?js_string?no_esc}').value = '${question.id?js_string?no_esc}_${question.iterationNumber?js_string?no_esc}';
 					} else {
 						if (displayField) {
 							displayField.classList.add("control_invalid");
@@ -140,13 +140,13 @@ document.addEventListener('DOMContentLoaded', function() {
 							});
 						}
 						if( hasCollapse && toCollapse ){ toCollapse.style.display = 'none'; } // Hide parent group if is in a collapse step-group
-						document.getElementById('${question.id}_${question.iterationNumber}').value = '';
+						document.getElementById('${question.id?js_string?no_esc}_${question.iterationNumber?js_string?no_esc}').value = '';
 					}
 					/* Update aria-expanded on all controlling inputs */
 					document.querySelectorAll('[aria-controls~="' + targetFieldId + '"]').forEach(function(ctrl) {
 						ctrl.setAttribute('aria-expanded', String(bIsQuestionDisplayed));
 					});
-					var currentControl = "${question.id}_${question.iterationNumber}";
+					var currentControl = "${question.id?js_string?no_esc}_${question.iterationNumber?js_string?no_esc}";
 					var currentInput = getInputElement(currentControl);
 					if ( currentInput[0] != undefined && currentInput[0].type != 'file' ){
 						currentInput[0].dispatchEvent(new Event('change', { bubbles: true }));

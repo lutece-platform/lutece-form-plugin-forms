@@ -38,7 +38,7 @@
                             <#list form.actions as action>
                                 <#if action.permission=='MODIFY'>
                                     <@link href='${action.url}&id_form=${form.id}' title='${form.title}'>
-                                        <@h level=3 class='mb-0 searchable text-truncate text-wrap' params='title="${form.title}"'>
+                                        <@h level=3 class='mb-0 searchable text-truncate text-wrap' attrs={'title': ( form.title )}>
                                             <#if !form.active><@icon style='times' class='text-danger fs-2' title='#i18n{portal.util.labelDisabled}' />	<#else>	<@icon style='check' class='text-success fs-2' title='#i18n{portal.util.labelEnabled}' /></#if>
                                             ${form.title}
                                         </@h>
@@ -79,7 +79,7 @@
                                     </#if> 
                                 </#if>
                                 </#assign>
-                                <#assign publishBtnType>outline-<#if form.active>success<#else><#if form.availabilityStartDate?? &&  form.availabilityStartDate gt .now?datetime>info<#else>danger</#if></#if></#assign>
+                                <#assign publishBtnType = 'outline-' + ( form.active )?then( 'success', ( form.availabilityStartDate?? &&  form.availabilityStartDate gt .now?datetime )?then( 'info', 'danger' ) ) />
                                 <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&id_form=${form.id}" useIframe=true targetElement="#modify_form" id="publish-${form.id}" title="#i18n{forms.action.publish.name}" btnTitle=publishBtnTitle! btnColor=publishBtnType! btnClass="text-truncate searchable d-inline-block align-self-center" params='style="max-width:400px;"'/>
                             </#if>  
                             <@div class='form-actions d-lg-flex justify-content-end align-items-center flex-wrap py-2'>
@@ -155,7 +155,7 @@ new LuteceSearchList( searchInput, searchElementList, {
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('[id^="form_"]').forEach( form => {
 	    form.addEventListener('dblclick', function(e) {
-	        const formId = this.id.replace('form_', ''), token='${token!}';
+	        const formId = this.id.replace('form_', ''), token='${( token! )?js_string?no_esc}';
 			window.location.href = <#noparse>`jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${formId}&token=${token}`</#noparse>;
 		});
 	});

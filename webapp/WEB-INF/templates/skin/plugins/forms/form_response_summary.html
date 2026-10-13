@@ -59,8 +59,9 @@ if("IntersectionObserver" in window){
 	});
 }
 document.addEventListener('DOMContentLoaded', () => {
-	<@cSetPageTitle title='${form.title?html} - #i18n{forms.modify_form.labelDisplaySummary}' />
-	document.querySelector('#main-banner-title').innerHTML = '${form.title?html}';
+	<@cSetPageTitle title=form.title + ' - ' + i18n('forms.modify_form.labelDisplaySummary') />
+	const bannerTitle = document.querySelector('#main-banner-title');
+	if ( bannerTitle ) { bannerTitle.textContent = '${form.title?js_string?no_esc}'; }
 });
 </script>
 </@cTpl>

@@ -210,7 +210,7 @@ document.querySelectorAll('[id^="step_"]').forEach(step => {
 	const stepTitle = step.querySelector('.card-header .card-title').textContent.trim();
 	stepsArray.push({ id: idStep, title: stepTitle });
 });
-sessionStorage.setItem('stepList${form.id}', JSON.stringify(stepsArray));
+sessionStorage.setItem('stepList${form.id?js_string?no_esc}', JSON.stringify(stepsArray));
 let startStepId = null;
 let isLinking = false;
 
@@ -238,7 +238,7 @@ document.addEventListener('mouseover', function(e) {
 
 document.addEventListener('mouseup', function(e) {
 	if ( isLinking && e.target.closest('[id^="step_"]') != null ) {
-		const stepToken=encodeURIComponent('${token}')
+		const stepToken=encodeURIComponent('${token?js_string?no_esc}')
 		let endStepId = e.target.closest('[id^="step_"]').id.replace('step_', '');
 		if (startStepId && endStepId && startStepId !== endStepId) {
 			// AJAX call to define the link

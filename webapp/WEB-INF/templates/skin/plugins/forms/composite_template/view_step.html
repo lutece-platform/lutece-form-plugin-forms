@@ -24,22 +24,22 @@
 <@cInput type='hidden' name='id_step' value=step.id?c class='' />
 <#if !step.initial >
 <#assign doPrevAction='action_doReturnStep'>
-<#assign labelPrevAction>#i18n{forms.step.previous}</#assign>
+<#assign labelPrevAction = '#i18n{forms.step.previous}' />
 </#if>
 <#if step.final>
-	<#assign labelSaveAction>#i18n{forms.step.save}</#assign>
+	<#assign labelSaveAction = '#i18n{forms.step.save}' />
 	<#if form.labelFinalButton?has_content>
 		<#assign labelSaveAction=form.labelFinalButton />
 	</#if>
 	<#if form.displaySummary>
 		<#assign doSaveAction='action_formResponseSummary' />
-		<#assign labelSaveAction>#i18n{forms.step.see.summary}</#assign>
+		<#assign labelSaveAction = '#i18n{forms.step.see.summary}' />
 	<#else>
 		<#assign doSaveAction='action_doSaveResponse' />
 	</#if>
 <#else>
 	<#assign doNextAction='action_doSaveStep' />
-	<#assign labelNextAction>#i18n{forms.step.next}</#assign>
+	<#assign labelNextAction = '#i18n{forms.step.next}' />
 </#if>
 <#if user?? && form.backupEnabled>
 	<#assign doSaveForBackUpAction='action_doSaveForBackup' />
@@ -47,7 +47,7 @@
 		<#assign doResetBackUpAction='action_doResetBackup' />
 	</#if>
 </#if>
-<#assign stepParams></#assign>
+<#assign stepParams = '' />
 <#if !current_step_index??>
 	<#assign current_step_index=0 />
 </#if>

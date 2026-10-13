@@ -5,7 +5,7 @@
 <#assign field_autocomplete = getFieldByCode(entry, "autocomplete")!{}>
 
 <#if field_autocomplete?? && field_autocomplete.value??>
-	<#assign autocomplete = "autocomplete=${field_autocomplete.value}" />
+	<#assign autocomplete>autocomplete="${field_autocomplete.value}"</#assign>
 <#else>
 	<#assign autocomplete = "" />
 </#if>

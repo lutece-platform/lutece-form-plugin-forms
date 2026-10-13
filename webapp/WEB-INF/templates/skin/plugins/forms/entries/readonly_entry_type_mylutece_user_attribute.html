@@ -1,6 +1,6 @@
 <@cTpl>
 <#if !entry.onlyDisplayInBack>
-<#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign entryCSSClass = ( entry.CSSClass?split(' ') )?map( ecc -> ( !ecc?contains('col') )?then( ' ' + ( ecc )?string + ' ', '' ) )?join( '' ) />
 <#compress>
 <#if mylutece_user_login?? && mylutece_user_infos_list?has_content>
 <@chItem class=entryCSSClass!?trim>
@@ -13,7 +13,7 @@
     <#if list_responses?has_content>
         <#list list_responses as response>
             <#if form_response?? && response.entry??>
-                <@cLink href='jsp/admin/plugins/forms/DoVisualisationMyLuteceUser.jsp?id_form_response=${form_response.id}&amp;id_entry=${response.entry.idEntry}'>${response.toStringValueResponse!''}</@cLink>
+                <@cLink href='jsp/admin/plugins/forms/DoVisualisationMyLuteceUser.jsp?id_form_response=${form_response.id}&id_entry=${response.entry.idEntry}'>${response.toStringValueResponse!''}</@cLink>
             <#else>
                 ${response.toStringValueResponse!''}
             </#if>

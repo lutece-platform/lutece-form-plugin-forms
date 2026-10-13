@@ -8,11 +8,11 @@
 <#assign geometryValue = '' />
 <#assign hasError = false />
 <#assign entryClass=''>
-<#assign entryClass>position-relative <#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign entryClass = 'position-relative ' + ( entry.CSSClass?split(' ') )?map( ecc -> ( !ecc?contains('col') )?then( ' ' + ( ecc )?string + ' ', '' ) )?join( '' ) />
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
 <#if list_responses??><#list list_responses as response><#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError><#assign hasError = true /><#assign error = response.entry.error></#if></#list></#if>
-<#assign errorMsg><#if hasError><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#if></#assign>
-<#assign helpMsg><#if entry.helpMessage?? && entry.helpMessage!=''>${entry.helpMessage}</#if></#assign>
+<#assign errorMsg = ( hasError )?then( ( error.mandatoryError )?then( '#i18n{forms.message.mandatory.entry}', ( error.errorMessage )?string ), '' ) />
+<#assign helpMsg = ( entry.helpMessage?? && entry.helpMessage!='' )?then( ( entry.helpMessage )?string, '' ) />
 <#assign iterationNumber = entry_iteration_number?c >
 <#if entry.fields??>
 <#assign addressField = getFieldValueByCode( entry, "address" )>
@@ -59,7 +59,7 @@
 				adr.classList.add('is-invalid');
 				var nextSibling = adr.nextElementSibling;
 				if (!nextSibling || !nextSibling.classList.contains('invalid-feedback')) {
-					adr.insertAdjacentHTML('afterend', '<div class="invalid-feedback">#i18n{forms.message.geolocation.checkAdress}</div>');
+					adr.insertAdjacentHTML('afterend', '<div class="invalid-feedback">${i18n('forms.message.geolocation.checkAdress')?js_string?no_esc}</div>');
 				}
 
 				// Scroll to the input field
@@ -68,7 +68,7 @@
 			}
 
 			window.addEventListener('load', function () {
-				let iterationNumber = '${entry_iteration_number}';
+				let iterationNumber = '${entry_iteration_number?js_string?no_esc}';
 				if (document.getElementById('number_iteration_geolocation') == null) {
 					let numberAddressInput = document.createElement('input');
 					numberAddressInput.type = 'hidden';
@@ -84,11 +84,11 @@
 				var hasCheckAdr = currStep ? currStep.querySelectorAll('input.checkaddress').length : 0;
 				var btnSendStep = currStep ? currStep.querySelector('[name="action_doSaveStep"]') : null;
 
-				var jAdresse = document.getElementById('${idName}_address');
-				var jAdresseId = document.getElementById('${idName}_idAddress');
-				var jAdresseX = document.getElementById('${idName}_x');
-				var jAdresseY = document.getElementById('${idName}_y');
-				var jAdresseGeometry = document.getElementById('${idName}_geometry');
+				var jAdresse = document.getElementById('${idName?js_string?no_esc}_address');
+				var jAdresseId = document.getElementById('${idName?js_string?no_esc}_idAddress');
+				var jAdresseX = document.getElementById('${idName?js_string?no_esc}_x');
+				var jAdresseY = document.getElementById('${idName?js_string?no_esc}_y');
+				var jAdresseGeometry = document.getElementById('${idName?js_string?no_esc}_geometry');
 
 				// suggestPOI est un plugin jQuery — nécessite jQuery pour l'initialisation
 				$(jAdresse).suggestPOI();
@@ -108,7 +108,7 @@
 
 				if ( hasCheckAdr ){
 					// If the value has been already set
-					const addrInputValue = '${addressValue!}';
+					const addrInputValue = '${( addressValue! )?js_string?no_esc}';
 					// Reset address validation state when user changes the input
 					jAdresse.addEventListener('input', function() {
 						jAdresse.classList.remove('wssuggest');

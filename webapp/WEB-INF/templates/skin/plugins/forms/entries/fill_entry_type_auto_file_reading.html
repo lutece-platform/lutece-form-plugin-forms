@@ -5,15 +5,15 @@
 <#assign helpMsg = '' />
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
 <#assign fieldName=idName >
-<#if list_responses?? && list_responses?has_content><#assign response_error = list_responses[0]><#if response_error.entry.idEntry == entry.idEntry && response_error.entry.error?? && response_error.entry.error.isDisplayableError><#assign error = response_error.entry.error><#assign errorMsg><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#assign></#if></#if>
-<#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
-<#if entry.helpMessage?exists&&entry.helpMessage!=''><#assign helpMsg>${entry.helpMessage}</#assign></#if>
+<#if list_responses?? && list_responses?has_content><#assign response_error = list_responses[0]><#if response_error.entry.idEntry == entry.idEntry && response_error.entry.error?? && response_error.entry.error.isDisplayableError><#assign error = response_error.entry.error><#assign errorMsg = ( error.mandatoryError )?then( '#i18n{forms.message.mandatory.entry}', ( error.errorMessage )?string ) /></#if></#if>
+<#assign entryCSSClass = ( entry.CSSClass?split(' ') )?map( ecc -> ( !ecc?contains('col') )?then( ' ' + ( ecc )?string + ' ', '' ) )?join( '' ) />
+<#if entry.helpMessage?exists&&entry.helpMessage!=''><#assign helpMsg = ( entry.helpMessage )?string /></#if>
 <@cField class=entryCSSClass!?trim label=entry.title! for=idName! required=entry.mandatory! >
 	<@cInput type='file' name=idName! class='form-control custom-file-input' helpMessage=helpMessage! errorMsg=errorMsg! required=entry.mandatory! />
 </@cField>		
 <@cRow>
 	<@cCol cols='12 col-sm-6'>
-		<@cBtn id='action_doSynchronousUploadDocument' params='name="action_doSynchronousUploadDocument" value="${uploadHandler.uploadSubmitPrefix}${fieldName}"' label='#i18n{forms.entryType.autoFileReading.label.process.ocr}' />
+		<@cBtn id='action_doSynchronousUploadDocument' attrs={'name': "action_doSynchronousUploadDocument", 'value': "${uploadHandler.uploadSubmitPrefix}${fieldName}"} label='#i18n{forms.entryType.autoFileReading.label.process.ocr}' />
 	</@cCol>
 	<@cCol cols='12 col-sm-6'>
 		<canvas id="loader" width="50" height="50"></canvas>

@@ -1,14 +1,14 @@
 <@cTpl>
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
 <#assign hasError = false >
-<#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign entryCSSClass = ( entry.CSSClass?split(' ') )?map( ecc -> ( !ecc?contains('col') )?then( ' ' + ( ecc )?string + ' ', '' ) )?join( '' ) />
 <#if list_responses??><#list list_responses as response><#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError><#assign hasError = true /><#assign error = response.entry.error></#if></#list></#if>
 <#assign idName = buildEntryName( entry, entry_iteration_number ) >
 <#assign field = getFieldByCode( entry, "autocomplete" ) >
-<#if list_responses?has_content><#list list_responses as response><#if response.entry.idEntry == entry.idEntry><#if response.toStringValueResponse??><#assign responseValue>${response.toStringValueResponse}</#assign></#if></#if></#list><#else><#assign responseValue=''></#if>
-<#assign autoCompleteValue><#if field??>${field.value!}</#if></#assign>
-<#if hasError><#assign errorMsg><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#assign></#if>
-<#assign helpMsg><#if entry.helpMessage?exists && entry.helpMessage!=''>${entry.helpMessage!}</#if></#assign>
+<#if list_responses?has_content><#list list_responses as response><#if response.entry.idEntry == entry.idEntry><#if response.toStringValueResponse??><#assign responseValue = ( response.toStringValueResponse )?string /></#if></#if></#list><#else><#assign responseValue=''></#if>
+<#assign autoCompleteValue = ( field?? )?then( ( field.value!'' )?string, '' ) />
+<#if hasError><#assign errorMsg = ( error.mandatoryError )?then( '#i18n{forms.message.mandatory.entry}', ( error.errorMessage )?string ) /></#if>
+<#assign helpMsg = ( entry.helpMessage?exists && entry.helpMessage!='' )?then( ( entry.helpMessage!'' )?string, '' ) />
 <#assign placeholder = getFieldValueByCode(entry, "placeholder") >
 <@cField class=entryCSSClass!?trim label=entry.title for=idName required=entry.mandatory >
 <@cInput type='tel' name=idName! placeholder=placeholder! required=entry.mandatory! html5Required=false value=responseValue! autocomplete=autoCompleteValue! errorMsg=errorMsg  helpMsg=helpMsg />

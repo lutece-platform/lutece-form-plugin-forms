@@ -23,7 +23,7 @@
 						<h3>${pdf_cell.group!}</h3>
 					<#else>
 						<#if pdf_cell.drawable>
-							<p><b>${pdf_cell.title!}</b> : ${pdf_cell.value!}</p>
+							<p><b>${pdf_cell.title!}</b> : ${( pdf_cell.value!'' )?no_esc}</p>
 						</#if>
 					</#if>
 				</#if>

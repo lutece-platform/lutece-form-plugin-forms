@@ -6,7 +6,7 @@
 		<@card class='mb-1'>
 			<@row class='align-items-center'>
 				<@div class='col ps-0'>
-					<@h level=3 class='mb-0 d-flex align-items-center' params='title="#i18n{portal.util.labelModify} ${form.title}"'>
+					<@h level=3 class='mb-0 d-flex align-items-center' attrs={'title': "#i18n{portal.util.labelModify} ${form.title}"}>
 						<#if !form.active><@icon style='times' class='text-danger fs-2' title='#i18n{portal.util.labelDisabled}' /><#else><@icon style='check' class='text-success fs-2' title='#i18n{portal.util.labelEnabled}' /></#if>
 						<@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}' label='${form.title}' class='d-inline-block text-truncate' params='style="max-width:180px"' />
 					</@h>
@@ -57,7 +57,7 @@
         <#--
 		<@row>
 			<@columns xs=12 md=8>
-				<@h level=3 class='d-inline-block truncate' params='title="${form.title}" style="--tw:300px"'>
+				<@h level=3 class='d-inline-block truncate' attrs={'title': ( form.title ), 'style': "--tw:300px"}>
 					<#if !form.active><@icon style='times' class='text-danger' title='#i18n{portal.util.labelDisabled}' />	<#else>	<@icon style='check' class='text-success' title='#i18n{portal.util.labelEnabled}' /></#if>
 					<@tag class='mx-2 fs-5' title='#i18n{forms.dashboard.row_responses}'> ${form.currentNumberResponse}</@tag>
 					${form.title}
