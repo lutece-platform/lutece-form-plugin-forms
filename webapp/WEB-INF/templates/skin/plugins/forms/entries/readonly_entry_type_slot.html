@@ -1,6 +1,6 @@
 <@cTpl>
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
-<#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign entryCSSClass = ( entry.CSSClass?split(' ') )?map( ecc -> ( !ecc?contains('col') )?then( ' ' + ( ecc )?string + ' ', '' ) )?join( '' ) />
 <@chItem class=entryCSSClass!?trim>
     <@cInline type='strong'>${entry.title} : </@cInline>
     <#if list_responses?has_content>

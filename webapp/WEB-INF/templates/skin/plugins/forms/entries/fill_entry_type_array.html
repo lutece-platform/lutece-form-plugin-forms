@@ -3,7 +3,7 @@
 <#assign inputValue = '' >
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
 <#assign hasError = false />
-<#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign entryCSSClass = ( entry.CSSClass?split(' ') )?map( ecc -> ( !ecc?contains('col') )?then( ' ' + ( ecc )?string + ' ', '' ) )?join( '' ) />
 <#if list_responses??><#list list_responses as response><#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError><#assign hasError = true /><#assign error = response.entry.error></#if></#list></#if>
 <@cFieldset class=entryCSSClass!?trim legend=entry.title for=idName required=entry.mandatory > 
 <#if entry.helpMessage?exists && entry.helpMessage!=''><@cFormHelp id=idName! label=entry.helpMessage! /></#if>

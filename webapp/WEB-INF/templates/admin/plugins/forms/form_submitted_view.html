@@ -5,7 +5,7 @@
             <@card>
             <@div class='d-flex flex-column align-items-center justify-content-center mt-5'>
                 <@messages warnings=warnings />
-                <#if messageInfo?? >${messageInfo}</#if>
+                <#if messageInfo?? >${richText( messageInfo )}</#if>
                 <@aButton href=back_url title="#i18n{forms.form.returnPage}" buttonIcon="x ms-2" />
             </@div>
             </@card>

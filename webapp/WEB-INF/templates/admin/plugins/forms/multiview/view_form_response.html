@@ -66,7 +66,7 @@
 								</@boxHeader>
 								<@boxBody id='box-step-content-comment' class='collapse show'>
 									<@fieldSet class='fieldset-group' legend='#i18n{module.forms.extend.response.comment.subtitle}' legendClass='sr-only' fieldsetId='group-comment' fieldsetParams=' tabindex=0'>
-									${comment!}
+									${( comment!'' )?no_esc}
 									</@fieldSet>
 								</@boxBody>
 							</@box>
@@ -78,7 +78,7 @@
 								</@boxHeader>
 								<@boxBody id='box-step-content-rating' class='collapse show'>
 								<@fieldSet class='fieldset-group' legend='#i18n{module.forms.extend.response.rating.subtitle}' legendClass='sr-only' fieldsetId='group-rating' fieldsetParams=' tabindex=0'>
-									${rating!}
+									${( rating!'' )?no_esc}
 								</@fieldSet>
 								</@boxBody>
 							</@box>
@@ -90,7 +90,7 @@
 								</@boxHeader>
 								<@boxBody id='box-step-content-follow' class='collapse show'>
 									<@fieldSet class='fieldset-group' legend='#i18n{module.forms.extend.response.follow.subtitle}' legendClass='sr-only' fieldsetId='group-follow' fieldsetParams=' tabindex=0'>
-										${follow!}
+										${( follow!'' )?no_esc}
 									</@fieldSet>
 								</@boxBody>
 							</@box>
@@ -102,7 +102,7 @@
 								</@boxHeader>
 								<@boxBody id='box-step-content-feedback' class='collapse show'>
 									<@fieldSet class='fieldset-group' legend='#i18n{module.forms.extend.response.feedback.subtitle}' legendClass='sr-only' fieldsetId='group-feedback' fieldsetParams=' tabindex=0'>
-										${feedback!}
+										${( feedback!'' )?no_esc}
 									</@fieldSet>
 								</@boxBody>
 							</@box>
@@ -153,6 +153,6 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
 	// Set body class for multiview forms page
-	setNavButtons('${form_response.id}', '<i class="bi bi-arrow-left"></i> #i18n{portal.util.labelPrevious}', '#i18n{portal.util.labelNext} <i class="bi bi-arrow-right"></i>');
+	setNavButtons('${form_response.id?js_string?no_esc}', '<i class="bi bi-arrow-left"></i> ${i18n('portal.util.labelPrevious')?js_string?no_esc}', '${i18n('portal.util.labelNext')?js_string?no_esc} <i class="bi bi-arrow-right"></i>');
 });
 </script>

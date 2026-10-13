@@ -14,7 +14,7 @@
 			<@columns xs=12 md=9 lg=10>
 				<@tabs>
 					<@tabList>
-					<#list form_panel_list as form_panel><#if form_panel.template??>${form_panel.template}</#if></#list>
+					<#list form_panel_list as form_panel><#if form_panel.template??>${form_panel.template?no_esc}</#if></#list>
 					</@tabList>
 				<#if table_template?has_content>
 					<@div id='multi-form-list' class='p-3'>
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	// Initialize the dropdown button
 	const formSelector = document.querySelector('.forms-filter #id_form')
-	formSelector.options[0].textContent = '#i18n{forms.filter.option.labelAllForms}';
+	formSelector.options[0].textContent = '${i18n('forms.filter.option.labelAllForms')?js_string?no_esc}';
 
 	// Reset filter button - check if any filter is set
 	function hasActiveFilters() {
@@ -101,9 +101,9 @@ document.addEventListener('DOMContentLoaded', function () {
 		});
 	});
 
-	if( document.getElementById("${filter_name!}_button") ){
-		document.getElementById("${filter_name!}_button").addEventListener('mousedown', () => {
-			setInputAndListener("${filter_name!}")
+	if( document.getElementById("${( filter_name! )?js_string?no_esc}_button") ){
+		document.getElementById("${( filter_name! )?js_string?no_esc}_button").addEventListener('mousedown', () => {
+			setInputAndListener("${( filter_name! )?js_string?no_esc}")
 		});
 	}
 
@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		a.target='_blank';
 		a.setAttribute('style','white-space:wrap;');
 		a.href = filegenerator;
-		a.textContent = "#i18n{forms.export.async.message}";
+		a.textContent = "${i18n('forms.export.async.message')?js_string?no_esc}";
 		const i = document.createElement('i');
 		i.className = 'ti ti-external-link ms-2';
 		i.setAttribute('aria-hidden', 'true');
@@ -138,13 +138,13 @@ function setInputAndListener(filterName) {
 		if (checkbox.name === filterName) {
 			if (i !== 0 && allChecked && !checkbox.checked) {
 				allChecked = false;
-				document.getElementById(filterName + "_select_all_filters").innerText = "#i18n{forms.multiviewForms.form_filter.select_all}";
+				document.getElementById(filterName + "_select_all_filters").innerText = "${i18n('forms.multiviewForms.form_filter.select_all')?js_string?no_esc}";
 
 			}
 			if (i === checkboxes.length - 1 && allChecked) {
 				checkboxes[0].value = "";
 				checkboxes[0].name = "";
-				document.getElementById(filterName + "_select_all_filters").innerText = "#i18n{forms.multiviewForms.form_filter.unselect_all}";
+				document.getElementById(filterName + "_select_all_filters").innerText = "${i18n('forms.multiviewForms.form_filter.unselect_all')?js_string?no_esc}";
 			}
 			checkbox.addEventListener('change', function (ev) {
 				let form = ev.target.form;

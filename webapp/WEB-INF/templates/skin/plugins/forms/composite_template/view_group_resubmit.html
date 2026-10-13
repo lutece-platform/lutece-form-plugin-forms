@@ -10,16 +10,16 @@
 					<#assign legend>
 						<@cBlock class='h3 group-title w-75 pe-m'>
 							${group.title!}<#if iterationNumber gt 0> (${iterationNumber + 1})</#if>
-							<#if group.description != ''><br><@cInline type='small' class='group-desc'>${group.description}</@cInline></#if>
+							<#if group.description != ''><br><@cInline type='small' class='group-desc'>${richText( group.description )}</@cInline></#if>
 						</@cBlock>
 						<#if iterationNumber gte group.iterationMin>
-							<#assign removeParams = 'formnovalidate name="action_removeIteration" value="${group.id}_${iterationNumber}"'>
+							<#assign removeParams>formnovalidate name="action_removeIteration" value="${group.id}_${iterationNumber}"</#assign>
 							<@cBtn class='danger ms-auto mt-0 me-m action-group' id='group_remove_${group.id}_${iterationNumber}' label=group.iterationRemoveLabel! params=removeParams>
 								<@cIcon name='trash' />
 							</@cBtn>
 						</#if>
 						<#if isIterable>
-							<#assign addParams = 'formnovalidate value="${id_group}" name="action_addIteration"'>
+							<#assign addParams>formnovalidate value="${id_group}" name="action_addIteration"</#assign>
 							<@cBtn class='primary ms-auto action-group' id='group_add_${id_group}' label=group.iterationAddLabel! params=addParams>
 								<@cIcon name='plus' />
 							</@cBtn>
@@ -38,7 +38,7 @@
 (function(){
 	function init(){
 		// Handle the display of the conditional groups of fields
-		const group = document.getElementById('step-group-${id_group}');
+		const group = document.getElementById('step-group-${id_group?js_string?no_esc}');
 		if ( group === null ) {
 			return;
 		}

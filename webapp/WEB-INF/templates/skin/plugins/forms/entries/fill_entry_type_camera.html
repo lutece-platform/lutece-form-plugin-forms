@@ -18,11 +18,11 @@
 </#if>
 </#list>
 </#if>
-<#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign entryCSSClass = ( entry.CSSClass?split(' ') )?map( ecc -> ( !ecc?contains('col') )?then( ' ' + ( ecc )?string + ' ', '' ) )?join( '' ) />
 <@cField class='camera-wrapper ${entryCSSClass!}' label=entry.title for=idName required=entry.mandatory >
 <#if entry.helpMessage?exists&&entry.helpMessage!=''><@cFormHelp id=idName! label=entry.helpMessage! /></#if>
 <#if hasError>
-<#assign errorMsg><#if error.mandatoryError><#if entry.errorMessage?has_content>${entry.errorMessage}<#else>#i18n{forms.message.mandatory.entry}</#if><#else>${error.errorMessage}</#if></#assign>
+<#assign errorMsg = ( error.mandatoryError )?then( entry.errorMessage?has_content?then( ( entry.errorMessage )?string, '#i18n{forms.message.mandatory.entry}' ), ( error.errorMessage )?string ) />
 <@cInline class="is-invalid"></@cInline>
 <@cFormError id=idName label=errorMsg />
 </#if>
@@ -42,19 +42,19 @@
 		</@cBtn>							
 	</@cCol>
 </@cRow>
-<#assign camera_value><#if list_responses??><#list list_responses as response><#if response.entry.idEntry == entry.idEntry><#if response.toStringValueResponse??>${response.toStringValueResponse}</#if></#if></#list></#if></#assign>
+<#assign camera_value = ( list_responses?? )?then( ( list_responses )?map( response -> ( response.entry.idEntry == entry.idEntry )?then( ( response.toStringValueResponse?? )?then( ( response.toStringValueResponse )?string, '' ), '' ) )?join( '' ), '' ) />
 <@cInput name=idName id=idName  type='hidden' value=camera_value!'' />
 </@cField>
 <script>
 // Put event listeners into place
 window.addEventListener("DOMContentLoaded", function() {
 	// Grab elements, create settings, etc.
-	let videoWrapper${entry.idEntry} = document.getElementById('video-wrapper-${entry.idEntry}'),
-		canvasWrapper${entry.idEntry} = document.getElementById('canvas-wrapper-${entry.idEntry}'),
-		canvas${entry.idEntry} = document.getElementById('canvas-${entry.idEntry}'),
+	let videoWrapper${entry.idEntry} = document.getElementById('video-wrapper-${entry.idEntry?js_string?no_esc}'),
+		canvasWrapper${entry.idEntry} = document.getElementById('canvas-wrapper-${entry.idEntry?js_string?no_esc}'),
+		canvas${entry.idEntry} = document.getElementById('canvas-${entry.idEntry?js_string?no_esc}'),
 		context${entry.idEntry} = canvas${entry.idEntry}.getContext('2d'),
-		video = document.getElementById('video-${entry.idEntry}'),
-		photo${entry.idEntry} = document.querySelector('#attribute${entry.idEntry}'),
+		video = document.getElementById('video-${entry.idEntry?js_string?no_esc}'),
+		photo${entry.idEntry} = document.querySelector('#attribute${entry.idEntry?js_string?no_esc}'),
 		img = new Image(),
 		mediaConfig${entry.idEntry} = { video: true };
 
@@ -96,24 +96,24 @@ window.addEventListener("DOMContentLoaded", function() {
 	}
 	
 	// Trigger photo take
-	document.getElementById('snap${entry.idEntry}').addEventListener('click', function(ev) {
+	document.getElementById('snap${entry.idEntry?js_string?no_esc}').addEventListener('click', function(ev) {
 		canvas${entry.idEntry}.style.display = "block";
 		canvasWrapper${entry.idEntry}.style.display = "flex";
 		context${entry.idEntry}.drawImage( video, 0, 0, ${width}, ${height});
 	
-		const data${entry.idEntry} = canvas${entry.idEntry}.toDataURL('image/${imageType}',1);
+		const data${entry.idEntry} = canvas${entry.idEntry}.toDataURL('image/${imageType?js_string?no_esc}',1);
 		if(video.src != null && video.src !="" ){
 			photo${entry.idEntry}.setAttribute('value', data${entry.idEntry});
 		}
 		if ( video.srcObject != null) {
 			photo${entry.idEntry}.setAttribute('value', data${entry.idEntry});
 		}
-		sessionStorage.setItem('data${entry.idEntry}', data${entry.idEntry}  );
+		sessionStorage.setItem('data${entry.idEntry?js_string?no_esc}', data${entry.idEntry}  );
 		ev.preventDefault();
 	});
 	
 	// Trigger photo remove
-	document.getElementById('clear${entry.idEntry}').addEventListener('click', function(ev) {
+	document.getElementById('clear${entry.idEntry?js_string?no_esc}').addEventListener('click', function(ev) {
 		context${entry.idEntry}.clearRect( 0, 0, ${width}, ${height});
 		photo${entry.idEntry}.setAttribute('value', "");
 		canvas${entry.idEntry}.style.display = "none";

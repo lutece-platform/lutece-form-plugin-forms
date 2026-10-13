@@ -48,7 +48,7 @@
 <#-- <@getDatePickerBootstrap idField="${idName}" language=locale.language /> -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-	const dateInput = document.getElementById('attribute${idName}');
+	const dateInput = document.getElementById('attribute${idName?js_string?no_esc}');
 	if (dateInput) {
 		dateInput.addEventListener('change', function() {
 			this.blur();

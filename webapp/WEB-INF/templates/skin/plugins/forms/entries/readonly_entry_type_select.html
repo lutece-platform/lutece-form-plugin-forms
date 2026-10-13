@@ -1,12 +1,12 @@
 <@cTpl>
 <#if !entry.onlyDisplayInBack>
 <#assign strResponse='' >
-<#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign entryCSSClass = ( entry.CSSClass?split(' ') )?map( ecc -> ( !ecc?contains('col') )?then( ' ' + ( ecc )?string + ' ', '' ) )?join( '' ) />
 <#compress>
 <@chItem class=entryCSSClass!?trim>
 <@cInline type='strong'>${entry.title!''} :</@cInline>
 <#if list_responses?has_content>
-	<#assign strResponse><#list list_responses as response><#if entryTypeService.getResponseValueForRecap(null, null, response, null)??>${entryTypeService.getResponseValueForRecap(null, null, response, null)}<#else>${response.toStringValueResponse!''}</#if></#list></#assign>
+	<#assign strResponse = ( list_responses )?map( response -> ( entryTypeService.getResponseValueForRecap(null, null, response, null)?? )?then( ( entryTypeService.getResponseValueForRecap(null, null, response, null) )?string, ( response.toStringValueResponse!'' )?string ) )?join( '' ) />
 	<#if list_responses?size gte 1 && strResponse?trim !=''>
 		<#list list_responses as response><@cInline>${strResponse}<#sep>,</#sep></@cInline></#list>
 	<#else>

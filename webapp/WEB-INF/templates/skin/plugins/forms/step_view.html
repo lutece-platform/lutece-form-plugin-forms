@@ -11,13 +11,7 @@
 <@cContainer>
 	<#if warnings?size gt 0 >
 	<#assign first = warnings[0] />
-	<#assign messageWarning>
-	<#if first?is_string>
-		<#list warnings as warning >${warning!' #i18n{portal.util.message.titleWarning} '}</#list>
-	<#else>
-		<#list warnings as warning ><#if warning.message??>${warning.message!' #i18n{portal.util.message.titleWarning} '}</#if></#list>
-	</#if>
-	</#assign>
+	<#assign messageWarning = '\n	' + ( first?is_string )?then( '\n		' + ( warnings )?map( warning -> ( warning!' #i18n{portal.util.message.titleWarning} ' )?string )?join( '' ) + '\n	', '\n		' + ( warnings )?map( warning -> ( warning.message?? )?then( ( warning.message!' #i18n{portal.util.message.titleWarning} ' )?string, '' ) )?join( '' ) + '\n	' ) + '\n	' />
 		<@cAlert type='warning' class='mb-m' id='messages_warnings_div' title=messageWarning! dismissible=true />
 	</#if>
 </@cContainer>
@@ -217,12 +211,12 @@ document.addEventListener('DOMContentLoaded', function(){
 
 	// Title and breadcrumb
 	if( document.querySelector('.banner h1') ){
-		document.querySelector('.banner h1').innerHTML = "${form.title?js_string}";
+		document.querySelector('.banner h1').textContent = "${form.title?js_string?no_esc}";
 	}
 	var stepTitleEl = document.querySelector('#current_step .title span:not(.step-number)');
 	var stepTitle = stepTitleEl ? stepTitleEl.textContent.trim() : '';
-	document.querySelector('.breadcrumb-item.active').innerHTML = "${form.title?js_string}" + (stepTitle ? " - " + stepTitle : "");
-	document.querySelector('title').innerHTML = "${form.title?js_string}" + (stepTitle ? " - " + stepTitle : "");
+	document.querySelector('.breadcrumb-item.active').textContent = "${form.title?js_string?no_esc}" + (stepTitle ? " - " + stepTitle : "");
+	document.querySelector('title').textContent = "${form.title?js_string?no_esc}" + (stepTitle ? " - " + stepTitle : "");
 	
 	// Hide step groups whose questions are all hidden, and keep them in sync with the conditional fields
 	refreshStepGroupsDisplay();

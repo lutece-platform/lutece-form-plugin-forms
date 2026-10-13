@@ -1,7 +1,7 @@
 <@cTpl>
 <#assign indexIteration=-1>
 <#assign nbIterationMin=group.iterationMin>
-<#assign isShownTitle><#if group.title?ends_with('hidden')>false<#else>true</#if></#assign>
+<#assign isShownTitle = ( group.title?ends_with('hidden') )?then( 'false', 'true' ) />
 <@cBlock class='step-group'>
 	<#list groupContent as childrenHtml>
 	<#assign currentIteration = (childrenHtml?index / nbBaseChildren)?int />
@@ -10,19 +10,19 @@
 		<#assign indexIteration = currentIteration />
 		<#assign nbTotalIteration = ( groupContent?size / nbBaseChildren )?int />
 		<fieldset class="step-group-item" id="group_${group.id!}_${indexIteration}"></a>
-		<#assign cClass><#if childrenHtml?index gte 1>border-top col-12 pt-m mt-l</#if><#if id_display??>display_field_${id_display} hidden</#if></#assign>
+		<#assign cClass = ( childrenHtml?index gte 1 )?then( 'border-top col-12 pt-m mt-l', '' ) + ( id_display?? )?then( 'display_field_' + ( id_display )?string + ' hidden', '' ) />
 		<#if cClass?trim !=''><div class="${cClass}"></#if>
 		<#assign legend>
 		<@cInline class='h3 group-title'>${group.title?replace('hidden','')}
 		<#if indexIteration gt 0>(${indexIteration+1})</#if>
 		<#if ( nbTotalIteration gt nbIterationMin ) && ( isIterable && indexIteration = nbTotalIteration - 1 )><div class="btn btn-group ms-auto mt-0"></#if>
 		<#if nbTotalIteration gt nbIterationMin>
-			<@cBtn class='danger ms-auto me-sm action-group' id='group_remove_${group.id!}_${indexIteration}' label=group.iterationRemoveLabel! params=' formnovalidate name="action_removeIteration" value="${group.id}_${indexIteration}"'>
+			<@cBtn class='danger ms-auto me-sm action-group' id='group_remove_${group.id!}_${indexIteration}' label=group.iterationRemoveLabel! attrs={'formnovalidate': true, 'name': "action_removeIteration", 'value': "${group.id}_${indexIteration}"}>
 				<@cIcon name='trash' />
 			</@cBtn>
 		</#if>
 		<#if isIterable && indexIteration = nbTotalIteration - 1>
-			<@cBtn class='primary ms-auto action-group' id='group_add_${group.id!}_${indexIteration}' label=group.iterationAddLabel params='formnovalidate value="${id_group}" name="action_addIteration" '>
+			<@cBtn class='primary ms-auto action-group' id='group_add_${group.id!}_${indexIteration}' label=group.iterationAddLabel attrs={'formnovalidate': true, 'value': ( id_group ), 'name': "action_addIteration"}>
 				<@cIcon name='plus' />
 			</@cBtn>
 		</#if>
@@ -33,7 +33,7 @@
 		<div class="row">
 		<#if cClass !=''></div></div></#if>
 		</#if>
-		<#if group.description!=''><@cCol cols='12'>${group.description}</@cCol></#if>
+		<#if group.description!=''><@cCol cols='12'>${richText( group.description )}</@cCol></#if>
 		${childrenHtml}
 	</#list>
 	<#if indexIteration gte 0></fieldset></#if>

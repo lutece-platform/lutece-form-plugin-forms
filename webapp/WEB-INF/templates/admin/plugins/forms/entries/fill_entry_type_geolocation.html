@@ -7,11 +7,11 @@
 <#assign geometryValue = '' />
 <#assign hasError = false />
 <#assign entryClass=''>
-<#assign entryClass>position-relative <#list entry.CSSClass?split(' ') as laClass>${laClass!}</#list></#assign>
+<#assign entryClass = 'position-relative ' + ( entry.CSSClass?split(' ') )?map( laClass -> ( laClass!'' )?string )?join( '' ) />
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
 <#if list_responses??><#list list_responses as response><#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError><#assign hasError = true /><#assign error = response.entry.error></#if></#list></#if>
-<#assign errorMsg><#if hasError><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#if></#assign>
-<#assign helpMsg><#if entry.helpMessage?? && entry.helpMessage!=''>${entry.helpMessage}</#if></#assign>
+<#assign errorMsg = ( hasError )?then( ( error.mandatoryError )?then( '#i18n{forms.message.mandatory.entry}', ( error.errorMessage )?string ), '' ) />
+<#assign helpMsg = ( entry.helpMessage?? && entry.helpMessage!='' )?then( ( entry.helpMessage )?string, '' ) />
 <#assign iterationNumber = entry_iteration_number?c >
 <#assign hasCheckAddress = entry.CSSClass?? && entry.CSSClass?contains("checkaddress") />
 <#if entry.fields??>
@@ -65,7 +65,7 @@
         <@setupSuggestPOI />
         <script>
         document.addEventListener('DOMContentLoaded', function() {
-            var iterationNumber = '${entry_iteration_number}';
+            var iterationNumber = '${entry_iteration_number?js_string?no_esc}';
             var numberIterInput = document.getElementById('number_iteration_geolocation');
             if (!numberIterInput) {
                 numberIterInput = document.createElement('input');
@@ -82,12 +82,12 @@
             }
 
             var hasCheckAddress = ${hasCheckAddress?c};
-            var autocompleteContainer = document.getElementById('${idName}_address');
+            var autocompleteContainer = document.getElementById('${idName?js_string?no_esc}_address');
             var searchInput = autocompleteContainer.querySelector('.lutece-autocomplete-search-input');
-            var inputIdAddress = document.getElementById('${idName}_idAddress');
-            var inputX = document.getElementById('${idName}_x');
-            var inputY = document.getElementById('${idName}_y');
-            var inputGeometry = document.getElementById('${idName}_geometry');
+            var inputIdAddress = document.getElementById('${idName?js_string?no_esc}_idAddress');
+            var inputX = document.getElementById('${idName?js_string?no_esc}_x');
+            var inputY = document.getElementById('${idName?js_string?no_esc}_y');
+            var inputGeometry = document.getElementById('${idName?js_string?no_esc}_geometry');
 
             var suggestPoi = new SuggestPOI(autocompleteContainer, {
                 allowFreeText: !hasCheckAddress
@@ -107,7 +107,7 @@
                         feedback.remove();
                     }
                     enableSubmitButtons();
-                    sessionStorage.setItem('wsvalidated_${entry.idEntry}', 'done');
+                    sessionStorage.setItem('wsvalidated_${entry.idEntry?js_string?no_esc}', 'done');
                 }
             });
 
@@ -128,12 +128,12 @@
                 if (!autocompleteContainer.querySelector('.invalid-feedback')) {
                     var feedback = document.createElement('div');
                     feedback.className = 'invalid-feedback d-block';
-                    feedback.textContent = '#i18n{forms.message.geolocation.checkAdress}';
+                    feedback.textContent = '${i18n('forms.message.geolocation.checkAdress')?js_string?no_esc}';
                     autocompleteContainer.appendChild(feedback);
                 }
             }
 
-            var wsv = sessionStorage.getItem('wsvalidated_${entry.idEntry}');
+            var wsv = sessionStorage.getItem('wsvalidated_${entry.idEntry?js_string?no_esc}');
             if (wsv === 'done') {
                 autocompleteContainer.classList.add('wssuggest');
                 enableSubmitButtons();

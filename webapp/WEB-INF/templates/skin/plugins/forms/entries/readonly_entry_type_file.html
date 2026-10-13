@@ -2,13 +2,13 @@
 <#if !entry.onlyDisplayInBack>
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
 <#assign filesList = []>
-<#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
+<#assign entryCSSClass = ( entry.CSSClass?split(' ') )?map( ecc -> ( !ecc?contains('col') )?then( ' ' + ( ecc )?string + ' ', '' ) )?join( '' ) />
 <@chItem class=entryCSSClass!?trim >
 	<@cInline type='strong' id='label_${idName!}'>${entry.title!''} :</@cInline>
 	<#if list_responses?has_content>
 		<@cInline class='d-inline-block ms-xs me-m' type='strong'>${i18n("portal.theme.labelNumberOfFiles", list_responses?size )}</@cInline>
-		<@cBtn label='' type='button' id='btn-${idName!}' class='secondary btn-mini btn-show-files py-0' params=' data-hide="#i18n{portal.theme.labelHideUploadedFiles}" data-show="#i18n{portal.theme.labelShowUploadedFiles}" aria-expanded="false" aria-controls="list_${idName!}" aria-labelledby="label_${idName}"'>#i18n{portal.theme.labelShowUploadedFiles}</@cBtn>
-		<@chList class='list-uploaded-files visually-hidden mb-3' id='list_${idName!}' params='role="region" aria-labelledby="label_${idName}"'>
+		<@cBtn label='' type='button' id='btn-${idName!}' class='secondary btn-mini btn-show-files py-0' attrs={'data-hide': "#i18n{portal.theme.labelHideUploadedFiles}", 'data-show': "#i18n{portal.theme.labelShowUploadedFiles}", 'aria-expanded': "false", 'aria-controls': "list_${idName!}", 'aria-labelledby': "label_${idName}"}>#i18n{portal.theme.labelShowUploadedFiles}</@cBtn>
+		<@chList class='list-uploaded-files visually-hidden mb-3' id='list_${idName!}' attrs={'role': "region", 'aria-labelledby': "label_${idName}"}>
 		<#list list_responses as response>
 		<#if response.file?exists>
 			<#if response.file.size??>
@@ -35,9 +35,9 @@
 		</@chList>
 		<script>
 			document.addEventListener('DOMContentLoaded', () => {
-				button = document.getElementById('btn-${idName!}')
+				button = document.getElementById('btn-${( idName! )?js_string?no_esc}')
 					button.addEventListener('click', () => {
-					const filesList = document.getElementById('list_${idName!}')
+					const filesList = document.getElementById('list_${( idName! )?js_string?no_esc}')
 					if (filesList) {
 						filesList.classList.contains('visually-hidden') ? button.textContent = button.getAttribute('data-hide') : button.textContent = button.getAttribute('data-show');
 						filesList.classList.contains('visually-hidden') ? button.setAttribute('aria-expanded', 'true') : button.setAttribute('aria-expanded', 'false');
@@ -45,7 +45,7 @@
 					}
 				});
 				<#if filesList?size gt 0>
-				const filesToShow = [<#list filesList as fl>'${fl}'<#sep>,</#sep></#list>];
+				const filesToShow = [<#list filesList as fl>'${fl?js_string?no_esc}'<#sep>,</#sep></#list>];
 				filesToShow.forEach( function( fileId ) {
 					<#noparse>
 					const imgElement = sessionStorage.getItem( `asynchronousupload_imgtag_${fileId}` );

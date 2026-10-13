@@ -82,7 +82,7 @@
 					const sortable1 = document.getElementById('sortable1');
 					const sortable2 = document.getElementById('sortable2');
 					const form = document.querySelector('form');
-					const idNameInput = document.getElementById('${idName}');
+					const idNameInput = document.getElementById('${idName?js_string?no_esc}');
 
 					function makesortable(element) {
 						let draggedItem = null;
@@ -187,7 +187,7 @@
 					const sortable1 = document.getElementById('sortable1');
 					const sortable2 = document.getElementById('sortable2');
 					const form = document.querySelector('form');
-					const idNameInput = document.getElementById('${idName}');
+					const idNameInput = document.getElementById('${idName?js_string?no_esc}');
 					let draggedItem = null;
 
 					function makeListSortable(element) {

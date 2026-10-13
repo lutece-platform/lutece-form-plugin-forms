@@ -3,7 +3,7 @@
     <@columns sm=9 class='mb-3'>
     <#if list_responses?has_content>
         <#list list_responses as response>
-            ${response.toStringValueResponse!?replace("\n", "<br>")}
+            <@textAreaResponse entry=entry value=response.toStringValueResponse! />
         </#list>
     </#if>
     </@columns>

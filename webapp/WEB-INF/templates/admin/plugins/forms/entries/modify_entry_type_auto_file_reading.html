@@ -15,6 +15,6 @@
 </@formGroup>
 <!-- -----------------------OCR CONFIG MAPPING----------------------- -->
 <#assign ocr_mapping_template= entryTypeService.getOcrConfigTemplate( step.id , question.id, entry.idEntry, fileType)>
-${ocr_mapping_template!}
+${( ocr_mapping_template!'' )?no_esc}
 <!-- ---------------------------------------------------------------- -->
 </@editFields>
