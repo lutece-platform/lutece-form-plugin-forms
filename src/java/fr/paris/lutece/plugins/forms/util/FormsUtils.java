@@ -37,6 +37,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.TreeMap;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -51,6 +55,7 @@ import fr.paris.lutece.plugins.forms.business.FormAction;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.Transition;
 import fr.paris.lutece.portal.service.security.SecurityTokenService;
+import fr.paris.lutece.portal.service.template.HtmlMarkup;
 import fr.paris.lutece.portal.service.util.CryptoService;
 
 /**
@@ -180,12 +185,13 @@ public class FormsUtils
     }
 
     /**
-     * Tells whether the return URL of a form can be written as a link: a relative URL, or an http(s) one. Escaping does
-     * not stop a URL in another scheme (javascript:, data:) from running when the link is followed.
+     * Tells whether the return URL of a form can be written as a link: a relative URL of this site, or an http(s) one.
+     * Escaping does not stop a URL in another scheme (javascript:, data:) from running when the link is followed, and a
+     * URL starting with // or holding a backslash, which browsers read as /, would lead to another host.
      *
      * @param strUrl
      *            the return URL entered in the form settings
-     * @return true if the URL is relative or http(s)
+     * @return true if the URL is relative to this site or http(s)
      */
     public static boolean isSafeReturnUrl( String strUrl )
     {
@@ -193,10 +199,68 @@ public class FormsUtils
         {
             return false;
         }
-        String strTrimmed = strUrl.strip( ).toLowerCase( Locale.ROOT );
-        int nColon = strTrimmed.indexOf( ':' );
-        int nPathStart = StringUtils.indexOfAny( strTrimmed, "/?#" );
+        String strCompact = strUrl.replaceAll( "[\\x00-\\x20]", "" ).toLowerCase( Locale.ROOT );
+        if ( strCompact.startsWith( "http://" ) || strCompact.startsWith( "https://" ) )
+        {
+            return true;
+        }
+        if ( strCompact.startsWith( "//" ) || strCompact.contains( "\\" ) )
+        {
+            return false;
+        }
+        int nColon = strCompact.indexOf( ':' );
+        int nPathStart = StringUtils.indexOfAny( strCompact, "/?#" );
 
-        return nColon < 0 || ( nPathStart >= 0 && nPathStart < nColon ) || strTrimmed.startsWith( "http://" ) || strTrimmed.startsWith( "https://" );
+        return nColon < 0 || ( nPathStart >= 0 && nPathStart < nColon );
+    }
+
+    /**
+     * Copies a template model, typing as HTML markup the values of the given keys: HTML the plugin rendered from its
+     * templates, a String, a list of Strings or a map of lists of Strings. The markup values are not Serializable, so a
+     * model kept in a session-scoped display object holds Strings, and this copy is the one handed to the template.
+     *
+     * @param model
+     *            the model, left unchanged
+     * @param keys
+     *            the keys whose values are HTML rendered by the plugin
+     * @return the copy for the template
+     */
+    public static Map<String, Object> withHtmlMarkup( Map<String, Object> model, String... keys )
+    {
+        Map<String, Object> copy = new HashMap<>( model );
+        for ( String strKey : keys )
+        {
+            copy.computeIfPresent( strKey, ( key, value ) -> toHtmlMarkup( value ) );
+        }
+
+        return copy;
+    }
+
+    /**
+     * Types a rendered value as HTML markup: a String, a list of Strings, or a map whose values are lists of Strings.
+     *
+     * @param value
+     *            the value
+     * @return the markup value, or the value itself when it is of another type
+     */
+    private static Object toHtmlMarkup( Object value )
+    {
+        if ( value instanceof String )
+        {
+            return HtmlMarkup.of( (String) value );
+        }
+        if ( value instanceof List<?> )
+        {
+            return ( (List<?>) value ).stream( ).map( FormsUtils::toHtmlMarkup ).collect( Collectors.toList( ) );
+        }
+        if ( value instanceof Map<?, ?> )
+        {
+            Map<Object, Object> mapMarkup = new TreeMap<>( );
+            ( (Map<?, ?>) value ).forEach( ( key, item ) -> mapMarkup.put( key, toHtmlMarkup( item ) ) );
+
+            return mapMarkup;
+        }
+
+        return value;
     }
 }

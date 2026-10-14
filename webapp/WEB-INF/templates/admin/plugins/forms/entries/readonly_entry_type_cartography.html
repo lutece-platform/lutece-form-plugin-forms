@@ -21,6 +21,7 @@ var geojson = null;
     try { geojson = JSON.parse( '${coordinate?js_string?no_esc}' ); } catch ( e ) { geojson = null; }
 
 map.whenReady(function () {
+    if ( !geojson || !geojson.geometry ) { return; }
 
     if (geojson.geometry.type === "Point") {
         var c = geojson.geometry.coordinates;
