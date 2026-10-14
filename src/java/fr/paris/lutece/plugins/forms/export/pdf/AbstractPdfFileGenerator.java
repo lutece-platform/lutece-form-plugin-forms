@@ -43,6 +43,8 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import fr.paris.lutece.portal.service.template.HtmlMarkup;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import fr.paris.lutece.portal.service.html.XSSSanitizerException;
@@ -126,7 +128,7 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
 		List<PdfCell> listPdfCell = new ArrayList<>();
 		listPdfCell.addAll(generateFirstFormResponseInfos(formResponse));
 		listPdfCell.addAll(getPdfCellValueFormsReponse( formResponse ));
-		model.put( MARK_PDF_CELL_LIST, listPdfCell );
+		model.put( MARK_PDF_CELL_LIST, toTemplateCells( listPdfCell ) );
 		return getTemplateExportPDF(model);
 	}
 
@@ -139,10 +141,38 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
 			listPdfCell.addAll(generateFirstFormResponseInfos(formResponse));
 			listPdfCell.addAll(getPdfCellValueFormsReponse( formResponse ));
 		}
-		model.put( MARK_PDF_CELL_LIST, listPdfCell );
+		model.put( MARK_PDF_CELL_LIST, toTemplateCells( listPdfCell ) );
 		return getTemplateExportPDF(model);
 	}
 	
+    /**
+     * Hands the cells to the template. The value of a cell is HTML built by getResponseValue (escaped text, sanitized rich
+     * text, embedded images): it is given as markup, so a template, the default one as one uploaded by an administrator,
+     * writes ${pdf_cell.value} as is, while the title, group and step are escaped as any text.
+     *
+     * @param listPdfCell
+     *            the cells
+     * @return the cells as the template reads them
+     */
+    private static List<Map<String, Object>> toTemplateCells( List<PdfCell> listPdfCell )
+    {
+        List<Map<String, Object>> listCells = new ArrayList<>( );
+        for ( PdfCell cell : listPdfCell )
+        {
+            Map<String, Object> mapCell = new HashMap<>( );
+            mapCell.put( "title", cell.getTitle( ) );
+            mapCell.put( "value", cell.getValue( ) == null ? null : HtmlMarkup.of( cell.getValue( ) ) );
+            mapCell.put( "group", cell.getGroup( ) );
+            mapCell.put( "step", cell.getStep( ) );
+            mapCell.put( "formResponseNumber", cell.getFormResponseNumber( ) );
+            mapCell.put( "formResponseDate", cell.getFormResponseDate( ) );
+            mapCell.put( "drawable", cell.isDrawable( ) );
+            listCells.add( mapCell );
+        }
+
+        return listCells;
+    }
+
 	private HtmlTemplate getTemplateExportPDF(Map<String, Object> model)
 	{
 		File templateFile = FileHome.findByPrimaryKey(MultiviewConfig.getInstance().getIdFileTemplatePdf());
