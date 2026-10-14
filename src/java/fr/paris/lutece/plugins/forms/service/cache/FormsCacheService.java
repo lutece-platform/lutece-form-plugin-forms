@@ -126,6 +126,13 @@ public class FormsCacheService extends AbstractCacheableService implements Event
                 .append( nIdParent ).toString( );
     }
 
+    public String getFormDisplayByFormStepAndCompositeKey( int nIdForm, int nIdStep, int nIdComposite )
+    {
+        return new StringBuilder( "FormDisplay-by-Form:" ).append( nIdForm )
+                .append( "-and-Step:" ).append( nIdStep )
+                .append( "-and-Composite:" ).append( nIdComposite ).toString( );
+    }
+
     public String getGroupCacheKey( int nIdGroup )
     {
         return new StringBuilder( "Group-id:" ).append( nIdGroup ).toString( );
