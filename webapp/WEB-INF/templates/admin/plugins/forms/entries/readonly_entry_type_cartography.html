@@ -17,7 +17,8 @@
 <script>
 //Retrieve the map object.
 var map = mapsPlaceholder.pop();
-var geojson = ${coordinate};
+var geojson = null;
+    try { geojson = JSON.parse( '${coordinate?js_string?no_esc}' ); } catch ( e ) { geojson = null; }
 
 map.whenReady(function () {
 
