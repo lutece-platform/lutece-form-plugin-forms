@@ -209,7 +209,16 @@ public final class FormDisplayHome
      */
     public static FormDisplay getFormDisplayByFormStepAndComposite( int nIdForm, int nIdStep, int nIdComposite )
     {
-        FormDisplay formDisplay = _dao.selectFormdisplayByFormStepAndComposite( nIdForm, nIdStep, nIdComposite, _plugin );
+        String cacheKey = _cache.getFormDisplayByFormStepAndCompositeKey( nIdForm, nIdStep, nIdComposite );
+        FormDisplay formDisplay = ( FormDisplay ) _cache.get( cacheKey );
+        if ( formDisplay == null )
+        {
+            formDisplay = _dao.selectFormdisplayByFormStepAndComposite( nIdForm, nIdStep, nIdComposite, _plugin );
+            if ( formDisplay != null )
+            {
+                _cache.put( cacheKey, formDisplay );
+            }
+        }
         if ( formDisplay != null )
         {
             initConditionalDisplayForFormDisplay( formDisplay );
