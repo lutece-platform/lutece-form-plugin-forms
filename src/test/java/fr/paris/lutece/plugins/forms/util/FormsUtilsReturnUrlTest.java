@@ -58,13 +58,14 @@ public class FormsUtilsReturnUrlTest
     }
 
     /**
-     * Other schemes, and an empty URL, are refused.
+     * Other schemes, another host (//, backslashes) and an empty URL are refused.
      */
     @Test
     public void testUnsafeUrls( )
     {
         for ( String strUrl : new String [ ] {
-                "javascript:alert(1)", " JavaScript:alert(1)", "data:text/html,<script>alert(1)</script>", "vbscript:x", "", null
+                "javascript:alert(1)", " JavaScript:alert(1)", "java\tscript:alert(1)", "data:text/html,<script>alert(1)</script>", "vbscript:x",
+                "//evil.example", " //evil.example", "\\\\evil.example", "/\\evil.example", "", null
         } )
         {
             assertFalse( FormsUtils.isSafeReturnUrl( strUrl ), String.valueOf( strUrl ) );

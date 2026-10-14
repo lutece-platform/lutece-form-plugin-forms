@@ -61,6 +61,7 @@ import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.plugins.forms.util.FormsUtils;
 import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
@@ -69,7 +70,6 @@ import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.BeanUtils;
-import fr.paris.lutece.portal.service.template.HtmlMarkup;
 
 /**
  * 
@@ -298,7 +298,7 @@ public class StepDisplayTree implements Serializable
 
         _model.put( FormsConstants.MARK_FORM, _form );
         _model.put( FormsConstants.MARK_STEP, _step );
-        _model.put( MARK_STEP_CONTENT, HtmlMarkup.of( strBuilder.toString( ) ) );
+        _model.put( MARK_STEP_CONTENT, strBuilder.toString( ) );
 
         if ( displayType == DisplayType.EDITION_FRONTOFFICE )
         {
@@ -313,7 +313,7 @@ public class StepDisplayTree implements Serializable
 
                 if ( displayCaptcha )
                 {
-                    _model.put( MARK_CAPTCHA, HtmlMarkup.of( getCaptchaService( ).get( ).getHtmlCode( ) ) );
+                    _model.put( MARK_CAPTCHA, getCaptchaService( ).get( ).getHtmlCode( ) );
                 }
             }
         }
@@ -325,7 +325,7 @@ public class StepDisplayTree implements Serializable
 
         String strTemplate = findTemplateFor( displayType );
 
-        return AppTemplateService.getTemplate( strTemplate, locale, _model ).getHtml( );
+        return AppTemplateService.getTemplate( strTemplate, locale, FormsUtils.withHtmlMarkup( _model, MARK_STEP_CONTENT, MARK_CAPTCHA ) ).getHtml( );
     }
 
     /**

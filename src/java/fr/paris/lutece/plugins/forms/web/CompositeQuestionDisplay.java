@@ -65,6 +65,7 @@ import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.plugins.forms.util.FormsUtils;
 import fr.paris.lutece.plugins.forms.validation.IValidator;
 import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDataService;
@@ -79,7 +80,6 @@ import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeSer
 import fr.paris.lutece.portal.service.image.ImageResourceManager;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
-import fr.paris.lutece.portal.service.template.HtmlMarkup;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
 import static fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService.SUFFIX_CONFIRM_FIELD;
@@ -246,7 +246,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay, Serializable
             
             strQuestionTemplate = displayService.getEntryTemplateDisplay( request, _question.getEntry( ), locale, _model, displayType );
 
-            _model.put( FormsConstants.MARK_QUESTION_CONTENT, HtmlMarkup.of( strQuestionTemplate ) );
+            _model.put( FormsConstants.MARK_QUESTION_CONTENT, strQuestionTemplate );
             _model.put( FormsConstants.MARK_QUESTION, _question );
             if ( _formDisplay.getDisplayControl( ) != null )
             {
@@ -311,7 +311,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay, Serializable
                 }
             }
 
-            HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( findTemplateFor( displayType ), locale, _model );
+            HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( findTemplateFor( displayType ), locale, FormsUtils.withHtmlMarkup( _model, FormsConstants.MARK_QUESTION_CONTENT ) );
 
             strQuestionTemplate = htmlTemplateQuestion != null ? htmlTemplateQuestion.getHtml( ) : StringUtils.EMPTY;
         }
