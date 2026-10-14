@@ -1,5 +1,5 @@
 <@cTpl>
-<#if dskey('portal.theme.site_property.bannerForm.showFormImg.checkbox')?number=1 && form.logo??><style>.banner{ background: transparent url("data:${form.logo.mimeType};base64,${form.logoBase64}") top left/contain no-repeat !important; }</style></#if>
+<#if dskey('portal.theme.site_property.bannerForm.showFormImg.checkbox')?number=1 && form.logo??><style>.banner{ background: transparent url("${cssUrl( 'data:' + form.logo.mimeType + ';base64,' + form.logoBase64 )}") top left/contain no-repeat !important; }</style></#if>
 <#if dskey('portal.theme.site_property.bannerForm.showFormTitle.checkbox')?number=0><style>.banner > header > h1{ display: none !important; }</style></#if>
 <@cBreadCrumb home='Accueil'>
 	<@chItem class='breadcrumb-item active' params='aria-current="page"' />
