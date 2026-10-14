@@ -29,9 +29,9 @@
 					<div class="helpBox">${group.description}</div>
 				</#if>
 				<#assign indexGroup=indexIteration>
-				<#if indexIteration gte nbIterationMin>
+for				<#if nbTotalIteration gt nbIterationMin>
 					<button class="btn btn-danger" name="action_removeIteration" value="${group.id}_${indexIteration}" type="submit">
-						<i class="fa fa-trash" aria-hidden="true"></i> ${group.iterationRemoveLabel!} 
+						<i class="fa fa-trash" aria-hidden="true"></i> ${group.iterationRemoveLabel!}
 					</button>
 				</#if>
 				</legend>	
