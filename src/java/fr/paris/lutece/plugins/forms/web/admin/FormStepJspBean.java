@@ -218,7 +218,8 @@ public class FormStepJspBean extends AbstractJspBean
         checkWorkgroupPermission(nIdForm, request);
 
         Form formParent = FormHome.findByPrimaryKey( nIdForm );
-        _step = new Step( );
+        // No step being edited: the next creation starts from a new step (see getCreateStep)
+        _step = null;
 
         Map<String, Object> model = getModel( );
         model.put( FormsConstants.MARK_FORM, formParent );
@@ -288,7 +289,8 @@ public class FormStepJspBean extends AbstractJspBean
         checkWorkgroupPermission(nIdForm, request);
 
         Form form = FormHome.findByPrimaryKey( nIdForm );
-        _step = new Step( );
+        // No step being edited: the next creation starts from a new step (see getCreateStep)
+        _step = null;
 
         Map<String, Object> model = getModel( );
         model.put( FormsConstants.MARK_FORM, form );
@@ -323,7 +325,9 @@ public class FormStepJspBean extends AbstractJspBean
             return redirectToViewManageForm( request );
         }
 
-        boolean bNewStep = ( _step == null );
+        // New step unless the creation form is displayed again with the values already posted (validation error); a step
+        // left by the modification of another step is not reused
+        boolean bNewStep = ( _step == null || _step.getId( ) != 0 );
         _step = bNewStep ? new Step( ) : _step;
         _step.setIdForm( nIdForm );
         if ( StepHome.getInitialStep( nIdForm ) == null )
@@ -367,6 +371,10 @@ public class FormStepJspBean extends AbstractJspBean
     @Action( ACTION_CREATE_STEP )
     public String doCreateStep( HttpServletRequest request ) throws AccessDeniedException
     {
+        if ( _step == null || _step.getId( ) != 0 )
+        {
+            _step = new Step( );
+        }
         populate( _step, request, request.getLocale( ) );
 
         if ( !validateStep( _step ) )
