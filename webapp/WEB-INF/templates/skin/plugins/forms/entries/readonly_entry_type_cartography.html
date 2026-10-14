@@ -28,6 +28,7 @@ window.addEventListener('load', function() {
     var geojson = null;
     try { geojson = JSON.parse( '${coordinate?js_string?no_esc}' ); } catch ( e ) { geojson = null; }
    	
+   	if ( !geojson || !geojson.geometry ) { return; }
    	if ( geojson["geometry"]["type"] == "Point" ) {
         var coordinates = geojson["geometry"]["coordinates"];
         var marker = L.marker([coordinates[1],coordinates[0]]).addTo(map);
