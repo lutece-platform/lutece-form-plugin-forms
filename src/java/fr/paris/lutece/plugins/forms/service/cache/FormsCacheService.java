@@ -33,8 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.service.cache;
 
-import javax.cache.CacheException;
-
 import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.genericattributes.business.EntryEvent;
@@ -149,6 +147,10 @@ public class FormsCacheService extends AbstractCacheableService<String, Object>
         return new StringBuilder( "FormMessage-by-Form:" ).append( nIdForm ).toString( );
     }
 
+    /**
+     * Puts a value in the cache. A failure of the cache (a value the provider cannot serialize, a closed cache, a provider
+     * error) is logged and never reaches the caller: the value is then read from the database again.
+     */
     @Override
     public void put( String key, Object value ) 
     {
@@ -163,9 +165,10 @@ public class FormsCacheService extends AbstractCacheableService<String, Object>
             {
             	_cache.put( key, value );
             }
-        } catch ( CacheException | IllegalStateException e ) 
+        } catch ( RuntimeException e )
         {
-            AppLogService.error( e.getMessage( ), e );
+            AppLogService.error( "Forms cache: cannot put the key {} (value {}): {}", key,
+                    ( value != null ) ? value.getClass( ).getName( ) : null, e.getMessage( ), e );
         }
     }
 
@@ -183,7 +186,7 @@ public class FormsCacheService extends AbstractCacheableService<String, Object>
             {
             	return _cache.get( key );
             }
-        } catch ( CacheException | IllegalStateException e ) 
+        } catch ( RuntimeException e ) 
         {
             AppLogService.error( e.getMessage( ), e );
         }
@@ -205,7 +208,7 @@ public class FormsCacheService extends AbstractCacheableService<String, Object>
             {
             	return _cache.remove( key );
             }
-        } catch ( CacheException | IllegalStateException e ) 
+        } catch ( RuntimeException e ) 
         {
             AppLogService.error( e.getMessage( ), e) ;
         }
