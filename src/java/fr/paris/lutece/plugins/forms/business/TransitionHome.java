@@ -39,6 +39,7 @@ import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.util.ReferenceList;
 import jakarta.enterprise.inject.spi.CDI;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -179,7 +180,8 @@ public final class TransitionHome
             	_cache.put( cacheKey, transitions );
             }
         }
-        return transitions;
+        // A copy: the cached list is shared by every reader when the cache returns its own instance (Hazelcast near cache)
+        return new ArrayList<>( transitions );
     }
 
     /**

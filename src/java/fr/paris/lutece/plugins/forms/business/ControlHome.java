@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import fr.paris.lutece.plugins.forms.service.cache.FormsCacheService;
@@ -225,7 +226,8 @@ public final class ControlHome
             }
             _cache.put( cacheKey, listControl );
         }
-        return listControl;
+        // A copy: the cached list is shared by every reader when the cache returns its own instance (Hazelcast near cache)
+        return new ArrayList<>( listControl );
     }
 
     /**
@@ -267,7 +269,8 @@ public final class ControlHome
             }
             _cache.put( cacheKey, listControl );
         }
-        return listControl;
+        // A copy: the cached list is shared by every reader when the cache returns its own instance (Hazelcast near cache)
+        return new ArrayList<>( listControl );
     }
 
     /**
