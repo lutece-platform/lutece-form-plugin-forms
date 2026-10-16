@@ -167,6 +167,13 @@ public class FormsCacheService extends AbstractCacheableService<String, Object>
         	return;
         }
 
+        if ( value == null )
+        {
+            // JCache refuses a null value: the key no longer has a value
+            remove( key );
+            return;
+        }
+
         try
         {
             if ( isCacheAvailable( ) ) 
