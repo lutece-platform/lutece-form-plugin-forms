@@ -279,7 +279,9 @@ public class FormsCacheService extends AbstractCacheableService<String, Object>
      */
     public void processEntryEvent( @Observes EntryEvent event )
     {
-        if ( isCacheEnable( ) && Form.RESOURCE_TYPE.equals( event.getResourceType( ) ) )
+        // No test of the status: the reset reaches the cache shared with the other instances when this one has it
+        // disabled
+        if ( Form.RESOURCE_TYPE.equals( event.getResourceType( ) ) )
         {
             resetCache( );
         }
