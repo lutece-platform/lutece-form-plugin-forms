@@ -37,6 +37,7 @@ import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.genericattributes.business.EntryEvent;
 import fr.paris.lutece.portal.service.cache.AbstractCacheableService;
+import fr.paris.lutece.portal.service.cache.CacheConfigUtil;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
@@ -45,6 +46,10 @@ import jakarta.enterprise.event.Observes;
 import jakarta.transaction.Status;
 import jakarta.transaction.Synchronization;
 import jakarta.transaction.TransactionSynchronizationRegistry;
+
+import java.io.Serializable;
+
+import org.apache.commons.lang3.SerializationUtils;
 
 @ApplicationScoped
 public class FormsCacheService extends AbstractCacheableService<String, Object>
@@ -199,7 +204,15 @@ public class FormsCacheService extends AbstractCacheableService<String, Object>
         {
             if ( isCacheAvailable( ) ) 
             {
-            	return _cache.get( key );
+                Object value = _cache.get( key );
+                // The objects of the forms are modified by their readers (back office screens, conditional displays).
+                // Ehcache gives a copy on each read; a shared provider may give its own instance (Hazelcast near cache in
+                // OBJECT format, the same instance for every request of a node): each reader then gets its own copy.
+                if ( value instanceof Serializable && CacheConfigUtil.isDistributed( _cache ) )
+                {
+                    return SerializationUtils.clone( (Serializable) value );
+                }
+                return value;
             }
         } catch ( RuntimeException e ) 
         {
