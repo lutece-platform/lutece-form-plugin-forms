@@ -7,7 +7,7 @@
 <#if list_responses?size gt 0>
 <#list list_responses as response>${entryTypeService.getResponseValueForRecap(entry,nullArg,response,nullArg)!''}</#list>
 <#else>
-<@cInline type='em'>#i18n{theme.labelNoDataProvided}</@cInline>
+<@cInline type='em'>#i18n{portal.theme.labelNoDataProvided}</@cInline>
 </#if>
 </#if>
 </@chItem>

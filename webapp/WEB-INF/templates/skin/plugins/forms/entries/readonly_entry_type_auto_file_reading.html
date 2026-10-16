@@ -8,7 +8,7 @@
 		<#if response.file?exists>
 			${response.file.title} (${response.file.size} O)
 		<#else>
-			<@cInline type='em'>#i18n{theme.labelNoDataProvided}</@cInline>
+			<@cInline type='em'>#i18n{portal.theme.labelNoDataProvided}</@cInline>
 		</#if>
 	</#list>
 </#if>

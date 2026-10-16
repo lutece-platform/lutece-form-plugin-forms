@@ -6,7 +6,7 @@
 <@cInline type='strong'>${entry.title!''} :</@cInline>
 <#if list_responses?has_content>
 <#list list_responses as response>
-<#if response.toStringValueResponse!?trim != ''>${response.toStringValueResponse!''}<#else><@cInline type='em'>#i18n{theme.labelNoDataProvided}</@cInline></#if>
+<#if response.toStringValueResponse!?trim != ''>${response.toStringValueResponse!''}<#else><@cInline type='em'>#i18n{portal.theme.labelNoDataProvided}</@cInline></#if>
 </#list>
 </#if>
 </#compress>	

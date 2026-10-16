@@ -12,7 +12,7 @@
 </#if>
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
 <#assign errorMsg><#if hasError><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#if></#assign>
-<#assign helpMsg><#if entry.helpMessage?exists&&entry.helpMessage!=''>${entry.helpMessage}. #i18n{labelSortableListHelp}<#else>#i18n{labelSortableListHelp}</#if></#assign>
+<#assign helpMsg><#if entry.helpMessage?exists&&entry.helpMessage!=''>${entry.helpMessage}. #i18n{portal.theme.labelSortableListHelp}<#else>#i18n{portal.theme.labelSortableListHelp}</#if></#assign>
 <#assign labelClass><#if hasError>main-danger-color is-invalid</#if></#assign>
 <#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
 <@cField class=entryCSSClass!?trim>

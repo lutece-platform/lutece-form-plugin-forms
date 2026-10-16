@@ -10,7 +10,7 @@
 	<#if list_responses?size gte 1 && strResponse?trim !=''>
 		<#list list_responses as response><@cInline>${strResponse}<#sep>,</#sep></@cInline></#list>
 	<#else>
-		<@cInline type='em'>#i18n{theme.labelNoDataProvided}</@cInline>
+		<@cInline type='em'>#i18n{portal.theme.labelNoDataProvided}</@cInline>
 	</#if>
 </#if>
 </@chItem>

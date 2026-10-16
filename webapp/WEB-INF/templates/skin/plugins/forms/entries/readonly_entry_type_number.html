@@ -9,7 +9,7 @@
 	<#if response.toStringValueResponse!?trim != ''>
 		${response.toStringValueResponse!''}
 	<#else>
-		<@cInline type='em'>#i18n{theme.labelNoDataProvided}</@cInline>
+		<@cInline type='em'>#i18n{portal.theme.labelNoDataProvided}</@cInline>
 	</#if>
 	</#list>
 </#if>
