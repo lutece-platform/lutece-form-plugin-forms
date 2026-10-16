@@ -70,6 +70,7 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
     private static final String MARK_ENTRY_VALUES = "entry_values";
     private static final String MARK_COLUMN_SORT_ATTRIBUTE = "column_sort_attribute";
     private static final String MARK_SORT_URL = "sort_url";
+    private static final String MARK_QUESTION_IDS = "question_ids";
 
     /**
      * {@inheritDoc}
@@ -87,6 +88,14 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
             FormColumnEntry column = ( (FormColumnEntry) getFormColumn( ) );
             String columSort = column.getListEntryCode( ).stream( ).distinct( ).collect( Collectors.joining( "," ) );
             String strAttributeSort = FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + columSort + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER + "0";
+
+            // Collect the id of every question backing this column so the client can persist the column order
+            String strQuestionIds = column.getListEntryCode( ).stream( ).distinct( )
+                    .flatMap( code -> QuestionHome.findByCode( code ).stream( ) )
+                    .map( q -> String.valueOf( q.getId( ) ) )
+                    .distinct( )
+                    .collect( Collectors.joining( "," ) );
+            model.put( MARK_QUESTION_IDS, strQuestionIds );
 
             String strEntryCode = column.getListEntryCode( ).get( 0 );
             Question question = QuestionHome.findByCode( strEntryCode ).get( 0 );
