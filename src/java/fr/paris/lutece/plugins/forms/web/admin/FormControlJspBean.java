@@ -279,10 +279,8 @@ public class FormControlJspBean extends AbstractJspBean
     @View( value = VIEW_MANAGE_CONDITION_CONTROL, defaultView = true )
     public String getManageConditionControl( HttpServletRequest request )
     {
-        if (!FormsConstants.PARAMETER_VALIDATE_LOGICAL_OPERATOR.equals(request.getParameter(FormsConstants.PARAMETER_VIEW_MODIFY_LOGICAL_OPERATOR))) {
-            clearAttributes( );
-            retrieveParameters( request );
-        }
+        clearAttributes( );
+        retrieveParameters( request );
 
         if ( _step == null || _controlType == null )
         {
@@ -313,6 +311,7 @@ public class FormControlJspBean extends AbstractJspBean
         model.put( MARK_NB_ITEMS_PER_PAGE, StringUtils.EMPTY + _nItemsPerPage );
 
         model.put( FormsConstants.PARAMETER_CONTROL_TYPE, _controlType.name( ) );
+        model.put( FormsConstants.PARAMETER_ID_TARGET, _nIdTarget );
         model.put( FormsConstants.MARK_STEP_HOME, StepHome.class );
         model.put( FormsConstants.MARK_QUESTION_HOME, QuestionHome.class );
         model.put( FormsConstants.MARK_VALIDATOR_MANAGER, EntryServiceManager.getInstance( ) );
@@ -361,6 +360,13 @@ public class FormControlJspBean extends AbstractJspBean
     @View( VIEW_MODIFY_CONDITION_CONTROL )
     public String getModifyConditionControl( HttpServletRequest request )
     {
+        // Entering the creation from the condition list: never reuse a target, step or control left in session by another form
+        if ( request.getParameter( FormsConstants.PARAMETER_ID_TARGET ) != null )
+        {
+            clearAttributes( );
+            retrieveParameters( request );
+        }
+
         if ( _step == null )
         {
             int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
