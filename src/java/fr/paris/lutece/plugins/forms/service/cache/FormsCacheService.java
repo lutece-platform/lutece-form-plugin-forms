@@ -39,13 +39,21 @@ import fr.paris.lutece.plugins.genericattributes.business.EntryEvent;
 import fr.paris.lutece.portal.service.cache.AbstractCacheableService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
+import jakarta.transaction.Status;
+import jakarta.transaction.Synchronization;
+import jakarta.transaction.TransactionSynchronizationRegistry;
 
 @ApplicationScoped
 public class FormsCacheService extends AbstractCacheableService<String, Object>
 {
     private static final String CACHE_NAME = "formsCacheService";
+    private static final String KEY_RESET_PENDING = FormsCacheService.class.getName( ) + ".resetPending";
+
+    @Resource
+    private TransactionSynchronizationRegistry _registry;
 
     @PostConstruct
     public void initCache( )
@@ -197,25 +205,62 @@ public class FormsCacheService extends AbstractCacheableService<String, Object>
     @Override
     public boolean remove( String key ) 
     {
-    	if ( !isCacheEnable( ) )
+        // No test of the status: a cache disabled on this instance still forwards the removal to the cache shared
+        // with the other instances (the core keeps it open for that)
+        try
         {
-        	return false;
+            return super.remove( key );
         }
-    	
-    	try
+        catch ( RuntimeException e ) 
         {
-            if ( isCacheAvailable() ) 
-            {
-            	return _cache.remove( key );
-            }
-        } catch ( RuntimeException e ) 
-        {
-            AppLogService.error( e.getMessage( ), e) ;
+            AppLogService.error( e.getMessage( ), e );
         }
-    	
-    	return false;
+        return false;
     }
     
+    /**
+     * Resets the cache. Within a transaction (form import or copy, which write hundreds of objects), the reset is done
+     * once, after the transaction completes: the other requests cannot cache again the data read before the commit,
+     * and the cache (shared by every instance under Hazelcast) is not emptied for each written object.
+     */
+    @Override
+    public void resetCache( )
+    {
+        TransactionSynchronizationRegistry registry = _registry;
+        if ( registry != null && registry.getTransactionStatus( ) == Status.STATUS_ACTIVE )
+        {
+            if ( registry.getResource( KEY_RESET_PENDING ) == null )
+            {
+                registry.putResource( KEY_RESET_PENDING, Boolean.TRUE );
+                registry.registerInterposedSynchronization( new Synchronization( )
+                {
+                    @Override
+                    public void beforeCompletion( )
+                    {
+                        // The reset is done once the transaction is completed
+                    }
+
+                    @Override
+                    public void afterCompletion( int nStatus )
+                    {
+                        // Committed or rolled back: the cache may hold values read during the transaction
+                        resetNow( );
+                    }
+                } );
+            }
+            return;
+        }
+        resetNow( );
+    }
+
+    /**
+     * Resets the cache at once
+     */
+    private void resetNow( )
+    {
+        super.resetCache( );
+    }
+
     /**
      * Checks whether the cache instance is initialized and currently open.
      *
