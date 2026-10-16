@@ -31,12 +31,10 @@ INSERT INTO core_datastore ( entity_key, entity_value ) VALUES( 'forms.display.f
 
 DELETE FROM core_datastore WHERE entity_key='core.cache.status.formsCacheService.enabled';
 INSERT INTO core_datastore VALUES ( 'core.cache.status.formsCacheService.enabled', '1' );
-DELETE FROM core_datastore WHERE entity_key='core.cache.status.formsCacheService.timeToIdleSeconds';
-INSERT INTO core_datastore VALUES ( 'core.cache.status.formsCacheService.timeToIdleSeconds', '86400' );
+DELETE FROM core_datastore WHERE entity_key='core.cache.status.formsCacheService.maxElementsInMemory';
+INSERT INTO core_datastore VALUES ( 'core.cache.status.formsCacheService.maxElementsInMemory', '20000' );
 DELETE FROM core_datastore WHERE entity_key='core.cache.status.formsCacheService.timeToLiveSeconds';
 INSERT INTO core_datastore VALUES ( 'core.cache.status.formsCacheService.timeToLiveSeconds', '86400' );
-DELETE FROM core_datastore WHERE entity_key='core.cache.status.formsCacheService.overflowToDisk';
-INSERT INTO core_datastore VALUES ( 'core.cache.status.formsCacheService.overflowToDisk', '0' );
 
 DELETE FROM core_admin_right WHERE id_right = 'FORMS_SEARCH_INDEXATION';
 INSERT INTO core_admin_right (id_right,name,level_right,admin_url,description,is_updatable,plugin_name,id_feature_group,icon_url,documentation_url, id_order ) VALUES
