@@ -158,7 +158,8 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     private static final String MARK_LIST_FORMAT_EXPORT = "format_export_list";
     private static final String MARK_LIST_UNIQUE_FILE = "listUniqueFile";
     private static final String MARK_EXPORT_SUCCESS = "export_success";
-    // Session variables
+    // Session variables: shared by the concurrent requests of a session (several tabs, parallel loads), the views and
+    // actions that read or rebuild them are synchronized
     private String _strSelectedPanelTechnicalCode = StringUtils.EMPTY;
     private transient List<IFormColumn> _listFormColumn;
     private transient List<IFormFilterDisplay> _listFormFilterDisplay;
@@ -184,7 +185,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
      * @return the view associated to the responses value of all forms
      */
     @View( value = VIEW_MULTIVIEW_FORMS, defaultView = true )
-    public String getMultiviewFormsView( HttpServletRequest request )
+    public synchronized String getMultiviewFormsView( HttpServletRequest request )
     {
         boolean bIsSessionLost = isSessionLost( );
         boolean bHasFilterParameters = hasFilterParameters( request );
@@ -313,7 +314,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
      * @throws AccessDeniedException
      */
     @Action( ACTION_EXPORT_RESPONSES )
-    public String doExportResponses( HttpServletRequest request ) throws AccessDeniedException
+    public synchronized String doExportResponses( HttpServletRequest request ) throws AccessDeniedException
     {
         GlobalFormsAction multiviewExportAction = GlobalFormsActionHome.selectGlobalFormActionByCode( FormsConstants.ACTION_FORMS_EXPORT_RESPONSES,
                 FormsPlugin.getPlugin( ), request.getLocale( ) );
