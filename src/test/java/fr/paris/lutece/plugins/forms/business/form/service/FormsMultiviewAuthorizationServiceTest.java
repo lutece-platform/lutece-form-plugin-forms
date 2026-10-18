@@ -39,6 +39,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,6 +59,12 @@ import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnFormsMo
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnWorkflowStateMock;
 import fr.paris.lutece.plugins.forms.business.form.list.FormListDAOMock;
 import fr.paris.lutece.plugins.forms.business.form.list.FormListFacade;
+import fr.paris.lutece.plugins.forms.business.form.list.IFormListDAO;
+import fr.paris.lutece.api.user.User;
+import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
+import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
+import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
+import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.business.form.panel.configuration.FormPanelConfiguration;
 import fr.paris.lutece.plugins.forms.service.FormsMultiviewAuthorizationService;
@@ -177,5 +189,112 @@ public class FormsMultiviewAuthorizationServiceTest extends LuteceTestCase
 
         boolean bIsUserAuthorize = formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponse( buildAuthenticatedRequest( ), nIdFormResponse );
         assertThat( bIsUserAuthorize, is( Boolean.FALSE ) );
+    }
+
+    /**
+     * Test of the method {@link FormsMultiviewAuthorizationService#isUserAuthorizedOnFormResponse(request,int)} called concurrently by several requests on
+     * the same service instance: each call must get the result of its own form response
+     *
+     * @throws Exception
+     *             if a call fails
+     */
+    @Test
+    public void testIsUserAthorizedOnFormResponseConcurrently( ) throws Exception
+    {
+        int nThreads = 16;
+        int nCalls = 400;
+        List<Integer> listAuthorizedId = Arrays.asList( 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 );
+
+        FormListFacade formListFacade = new FormListFacade( new FormListDAOFilterMock( listAuthorizedId ) );
+        IFormsMultiviewAuthorizationService formsMultiviewAuthorizationService = new FormsMultiviewAuthorizationService(
+                _formPanel.getFormPanelConfiguration( ), formListFacade, _formColumnFactory );
+
+        ExecutorService executor = Executors.newFixedThreadPool( nThreads );
+        CountDownLatch latchStart = new CountDownLatch( 1 );
+        List<Future<Boolean>> listResult = new ArrayList<>( );
+
+        try
+        {
+            for ( int i = 0; i < nCalls; i++ )
+            {
+                // Odd ids 1..19: half of them authorized
+                int nIdFormResponse = ( i % 10 ) * 2 + 1;
+                boolean bExpected = listAuthorizedId.contains( nIdFormResponse );
+                Callable<Boolean> call = ( ) -> {
+                    latchStart.await( );
+                    return formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponse( buildAuthenticatedRequest( ), nIdFormResponse ) == bExpected;
+                };
+                listResult.add( executor.submit( call ) );
+            }
+            latchStart.countDown( );
+
+            int nWrongResults = 0;
+            for ( Future<Boolean> result : listResult )
+            {
+                if ( !result.get( 30, TimeUnit.SECONDS ) )
+                {
+                    nWrongResults++;
+                }
+            }
+            assertThat( nWrongResults, is( 0 ) );
+        }
+        finally
+        {
+            executor.shutdownNow( );
+        }
+    }
+
+    /**
+     * Mock of the DAO which, like the real one, returns only the form response of the id filter when it is authorized, after a short delay so that the calls
+     * overlap
+     */
+    private static final class FormListDAOFilterMock implements IFormListDAO
+    {
+        private final List<Integer> _listIdAuthorizedFormResponse;
+
+        FormListDAOFilterMock( List<Integer> listIdAuthorizedFormResponse )
+        {
+            _listIdAuthorizedFormResponse = listIdAuthorizedFormResponse;
+        }
+
+        @Override
+        public void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter, int nStartIndex,
+                int nPageSize, FormItemSortConfig sortConfig )
+        {
+            List<FormResponseItem> listFormResponseItem = new ArrayList<>( );
+            for ( FormFilter formFilter : listFormFilter )
+            {
+                Object idFormResponse = formFilter.getFormParameters( ).getFormParametersMap( ).get( FormsConstants.PARAMETER_ID_RESPONSE );
+                if ( idFormResponse instanceof Integer && _listIdAuthorizedFormResponse.contains( idFormResponse ) )
+                {
+                    FormResponseItem formResponseItem = new FormResponseItem( );
+                    formResponseItem.setIdFormResponse( (Integer) idFormResponse );
+                    listFormResponseItem.add( formResponseItem );
+                }
+            }
+            try
+            {
+                Thread.sleep( 2 );
+            }
+            catch( InterruptedException e )
+            {
+                Thread.currentThread( ).interrupt( );
+            }
+            formPanel.setFormResponseItemList( listFormResponseItem );
+        }
+
+        @Override
+        public void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter, int nStartIndex,
+                int nPageSize, FormItemSortConfig sortConfig, User user )
+        {
+            populateFormColumns( formPanel, listFormColumn, listFormFilter, nStartIndex, nPageSize, sortConfig );
+        }
+
+        @Override
+        public List<FormResponseItem> searchAllFormResponseItem( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
+                FormItemSortConfig sortConfig )
+        {
+            return new ArrayList<>( );
+        }
     }
 }
