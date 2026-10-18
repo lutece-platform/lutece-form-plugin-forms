@@ -120,6 +120,7 @@ public class FormXPage extends MVCApplication
     private static final String MESSAGE_WARNING_INACTIVE_STATE_BYPASSED = "forms.warning.inactive.state.bypassed";
     private static final String MESSAGE_ERROR_TOKEN = "Invalid security token";
     private static final String MESSAGE_WARNING_INVALID_FORM_SESSION = "forms.warning.invalid.form.session";
+    private static final String MESSAGE_WARNING_INVALID_TOKEN = "forms.warning.invalid.token";
     private static final String MESSAGE_ERROR_BACKUP_NEEDS_AUTHENTICATION = "forms.error.form.backupNeedsAuthentication";
 
     // Views
@@ -702,7 +703,7 @@ public class FormXPage extends MVCApplication
         IsRequestComingFromAction = true;
         if ( !_securityTokenService.validate( request, ACTION_SAVE_FORM_RESPONSE ) )
         {
-            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
+            return getStepViewOnInvalidToken( request );
         }
         Form form = null;
         try
@@ -754,7 +755,7 @@ public class FormXPage extends MVCApplication
         // CSRF Token control
         if ( !_securityTokenService.validate( request, ACTION_SAVE_FORM_RESPONSE ) )
         {
-            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
+            return getStepViewOnInvalidToken( request );
         }
         Form form = null;
         try
@@ -789,6 +790,26 @@ public class FormXPage extends MVCApplication
         }
 
         return doSaveResponse( request, form );
+    }
+
+    /**
+     * Redisplays the current step when the security token of the posted page is invalid or expired (back button, page posted twice, form opened in two
+     * tabs): the user posts the step again with a new token, instead of getting an error page
+     *
+     * @param request
+     *            The request
+     * @return the step view with a warning
+     * @throws SiteMessageException
+     *             if there is an error during the page generation
+     * @throws UserNotSignedException
+     *             if the user is not signed in
+     */
+    private XPage getStepViewOnInvalidToken( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
+    {
+        AppLogService.info( "FormXPage: " + MESSAGE_ERROR_TOKEN );
+        addWarning( MESSAGE_WARNING_INVALID_TOKEN, getLocale( request ) );
+
+        return getStepView( request );
     }
 
     private XPage doSaveResponse( HttpServletRequest request, Form form ) throws SiteMessageException, UserNotSignedException
@@ -1027,7 +1048,7 @@ public class FormXPage extends MVCApplication
         IsRequestComingFromAction = true;
         if ( !_securityTokenService.validate( request, ACTION_SAVE_FORM_RESPONSE ) )
         {
-            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
+            return getStepViewOnInvalidToken( request );
         }
 
         Form form = null;
