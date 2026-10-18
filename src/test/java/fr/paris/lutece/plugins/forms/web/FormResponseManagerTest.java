@@ -41,6 +41,7 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 
+import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseStep;
@@ -100,6 +101,53 @@ public class FormResponseManagerTest extends LuteceTestCase
 
         }
 
+    }
+
+    /**
+     * The responses of a step whose page has never been posted are not collected: its mandatory questions have no response
+     */
+    @Test
+    public void testHasResponsesForMandatoryQuestions( )
+    {
+        Form form = new Form( );
+        form.setId( DEFAULT_INT );
+        FormResponseManager manager = new FormResponseManager( form );
+
+        Step step = new Step( );
+        step.setId( 1 );
+        step.setFinal( true );
+        step.setInitial( true );
+        manager.add( step );
+
+        Entry entryMandatory = new Entry( );
+        entryMandatory.setMandatory( true );
+        Question questionMandatory = new Question( );
+        questionMandatory.setId( 1 );
+        questionMandatory.setEntry( entryMandatory );
+
+        Question questionOptional = new Question( );
+        questionOptional.setId( 2 );
+        questionOptional.setEntry( new Entry( ) );
+
+        List<Question> listQuestion = List.of( questionMandatory, questionOptional );
+
+        // Step displayed but never posted
+        assertFalse( manager.hasResponsesForMandatoryQuestions( step, listQuestion ) );
+        // Only optional questions
+        assertTrue( manager.hasResponsesForMandatoryQuestions( step, List.of( questionOptional ) ) );
+        // No current step
+        assertFalse( manager.hasResponsesForMandatoryQuestions( null, listQuestion ) );
+
+        // Step posted: a response (even empty, validated later) for each question
+        List<FormQuestionResponse> listResponse = new ArrayList<>( );
+        for ( Question question : listQuestion )
+        {
+            FormQuestionResponse formQuestionResponse = new FormQuestionResponse( );
+            formQuestionResponse.setQuestion( question );
+            listResponse.add( formQuestionResponse );
+        }
+        manager.addResponses( listResponse );
+        assertTrue( manager.hasResponsesForMandatoryQuestions( step, listQuestion ) );
     }
 
     /**

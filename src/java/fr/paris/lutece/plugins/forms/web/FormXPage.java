@@ -776,6 +776,11 @@ public class FormXPage extends MVCApplication
                 addWarning( MESSAGE_WARNING_CAPTCHA, getLocale( request ) );
                 return getFormResponseSummaryPage( request, form );
             }
+            if ( !_formResponseManager.hasResponsesForMandatoryQuestions( _formResponseManager.getCurrentStep( ), _stepDisplayTree.getQuestions( ) ) )
+            {
+                // Posted without going through the summary: the responses of the current step have never been collected nor validated
+                return getStepView( request );
+            }
         }
         catch( FormNotFoundException exception )
         {

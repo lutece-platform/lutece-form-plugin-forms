@@ -311,6 +311,33 @@ public class FormResponseManager implements Serializable
     }
 
     /**
+     * Tests whether the responses of the mandatory questions of the specified step have been collected. They are collected (and validated) when the page of
+     * the step is posted: a step whose page has never been posted has no response at all.
+     *
+     * @param step
+     *            the step
+     * @param listQuestion
+     *            the questions displayed in the step
+     * @return {@code true} if every mandatory question of the step has a response (possibly empty, it is validated by {@link #validateFormResponses( )}),
+     *         {@code false} otherwise
+     */
+    public boolean hasResponsesForMandatoryQuestions( Step step, List<Question> listQuestion )
+    {
+        List<FormQuestionResponse> listFormQuestionResponse = ( step != null ) ? findResponsesFor( step ) : new ArrayList<>( );
+
+        for ( Question question : listQuestion )
+        {
+            if ( question.getEntry( ) != null && question.getEntry( ).isMandatory( ) && !question.getEntry( ).isOnlyDisplayInBack( )
+                    && listFormQuestionResponse.stream( ).noneMatch( response -> response.getQuestion( ).getId( ) == question.getId( ) ) )
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Finds all responses
      *
      * @return the found responses
