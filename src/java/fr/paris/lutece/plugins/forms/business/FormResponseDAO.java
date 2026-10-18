@@ -57,8 +57,10 @@ public final class FormResponseDAO implements IFormResponseDAO
     private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE id_response = ?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_response ( id_form, guid, creation_date, update_date, from_save, status, role, admin, update_date_status ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_response WHERE id_response = ? ";
+    private static final String SQL_QUERY_DELETE_IF_DRAFT = SQL_QUERY_DELETE + " AND from_save = 1 ";
     private static final String SQL_QUERY_DELETE_BY_FORM = "DELETE FROM forms_response WHERE id_form = ? ";
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_response SET id_form = ?, guid = ?, update_date = ?, from_save = ?, status = ?, role = ?, admin = ?, update_date_status = ? WHERE id_response = ?";
+    private static final String SQL_QUERY_UPDATE_IF_DRAFT = SQL_QUERY_UPDATE + " AND from_save = 1";
     private static final String SQL_QUERY_SELECT_FOR_BACKUP = SQL_QUERY_SELECTALL + " WHERE guid = ? AND id_form = ? AND from_save = ? ";
     private static final String SQL_QUERY_SELECT_FOR_BACKUP_BO = SQL_QUERY_SELECTALL + " WHERE admin = ? AND id_form = ? AND from_save = ? ";
     private static final String SQL_QUERY_SELECT_ALL_BY_USER = SQL_QUERY_SELECTALL + " WHERE guid = ? AND from_save = 0 ";
@@ -143,7 +145,47 @@ public final class FormResponseDAO implements IFormResponseDAO
     @Override
     public void store( FormResponse formResponse, Plugin plugin )
     {
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin ) )
+        update( formResponse, SQL_QUERY_UPDATE, plugin );
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean storeIfDraft( FormResponse formResponse, Plugin plugin )
+    {
+        return update( formResponse, SQL_QUERY_UPDATE_IF_DRAFT, plugin ) == 1;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean deleteIfDraft( int nKey, Plugin plugin )
+    {
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_IF_DRAFT, plugin ) )
+        {
+            daoUtil.setInt( 1, nKey );
+            daoUtil.executeUpdate( );
+
+            return daoUtil.getReturnedRowCount( ) == 1;
+        }
+    }
+
+    /**
+     * Update a form response with the given query
+     * 
+     * @param formResponse
+     *            the form response
+     * @param strQuery
+     *            the update query
+     * @param plugin
+     *            the Plugin
+     * @return the number of rows updated
+     */
+    private int update( FormResponse formResponse, String strQuery, Plugin plugin )
+    {
+        try ( DAOUtil daoUtil = new DAOUtil( strQuery, plugin ) )
         {
             int nIndex = 1;
             daoUtil.setInt( nIndex++, formResponse.getFormId( ) );
@@ -159,6 +201,8 @@ public final class FormResponseDAO implements IFormResponseDAO
             daoUtil.setInt( nIndex++, formResponse.getId( ) );
 
             daoUtil.executeUpdate( );
+
+            return daoUtil.getReturnedRowCount( );
         }
     }
 

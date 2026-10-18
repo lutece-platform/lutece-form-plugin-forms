@@ -57,6 +57,7 @@ import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.exception.FormNotFoundException;
+import fr.paris.lutece.plugins.forms.exception.FormResponseAlreadySubmittedException;
 import fr.paris.lutece.plugins.forms.exception.MaxFormResponseException;
 import fr.paris.lutece.plugins.forms.exception.QuotaLockTimeoutException;
 import fr.paris.lutece.plugins.forms.exception.QuestionValidationException;
@@ -384,6 +385,11 @@ public class FormResponseJspBean extends AbstractJspBean
         {
             _formService.saveFormForBackup( formResponse );
         }
+        catch( FormResponseAlreadySubmittedException e )
+        {
+            // The draft has been submitted or reset from another window
+            addError( FormsConstants.MESSAGE_ERROR_ALREADY_SUBMITTED, getLocale( ) );
+        }
         catch( AppException e )
         {
             // The backup has been rolled back : tell the user rather than let them believe it was saved
@@ -629,6 +635,12 @@ public class FormResponseJspBean extends AbstractJspBean
         {
             // Too many simultaneous submissions: the quota is not necessarily reached, the user can try again
             addError( FormsConstants.MESSAGE_ERROR_QUOTA_BUSY, getLocale( ) );
+            return redirectView( request, VIEW_ERROR );
+        }
+        catch ( FormResponseAlreadySubmittedException e )
+        {
+            // The draft has been submitted or reset from another window
+            addError( FormsConstants.MESSAGE_ERROR_ALREADY_SUBMITTED, getLocale( ) );
             return redirectView( request, VIEW_ERROR );
         }
         catch ( MaxFormResponseException e )

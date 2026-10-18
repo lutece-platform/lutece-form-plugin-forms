@@ -53,6 +53,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.forms.exception.FormNotFoundException;
+import fr.paris.lutece.plugins.forms.exception.FormResponseAlreadySubmittedException;
 import fr.paris.lutece.plugins.forms.exception.MaxFormResponseException;
 import fr.paris.lutece.plugins.forms.exception.QuotaLockTimeoutException;
 import fr.paris.lutece.plugins.forms.exception.QuestionValidationException;
@@ -1070,6 +1071,11 @@ public class FormXPage extends MVCApplication
         {
             _formService.saveFormForBackup( formResponse );
         }
+        catch( FormResponseAlreadySubmittedException e )
+        {
+            // The draft has been submitted or reset from another window or device
+            SiteMessageService.setMessage( request, FormsConstants.MESSAGE_ERROR_ALREADY_SUBMITTED, SiteMessage.TYPE_ERROR );
+        }
         catch( AppException e )
         {
             // The backup has been rolled back : tell the user rather than let them believe it was saved
@@ -1391,6 +1397,11 @@ public class FormXPage extends MVCApplication
         catch( MaxFormResponseException e)
         {
             SiteMessageService.setMessage( request, FormsConstants.MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM, SiteMessage.TYPE_ERROR );
+        }
+        catch( FormResponseAlreadySubmittedException e )
+        {
+            // The draft has been submitted or reset from another window or device
+            SiteMessageService.setMessage( request, FormsConstants.MESSAGE_ERROR_ALREADY_SUBMITTED, SiteMessage.TYPE_ERROR );
         }
         catch( AppException e )
         {

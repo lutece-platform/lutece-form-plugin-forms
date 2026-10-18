@@ -43,12 +43,13 @@ import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseHome;
+import fr.paris.lutece.plugins.forms.exception.FormResponseAlreadySubmittedException;
 import fr.paris.lutece.plugins.forms.exception.MaxFormResponseException;
 import fr.paris.lutece.test.LuteceTestCase;
 import jakarta.inject.Inject;
 
 /**
- * Drafts: quota at submission
+ * Drafts: quota at submission, and a draft submitted meanwhile from another session
  */
 public class FormServiceDraftTest extends LuteceTestCase
 {
@@ -85,6 +86,41 @@ public class FormServiceDraftTest extends LuteceTestCase
 
         assertThrows( MaxFormResponseException.class, ( ) -> _formService.saveForm( _form, draft ) );
         assertTrue( FormResponseHome.loadById( draft.getId( ) ).isFromSave( ) );
+    }
+
+    /**
+     * A draft loaded in a session and submitted from another session is neither turned back into a draft, nor submitted again, nor removed
+     */
+    @Test
+    public void testDraftSubmittedFromAnotherSession( )
+    {
+        FormResponse draftOfSessionB = createResponse( true );
+
+        // Session A submits the draft
+        FormResponse responseOfSessionA = FormResponseHome.loadById( draftOfSessionB.getId( ) );
+        responseOfSessionA.setFromSave( false );
+        FormResponseHome.update( responseOfSessionA );
+
+        assertThrows( FormResponseAlreadySubmittedException.class, ( ) -> _formService.saveFormForBackup( draftOfSessionB ) );
+        assertThrows( FormResponseAlreadySubmittedException.class, ( ) -> _formService.saveForm( _form, draftOfSessionB ) );
+        _formService.removeFormBackup( draftOfSessionB );
+
+        FormResponse stored = FormResponseHome.loadById( draftOfSessionB.getId( ) );
+        assertNotNull( stored );
+        assertFalse( stored.isFromSave( ) );
+    }
+
+    /**
+     * A draft that is still a draft is removed by a reset
+     */
+    @Test
+    public void testResetDraft( )
+    {
+        FormResponse draft = createResponse( true );
+
+        _formService.removeFormBackup( draft );
+
+        assertNull( FormResponseHome.loadById( draft.getId( ) ) );
     }
 
     private FormResponse createResponse( boolean bDraft )

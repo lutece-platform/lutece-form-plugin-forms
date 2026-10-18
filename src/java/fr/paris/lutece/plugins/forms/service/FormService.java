@@ -69,6 +69,7 @@ import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.business.export.FormExportConfigHome;
 import fr.paris.lutece.plugins.forms.exception.LockException;
+import fr.paris.lutece.plugins.forms.exception.FormResponseAlreadySubmittedException;
 import fr.paris.lutece.plugins.forms.exception.MaxFormResponseException;
 import fr.paris.lutece.plugins.forms.exception.QuotaLockTimeoutException;
 import fr.paris.lutece.plugins.forms.service.event.FormResponseEvent;
@@ -322,6 +323,16 @@ public class FormService
      */
     private void saveForm(FormResponse formResponse) 
     {
+        // A draft becomes final only if it is still a draft in the database: it may have been submitted or reset from another session
+        if ( formResponse.getId( ) > 0 && formResponse.isFromSave( ) )
+        {
+            formResponse.setFromSave( Boolean.FALSE );
+            if ( !FormResponseHome.updateIfDraft( formResponse ) )
+            {
+                formResponse.setFromSave( Boolean.TRUE );
+                throw new FormResponseAlreadySubmittedException( "The draft " + formResponse.getId( ) + " has been submitted or removed meanwhile" );
+            }
+        }
     	formResponse.setFromSave( Boolean.FALSE );	
         filterFinalSteps( formResponse );
         save( formResponse );
@@ -414,6 +425,12 @@ public class FormService
     {
         formResponse.setFromSave( Boolean.TRUE );
 
+        // An existing draft is saved only if it is still a draft in the database
+        if ( formResponse.getId( ) > 0 && !FormResponseHome.updateIfDraft( formResponse ) )
+        {
+            throw new FormResponseAlreadySubmittedException( "The draft " + formResponse.getId( ) + " has been submitted or removed meanwhile" );
+        }
+
         save( formResponse );
         saveFormResponseSteps( formResponse );
     }
@@ -427,10 +444,9 @@ public class FormService
     @Transactional
     public void removeFormBackup( FormResponse formResponse )
     {
-        if ( formResponse.isFromSave( ) )
+        // The flag of the response in memory may be stale: only a response that is still a draft in the database is removed
+        if ( formResponse.getId( ) > 0 && FormResponseHome.removeIfDraft( formResponse.getId( ) ) )
         {
-            FormResponseHome.remove( formResponse.getId( ) );
-
             for ( FormQuestionResponse formQuestionResponse : FormQuestionResponseHome.getFormQuestionResponseListByFormResponse( formResponse.getId( ) ) )
             {
                 FormQuestionResponseHome.remove( formQuestionResponse );
