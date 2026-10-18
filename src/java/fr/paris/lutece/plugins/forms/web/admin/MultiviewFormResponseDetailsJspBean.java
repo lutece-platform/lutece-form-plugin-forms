@@ -188,22 +188,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         	return redirectToResponseList( request );
         }
 
-        boolean bRBACAuthorization = RBACService.isAuthorized( Form.RESOURCE_TYPE, Integer.toString( formResponse.getFormId( ) ),
-                FormsResourceIdService.PERMISSION_VIEW_FORM_RESPONSE, (User) getUser( ) );
-        boolean bAuthorizedRecord = _formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponse( request, nIdFormResponse );
-
-        // If the current user is not part of this Form's workgroup then deny them access to the form's responses
-        if ( bAuthorizedRecord )
-        {
-            int nIdForm = formResponse.getFormId( );
-            Form form = FormHome.findByPrimaryKey( nIdForm );
-            bAuthorizedRecord = _formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponseWithinWorkgroup( request, form );
-        }
-
-        if ( !bRBACAuthorization || !bAuthorizedRecord )
-        {
-            throw new AccessDeniedException( MESSAGE_ACCESS_DENIED );
-        }
+        checkUserAuthorizedOnFormResponse( request, formResponse );
 
         // Build the base model for the page of the details of a FormResponse
         Map<String, Object> model = buildFormResponseDetailsModel( request, formResponse );
@@ -424,14 +409,52 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
     }
 
     /**
+     * Check that the user can access the form response: the permission to view the responses of its form, the response among the ones the user can see
+     * in the multiview, and the workgroup of its form
+     * 
+     * @param request
+     *            the request
+     * @param formResponse
+     *            the form response, may be null
+     * @throws AccessDeniedException
+     *             if the form response does not exist or if the user is not authorized on it
+     */
+    private void checkUserAuthorizedOnFormResponse( HttpServletRequest request, FormResponse formResponse ) throws AccessDeniedException
+    {
+        if ( formResponse == null )
+        {
+            throw new AccessDeniedException( MESSAGE_ACCESS_DENIED );
+        }
+
+        boolean bRBACAuthorization = RBACService.isAuthorized( Form.RESOURCE_TYPE, Integer.toString( formResponse.getFormId( ) ),
+                FormsResourceIdService.PERMISSION_VIEW_FORM_RESPONSE, (User) getUser( ) );
+        boolean bAuthorizedRecord = _formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponse( request, formResponse.getId( ) );
+
+        // If the current user is not part of this Form's workgroup then deny them access to the form's responses
+        if ( bAuthorizedRecord )
+        {
+            int nIdForm = formResponse.getFormId( );
+            Form form = FormHome.findByPrimaryKey( nIdForm );
+            bAuthorizedRecord = _formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponseWithinWorkgroup( request, form );
+        }
+
+        if ( !bRBACAuthorization || !bAuthorizedRecord )
+        {
+            throw new AccessDeniedException( MESSAGE_ACCESS_DENIED );
+        }
+    }
+
+    /**
      * Returns the task form associate to the workflow action
      *
      * @param request
      *            The Http request
      * @return The HTML form the task form associate to the workflow action
+     * @throws AccessDeniedException
+     *             if the user is not authorized on the form response
      */
     @View( value = VIEW_TASKS_FORM, securityTokenAction = ACTION_SAVE_TASK_FORM )
-    public String getTaskForm( HttpServletRequest request )
+    public String getTaskForm( HttpServletRequest request ) throws AccessDeniedException
     {
         int nIdFormResponse = NumberUtils.toInt( request.getParameter( PARAMETER_ID_FORM_RESPONSE ), NumberUtils.INTEGER_MINUS_ONE );
         int nIdAction = NumberUtils.toInt( request.getParameter( PARAMETER_ID_ACTION ), NumberUtils.INTEGER_MINUS_ONE );
@@ -440,6 +463,8 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         {
             return redirectView( request, VIEW_FORM_RESPONSE_DETAILS );
         }
+
+        checkUserAuthorizedOnFormResponse( request, FormResponseHome.findByPrimaryKey( nIdFormResponse ) );
 
         _formsAsynchronousUploadHandler.removeSessionFiles( request.getSession( ) );
 
@@ -470,6 +495,9 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         int nIdAction = NumberUtils.toInt( request.getParameter( PARAMETER_ID_ACTION ), NumberUtils.INTEGER_MINUS_ONE );
 
         Locale locale = getLocale( );
+        FormResponse formResponse = FormResponseHome.findByPrimaryKey( nIdFormResponse );
+        checkUserAuthorizedOnFormResponse( request, formResponse );
+
         if ( _workflowService.isDisplayTasksForm( nIdAction, locale ) )
         {
             Map<String, String> model = new LinkedHashMap<>( );
@@ -478,8 +506,6 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
 
             return redirect( request, VIEW_TASKS_FORM, model );
         }
-
-        FormResponse formResponse = FormResponseHome.findByPrimaryKey( nIdFormResponse );
 
         try
         {
@@ -527,7 +553,8 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         int nIdAction = NumberUtils.toInt( request.getParameter( PARAMETER_ID_ACTION ), NumberUtils.INTEGER_MINUS_ONE );
 
         FormResponse formResponse = FormResponseHome.findByPrimaryKey( nIdFormResponse );
-        int nIdForm = ( formResponse != null ) ? formResponse.getFormId( ) : NumberUtils.INTEGER_MINUS_ONE;
+        checkUserAuthorizedOnFormResponse( request, formResponse );
+        int nIdForm = formResponse.getFormId( );
 
         if ( _workflowService.canProcessAction( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, nIdForm, request, false, null ) )
         {
