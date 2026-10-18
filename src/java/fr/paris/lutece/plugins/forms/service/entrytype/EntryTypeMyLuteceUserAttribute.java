@@ -91,8 +91,6 @@ public class EntryTypeMyLuteceUserAttribute extends AbstractEntryTypeMyLuteceUse
     private static final String FIELD_MYLUTECE_ATTRIBUTE_TEMPLATE_CODE = "attribute_template";
     private static final String MARK_MYLUTECE_ATTRIBUTE_VALUE = "mylutece_attr_value";
 
-    private ReferenceList _refListUserAttributes;
-
     @Inject
     public void addAnonymizationTypes(
     		@Named("genericattributes.entryIdAnonymizationType") IEntryAnonymizationType entryIdAnonymizationType,
@@ -260,11 +258,7 @@ public class EntryTypeMyLuteceUserAttribute extends AbstractEntryTypeMyLuteceUse
      */
     public ReferenceList getLuteceUserAttributesRefList( String strLangage )
     {
-        if ( _refListUserAttributes != null )
-        {
-            return _refListUserAttributes;
-        }
-
+        // Built for each call: the labels are in the language of the caller, and this bean is shared by all the users
         ReferenceList referenceList = new ReferenceList( );
 
         String strAttributesList = AppPropertiesService.getProperty( FormsConstants.PROPERTY_MY_LUTECE_ATTRIBUTES_LIST, StringUtils.EMPTY );
@@ -284,9 +278,6 @@ public class EntryTypeMyLuteceUserAttribute extends AbstractEntryTypeMyLuteceUse
 
             referenceList.add( item );
         }
-
-        // We save the reference list to avoid its generation each time this method is called
-        _refListUserAttributes = referenceList;
 
         return referenceList;
     }
