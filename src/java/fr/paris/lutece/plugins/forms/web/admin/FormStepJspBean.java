@@ -386,7 +386,7 @@ public class FormStepJspBean extends AbstractJspBean
 
         Step initialStep = StepHome.getInitialStep( _step.getIdForm( ) );
         String strMultiStep = request.getParameter( PARAMETER_MULTI_STEP );
-        int multiStep = ( strMultiStep != null ) ? Integer.parseInt( strMultiStep ) : 0;
+        int multiStep = NumberUtils.toInt( strMultiStep, 0 );
 
         // Cas 1 : première étape + case cochée → formulaire multi-étapes
         if( multiStep == 1 )
@@ -422,8 +422,10 @@ public class FormStepJspBean extends AbstractJspBean
         _formService.removeBackupsByForm( _step.getIdForm( ) );
         addInfo( INFO_STEP_CREATED, getLocale( ) );
 
-        int previousStep = Integer.parseInt( request.getParameter( PARAMETER_PREVIOUS_STEP ) );
-        if ( previousStep != -1 )
+        // The previous step must be a step of the same form
+        int previousStep = NumberUtils.toInt( request.getParameter( PARAMETER_PREVIOUS_STEP ), NumberUtils.INTEGER_MINUS_ONE );
+        Step stepPrevious = ( previousStep != NumberUtils.INTEGER_MINUS_ONE ) ? StepHome.findByPrimaryKey( previousStep ) : null;
+        if ( stepPrevious != null && stepPrevious.getIdForm( ) == _step.getIdForm( ) )
         {
             Transition transition = new Transition( );
             transition.setFromStep( previousStep );
@@ -778,7 +780,7 @@ public class FormStepJspBean extends AbstractJspBean
         int nIdForm = -1;
         try
         {
-            nIdForm = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ) );
+            nIdForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), NumberUtils.INTEGER_MINUS_ONE );
             checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nIdForm ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_CREATE_STEP );
             checkWorkgroupPermission(nIdForm, multipartRequest);
             _formJsonService.jsonImportStep( nIdForm, new String( fileItem.get( ), StandardCharsets.UTF_8 ), getLocale( ) );
@@ -796,10 +798,10 @@ public class FormStepJspBean extends AbstractJspBean
     public String doImportTemplate( HttpServletRequest request ) throws AccessDeniedException
     {
 
-        int nIdForm = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ) );
+        int nIdForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), NumberUtils.INTEGER_MINUS_ONE );
         checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nIdForm ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_CREATE_STEP );
         checkWorkgroupPermission(nIdForm, request);
-        int nIdTemplate = Integer.parseInt( request.getParameter( PARAMETER_ID_TEMPLATE ) );
+        int nIdTemplate = NumberUtils.toInt( request.getParameter( PARAMETER_ID_TEMPLATE ), NumberUtils.INTEGER_MINUS_ONE );
         StepJsonData template = _stepService.getStepTemplateData( nIdTemplate );
         if ( template != null )
         {

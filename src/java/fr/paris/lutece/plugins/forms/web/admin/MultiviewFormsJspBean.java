@@ -53,6 +53,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.asynchronousupload.service.IAsyncUploadHandler;
@@ -344,8 +345,12 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
         if ( formatExport != null )
         {
-            int idForm = Integer.parseInt( strIdForm );
-            Form form = FormHome.findByPrimaryKey( idForm );
+            Form form = FormHome.findByPrimaryKey( NumberUtils.toInt( strIdForm, NumberUtils.INTEGER_MINUS_ONE ) );
+            if ( form == null )
+            {
+                addError( "forms.export.error.filter", getLocale( ) );
+                return getMultiviewFormsView( request );
+            }
             List<FormFilter> listFormFilter = _listFormFilterDisplay.stream( ).map( IFormFilterDisplay::getFormFilter ).collect( Collectors.toList( ) );
 
             _temporaryFileGeneratorService.generateFile( formatExport.createFileGenerator( form.getTitle( ),

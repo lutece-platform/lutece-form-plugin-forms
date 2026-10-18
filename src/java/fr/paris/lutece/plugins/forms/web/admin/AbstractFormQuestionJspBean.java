@@ -188,13 +188,20 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
      */
     protected String processQuestionCreation( HttpServletRequest request, String viewManageQuestions, String errorReturnUrl ) throws CodeAlreadyExistsException
     {
-        int nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
+        int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), INTEGER_MINUS_ONE );
         int nParentGroup = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ), 0 );
-        int nIdType = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_ENTRY_TYPE ) );
+        int nIdType = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_ENTRY_TYPE ), INTEGER_MINUS_ONE );
 
         if ( ( _step == null ) || nIdStep != _step.getId( ) )
         {
             _step = getFormDatabaseService( ).findStepByPrimaryKey( nIdStep );
+        }
+
+        // A missing or invalid parameter: back to the list of forms
+        if ( _step == null || nIdType == INTEGER_MINUS_ONE )
+        {
+            addError( ERROR_QUESTION_NOT_CREATED, getLocale( ) );
+            return getJspManageForm( request );
         }
 
         _entry = FormsEntryUtils.createEntryByType( nIdType );
@@ -296,6 +303,12 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         if ( _question == null || _question.getId( ) != nIdQuestion )
         {
             _question = getFormDatabaseService( ).findQuestionByPrimaryKey( nIdQuestion );
+        }
+
+        // A missing, invalid or unknown step or question: back to the list of forms
+        if ( _step == null || _question == null )
+        {
+            return getJspManageForm( request );
         }
 
         int nIdEntry = _question.getIdEntry( );
@@ -413,11 +426,16 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
 
     protected String modifyGroup( HttpServletRequest request, String viewReturnOk )
     {
-        int nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
+        int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), INTEGER_MINUS_ONE );
 
         if ( _step == null || nIdStep != _step.getId( ) )
         {
             _step = getFormDatabaseService( ).findStepByPrimaryKey( nIdStep );
+        }
+
+        if ( _step == null )
+        {
+            return redirectToViewManageForm( request );
         }
 
         _group = _group != null ? _group : new Group( );
@@ -564,7 +582,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
 
         if ( StringUtils.isNotEmpty( strIdStep ) )
         {
-            int nIdStep = Integer.parseInt( strIdStep );
+            int nIdStep = NumberUtils.toInt( strIdStep, INTEGER_MINUS_ONE );
 
             if ( ( _step == null ) || ( _step.getId( ) != nIdStep ) )
             {
@@ -572,15 +590,15 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
             }
         }
 
-        String strIdQuestion = request.getParameter( FormsConstants.PARAMETER_ID_QUESTION );
-        int nIdQuestion = INTEGER_MINUS_ONE;
-
-        if ( StringUtils.isNotEmpty( strIdQuestion ) )
-        {
-            nIdQuestion = Integer.parseInt( strIdQuestion );
-        }
+        int nIdQuestion = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_QUESTION ), INTEGER_MINUS_ONE );
 
         _question = getFormDatabaseService( ).findQuestionByPrimaryKey( nIdQuestion );
+
+        // A missing, invalid or unknown question: the caller redirects to the list of forms
+        if ( _question == null || _step == null )
+        {
+            return null;
+        }
 
         _entry = getFormDatabaseService( ).findEntryByPrimaryKey( _question.getIdEntry( ) );
 
@@ -846,7 +864,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         int nIdQuestion = INTEGER_MINUS_ONE;
 
         String strIdQuestion = request.getParameter( FormsConstants.PARAMETER_ID_TARGET );
-        int nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
+        int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), INTEGER_MINUS_ONE );
         Question questionToCopy = null;
 
         if ( ( _step == null ) || nIdStep != _step.getId( ) )
@@ -856,13 +874,20 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
 
         if ( StringUtils.isNotEmpty( strIdQuestion ) )
         {
-            nIdQuestion = Integer.parseInt( strIdQuestion );
+            nIdQuestion = NumberUtils.toInt( strIdQuestion, INTEGER_MINUS_ONE );
+        }
+
+        _question = getFormDatabaseService( ).findQuestionByPrimaryKey( nIdQuestion );
+
+        // A missing, invalid or unknown step or question: back to the list of forms
+        if ( _step == null || _question == null )
+        {
+            return getJspManageForm( request );
         }
 
         // Get the question to copy and clone it
         try
         {
-            _question = getFormDatabaseService( ).findQuestionByPrimaryKey( nIdQuestion );
             questionToCopy = _question.clone( );
             questionToCopy.setEntry( _question.getEntry( ) );
         }

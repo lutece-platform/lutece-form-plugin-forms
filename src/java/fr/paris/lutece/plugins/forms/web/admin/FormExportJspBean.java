@@ -451,13 +451,13 @@ public class FormExportJspBean extends AbstractJspBean
     @Action( ACTION_SET_DEFAULT_ORDER )
     public String doSetDefaultDisplayOrder(HttpServletRequest request) throws AccessDeniedException
     {
-        Integer nIdForm = Integer.parseInt(request.getParameter(FormsConstants.PARAMETER_ID_FORM));
         int nId = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
 
         if ( nId == FormsConstants.DEFAULT_ID_VALUE )
         {
             return redirect( request, VIEW_MANAGE_FORMS );
         }
+        Integer nIdForm = nId;
        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_CREATE_EXPORT_CONFIG );
 
         List<Question> questionList = QuestionHome.getQuestionListByIdFormInQuestionOrder(nIdForm);

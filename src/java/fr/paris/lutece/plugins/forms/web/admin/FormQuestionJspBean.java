@@ -346,8 +346,8 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     private String getErrorReturnUrlOnCreation( HttpServletRequest request )
     {
     	UrlItem errorReturnUrl = new UrlItem( JSP_MANAGE_QUESTIONS );
-    	errorReturnUrl.addParameter( FormsConstants.PARAMETER_ID_STEP, Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) ) );
-    	errorReturnUrl.addParameter( FormsConstants.PARAMETER_BUTTON_TYPE_ENTRY, Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_ENTRY_TYPE ) ) );
+    	errorReturnUrl.addParameter( FormsConstants.PARAMETER_ID_STEP, NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), INTEGER_MINUS_ONE ) );
+    	errorReturnUrl.addParameter( FormsConstants.PARAMETER_BUTTON_TYPE_ENTRY, NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_ENTRY_TYPE ), INTEGER_MINUS_ONE ) );
     	errorReturnUrl.addParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT, request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ) );
     	
     	return errorReturnUrl.getUrl( );
@@ -397,6 +397,10 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     public String getModifyQuestion( HttpServletRequest request )
     {
         Map<String, Object> model = initModifyQuestionModel( request );
+        if ( model == null )
+        {
+            return redirectToViewManageForm( request );
+        }
         Map<Integer, String> fieldsList = new HashMap<>( );
 
         if ( ( _form == null ) || ( _form.getId( ) != _entry.getIdResource( ) ) )
@@ -465,8 +469,8 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     {
     	UrlItem errorReturnUrl = new UrlItem( JSP_MANAGE_QUESTIONS );
     	errorReturnUrl.addParameter( FormsConstants.PARAMETER_TARGET_VIEW, VIEW_MODIFY_QUESTION );
-    	errorReturnUrl.addParameter( FormsConstants.PARAMETER_ID_STEP, Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) ) );
-    	errorReturnUrl.addParameter( FormsConstants.PARAMETER_ID_QUESTION, Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_QUESTION ) ) );
+    	errorReturnUrl.addParameter( FormsConstants.PARAMETER_ID_STEP, NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), INTEGER_MINUS_ONE ) );
+    	errorReturnUrl.addParameter( FormsConstants.PARAMETER_ID_QUESTION, NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_QUESTION ), INTEGER_MINUS_ONE ) );
     			
     	return errorReturnUrl.getUrl( );
     }
@@ -531,10 +535,13 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     @Action( value = ACTION_REMOVE_FILE )
     public String doRemoveFileComment( HttpServletRequest request )
     {
-        String idEntry = request.getParameter( FormsConstants.PARAMETER_ID_ENTRY );
-        int id = Integer.parseInt( idEntry );
+        int id = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_ENTRY ), INTEGER_MINUS_ONE );
 
         Entry entry = EntryHome.findByPrimaryKey( id );
+        if ( entry == null || _step == null || _question == null )
+        {
+            return redirectToViewManageForm( request );
+        }
         Field oldFile = entry.getFieldByCode( IEntryTypeService.FIELD_DOWNLOADABLE_FILE );
         if ( oldFile != null )
         {

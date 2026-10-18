@@ -810,7 +810,7 @@ public class FormJspBean extends AbstractJspBean
     @Action( ACTION_MODIFY_FORM_QUESTIONS_PUBLICATION )
     public String doModifyFormQuestionsPublication( HttpServletRequest request ) throws AccessDeniedException
     {
-        int nId = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ) );
+        int nId = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), NumberUtils.INTEGER_MINUS_ONE );
 
         Form formToBeModified = FormHome.findByPrimaryKey( nId );
 
