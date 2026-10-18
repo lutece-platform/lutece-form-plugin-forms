@@ -501,9 +501,15 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
 
     protected Map<String, Object> initCreateQuestionModel( HttpServletRequest request )
     {
-        int nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
-        int nIdTypeEntry = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_BUTTON_TYPE_ENTRY ) );
+        int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), INTEGER_MINUS_ONE );
+        int nIdTypeEntry = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_BUTTON_TYPE_ENTRY ), INTEGER_MINUS_ONE );
         _nIdParentSelected = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ), 0 );
+
+        // A missing or invalid parameter: the caller redirects to the list of forms
+        if ( nIdStep == INTEGER_MINUS_ONE || nIdTypeEntry == INTEGER_MINUS_ONE )
+        {
+            return null;
+        }
 
         _step = getFormDatabaseService( ).findStepByPrimaryKey( nIdStep );
         if ( _step == null )

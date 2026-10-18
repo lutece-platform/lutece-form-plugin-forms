@@ -170,9 +170,13 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     {
         Locale locale = getLocale( );
 
-        int nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
+        int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), INTEGER_MINUS_ONE );
 
         _step = StepHome.findByPrimaryKey( nIdStep );
+        if ( _step == null )
+        {
+            return redirectToViewManageForm( request );
+        }
         _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
 
         String strInfoKey = request.getParameter( FormsConstants.PARAMETER_INFO_KEY );
