@@ -1233,12 +1233,16 @@ public class FormXPage extends MVCApplication
 
         String strIterationInfo = request.getParameter( FormsConstants.PARAMETER_ACTION_PREFIX + ACTION_REMOVE_ITERATION );
 
-        String [ ] arrayIterationInfo = strIterationInfo.split( FormsConstants.SEPARATOR_UNDERSCORE );
+        // <id of the group>_<index of the iteration>: a malformed value removes nothing, the group checks the index
+        String [ ] arrayIterationInfo = StringUtils.split( strIterationInfo, FormsConstants.SEPARATOR_UNDERSCORE );
 
-        int nIdGroupParent = Integer.parseInt( arrayIterationInfo [0] );
-        int nIndexIteration = Integer.parseInt( arrayIterationInfo [1] );
+        if ( arrayIterationInfo != null && arrayIterationInfo.length == 2 )
+        {
+            int nIdGroupParent = NumberUtils.toInt( arrayIterationInfo [0], FormsConstants.INCORRECT_ID );
+            int nIndexIteration = NumberUtils.toInt( arrayIterationInfo [1], FormsConstants.INCORRECT_ID );
 
-        _stepDisplayTree.removeIteration( request, nIdGroupParent, nIndexIteration );
+            _stepDisplayTree.removeIteration( request, nIdGroupParent, nIndexIteration );
+        }
 
         return getStepView(  request );
     }

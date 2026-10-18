@@ -538,17 +538,16 @@ public class FormResponseJspBean extends AbstractJspBean
         int nIdGroupParent;
         int nIndexIteration;
 
-        if ( strIterationInfo != null ){
-            String [ ] arrayIterationInfo = strIterationInfo.split( FormsConstants.SEPARATOR_UNDERSCORE );
+        // <id of the group>_<index of the iteration>: the group checks the index
+        String [ ] arrayIterationInfo = StringUtils.split( strIterationInfo, FormsConstants.SEPARATOR_UNDERSCORE );
 
-            nIdGroupParent = Integer.parseInt( arrayIterationInfo [0] );
-            nIndexIteration = Integer.parseInt( arrayIterationInfo [1] );
+        if ( arrayIterationInfo != null && arrayIterationInfo.length == 2 ){
+            nIdGroupParent = NumberUtils.toInt( arrayIterationInfo [0], FormsConstants.INCORRECT_ID );
+            nIndexIteration = NumberUtils.toInt( arrayIterationInfo [1], FormsConstants.INCORRECT_ID );
         } else {
             addError( MESSAGE_ERROR_REMOVE_ITERATION, getLocale() );
             return redirectView( request, VIEW_ERROR );
         }
-
-        String [ ] arrayIterationInfo = strIterationInfo.split( FormsConstants.SEPARATOR_UNDERSCORE );
 
         _stepDisplayTree.removeIteration( request, nIdGroupParent, nIndexIteration );
 

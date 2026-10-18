@@ -384,6 +384,12 @@ public class CompositeGroupDisplay implements ICompositeDisplay, Serializable
 
         if ( nIdGroupParent == _group.getId( ) )
         {
+            // Only an existing iteration, and only while there are more iterations than the minimum (the remove button is not displayed otherwise)
+            if ( nIndexIterationToRemove < 0 || nIndexIterationToRemove > _nIterationNumber || _nIterationNumber + 1 <= _group.getIterationMin( ) )
+            {
+                return;
+            }
+
             int nNbIterationToAdd = _nIterationNumber - nIndexIterationToRemove;
 
             _nIterationNumber = nIndexIterationToRemove - 1;
