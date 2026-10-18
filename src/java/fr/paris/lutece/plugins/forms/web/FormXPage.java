@@ -174,7 +174,8 @@ public class FormXPage extends MVCApplication
     private Step _currentStep;
     private StepDisplayTree _stepDisplayTree;
     private IBreadcrumb _breadcrumb;
-    private boolean _bInactiveStateBypassed;
+    // The form whose inactive state has been bypassed (link of the back office): the bypass applies to this form only
+    private int _nIdFormInactiveStateBypassed = FormsConstants.INCORRECT_ID;
     private boolean IsRequestComingFromAction = false;
 
     /**
@@ -414,7 +415,7 @@ public class FormXPage extends MVCApplication
      */
     private boolean bypassInactiveState( Form form, HttpServletRequest request )
     {
-        if ( _bInactiveStateBypassed )
+        if ( _nIdFormInactiveStateBypassed == form.getId( ) )
         {
             return true;
         }
@@ -441,7 +442,7 @@ public class FormXPage extends MVCApplication
         // milliseconds
         if ( timestampAge <= lBypassDuration )
         {
-            _bInactiveStateBypassed = true;
+            _nIdFormInactiveStateBypassed = form.getId( );
             return true;
         }
         return false;
@@ -1374,7 +1375,7 @@ public class FormXPage extends MVCApplication
      */
     private void saveFormResponse( Form form, HttpServletRequest request ) throws SiteMessageException
     {
-        if ( _bInactiveStateBypassed )
+        if ( _nIdFormInactiveStateBypassed == form.getId( ) )
         {
             return; // form was in testing mode; do not save response
         }
@@ -1424,7 +1425,7 @@ public class FormXPage extends MVCApplication
         _currentStep = null;
         _stepDisplayTree = null;
         _breadcrumb = null;
-        _bInactiveStateBypassed = false;
+        _nIdFormInactiveStateBypassed = FormsConstants.INCORRECT_ID;
         IsRequestComingFromAction = false;
         _formsAsynchronousUploadHandler.removeSessionFiles( request.getSession( ) );
     }
