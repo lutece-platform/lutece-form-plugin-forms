@@ -56,6 +56,8 @@ public class FormsCacheService extends AbstractCacheableService<String, Object>
 {
     private static final String CACHE_NAME = "formsCacheService";
     private static final String KEY_RESET_PENDING = FormsCacheService.class.getName( ) + ".resetPending";
+    // The caching provider never changes: whether the cache is shared is read once, not on each get
+    private volatile Boolean _bDistributed;
 
     @Resource
     private TransactionSynchronizationRegistry _registry;
@@ -208,7 +210,7 @@ public class FormsCacheService extends AbstractCacheableService<String, Object>
                 // The objects of the forms are modified by their readers (back office screens, conditional displays).
                 // Ehcache gives a copy on each read; a shared provider may give its own instance (Hazelcast near cache in
                 // OBJECT format, the same instance for every request of a node): each reader then gets its own copy.
-                if ( value instanceof Serializable && CacheConfigUtil.isDistributed( _cache ) )
+                if ( value instanceof Serializable && isDistributed( ) )
                 {
                     return SerializationUtils.clone( (Serializable) value );
                 }
@@ -279,6 +281,22 @@ public class FormsCacheService extends AbstractCacheableService<String, Object>
     private void resetNow( )
     {
         super.resetCache( );
+    }
+
+    /**
+     * Tells whether the cache is shared with other instances (any provider but Ehcache), read once
+     *
+     * @return true if the cache is shared
+     */
+    private boolean isDistributed( )
+    {
+        Boolean bDistributed = _bDistributed;
+        if ( bDistributed == null )
+        {
+            bDistributed = CacheConfigUtil.isDistributed( _cache );
+            _bDistributed = bDistributed;
+        }
+        return bDistributed;
     }
 
     /**
