@@ -151,8 +151,9 @@ public class FormService
      */
     public void saveForm( Form form, FormResponse formResponse )
     {
-        boolean quotaGuarded = ( form.getMaxNumberResponse( ) != 0 || form.isOneResponseByUser( ) )
-                && ( formResponse.getId( ) == 0 || !formResponse.isFromSave( ) );
+        // A new response, or a draft submitted now, counts in the quotas; the update of a submitted response does not
+        boolean bNewFinalResponse = ( formResponse.getId( ) <= 0 ) || formResponse.isFromSave( );
+        boolean quotaGuarded = ( form.getMaxNumberResponse( ) != 0 || form.isOneResponseByUser( ) ) && bNewFinalResponse;
 
         if ( quotaGuarded )
         {
