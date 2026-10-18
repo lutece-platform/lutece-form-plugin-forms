@@ -414,7 +414,10 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         }
 
         _group = _group != null ? _group : new Group( );
+        // The group to update is the one of the view, whose form has been checked: the posted data cannot change it
+        int nIdGroup = _group.getId( );
         populate( _group, request );
+        _group.setId( nIdGroup );
 
         if ( !validateGroup( ) )
         {

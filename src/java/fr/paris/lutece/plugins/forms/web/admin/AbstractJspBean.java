@@ -45,6 +45,7 @@ import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
+import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
@@ -248,6 +249,24 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
         }
     }
     
+    /**
+     * Check that the user can modify every form referenced by the parameters of the request (form, step, question, group, display, entry, transition,
+     * control), whatever the parameter the controller reads
+     * 
+     * @param request
+     *            the request
+     * @throws AccessDeniedException
+     *             if the user is not authorized on one of the forms
+     */
+    protected void checkUserPermissionOnReferencedForms( HttpServletRequest request ) throws AccessDeniedException
+    {
+        for ( int nIdForm : ReferencedFormsResolver.getReferencedFormIds( request ) )
+        {
+            checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nIdForm ), FormsResourceIdService.PERMISSION_MODIFY, request, null );
+            checkWorkgroupPermission( nIdForm, request );
+        }
+    }
+
     /**
      * Get a security token for the given action
      * 

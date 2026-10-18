@@ -40,6 +40,7 @@ import java.util.Map;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -127,6 +128,17 @@ public class FormTransitionJspBean extends AbstractJspBean
     private Transition _transition;
     private Step _step;
     private Form _form;
+
+    /**
+     * {@inheritDoc} The user must be allowed to modify every form referenced by the request, whatever the view or action
+     */
+    @Override
+    public String processController( HttpServletRequest request, HttpServletResponse response ) throws AccessDeniedException
+    {
+        checkUserPermissionOnReferencedForms( request );
+
+        return super.processController( request, response );
+    }
 
     /**
      * Build the Manage View
@@ -338,7 +350,7 @@ public class FormTransitionJspBean extends AbstractJspBean
         }
         populate( _transition, request, getLocale( ) );
 
-        if ( detectCircularTransition( _transition ) || !validateTransition( _transition ) )
+        if ( !isTransitionInOneForm( _transition ) || detectCircularTransition( _transition ) || !validateTransition( _transition ) )
         {
             return false;
         }
@@ -358,14 +370,17 @@ public class FormTransitionJspBean extends AbstractJspBean
     @Action( ACTION_MODIFY_TRANSITION )
     public String doModifyTransition( HttpServletRequest request )
     {
-        if ( !retrieveTransitionFromRequest( request ) )
+        if ( !retrieveTransitionFromRequest( request ) || _transition == null )
         {
             return redirectToViewManageForm( request );
         }
 
+        // The transition to update is the one of the request, whose form has been checked: the posted data cannot change it
+        int nIdTransition = _transition.getId( );
         populate( _transition, request, getLocale( ) );
+        _transition.setId( nIdTransition );
 
-        if ( detectCircularTransition( _transition ) || !validateTransition( _transition ) )
+        if ( !isTransitionInOneForm( _transition ) || detectCircularTransition( _transition ) || !validateTransition( _transition ) )
         {
             return redirect( request, VIEW_MODIFY_TRANSITION, FormsConstants.PARAMETER_ID_STEP, _transition.getFromStep( ),
                     FormsConstants.PARAMETER_ID_TRANSITION, _transition.getId( ) );
@@ -380,7 +395,9 @@ public class FormTransitionJspBean extends AbstractJspBean
 
     private boolean detectCircularTransition( Transition newTransition )
     {
-        List<Transition> listTransitions = TransitionHome.getTransitionsListFromForm( _form.getId( ) );
+        // The form of the transition, not the one of the session that may not be set (transition created from a fresh session)
+        Step stepFrom = StepHome.findByPrimaryKey( newTransition.getFromStep( ) );
+        List<Transition> listTransitions = TransitionHome.getTransitionsListFromForm( stepFrom.getIdForm( ) );
         listTransitions.add( newTransition );
 
         DetectCycleGraphBuilder builder = DetectCycleGraphBuilder.builder( );
@@ -493,7 +510,7 @@ public class FormTransitionJspBean extends AbstractJspBean
             return redirectToViewManageForm( request );
         }
 
-        if ( !retrieveTransitionFromRequest( request ) )
+        if ( !retrieveTransitionFromRequest( request ) || _transition == null || _step == null )
         {
             return redirectToViewManageForm( request );
         }
@@ -573,6 +590,21 @@ public class FormTransitionJspBean extends AbstractJspBean
      * 
      * @return True if the transition is valid
      */
+    /**
+     * Check that the steps of the transition exist and belong to the same form
+     * 
+     * @param transition
+     *            the transition
+     * @return true if both steps belong to the same form, false otherwise
+     */
+    private boolean isTransitionInOneForm( Transition transition )
+    {
+        Step stepFrom = StepHome.findByPrimaryKey( transition.getFromStep( ) );
+        Step stepNext = StepHome.findByPrimaryKey( transition.getNextStep( ) );
+
+        return ( stepFrom != null ) && ( stepNext != null ) && ( stepFrom.getIdForm( ) == stepNext.getIdForm( ) );
+    }
+
     private boolean validateTransition( Transition transition )
     {
         return validateBean( transition, TRANSITION_VALIDATION_ATTRIBUTES_PREFIX );

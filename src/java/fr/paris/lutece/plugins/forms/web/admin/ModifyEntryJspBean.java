@@ -42,6 +42,7 @@ import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -164,6 +165,17 @@ public class ModifyEntryJspBean extends AbstractJspBean
     private SecurityTokenService _securityTokenService;
 
     /* -------- Fields management ---------- */
+
+    /**
+     * {@inheritDoc} The user must be allowed to modify every form referenced by the request, whatever the view or action
+     */
+    @Override
+    public String processController( HttpServletRequest request, HttpServletResponse response ) throws AccessDeniedException
+    {
+        checkUserPermissionOnReferencedForms( request );
+
+        return super.processController( request, response );
+    }
 
     /**
      * Gets the field creation page

@@ -42,6 +42,7 @@ import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import fr.paris.lutece.portal.service.util.AppPathService;
 import org.apache.commons.collections.CollectionUtils;
@@ -145,6 +146,17 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     @Inject
     private FormDisplayService _formDisplayService;
     private Form _form;
+
+    /**
+     * {@inheritDoc} The user must be allowed to modify every form referenced by the request, whatever the view or action
+     */
+    @Override
+    public String processController( HttpServletRequest request, HttpServletResponse response ) throws AccessDeniedException
+    {
+        checkUserPermissionOnReferencedForms( request );
+
+        return super.processController( request, response );
+    }
 
     /**
      * Build the Manage View
