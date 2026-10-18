@@ -120,6 +120,7 @@ public class FormXPage extends MVCApplication
     private static final String MESSAGE_WARNING_INACTIVE_STATE_BYPASSED = "forms.warning.inactive.state.bypassed";
     private static final String MESSAGE_ERROR_TOKEN = "Invalid security token";
     private static final String MESSAGE_WARNING_INVALID_FORM_SESSION = "forms.warning.invalid.form.session";
+    private static final String MESSAGE_ERROR_BACKUP_NEEDS_AUTHENTICATION = "forms.error.form.backupNeedsAuthentication";
 
     // Views
     private static final String VIEW_LIST_FORM = "listForm";
@@ -1068,7 +1069,17 @@ public class FormXPage extends MVCApplication
             return getStepView(  request );
         }
 
-        LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
+        LuteceUser user = SecurityService.isAuthenticationEnable( ) ? SecurityService.getInstance( ).getRegisteredUser( request ) : null;
+        if ( user == null )
+        {
+            // A draft belongs to a signed in user: an anonymous user is asked to sign in (the answers stay in the session)
+            if ( SecurityService.isAuthenticationEnable( ) )
+            {
+                throw new UserNotSignedException( );
+            }
+            addError( MESSAGE_ERROR_BACKUP_NEEDS_AUTHENTICATION, getLocale( request ) );
+            return getStepView( request );
+        }
         FormResponse formResponse = _formResponseManager.getFormResponse( );
         formResponse.setGuid( user.getName( ) );
         formResponse.setUpdateStatus(Timestamp.valueOf(LocalDateTime.now()));
