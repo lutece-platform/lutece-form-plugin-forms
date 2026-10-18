@@ -1,3 +1,5 @@
+<#-- The token of the action called by a form action URL (duplicateForm...), checked by the core as _csrftoken -->
+<#function linkToken url><#if url?contains('action=')><#return '&_csrftoken=' + (link_tokens[url?keep_after('action=')?keep_before('&')])!''></#if><#return ''></#function>
 <@pageContainer>
     <@pageColumn>
 		<@pageHeader title='#i18n{forms.manageForm.title}' titleClass='mb-3'>
@@ -37,7 +39,7 @@
                         <#if hasFormActionUpdate>
                             <#list form.actions as action>
                                 <#if action.permission=='MODIFY'>
-                                    <@link href='${action.url}&id_form=${form.id}' title='${form.title}'>
+                                    <@link href='${action.url}&id_form=${form.id}${linkToken(action.url)}' title='${form.title}'>
                                         <@h level=3 class='mb-0 searchable text-truncate text-wrap' params='title="${form.title}"'>
                                             <#if !form.active><@icon style='times' class='text-danger fs-2' title='#i18n{portal.util.labelDisabled}' />	<#else>	<@icon style='check' class='text-success fs-2' title='#i18n{portal.util.labelEnabled}' /></#if>
                                             ${form.title}
@@ -96,8 +98,7 @@
                                             <#assign color = 'primary' />
                                         </#if>
                                         <#assign separator = action.url?contains("?")?then("&", "?")>
-                                        <#assign linkToken><#if action.url?contains('action=')>&_csrftoken=${(link_tokens[action.url?keep_after('action=')?keep_before('&')])!}</#if></#assign>
-                                        <@link href='${action.url}${separator}id_form=${form.id}&token=${token}${linkToken}' label='' class='dropdown-item ${perm}'> <@span class='text-${color}'><@icon style=action.iconUrl! /> ${action.name!}</@span></@link>
+                                        <@link href='${action.url}${separator}id_form=${form.id}&token=${token}${linkToken(action.url)}' label='' class='dropdown-item ${perm}'> <@span class='text-${color}'><@icon style=action.iconUrl! /> ${action.name!}</@span></@link>
                                     </#list>
                                 </#if>
                                 <#if form.active>

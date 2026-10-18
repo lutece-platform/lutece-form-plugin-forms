@@ -1,3 +1,5 @@
+<#-- The token of the action called by a form action URL (duplicateForm...), checked by the core as _csrftoken -->
+<#function linkToken url><#if url?contains('action=')><#return '&_csrftoken=' + (link_tokens[url?keep_after('action=')?keep_before('&')])!''></#if><#return ''></#function>
 <@adminDashboardWidget title='#i18n{forms.dashboard.formList}' id='forms_dashboard' url=url>
 <#if form_list?size gt 0>
 <@listGroup class='list-group-flush py-0' >
@@ -16,10 +18,10 @@
 					<#if form.actions?exists>
 						<#list form.actions as action>
 						<#if action.permission=='PARAM'>
-							<@aButton class='btn-sm me-1' href='${action.url}&id_form=${form.id}' title='${action.name!}' hideTitle=['all'] buttonIcon='${action.iconUrl}' />
+							<@aButton class='btn-sm me-1' href='${action.url}&id_form=${form.id}${linkToken(action.url)}' title='${action.name!}' hideTitle=['all'] buttonIcon='${action.iconUrl}' />
 						</#if>
 						<#if action.permission=='VIEW_FORM_RESPONSE' && form.currentNumberResponse gt 0>
-							<@aButton class='btn-sm' href='${action.url}&id_form=${form.id}' title='${action.name!}' hideTitle=['all'] buttonIcon='${action.iconUrl}' />
+							<@aButton class='btn-sm' href='${action.url}&id_form=${form.id}${linkToken(action.url)}' title='${action.name!}' hideTitle=['all'] buttonIcon='${action.iconUrl}' />
 						</#if>
 						</#list>
 					</#if>
@@ -38,7 +40,7 @@
 									<#assign actionUrl="jsp/admin/plugins/forms/ManageForms.jsp?view=modifyForm&id_form=${form.id}"/>
 								</#if>
                                 <#assign separator = action.url?contains("?")?then("&", "?")>
-								<@link href='${actionUrl}${separator}id_form=${form.id}' class='dropdown-item ${actionClass}'><@icon style=action.iconUrl! /> ${action.name!}</@link>
+								<@link href='${actionUrl}${separator}id_form=${form.id}&token=${token!}${linkToken(actionUrl)}' class='dropdown-item ${actionClass}'><@icon style=action.iconUrl! /> ${action.name!}</@link>
 							</#list>
 						</#if>
 						<@link href='jsp/admin/plugins/forms/ManageFormResponse.jsp?view=stepView&id_form=${form.id}&init=true' label='#i18n{forms.manageForm.BOLink.label}' class='dropdown-item' />
@@ -69,7 +71,7 @@
 					<#list form.actions?filter( action -> ( action.description=='forms.action.modify.description'  ) ) as action>
 						<#assign params='' />
 						<#assign class='' />
-						<@aButton href='${action.url}&id_form=${form.id}' title='${action.name} ${action.description}' hideTitle=['all'] class=class color=color buttonIcon=action.iconUrl  params=params />
+						<@aButton href='${action.url}&id_form=${form.id}${linkToken(action.url)}' title='${action.name} ${action.description}' hideTitle=['all'] class=class color=color buttonIcon=action.iconUrl  params=params />
 					</#list>
 				</#if>
 				<@aButton href='jsp/admin/plugins/forms/ManageFormResponse.jsp?view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.BOLink.label} ${form.title}' buttonIcon='text-plus' hideTitle=['all'] class='btn btn-outline-secondary d-none d-xl-inline-block' />

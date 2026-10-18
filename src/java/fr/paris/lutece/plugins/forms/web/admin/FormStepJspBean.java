@@ -251,7 +251,8 @@ public class FormStepJspBean extends AbstractJspBean
         model.put( MARK_LOCALE, request.getLocale( ) );
         model.put( MARK_TEMPLATE_PROVIDER, _stepService.getStepTemplateProvider( ) );
         model.put( SecurityTokenService.MARK_TOKEN, _securityTokenService.getToken( request, ACTION_CREATE_STEP ) );
-        putLinkTokens( request, model, ACTION_DUPLICATE_STEP );
+        // The links of the steps between them (AJAX) call the creation of a transition of FormTransitionJspBean
+        putLinkTokens( request, model, ACTION_DUPLICATE_STEP, FormTransitionJspBean.ACTION_CREATE_TRANSITION );
         model.put( FormsConstants.MARK_PROD_URL, AppPathService.getProdUrl( request ) );
 
         setPageTitleProperty( EMPTY_STRING );

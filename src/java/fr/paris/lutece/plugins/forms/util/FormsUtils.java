@@ -34,13 +34,22 @@
 package fr.paris.lutece.plugins.forms.util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.StringUtils;
+
 import fr.paris.lutece.plugins.forms.business.Form;
+import fr.paris.lutece.plugins.forms.business.FormAction;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.Transition;
+import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.util.CryptoService;
 
 /**
@@ -48,9 +57,38 @@ import fr.paris.lutece.portal.service.util.CryptoService;
  */
 public class FormsUtils
 {
+    private static final String PARAMETER_ACTION_URL = "action=";
+
     private FormsUtils( )
     {
         // utility class
+    }
+
+    /**
+     * Get a security token for each action of a controller called by the URL of a form action (duplicateForm...). The core checks the token of an
+     * action called by a link as the parameter _csrftoken.
+     * 
+     * @param request
+     *            the request
+     * @param listFormAction
+     *            the form actions displayed
+     * @return the tokens by action
+     */
+    public static Map<String, String> getFormActionLinkTokens( HttpServletRequest request, List<FormAction> listFormAction )
+    {
+        SecurityTokenService securityTokenService = CDI.current( ).select( SecurityTokenService.class ).get( );
+        Map<String, String> mapLinkTokens = new HashMap<>( );
+
+        for ( FormAction formAction : listFormAction )
+        {
+            String strAction = StringUtils.substringBefore( StringUtils.substringAfter( formAction.getUrl( ), PARAMETER_ACTION_URL ), "&" );
+            if ( StringUtils.isNotEmpty( strAction ) && !mapLinkTokens.containsKey( strAction ) )
+            {
+                mapLinkTokens.put( strAction, securityTokenService.getToken( request, strAction ) );
+            }
+        }
+
+        return mapLinkTokens;
     }
 
     /**

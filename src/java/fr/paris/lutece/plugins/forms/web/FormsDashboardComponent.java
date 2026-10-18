@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import jakarta.enterprise.inject.spi.CDI;
 import jakarta.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.portal.service.util.AppPathService;
@@ -52,6 +53,7 @@ import fr.paris.lutece.plugins.forms.business.FormActionHome;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.util.FormsUtils;
+import fr.paris.lutece.plugins.forms.web.admin.FormJspBean;
 import fr.paris.lutece.portal.business.right.Right;
 import fr.paris.lutece.portal.business.right.RightHome;
 import fr.paris.lutece.portal.business.user.AdminUser;
@@ -60,6 +62,7 @@ import fr.paris.lutece.portal.service.database.AppConnectionService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
+import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 import fr.paris.lutece.util.html.HtmlTemplate;
@@ -71,6 +74,7 @@ public class FormsDashboardComponent extends DashboardComponent
     // MARKS
     private static final String MARK_URL = "url";
     private static final String MARK_FORM_LIST = "form_list";
+    private static final String MARK_LINK_TOKENS = "link_tokens";
 
     // PARAMETERS
     private static final String PARAMETER_PLUGIN_NAME = "plugin_name";
@@ -120,6 +124,10 @@ public class FormsDashboardComponent extends DashboardComponent
         model.put( FormsConstants.MARK_TIMESTAMP, strTimespamp );
         model.put( FormsConstants.MARK_INACTIVEBYPASSTOKENS, formIdToToken );
         model.put( FormsConstants.MARK_PROD_URL, AppPathService.getProdUrl( request ) );
+        // The form actions calling an action of a controller (duplicateForm...) carry the tokens it checks
+        model.put( MARK_LINK_TOKENS, FormsUtils.getFormActionLinkTokens( request, listFormActions ) );
+        model.put( SecurityTokenService.MARK_TOKEN,
+                CDI.current( ).select( SecurityTokenService.class ).get( ).getToken( request, FormJspBean.ACTION_CREATE_FORM ) );
 
         HtmlTemplate t = AppTemplateService.getTemplate( TEMPLATE_DASHBOARD, user.getLocale( ), model );
 

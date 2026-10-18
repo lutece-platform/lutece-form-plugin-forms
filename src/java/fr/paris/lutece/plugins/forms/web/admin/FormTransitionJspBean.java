@@ -104,7 +104,7 @@ public class FormTransitionJspBean extends AbstractJspBean
     private static final String VIEW_CONFIRM_REMOVE_TRANSITION = "confirmRemoveTransition";
 
     // Actions
-    private static final String ACTION_CREATE_TRANSITION = "createTransition";
+    public static final String ACTION_CREATE_TRANSITION = "createTransition";
     private static final String ACTION_CREATE_TRANSITION_AND_CONTROL = "createTransitionAndControl";
     private static final String ACTION_MODIFY_TRANSITION = "modifyTransition";
     private static final String ACTION_REMOVE_TRANSITION = "removeTransition";

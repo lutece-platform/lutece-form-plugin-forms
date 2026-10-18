@@ -407,6 +407,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         model.put( MARK_ADD_FILE_COMMENT, true );
         model.put( MARK_ACTION, JSP_MANAGE_QUESTIONS );
         model.put( FormsConstants.MARK_BREADCRUMBS, AppTemplateService.getTemplate( TEMPLATE_BREADCRUMBS, request.getLocale( ), model ).getHtml( ) );
+        putLinkTokens( request, model, ACTION_REMOVE_FILE );
         
         for( Field field : FieldHome.getFieldListByIdEntry( _question.getEntry().getIdEntry( ) ) )
         {

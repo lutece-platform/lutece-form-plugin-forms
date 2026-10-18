@@ -239,13 +239,14 @@ document.addEventListener('mouseover', function(e) {
 document.addEventListener('mouseup', function(e) {
 	if ( isLinking && e.target.closest('[id^="step_"]') != null ) {
 		const stepToken=encodeURIComponent('${token}')
+		const transitionToken=encodeURIComponent('${(link_tokens.createTransition)!}')
 		let endStepId = e.target.closest('[id^="step_"]').id.replace('step_', '');
 		if (startStepId && endStepId && startStepId !== endStepId) {
 			// AJAX call to define the link
 			fetch('jsp/admin/plugins/forms/ManageTransitions.jsp', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-				<#noparse>body: `action_createTransition=&id_step=${startStepId}&fromStep=${startStepId}&id_step=${endStepId}`</#noparse>
+				<#noparse>body: `action_createTransition=&id_step=${startStepId}&fromStep=${startStepId}&nextStep=${endStepId}&_csrftoken=${transitionToken}`</#noparse>
 			}).then(() => location.reload());
 		}
 	}

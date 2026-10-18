@@ -56,7 +56,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.util.ReferenceItem;
 import jakarta.servlet.http.HttpServletResponse;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -191,11 +190,10 @@ public class FormJspBean extends AbstractJspBean
     private static final String VIEW_MANAGE_QUESTION_PUBLICATION = "manageQuestionPublication";
 
     // Actions
-    private static final String ACTION_CREATE_FORM = "createForm";
+    public static final String ACTION_CREATE_FORM = "createForm";
     public static final String ACTION_MODIFY_FORM = "modifyForm";
     private static final String ACTION_REMOVE_FORM = "removeForm";
     private static final String ACTION_DUPLICATE_FORM = "duplicateForm";
-    private static final String PARAMETER_ACTION_PREFIX_URL = "action=";
     private static final String ACTION_EXPORT_FORM = "doExportJson";
     private static final String ACTION_IMPORT_FORM = "doImportJson";
     private static final String ACTION_MODIFY_FORM_QUESTIONS_PUBLICATION = "modifyFormQuestions";
@@ -307,8 +305,7 @@ public class FormJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_INACTIVEBYPASSTOKENS, formIdToToken );
         model.put( SecurityTokenService.MARK_TOKEN, _securityTokenService.getToken( request, ACTION_CREATE_FORM ) );
         // The form actions that call an action of a controller by a link (duplicateForm...) carry its token
-        putLinkTokens( request, model, listFormActions.stream( ).map( formAction -> getActionOfUrl( formAction.getUrl( ) ) )
-                .filter( StringUtils::isNotEmpty ).distinct( ).toArray( String [ ]::new ) );
+        model.put( MARK_LINK_TOKENS, FormsUtils.getFormActionLinkTokens( request, listFormActions ) );
         model.put( MARK_FORMS_WITH_FINAL_STEP, formsWithFinalStep );
         model.put( FormsConstants.MARK_PROD_URL, AppPathService.getProdUrl( request ) );
         setPageTitleProperty( EMPTY_STRING );
@@ -460,18 +457,6 @@ public class FormJspBean extends AbstractJspBean
 
         return redirect( request, strMessageUrl );
 
-    }
-
-    /**
-     * Get the MVC action called by an URL
-     * 
-     * @param strUrl
-     *            the URL
-     * @return the value of its parameter action, or an empty string
-     */
-    private static String getActionOfUrl( String strUrl )
-    {
-        return StringUtils.substringBefore( StringUtils.substringAfter( strUrl, PARAMETER_ACTION_PREFIX_URL ), "&" );
     }
 
     /**

@@ -10,7 +10,7 @@
 	<#if url_download_bo??>
 	<@div class='d-flex'>
 		<@link href=url_download_bo! title=filename! />
-		<@aButton href='${action}?action=removeFileComment&id_entry=${entry.idEntry}' hideTitle=['all'] color='danger' buttonIcon='times' />
+		<@aButton href='${action}?action=removeFileComment&id_entry=${entry.idEntry}&_csrftoken=${(link_tokens.removeFileComment)!}' hideTitle=['all'] color='danger' buttonIcon='times' />
 	</@div>
 	</#if>
 </@formGroup>
