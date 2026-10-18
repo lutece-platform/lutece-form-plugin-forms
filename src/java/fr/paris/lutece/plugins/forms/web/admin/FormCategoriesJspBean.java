@@ -200,7 +200,7 @@ public class FormCategoriesJspBean extends AbstractJspBean
      *            the request
      * @return the HTML code to confirm
      */
-    @Action( value = ACTION_CONFIRM_REMOVE_CATEGORY, securityTokenAction = ACTION_REMOVE_CATEGORY )
+    @Action( value = ACTION_CONFIRM_REMOVE_CATEGORY, securityTokenAction = ACTION_REMOVE_CATEGORY, securityTokenDisabled = true )
     public String getConfirmRemoveCategory( HttpServletRequest request )
     {
         String strIdCategory = request.getParameter( PARAMETER_ID_CATEGORY );

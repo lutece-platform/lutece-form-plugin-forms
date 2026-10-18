@@ -196,6 +196,7 @@ public class FormTransitionJspBean extends AbstractJspBean
         model.put( MARK_TRANSITION_LIST, listTransition );
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( FormsConstants.MARK_FORM, _form );
+        putLinkTokens( request, model, ACTION_DO_MOVE_PRIORITY_UP, ACTION_DO_MOVE_PRIORITY_DOWN );
 
         setPageTitleProperty( EMPTY_STRING );
 

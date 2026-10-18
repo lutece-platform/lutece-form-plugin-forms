@@ -147,6 +147,8 @@ public class FormExportJspBean extends AbstractJspBean
         model.put( MARK_EXPORT_CONFIG_LIST, ExportServiceManager.getInstance( ).createReferenceListExportConfig( formToBeModified, getLocale( ) ) );
         model.put( MARK_ACTIVE_TAB_PANNEL_2, Boolean.parseBoolean( request.getParameter( PARAMETER_ACTIVE_TAB_PANNEL_2 )));
         model.put( SecurityTokenService.MARK_TOKEN, _securityTokenService.getToken( request, ACTION_CREATE_EXPORT_CONFIG ) );
+        putLinkTokens( request, model, ACTION_MODIFY_EXPORTABLE_QUESTION, ACTION_MODIFY_EXPORT_DISPLAY_ORDER, ACTION_SET_DEFAULT_ORDER,
+                ACTION_MOVE_UP_EXPORT_CONFIG, ACTION_MOVE_DOWN_EXPORT_CONFIG );
 
         if (CollectionUtils.isNotEmpty(listQuestions))
         {

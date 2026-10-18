@@ -195,6 +195,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         model.put( FormsConstants.MARK_ENTRY_TYPE_REF_LIST, FormsEntryUtils.initListEntryType( ) );
         model.put( FormsConstants.MARK_ID_PARENT, _nIdParentSelected );
         model.put( FormsConstants.MARK_PROD_URL, AppPathService.getProdUrl( request ) );
+        putLinkTokens( request, model, ACTION_DUPLICATE_QUESTION );
 
         setPageTitleProperty( StringUtils.EMPTY );
         HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_MANAGE_QUESTIONS, locale, model );

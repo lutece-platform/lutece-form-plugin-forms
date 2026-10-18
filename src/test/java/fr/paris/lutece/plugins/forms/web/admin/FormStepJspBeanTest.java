@@ -48,6 +48,7 @@ import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.portal.business.rbac.RBACRole;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
+import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.test.AdminUserUtils;
 import fr.paris.lutece.test.LuteceTestCase;
 import fr.paris.lutece.test.mocks.MockHttpServletRequest;
@@ -62,9 +63,12 @@ public class FormStepJspBeanTest extends LuteceTestCase
     private static final String ROLE_FORMS_MANAGER = "forms_manager";
     // The "final" checkbox of the step creation form
     private static final Pattern CHECKBOX_FINAL = Pattern.compile( "<input[^>]*\\bid=\"final\"[^>]*>" );
+    private static final Pattern LINK_DUPLICATE_STEP = Pattern.compile( "action=duplicateStep&(?:amp;)?id_step=\\d+&(?:amp;)?token=[^&]+&(?:amp;)?_csrftoken=([^'\"&]+)" );
 
     @Inject
     private FormStepJspBean _bean;
+    @Inject
+    private SecurityTokenService _securityTokenService;
     private Form _form;
 
     @BeforeEach
@@ -121,6 +125,27 @@ public class FormStepJspBeanTest extends LuteceTestCase
         _bean.getGraphicalView( newRequest( ) );
 
         assertTrue( isFinalChecked( _bean.getCreateStep( newRequest( ) ) ) );
+    }
+
+    /**
+     * The link that duplicates a step is an action called by GET: it carries a token of this action, that the core checks as _csrftoken
+     */
+    @Test
+    public void testDuplicateStepLinkCarriesItsToken( ) throws AccessDeniedException
+    {
+        Step initial = new Step( );
+        initial.setTitle( "Initial" );
+        initial.setDescription( "" );
+        initial.setIdForm( _form.getId( ) );
+        initial.setInitial( true );
+        StepHome.create( initial );
+
+        MockHttpServletRequest request = newRequest( );
+        String strHtml = _bean.getManageSteps( request );
+
+        Matcher matcher = LINK_DUPLICATE_STEP.matcher( strHtml );
+        assertTrue( matcher.find( ), "The page must contain the link that duplicates the step" );
+        assertTrue( _securityTokenService.consumeToken( request, "duplicateStep", matcher.group( 1 ) ) );
     }
 
     private MockHttpServletRequest newRequest( )

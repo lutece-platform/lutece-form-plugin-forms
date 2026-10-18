@@ -192,6 +192,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
 
         // Build the base model for the page of the details of a FormResponse
         Map<String, Object> model = buildFormResponseDetailsModel( request, formResponse );
+        putLinkTokens( request, model, ACTION_PROCESS_ACTION );
 
         // Build the model of all ModelProcessors
         FormResponseViewModelProcessorFactory formResponseViewModelProcessorFactory = new FormResponseViewModelProcessorFactory( );

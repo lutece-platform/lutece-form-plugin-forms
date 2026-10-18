@@ -96,7 +96,8 @@
                                             <#assign color = 'primary' />
                                         </#if>
                                         <#assign separator = action.url?contains("?")?then("&", "?")>
-                                        <@link href='${action.url}${separator}id_form=${form.id}&token=${token}' label='' class='dropdown-item ${perm}'> <@span class='text-${color}'><@icon style=action.iconUrl! /> ${action.name!}</@span></@link>
+                                        <#assign linkToken><#if action.url?contains('action=')>&_csrftoken=${(link_tokens[action.url?keep_after('action=')?keep_before('&')])!}</#if></#assign>
+                                        <@link href='${action.url}${separator}id_form=${form.id}&token=${token}${linkToken}' label='' class='dropdown-item ${perm}'> <@span class='text-${color}'><@icon style=action.iconUrl! /> ${action.name!}</@span></@link>
                                     </#list>
                                 </#if>
                                 <#if form.active>

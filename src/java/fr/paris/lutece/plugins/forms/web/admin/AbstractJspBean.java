@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.web.admin;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -81,6 +82,11 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
     // Markers
     private static final String MARK_PAGINATOR = "paginator";
     private static final String MARK_NB_ITEMS_PER_PAGE = "nb_items_per_page";
+
+    /**
+     * Mark of the security tokens of the actions called by a link (GET), by action: the core checks them as the parameter _csrftoken
+     */
+    protected static final String MARK_LINK_TOKENS = "link_tokens";
 
     // Variables
     protected String _strCurrentPageIndex;
@@ -265,6 +271,27 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
             checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nIdForm ), FormsResourceIdService.PERMISSION_MODIFY, request, null );
             checkWorkgroupPermission( nIdForm, request );
         }
+    }
+
+    /**
+     * Put in the model a security token for each action called by a link of the page (GET). The core checks the token of an action whatever the HTTP
+     * method: the link carries it as the parameter _csrftoken. Call it after getModel( ), which copies the token of the page.
+     * 
+     * @param request
+     *            the request
+     * @param model
+     *            the model of the page
+     * @param actions
+     *            the actions called by a link of the page (the securityTokenAction of the action when it declares one)
+     */
+    protected void putLinkTokens( HttpServletRequest request, Map<String, Object> model, String... actions )
+    {
+        Map<String, String> mapLinkTokens = new HashMap<>( );
+        for ( String strAction : actions )
+        {
+            mapLinkTokens.put( strAction, _securityTokenService.getToken( request, strAction ) );
+        }
+        model.put( MARK_LINK_TOKENS, mapLinkTokens );
     }
 
     /**

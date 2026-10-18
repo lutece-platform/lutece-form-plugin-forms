@@ -90,8 +90,8 @@
                                         </@li>
                                         <@li> 
                                             <@btnGroup>
-                                                <#if transition_index gt 0><@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?action=moveUpPriority&id_step=${step.id}&id_transition=${transition.id}' title='#i18n{forms.manage_transitions.action.moveUpPriorityTransition}' hideTitle=['xs','sm','md','lg'] buttonIcon='chevron-up' /></#if>
-                                                <#if transition_has_next><@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?action=moveDownPriority&id_step=${step.id}&id_transition=${transition.id}' title='#i18n{forms.manage_transitions.action.moveDownPriorityTransition}' hideTitle=['xs','sm','md','lg'] buttonIcon='chevron-down' iconPosition='right' /></#if>
+                                                <#if transition_index gt 0><@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?action=moveUpPriority&id_step=${step.id}&id_transition=${transition.id}&_csrftoken=${(link_tokens.moveUpPriority)!}' title='#i18n{forms.manage_transitions.action.moveUpPriorityTransition}' hideTitle=['xs','sm','md','lg'] buttonIcon='chevron-up' /></#if>
+                                                <#if transition_has_next><@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?action=moveDownPriority&id_step=${step.id}&id_transition=${transition.id}&_csrftoken=${(link_tokens.moveDownPriority)!}' title='#i18n{forms.manage_transitions.action.moveDownPriorityTransition}' hideTitle=['xs','sm','md','lg'] buttonIcon='chevron-down' iconPosition='right' /></#if>
                                             </@btnGroup>
                                         </@li>
                                         <@li><@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=confirmRemoveTransition&id_transition=${transition.id}' title='#i18n{forms.manage_transitions.action.removeTransition}' hideTitle=['xs','sm','md','lg'] buttonIcon='trash' color='danger' /> </@li>
