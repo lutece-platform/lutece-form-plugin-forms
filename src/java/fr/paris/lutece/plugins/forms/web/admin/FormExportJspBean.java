@@ -37,6 +37,8 @@ import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
+import fr.paris.lutece.plugins.forms.business.StepHome;
+import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.export.FormExportConfig;
 import fr.paris.lutece.plugins.forms.business.export.FormExportConfigHome;
 import fr.paris.lutece.plugins.forms.export.ExportServiceManager;
@@ -157,8 +159,6 @@ public class FormExportJspBean extends AbstractJspBean
 
     @Action( ACTION_MODIFY_EXPORT_DISPLAY_ORDER )
     public String doModifyExportDisplayOrder(HttpServletRequest request) throws AccessDeniedException {
-        Integer nIdForm = Integer.parseInt(request.getParameter(FormsConstants.PARAMETER_ID_FORM));
-        Integer nIdQuestion = Integer.parseInt(request.getParameter(FormsConstants.PARAMETER_ID_QUESTION));
         int nId = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
 
         if ( nId == FormsConstants.DEFAULT_ID_VALUE )
@@ -167,8 +167,14 @@ public class FormExportJspBean extends AbstractJspBean
         }
         checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_CREATE_EXPORT_CONFIG );
 
-        Integer nOrderToSet = Integer.parseInt(request.getParameter(FormsConstants.PARAMETER_EXPORT_DISPLAY_ORDER));
-        Question questionToChangeOrder = QuestionHome.findByPrimaryKey(nIdQuestion);
+        Integer nIdForm = nId;
+        Question questionToChangeOrder = findQuestionOfForm( request, nId );
+        int nOrderToSet = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_EXPORT_DISPLAY_ORDER ), FormsConstants.DEFAULT_ID_VALUE );
+
+        if ( questionToChangeOrder == null || nOrderToSet == FormsConstants.DEFAULT_ID_VALUE )
+        {
+            throw new AccessDeniedException( UNAUTHORIZED );
+        }
         Integer nCurrentOrder = questionToChangeOrder.getExportDisplayOrder();
         List<Question> questionList = QuestionHome.getListQuestionByIdForm(nIdForm);
         questionToChangeOrder.setExportDisplayOrder(nOrderToSet);
@@ -194,7 +200,6 @@ public class FormExportJspBean extends AbstractJspBean
 
     @Action( ACTION_MODIFY_EXPORTABLE_QUESTION )
     public String doModifyExportableQuestion (HttpServletRequest request)  throws AccessDeniedException {
-        Integer nIdForm = Integer.parseInt(request.getParameter(FormsConstants.PARAMETER_ID_FORM));
         int nId = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
 
         if ( nId == FormsConstants.DEFAULT_ID_VALUE )
@@ -202,10 +207,14 @@ public class FormExportJspBean extends AbstractJspBean
             return redirect( request, VIEW_MANAGE_FORMS );
         }
         checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_CREATE_EXPORT_CONFIG );
+        Integer nIdForm = nId;
 
         if( request.getParameter(FormsConstants.PARAMETER_ID_QUESTION) != null ) {
-        Integer nIdQuestion = Integer.parseInt(request.getParameter(FormsConstants.PARAMETER_ID_QUESTION));
-        Question questionToUpdate = QuestionHome.findByPrimaryKey(nIdQuestion);
+        Question questionToUpdate = findQuestionOfForm( request, nId );
+        if ( questionToUpdate == null )
+        {
+            throw new AccessDeniedException( UNAUTHORIZED );
+        }
         Entry entry = questionToUpdate.getEntry( );
         if( request.getParameter("exportable_pdf") != null ) {
             boolean bIsExportablePdf = Boolean.parseBoolean(request.getParameter("exportable_pdf"));
@@ -233,6 +242,24 @@ public class FormExportJspBean extends AbstractJspBean
         mapParameters.put(PARAMETER_ACTIVE_TAB_PANNEL_2, "true");
 
         return redirect(request, VIEW_MANAGE_EXPORT, mapParameters);
+    }
+
+    /**
+     * Find the question given by the request parameter, if it belongs to the form whose permission has been checked
+     * 
+     * @param request
+     *            the request
+     * @param nIdForm
+     *            the form
+     * @return the question, or null if the parameter is not a question of the form
+     */
+    private Question findQuestionOfForm( HttpServletRequest request, int nIdForm )
+    {
+        int nIdQuestion = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_QUESTION ), FormsConstants.DEFAULT_ID_VALUE );
+        Question question = ( nIdQuestion != FormsConstants.DEFAULT_ID_VALUE ) ? QuestionHome.findByPrimaryKey( nIdQuestion ) : null;
+        Step step = ( question != null ) ? StepHome.findByPrimaryKey( question.getIdStep( ) ) : null;
+
+        return ( step != null && step.getIdForm( ) == nIdForm ) ? question : null;
     }
 
     @Action( value = ACTION_CREATE_EXPORT_CONFIG, securityTokenDisabled = true )
