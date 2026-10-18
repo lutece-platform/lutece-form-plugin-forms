@@ -214,6 +214,13 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
 
         _entry.setIdResource( _step.getIdForm( ) );
         _entry.setResourceType( Form.RESOURCE_TYPE );
+
+        // Check the code before creating the entry: an entry created with a duplicate code would be left without question
+        if ( StringUtils.isNotEmpty( _entry.getCode( ) ) && checkCodeAlreadyExists( _entry.getCode( ), _step.getIdForm( ), INTEGER_MINUS_ONE ) )
+        {
+            throw new CodeAlreadyExistsException( _entry.getCode( ) );
+        }
+
         getFormDatabaseService( ).createEntry( _entry );
 
         // If the entry code is empty, provide a new one
