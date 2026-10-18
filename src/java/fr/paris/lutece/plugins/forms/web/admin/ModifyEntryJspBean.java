@@ -39,18 +39,24 @@ import java.util.Locale;
 import java.util.Map;
 
 import jakarta.enterprise.context.SessionScoped;
+import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.forms.business.Form;
+import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
+import fr.paris.lutece.portal.service.admin.AccessDeniedException;
+import fr.paris.lutece.portal.service.security.SecurityTokenService;
+import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.util.FormsEntryUtils;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
@@ -141,6 +147,11 @@ public class ModifyEntryJspBean extends AbstractJspBean
     private static final String ACTION_MOVE_FIELD_UP = "moveFieldUp";
     private static final String ACTION_MOVE_FIELD_DOWN = "moveFieldDown";
 
+    /**
+     * Key of the security token of the links that move a field, put in the page of the question by {@link AbstractFormQuestionJspBean}
+     */
+    public static final String TOKEN_ACTION_MOVE_FIELD = "moveField";
+
     // other constants
     private static final String EMPTY_STRING = "";
     private static final String ANCHOR_LIST = "list";
@@ -148,6 +159,9 @@ public class ModifyEntryJspBean extends AbstractJspBean
     private int _nIdEntry = -1;
     private Step _step;
     private Question _question;
+
+    @Inject
+    private SecurityTokenService _securityTokenService;
 
     /* -------- Fields management ---------- */
 
@@ -170,8 +184,7 @@ public class ModifyEntryJspBean extends AbstractJspBean
         _nIdEntry = _question.getIdEntry( );
         Entry entry = EntryHome.findByPrimaryKey( _nIdEntry );
 
-        if ( ( ( _nIdEntry == -1 ) || ( entry == null ) ) || !RBACService.isAuthorized( Form.RESOURCE_TYPE, EMPTY_STRING + _step.getIdForm( ),
-                FormsResourceIdService.PERMISSION_MODIFY, (User) getUser( ) ) )
+        if ( ( ( _nIdEntry == -1 ) || ( entry == null ) ) || !isUserAuthorizedOnForm( request ) )
         {
             return getJspManageQuestions( request, _step.getId( ) );
         }
@@ -186,6 +199,7 @@ public class ModifyEntryJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_FIELD, field );
         model.put( FormsConstants.MARK_QUESTION, _question );
         model.put( FormsConstants.MARK_ID_ENTRY, _nIdEntry );
+        model.put( SecurityTokenService.MARK_TOKEN, _securityTokenService.getToken( request, ACTION_CREATE_FIELD ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_CREATE_FIELD, locale, model );
         setPageTitleProperty( PROPERTY_CREATE_FIELD_TITLE );
@@ -208,44 +222,16 @@ public class ModifyEntryJspBean extends AbstractJspBean
             return redirectToViewManageForm( request );
         }
 
-        if ( request.getParameter( FormsConstants.PARAMETER_ID_FIELD ) == null )
-        {
-            return redirectToViewManageForm( request );
-        }
+        Field field = findFieldOfQuestion( request );
 
-        String strIdField = request.getParameter( FormsConstants.PARAMETER_ID_FIELD );
-
-        int nIdField = -1;
-
-        try
-        {
-            nIdField = Integer.parseInt( strIdField );
-        }
-        catch( NumberFormatException ne )
-        {
-            AppLogService.error( ne );
-
-            return getJspManageQuestions( request, _step.getId( ) );
-        }
-
-        Field field = null;
-
-        if ( nIdField != -1 )
-        {
-            field = FieldHome.findByPrimaryKey( nIdField );
-        }
-
-        if ( ( field == null ) || !RBACService.isAuthorized( Form.RESOURCE_TYPE, EMPTY_STRING + _step.getIdForm( ), FormsResourceIdService.PERMISSION_MODIFY,
-                (User) getUser( ) ) )
+        if ( ( field == null ) || !isUserAuthorizedOnForm( request ) )
         {
             return getJspManageQuestions( request, _step.getId( ) );
         }
-        
-        Entry entry = null;
 
         _nIdEntry = _question.getIdEntry( );
 
-        entry = EntryHome.findByPrimaryKey( field.getParentEntry( ).getIdEntry( ) );
+        Entry entry = EntryHome.findByPrimaryKey( _nIdEntry );
 
         field.setParentEntry( entry );
         
@@ -256,6 +242,7 @@ public class ModifyEntryJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_FIELD, field );
         model.put( FormsConstants.MARK_QUESTION, _question );
         model.put( FormsConstants.MARK_ID_ENTRY, _nIdEntry );
+        model.put( SecurityTokenService.MARK_TOKEN, _securityTokenService.getToken( request, ACTION_MODIFY_FIELD ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MODIFY_FIELD, locale, model );
 
@@ -270,21 +257,23 @@ public class ModifyEntryJspBean extends AbstractJspBean
      * @param request
      *            The HTTP request
      * @return The URL to go after performing the action
+     * @throws AccessDeniedException
+     *             if the security token is invalid or if the user is not authorized on the form of the question
      */
     @Action( ACTION_CREATE_FIELD )
-    public String doCreateField( HttpServletRequest request )
+    public String doCreateField( HttpServletRequest request ) throws AccessDeniedException
     {
-
-        String strIdEntry = request.getParameter( FormsConstants.PARAMETER_ID_ENTRY );
         MultipartHttpServletRequest multipartRequest = ( MultipartHttpServletRequest ) request;
         MultipartItem imageFileItem = multipartRequest.getFile( FormsConstants.PARAMETER_ILLUSTRATION_IMAGE );
-        
-        _nIdEntry = Integer.parseInt( strIdEntry );
 
         if ( !updateStepAndQuestion( request ) )
         {
             return redirectToViewManageForm( request );
         }
+        checkTokenAndAuthorization( request, ACTION_CREATE_FIELD );
+
+        // The field is created on the entry of the question, whose form has been checked
+        _nIdEntry = _question.getIdEntry( );
 
         Entry entry = new Entry( );
         entry.setIdEntry( _nIdEntry );
@@ -326,39 +315,25 @@ public class ModifyEntryJspBean extends AbstractJspBean
      * @param request
      *            The HTTP request
      * @return The URL to go after performing the action
+     * @throws AccessDeniedException
+     *             if the security token is invalid or if the user is not authorized on the form of the question
      */
     @Action( ACTION_MODIFY_FIELD )
-    public String doModifyField( HttpServletRequest request )
+    public String doModifyField( HttpServletRequest request ) throws AccessDeniedException
     {
-        Field field = null;
-
-        String strIdField = request.getParameter( FormsConstants.PARAMETER_ID_FIELD );
         MultipartHttpServletRequest multipartRequest = ( MultipartHttpServletRequest ) request;
         MultipartItem imageFileItem = multipartRequest.getFile( FormsConstants.PARAMETER_ILLUSTRATION_IMAGE );
-        int nIdField = -1;
 
         if ( !updateStepAndQuestion( request ) )
         {
             return redirectToViewManageForm( request );
         }
+        checkTokenAndAuthorization( request, ACTION_MODIFY_FIELD );
 
-        if ( strIdField != null )
+        Field field = findFieldOfQuestion( request );
+
+        if ( field != null )
         {
-            try
-            {
-                nIdField = Integer.parseInt( strIdField );
-            }
-            catch( NumberFormatException ne )
-            {
-                AppLogService.error( ne );
-            }
-        }
-
-        if ( ( nIdField != -1 ) || !RBACService.isAuthorized( Form.RESOURCE_TYPE, EMPTY_STRING + _step.getIdForm( ), FormsResourceIdService.PERMISSION_MODIFY,
-                (User) getUser( ) ) )
-        {
-            field = FieldHome.findByPrimaryKey( nIdField );
-
             String strError = getFieldData( request, field );
 
             if ( strError != null )
@@ -408,17 +383,17 @@ public class ModifyEntryJspBean extends AbstractJspBean
             return redirectToViewManageForm( request );
         }
 
-        if ( ( request.getParameter( FormsConstants.PARAMETER_ID_FIELD ) == null ) || !RBACService.isAuthorized( Form.RESOURCE_TYPE,
-                EMPTY_STRING + _step.getIdForm( ), FormsResourceIdService.PERMISSION_MODIFY, (User) getUser( ) ) )
+        Field field = findFieldOfQuestion( request );
+
+        if ( ( field == null ) || !isUserAuthorizedOnForm( request ) )
         {
             return redirectToViewManageForm( request );
         }
 
-        String strIdField = request.getParameter( FormsConstants.PARAMETER_ID_FIELD );
-
         UrlItem url = new UrlItem( getActionUrl( ACTION_REMOVE_FIELD ) );
-        url.addParameter( FormsConstants.PARAMETER_ID_FIELD, strIdField );
+        url.addParameter( FormsConstants.PARAMETER_ID_FIELD, field.getIdField( ) );
         url.addParameter( FormsConstants.PARAMETER_ID_QUESTION, _question.getId( ) );
+        url.addParameter( SecurityTokenService.PARAMETER_TOKEN, _securityTokenService.getToken( request, ACTION_REMOVE_FIELD ) );
 
         String strMessageUrl = AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_FIELD, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
 
@@ -431,38 +406,23 @@ public class ModifyEntryJspBean extends AbstractJspBean
      * @param request
      *            The HTTP request
      * @return The URL to go after performing the action
+     * @throws AccessDeniedException
+     *             if the security token is invalid or if the user is not authorized on the form of the question
      */
     @Action( ACTION_REMOVE_FIELD )
-    public String doRemoveField( HttpServletRequest request )
+    public String doRemoveField( HttpServletRequest request ) throws AccessDeniedException
     {
-        String strIdField = request.getParameter( FormsConstants.PARAMETER_ID_FIELD );
-        int nIdField = -1;
-
         if ( !updateStepAndQuestion( request ) )
         {
             return redirectToViewManageForm( request );
         }
+        checkTokenAndAuthorization( request, ACTION_REMOVE_FIELD );
 
-        if ( ( strIdField == null ) || !RBACService.isAuthorized( Form.RESOURCE_TYPE, EMPTY_STRING + _step.getIdForm( ),
-                FormsResourceIdService.PERMISSION_MODIFY, (User) getUser( ) ) )
-        {
-            return redirectToViewManageForm( request );
-        }
+        Field field = findFieldOfQuestion( request );
 
-        try
+        if ( field != null )
         {
-            nIdField = Integer.parseInt( strIdField );
-        }
-        catch( NumberFormatException ne )
-        {
-            AppLogService.error( ne );
-
-            return redirectToViewManageForm( request );
-        }
-
-        if ( nIdField != -1 )
-        {
-            FieldHome.remove( nIdField );
+            FieldHome.remove( field.getIdField( ) );
 
             return redirectToViewModifyQuestion( request, _step.getId( ), _question.getId( ) );
         }
@@ -476,9 +436,11 @@ public class ModifyEntryJspBean extends AbstractJspBean
      * @param request
      *            The request
      * @return The next URL to redirect to
+     * @throws AccessDeniedException
+     *             if the security token is invalid or if the user is not authorized on the form of the question
      */
     @Action( ACTION_MOVE_FIELD_UP )
-    public String doMoveFieldUp( HttpServletRequest request )
+    public String doMoveFieldUp( HttpServletRequest request ) throws AccessDeniedException
     {
         return doMoveField( request, true );
     }
@@ -489,9 +451,11 @@ public class ModifyEntryJspBean extends AbstractJspBean
      * @param request
      *            The request
      * @return The next URL to redirect to
+     * @throws AccessDeniedException
+     *             if the security token is invalid or if the user is not authorized on the form of the question
      */
     @Action( ACTION_MOVE_FIELD_DOWN )
-    public String doMoveFieldDown( HttpServletRequest request )
+    public String doMoveFieldDown( HttpServletRequest request ) throws AccessDeniedException
     {
         return doMoveField( request, false );
     }
@@ -504,40 +468,27 @@ public class ModifyEntryJspBean extends AbstractJspBean
      * @param bMoveUp
      *            True to move the field up, false to move it down
      * @return The next URL to redirect to
+     * @throws AccessDeniedException
+     *             if the security token is invalid or if the user is not authorized on the form of the question
      */
-    private String doMoveField( HttpServletRequest request, boolean bMoveUp )
+    private String doMoveField( HttpServletRequest request, boolean bMoveUp ) throws AccessDeniedException
     {
-        List<Field> listField;
-        Field field;
-        String strIdField = request.getParameter( FormsConstants.PARAMETER_ID_FIELD );
-        int nIdField = -1;
-
-        if ( ( request.getParameter( FormsConstants.PARAMETER_ID_FIELD ) == null ) )
-        {
-            return redirectToViewManageForm( request );
-        }
-
         if ( !updateStepAndQuestion( request ) )
         {
             return redirectToViewManageForm( request );
         }
+        checkTokenAndAuthorization( request, TOKEN_ACTION_MOVE_FIELD );
 
-        try
-        {
-            nIdField = Integer.parseInt( strIdField );
-        }
-        catch( NumberFormatException ne )
-        {
-            AppLogService.error( ne );
+        Field field = findFieldOfQuestion( request );
 
-            return redirectToViewManageForm( request );
+        if ( field == null )
+        {
+            return redirectToViewModifyQuestion( request, _step.getId( ), _question.getId( ) );
         }
 
-        field = FieldHome.findByPrimaryKey( nIdField );
+        List<Field> listField = FieldHome.getFieldListByIdEntry( field.getParentEntry( ).getIdEntry( ) );
 
-        listField = FieldHome.getFieldListByIdEntry( field.getParentEntry( ).getIdEntry( ) );
-
-        int nIndexField = FormsEntryUtils.getIndexFieldInTheFieldList( nIdField, listField );
+        int nIndexField = FormsEntryUtils.getIndexFieldInTheFieldList( field.getIdField( ), listField );
 
         if ( nIndexField != -1 && ( ( bMoveUp && nIndexField > 0 ) || ( !bMoveUp && nIndexField < ( listField.size( ) - 1 ) ) ) )
         {
@@ -657,16 +608,11 @@ public class ModifyEntryJspBean extends AbstractJspBean
      */
     private boolean updateStepAndQuestion( HttpServletRequest request )
     {
-        boolean bSuccess = true;
-        int nIdStep = -1;
-        int nIdQuestion = -1;
+        int nIdQuestion = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_QUESTION ), NumberUtils.INTEGER_MINUS_ONE );
 
-        String strIdQuestion = request.getParameter( FormsConstants.PARAMETER_ID_QUESTION );
-        nIdQuestion = Integer.parseInt( strIdQuestion );
-
-        if ( StringUtils.isBlank( strIdQuestion ) || ( nIdQuestion == -1 ) )
+        if ( nIdQuestion == NumberUtils.INTEGER_MINUS_ONE )
         {
-            bSuccess = false;
+            return false;
         }
 
         if ( ( _question == null ) || ( _question.getId( ) != nIdQuestion ) )
@@ -674,17 +620,76 @@ public class ModifyEntryJspBean extends AbstractJspBean
             _question = QuestionHome.findByPrimaryKey( nIdQuestion );
         }
 
-        nIdStep = _question.getIdStep( );
-        if ( nIdStep == -1 )
+        if ( _question == null )
         {
-            bSuccess = false;
+            return false;
         }
+
+        int nIdStep = _question.getIdStep( );
 
         if ( ( _step == null ) || ( _step.getId( ) != nIdStep ) )
         {
             _step = StepHome.findByPrimaryKey( nIdStep );
         }
 
-        return bSuccess;
+        return _step != null;
+    }
+
+    /**
+     * Find the field given by the request parameter, if it belongs to the entry of the current question
+     * 
+     * @param request
+     *            the request
+     * @return the field, or null if the parameter is not a field of the entry of the question
+     */
+    private Field findFieldOfQuestion( HttpServletRequest request )
+    {
+        int nIdField = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FIELD ), NumberUtils.INTEGER_MINUS_ONE );
+        Field field = ( nIdField != NumberUtils.INTEGER_MINUS_ONE ) ? FieldHome.findByPrimaryKey( nIdField ) : null;
+
+        if ( field == null || field.getParentEntry( ) == null || field.getParentEntry( ).getIdEntry( ) != _question.getIdEntry( ) )
+        {
+            return null;
+        }
+
+        return field;
+    }
+
+    /**
+     * Check if the user can modify the form of the current step: the permission on the form and its workgroup
+     * 
+     * @param request
+     *            the request
+     * @return true if the user is authorized, false otherwise
+     */
+    private boolean isUserAuthorizedOnForm( HttpServletRequest request )
+    {
+        Form form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
+
+        return ( form != null )
+                && RBACService.isAuthorized( Form.RESOURCE_TYPE, EMPTY_STRING + form.getId( ), FormsResourceIdService.PERMISSION_MODIFY, (User) getUser( ) )
+                && AdminWorkgroupService.isAuthorized( form, (User) getUser( ) );
+    }
+
+    /**
+     * Check the security token of the action and the authorization of the user on the form of the current step
+     * 
+     * @param request
+     *            the request
+     * @param strTokenAction
+     *            the action of the security token
+     * @throws AccessDeniedException
+     *             if the token is invalid or if the user is not authorized on the form
+     */
+    private void checkTokenAndAuthorization( HttpServletRequest request, String strTokenAction ) throws AccessDeniedException
+    {
+        if ( !_securityTokenService.validate( request, strTokenAction ) )
+        {
+            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
+        }
+        if ( !isUserAuthorizedOnForm( request ) )
+        {
+            throw new AccessDeniedException( UNAUTHORIZED );
+        }
     }
 }

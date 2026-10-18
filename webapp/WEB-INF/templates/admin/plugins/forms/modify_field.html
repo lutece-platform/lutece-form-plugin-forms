@@ -6,6 +6,7 @@
 		<@input type='hidden' name='id_step' value='${question.idStep}' />
 		<@input type='hidden' name='id_question' value='${question.id}' />
 		<@input type='hidden' name='id_entry' value='${id_entry}' />
+		<@input type='hidden' name='token' value='${token}' />
 		<@fieldSet legend='#i18n{forms.modifyField.title} : "${field.parentEntry.title}"' hideLegend=['all']>
 			<@input type='hidden' name='id_field' value='${field.idField}' />
 			<@formGroup labelFor='title' labelKey='#i18n{forms.createField.labelTitle}' mandatory=true>

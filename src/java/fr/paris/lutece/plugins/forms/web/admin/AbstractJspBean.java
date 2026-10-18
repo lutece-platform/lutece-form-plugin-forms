@@ -248,6 +248,20 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
         }
     }
     
+    /**
+     * Get a security token for the given action
+     * 
+     * @param request
+     *            the request
+     * @param strAction
+     *            the action
+     * @return the token
+     */
+    protected String getSecurityToken( HttpServletRequest request, String strAction )
+    {
+        return _securityTokenService.getToken( request, strAction );
+    }
+
     protected void checkWorkgroupPermission(int nIdForm, HttpServletRequest request) throws AccessDeniedException
     {
     	Form form = FormHome.findByPrimaryKey(nIdForm);

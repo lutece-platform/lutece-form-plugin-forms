@@ -112,6 +112,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
     protected static final String MARK_LOCALE = "locale";
     private static final String MARK_LIST = "list";
     private static final String MARK_ENTRY_TYPE_SERVICE = "entryTypeService";
+    private static final String MARK_FIELD_TOKEN = "field_token";
     private static final String MARK_LIST_PARAM_DEFAULT_VALUES = "list_param_default_values";
     private static final String MARK_GROUP_VALIDATED = "groupValidated";
     private static final String MARK_STEP_VALIDATED = "stepValidated";
@@ -588,6 +589,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
         model.put( MARK_LOCALE, AdminUserService.getLocale( request ).getLanguage( ) );
         model.put( MARK_ENTRY_TYPE_SERVICE, EntryTypeServiceManager.getEntryTypeService( _entry ) );
+        model.put( MARK_FIELD_TOKEN, getSecurityToken( request, ModifyEntryJspBean.TOKEN_ACTION_MOVE_FIELD ) );
 
         if ( Boolean.TRUE.equals( _entry.getEntryType( ).getComment( ) ) )
         {
