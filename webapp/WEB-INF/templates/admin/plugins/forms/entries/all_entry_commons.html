@@ -11,6 +11,7 @@ function changeVisilityConfirmFieldTitle(){
 	}
 } 
 changeVisilityConfirmFieldTitle();
+document.getElementById("confirm_field").addEventListener("change", changeVisilityConfirmFieldTitle);
 </script>
 </#macro>
 <#macro refListSelect>
@@ -29,6 +30,7 @@ function changeVisibilityRefListSelect(){
 	}
 } 
 changeVisibilityRefListSelect();
+document.getElementById("use_ref_list").addEventListener("change", changeVisibilityRefListSelect);
 </script>
 </#macro>
 <#macro anonymPattern>
@@ -44,6 +46,7 @@ function changeVisilityAnonymizePattern(){
 	}
 } 
 changeVisilityAnonymizePattern();
+document.getElementById("anonymizable").addEventListener("change", changeVisilityAnonymizePattern);
 </script>
 </#macro>
 <#macro toDayDate>
@@ -59,6 +62,7 @@ function changeVisibilityDateValue(){
 	}
 }
 changeVisibilityDateValue();
+document.getElementById("default_today_date").addEventListener("change", changeVisibilityDateValue);
 </script>
 </#macro>
 <#macro editFields options=false hasTitle=true required=true onlyInBack=true autocomplete=false datalist=[] comments=true helpMessage=true labelErrorMessage=false image=false editor=false confirm=false anonym=false exportable=false exportablePdf=false refList='' placeholder='' maxSize=0 defaultValue='' multipart=false >
@@ -124,7 +128,7 @@ ${breadcrumb_template}
 					<#assign checkedValue = false />
 					<#assign useRefListFieldId ="" />
 				</#if>
-					<@checkBox orientation='switch' labelFor='use_ref_list' labelKey='#i18n{forms.create_entry.labelUseRefList}' name='use_ref_list' id='use_ref_list' value='1' params='onchange="javascript:changeVisibilityRefListSelect();"' checked=checkedValue />
+					<@checkBox orientation='switch' labelFor='use_ref_list' labelKey='#i18n{forms.create_entry.labelUseRefList}' name='use_ref_list' id='use_ref_list' value='1' checked=checkedValue />
 				</@formGroup>
 				<@formGroup rows=2 labelFor='select_ref_list' id='use_ref_list_group' labelKey='#i18n{forms.create_entry.labelUseRefListSelect}' >
 					<@select name='select_ref_list' items=ref_list_select default_value=useRefListFieldId />
@@ -176,7 +180,7 @@ ${breadcrumb_template}
 						<#assign checkedValue = false />
 						<#assign confirmFieldTitle ="" />
 					</#if>
-					<@checkBox orientation='switch' labelFor='confirm_field' labelKey='#i18n{forms.create_entry.labelConfirmField}' name='confirm_field' id='confirm_field' value='1' params='onchange="javascript:changeVisilityConfirmFieldTitle();"' checked=checkedValue />
+					<@checkBox orientation='switch' labelFor='confirm_field' labelKey='#i18n{forms.create_entry.labelConfirmField}' name='confirm_field' id='confirm_field' value='1' checked=checkedValue />
 				</@formGroup>
 				<@formGroup rows=2 labelFor='confirm_field_title' id="confirm_field_title_group" labelKey='#i18n{forms.create_entry.labelConfirmFieldTitle}'>
 					<@input type='text' name='confirm_field_title' id='confirm_field_title' value='${confirmFieldTitle!}'  maxlength=255 />
@@ -208,7 +212,7 @@ ${breadcrumb_template}
 						<#assign checkedValue = false />
 						<#assign anonPattern ="" />
 					</#if>
-					<@checkBox orientation='switch' labelFor='anonymizable' labelKey='#i18n{forms.create_entry.labelAnonymizable}' name='anonymizable' id='anonymizable' value='1' params='onchange="javascript:changeVisilityAnonymizePattern();"' checked=checkedValue />
+					<@checkBox orientation='switch' labelFor='anonymizable' labelKey='#i18n{forms.create_entry.labelAnonymizable}' name='anonymizable' id='anonymizable' value='1' checked=checkedValue />
 				</@formGroup>
 				<@formGroup rows=2 labelFor='anonymize_pattern' id="anonymize_pattern_group" labelKey='#i18n{forms.create_entry.labelAnonymizePattern}' helpKey='${anonymization_help_message}' >
 					<@input type='text' name='anonymize_pattern' id='anonymize_pattern' value='${anonPattern!}' maxlength=255 />

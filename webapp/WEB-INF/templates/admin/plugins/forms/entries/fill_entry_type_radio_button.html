@@ -1,10 +1,3 @@
-<#assign hide="">
-<#list entry.fields as field>
-<#if field.conditionalQuestions?exists&&field.conditionalQuestions?size!=0>
-<#assign idName = 'div'>
-<#if entry_iteration_number?has_content && entry_iteration_number gt 0><#assign idName = 'div_nIt' + entry_iteration_number + '_'></#if>
-<#assign idConditional = idName + field.idField><#assign hide=hide+"hideId(${idConditional}.id);"></#if>
-</#list>
 <@formGroup class='${entry.CSSClass!}' labelFor='form${entry.idEntry}' labelKey='${entry.title}' helpKey=entry.helpMessage!'' id='form${entry.idEntry}' mandatory=entry.mandatory htmlRequired=false  rows=2>
 <#assign inLine = entry.fieldInLine>
 <#list entry.fields as field>
@@ -20,12 +13,8 @@
 		<#else>
 			<#if field.defaultValue><#assign isChecked = true /></#if>
 		</#if>
-		<#assign params>onclick="${hide} <#if field.conditionalQuestions?exists&&field.conditionalQuestions?size!=0 >
-		<#assign idName = 'div'>
-		<#if entry_iteration_number?has_content && entry_iteration_number gt 0><#assign idName = 'div_nIt' + entry_iteration_number + '_'></#if>
-		<#assign idConditional = idName + field.idField>displayId(${idConditional}.id);</#if>"</#assign>
 		<#if !field.noDisplayTitle><#assign labelKey = field.title /><#else><#assign labelKey = '' /></#if>
-      <@radioButton orientation=orientation labelFor='${idName}_${field.idField}' labelKey=labelKey title='${field.comment!}' id='${idName}_${field.idField}' name='${idName}' value='${field.idField}' checked=isChecked params=params >
+      <@radioButton orientation=orientation labelFor='${idName}_${field.idField}' labelKey=labelKey title='${field.comment!}' id='${idName}_${field.idField}' name='${idName}' value='${field.idField}' checked=isChecked >
       <#if field.fileImage.url??><@img url=field.fileImage.url alt=field.title class='img-thumbnail thumbnail-md mx-2' /></#if>
       </@radioButton>
 		  <#if field.conditionalQuestions?exists&&field.conditionalQuestions?size!=0 && !inLine>
