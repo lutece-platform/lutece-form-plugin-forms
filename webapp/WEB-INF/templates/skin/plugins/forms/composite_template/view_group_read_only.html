@@ -1,7 +1,8 @@
 <@cTpl>
 <#assign classDisp = ( id_display?? )?then( 'display_field_' + ( id_display )?string, '' ) + ( group.title?contains('- hidden') )?then( 'visually-hidden', '' ) />
 <#assign param = { 'hidden': id_display?? } />
-<@chItem class='pt-m'><@cInline class=classDisp params=param>${group.title!} </@cInline>
+<#-- The group title structures the summary: a heading under the h2 of its step -->
+<@chItem class='pt-m'><@cTitle level=3 class='h5 ${classDisp}' params=param>${group.title!}</@cTitle>
 <#list groupContentByIteration as iterationNumber, groupContent >
 <#if groupContent?size != 0>
 <@chList class='step-group-children'>	

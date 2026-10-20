@@ -1,20 +1,22 @@
 <@cTpl>
 <#if list_steps?has_content && list_steps?size gt 1>
-<@cBlock type='nav' class='breadcrumb-forms-vertical breadcrumb-forms-stepper' params={"aria-label": "breadcrumb"}>
+<@cBlock type='nav' class='breadcrumb-forms-vertical breadcrumb-forms-stepper' params={"aria-label": i18n( 'forms.breadcrumb.stepper.label' )}>
     <@chList type='o' class='breadcrumb-forms-stepper__list'>
         <#list list_steps as step>
             <#if step?has_next>
                 <@chItem class='breadcrumb-forms-step breadcrumb-forms-step--done'>
                     <@cBtn noclass=true class='breadcrumb-forms-step__row' type='submit' label='' params={"name": "action_doGoToStep", "value": ( step?index?c ), "formnovalidate": true}>
                         <@cInline class='breadcrumb-forms-step__label'>${step.title!}</@cInline>
-                        <@cInline class='breadcrumb-forms-step__marker'><@cIcon name='check' title='#i18n{portal.theme.labelStepDone}' /></@cInline>
+                        <@cInline class='breadcrumb-forms-step__marker'><@cIcon name='check' params={ 'aria-hidden': 'true' } /></@cInline>
+                        <@cInline class='visually-hidden'>${i18n( 'forms.breadcrumb.step.done', ( step?index + 1 )?c, list_steps?size?c )}</@cInline>
                     </@cBtn>
                 </@chItem>
             <#else>
                 <@chItem class='breadcrumb-forms-step breadcrumb-forms-step--current' params={"aria-current": "step"}>
                     <@cBlock class='breadcrumb-forms-step__row'>
                         <@cInline class='breadcrumb-forms-step__label'>${step.title!}</@cInline>
-                        <@cInline class='breadcrumb-forms-step__marker'>${(step?index + 1)?c}</@cInline>
+                        <@cInline class='visually-hidden'>${i18n( 'forms.breadcrumb.step.current', ( step?index + 1 )?c, list_steps?size?c )}</@cInline>
+                        <@cInline class='breadcrumb-forms-step__marker' params={ 'aria-hidden': 'true' }>${(step?index + 1)?c}</@cInline>
                     </@cBlock>
                 </@chItem>
             </#if>
