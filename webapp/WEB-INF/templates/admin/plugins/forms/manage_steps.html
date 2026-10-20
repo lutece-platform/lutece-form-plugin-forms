@@ -83,7 +83,7 @@
 					<@manageFeature id='step-list'>
 						<#list step_list as step>
 						<#assign stepTitle=step.title!/>
-						<@manageFeatureItem id='step_${step.id}' valign='baseline' >
+						<@manageFeatureItem id='step_${step.id}' valign='baseline' params='data-title="${stepTitle?html}"'>
 							<@manageFeatureItemColumn valign='baseline' flex=false cols='12 col-md-10' auto=true>
 								<@link class='searchable' href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title=''>
 									<@h level=3>
@@ -207,7 +207,7 @@ new LuteceSearchList( searchInput, searchElementList, {
 const stepsArray = [];
 document.querySelectorAll('[id^="step_"]').forEach(step => {
 	const idStep = step.id.replace('step_', '');
-	const stepTitle = step.querySelector('.card-header .card-title').textContent.trim();
+	const stepTitle = ( step.dataset.title || '' ).trim();
 	stepsArray.push({ id: idStep, title: stepTitle });
 });
 sessionStorage.setItem('stepList${form.id}', JSON.stringify(stepsArray));
@@ -222,7 +222,7 @@ document.querySelectorAll('[id^="step_"]').forEach(card => {
 		document.body.style.cursor = 'crosshair';
 	});
 	card.addEventListener('dblclick', function(e) {
-		const cardTitleLink = this.querySelector('.card-header .card-title a');
+		const cardTitleLink = this.querySelector('a.searchable');
 		if (cardTitleLink) {
 			window.location.href = cardTitleLink.href;
 		}
