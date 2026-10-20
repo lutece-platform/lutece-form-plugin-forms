@@ -5,7 +5,7 @@
     <@pageColumn>
 		<@pageHeader title='#i18n{forms.manageForm.title}' titleClass='mb-3'>
 			<@tform type='inline'>
-				<@formGroup labelFor='plugin_type' labelKey='#i18n{portal.system.manage_plugins.buttonFilter}' hideLabel=['all'] formStyle='inline'>
+				<@formGroup labelFor='search_forms' labelKey='#i18n{portal.system.manage_plugins.buttonFilter}' hideLabel=['all'] formStyle='inline'>
 					<@inputGroup>
 						<@input type='text' name='search_forms' id='search_forms' placeHolder='#i18n{portal.system.manage_plugins.buttonFilter}' autoComplete="off" />
 						<@button color='primary' title='#i18n{portal.system.manage_plugins.buttonFilter}' buttonIcon='filter' hideTitle=['all'] />
@@ -14,20 +14,26 @@
 			</@tform>
 			<#if permission_create_forms>
                 <@aButton href='jsp/admin/plugins/forms/ManageForms.jsp?view=createForm' buttonIcon='plus' title='#i18n{forms.manageForm.buttonAdd}' hideTitle=['xs','sm','md'] class='card-header-icon' color='primary' />
-                <@offcanvas id="import-json" title="#i18n{forms.manageForm.buttonImport}" position="end" btnTitle="#i18n{forms.manageForm.buttonImport}" btnIcon="upload" hideTitle=['xs','sm','md'] btnClass='text-truncate'>
-                <@tform id='importJsonModal' method='post' name='upload_form' action='jsp/admin/plugins/forms/ManageForms.jsp' enctype="multipart/form-data">
-                <@input type="hidden" name="token" value="${token}" />
-                    <@formGroup labelKey='#i18n{forms.manageForm.labelImportFile}' helpKey='#i18n{forms.manageForm.labelImportFile.help}' rows=2>
-                        <@input type='file' name='json_file'/>
-                    </@formGroup>
-                    <@formGroup rows=2>
-                        <@button type='submit' name='action_doImportJson' buttonIcon='check' title='#i18n{portal.admin.message.buttonValidate}' />
-                        <@button type='cancel' name='action_doCancelImport' buttonIcon='times' title='#i18n{portal.admin.message.buttonCancel}' cancel=true />
-                    </@formGroup>
-                </@tform>
-                </@offcanvas>
+                <@button type='button' title='#i18n{forms.manageForm.buttonImport}' buttonIcon='upload' hideTitle=['xs','sm','md'] class='text-truncate' params={ 'data-bs-toggle': 'modal', 'data-bs-target': '#import-json' } />
             </#if>
 		</@pageHeader>
+		<#if permission_create_forms>
+		<@modal id='import-json'>
+			<@modalHeader titleLevel='h2' modalTitle='#i18n{forms.manageForm.buttonImport}' />
+			<@modalBody>
+				<@tform id='importJsonModal' method='post' name='upload_form' action='jsp/admin/plugins/forms/ManageForms.jsp' enctype="multipart/form-data">
+				<@input type="hidden" name="token" value="${token}" />
+					<@formGroup labelKey='#i18n{forms.manageForm.labelImportFile}' labelFor='json_file' helpKey='#i18n{forms.manageForm.labelImportFile.help}' rows=2>
+						<@input type='file' name='json_file' id='json_file' />
+					</@formGroup>
+					<@formGroup rows=2>
+						<@button type='submit' name='action_doImportJson' buttonIcon='check' title='#i18n{portal.admin.message.buttonValidate}' />
+						<@button type='button' color='secondary' buttonIcon='times' title='#i18n{portal.admin.message.buttonCancel}' params={ 'data-bs-dismiss': 'modal' } />
+					</@formGroup>
+				</@tform>
+			</@modalBody>
+		</@modal>
+		</#if>
         <#if form_list?size gt 0>
             <@messages errors=errors infos=infos />
             <@manageFeature id='forms-list'>
@@ -83,11 +89,11 @@
                                 </#if>
                                 </#assign>
                                 <#assign publishBtnType = 'outline-' + ( form.active )?then( 'success', ( form.availabilityStartDate?? &&  form.availabilityStartDate gt .now?datetime )?then( 'info', 'danger' ) ) />
-                                <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&id_form=${form.id}" useIframe=true targetElement="#modify_form" id="publish-${form.id}" title="#i18n{forms.action.publish.name}" btnTitle=publishBtnTitle! btnColor=publishBtnType! btnClass="text-truncate searchable d-inline-block align-self-center forms-mw-400"/>
+                                <@link href='jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&id_form=${form.id}' class='btn btn-${publishBtnType} text-truncate searchable d-inline-block align-self-center forms-mw-400' title='#i18n{forms.action.publish.name}'>${publishBtnTitle}<@span class='visually-hidden'> - #i18n{forms.action.publish.name} ${form.title}</@span></@link>
                             </#if>  
                             <@div class='form-actions d-lg-flex justify-content-end align-items-center flex-wrap py-2'>
-                                <@link href='jsp/admin/plugins/forms/ManageForms.jsp?view=modifyForm&id_form=${form.id}&token=${token}' label='' class='btn btn-primary ms-lg-2'><@icon style='cog' /><@span class='d-block d-md-none'> #i18n{forms.manage_steps.action.modifyStep}</@span></@link>
-                                <@button type='button' class='overflow-visible ms-2' title='#i18n{portal.util.labelActions}' dropdownMenu=true >
+                                <@aButton href='jsp/admin/plugins/forms/ManageForms.jsp?view=modifyForm&id_form=${form.id}&token=${token}' buttonIcon='cog' title='#i18n{portal.util.labelModify}' hideTitle=['md','lg','xl','xxl'] class='ms-lg-2' params={ 'aria-label': '#i18n{portal.util.labelModify} ' + form.title } />
+                                <@button type='button' class='overflow-visible ms-2' title='#i18n{portal.util.labelActions}' dropdownMenu=true params={ 'aria-label': '#i18n{portal.util.labelActions} ' + form.title } >
                                 <#if form.actions?exists>
                                     <#list form.actions as action>
                                         <#assign color='primary' />
@@ -116,9 +122,9 @@
                                     </#if>
                                     </#list>
                                 </#if>
-                                <@link href='${prod_url}jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true${inactiveBypass}' label='' class='dropdown-item' target="_blank"><@span> <@icon style='external-link'/> #i18n{forms.manageForm.FOLink.label}</@span></@link>
+                                <@link href='${prod_url}jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true${inactiveBypass}' label='' class='dropdown-item' target="_blank"><@span> <@icon style='external-link'/> #i18n{forms.manageForm.FOLink.label}<@span class='visually-hidden'> (#i18n{portal.site.portal_footer.newWindow})</@span></@span></@link>
                                 <#if is_active_kibana_forms_plugin>
-                                    <@link href='jsp/admin/plugins/kibana/KibanaDashboard.jsp?view=dashboard&tab=FormsDataSource_${form.id}' label='' class='dropdown-item' target="_blank"><@span> <@icon style='chart-area'/> #i18n{forms.manageForm.stats.label}</@span></@link>
+                                    <@link href='jsp/admin/plugins/kibana/KibanaDashboard.jsp?view=dashboard&tab=FormsDataSource_${form.id}' label='' class='dropdown-item' target="_blank"><@span> <@icon style='chart-area'/> #i18n{forms.manageForm.stats.label}<@span class='visually-hidden'> (#i18n{portal.site.portal_footer.newWindow})</@span></@span></@link>
                                 </#if>
                                 <#if form.breadcrumbName=='forms-breadcrumbaccordion.breadcrumbAccordion'>
                                     <@aButton color='default dropdown-item justify-content-start' href='jsp/admin/plugins/forms/modules/breadcrumbaccordion/ManageBreadcrumbAccordion.jsp?view=modifyBreadcrumb&id_form=${form.id}' title='#i18n{module.forms.breadcrumbaccordion.manage_breadcrumbAccordion.title}' buttonIcon='stack' />
