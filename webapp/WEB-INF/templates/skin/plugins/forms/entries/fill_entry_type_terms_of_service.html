@@ -7,8 +7,9 @@
 <#if list_responses?? && getResponseContainingTheFieldWithCode( list_responses, "agreement" )?? ><#assign responseAgreement = getResponseContainingTheFieldWithCode( list_responses, "agreement" ) ></#if>
 <#list entry.fields as field> <#assign idName = buildEntryName( entry, entry_iteration_number )></#list>  
 <#assign fieldLink = getFieldByCode( entry, "link" ) >
-<#assign helpMsg><#if entry.helpMessage?exists&&entry.helpMessage!=''><@cFormHelp id=idName! label=entry.helpMessage! /></#if></#assign>
+<#assign helpMsg = ( entry.helpMessage?? && entry.helpMessage != '' )?then( ( entry.helpMessage )?string, '' ) />
 <#if errorMsg!=''><#assign labelClass='is-invalid'></#if>
 <#assign tosLabel>${entry.title!} <@cLink label=fieldLink.value href='jsp/site/Portal.jsp?page=formsTermsOfService&id_entry=${entry.idEntry}' target='_blank' class='ps-xs' params={'data-forms-terms-of-service': true, 'rel': 'noopener'}><@cInline class='visually-hidden visually-hidden-focusable'>[#i18n{portal.site.portal_footer.newWindow}]</@cInline></@cLink></#assign>
+<#-- The help is text: the macro writes it with the error and describes the box by them -->
 <@cCheckbox name=name! label=tosLabel id='${name}_${fieldAgreement.idField}' value='${fieldAgreement.idField!}' class='form-check mt-xs' labelClass='custom-tos ${labelClass}' inline=entry.fieldInLine! checked=(responseAgreement?? && responseAgreement.toStringValueResponse="true") helpMsg=helpMsg errorMsg=errorMsg required=true html5Required=false />
 </@cTpl>

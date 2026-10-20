@@ -27,15 +27,20 @@
 <#assign idName=buildEntryName( entry, entry_iteration_number )>
 <#assign placeholder=getFieldValueByCode(entry, "placeholder") ><#assign placeholder = getFieldValueByCode(entry, "placeholder") >
 <#if hasError><#assign invalidClass='is-invalid'><#assign inputClass='form-control is-invalid'></#if>
-<@cField label=entry.title for=idName required=entry.mandatory class=entryCSSClass!?trim >
+<#-- The unit is part of the name of the field: written hidden in its label, and hidden from assistive technologies in the addon -->
+<#assign unitLabel><#if suffix!=''><@cInline class='visually-hidden'>(${suffix})</@cInline></#if></#assign>
+<@cField label=entry.title labelData=unitLabel for=idName required=entry.mandatory class=entryCSSClass!?trim >
 <#if suffix!=''>
-<#if helpMsg!=''><@cFormHelp id='help_${idName!}' label=helpMsg! /></#if>
-<#if errorMsg!=''><@cFormError id='error_${idName!}' label=errorMsg! /></#if>
+<#if helpMsg!=''><@cFormHelp id=idName! label=helpMsg! /></#if>
 <@cInputGroup class=invalidClass>	
 	<#if fieldValue?is_number><#assign fValue=fieldValue?number><#else ><#assign fValue=fieldValue?replace(suffix,'')></#if>
-	<@cInput type='number' class=inputClass name=idName! placeholder=placeholder! required=entry.mandatory! value=fValue?trim! html5Required=false max=fieldMax! min=fieldMin! step=entryStep?number />
-	<@cInputGroupAddonText class='text-muted'>${suffix}</@cInputGroupAddonText> 
+	<#-- '_error' marks the field invalid without writing the message inside the group: the message follows the group,
+	     and the field is described by it and by the help -->
+	<#assign numberDescribedBy = ( ( errorMsg != '' )?then( 'error_' + idName, '' ) + ' ' + ( helpMsg != '' )?then( 'help_' + idName, '' ) )?trim />
+	<@cInput type='number' name=idName! placeholder=placeholder! required=entry.mandatory! value=fValue?trim! html5Required=false max=fieldMax! min=fieldMin! step=entryStep?number errorMsg=( errorMsg!='' )?then( '_error', '' ) params=( numberDescribedBy?has_content )?then( { 'aria-describedby': numberDescribedBy }, { } ) />
+	<@cInputGroupAddonText class='text-muted' params={ 'aria-hidden': 'true' }>${suffix}</@cInputGroupAddonText> 
 </@cInputGroup>	
+<#if errorMsg!=''><@cFormError id=idName! label=errorMsg! /></#if>
 <#else>
 <@cInput type='number' name=idName! placeholder=placeholder! required=entry.mandatory! value=fieldValue! html5Required=false max=fieldMax! min=fieldMin! step=entryStep?number errorMsg=errorMsg! helpMsg=helpMsg! />
 </#if>
