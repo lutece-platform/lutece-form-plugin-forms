@@ -10,16 +10,6 @@ function redirectOnClick( element ){
     }
 }
 
-function resetForm( ){
-	document.getElementById("searched_text").value = '';
-	var filter = '#' + document.getElementById('formsFilter').value,
-		filter_to = filter + '_to',
-		filter_from = filter + '_from';
-	document.querySelector(filter_from).value = '';
-	document.querySelector(filter_to).value = '';
-	document.getElementById("searchForm").submit();
-}
-
 /**
  * Builds the link to a response, with the DOM: neither its label nor the identifier in its URL is read as HTML.
  */
@@ -57,23 +47,30 @@ function setNavButtons( idResp, labelPrev, labelNext ){
 	}
 }
 
+/**
+ * Swaps the icon class of a toggle button: the button carries the name, its icon is decorative.
+ */
+function setToggleIcon( toggle, iconAdded, iconRemoved ){
+	const icon = toggle ? toggle.querySelector( 'i' ) : null;
+	if ( icon ) {
+		icon.classList.add( iconAdded );
+		icon.classList.remove( iconRemoved );
+	}
+}
+
 function setToc( toc, tocBox, tocCompressToggle, tocSideToggle, tocExpandToggle ){
 	if (tocSideToggle && tocBox) {
 		tocSideToggle.addEventListener('click', function() {
 			if (tocBox.style.left === '85%'){
 				tocBox.style.left = '0';
-				tocExpandToggle.classList.add('ti-layout-sidebar-right-expand');
-				tocExpandToggle.classList.remove('ti-layout-sidebar-left-expand');
-				tocSideToggle.classList.add('ti-arrow-right');
-				tocSideToggle.classList.remove('ti-arrow-left');
+				setToggleIcon( tocExpandToggle, 'ti-layout-sidebar-right-expand', 'ti-layout-sidebar-left-expand' );
+				setToggleIcon( tocSideToggle, 'ti-arrow-right', 'ti-arrow-left' );
 				tocExpandToggle.style.left = '0';
 				localStorage.setItem('toc_side_state', '0');
 			} else {
 				tocBox.style.left='85%';
-				tocExpandToggle.classList.add('ti-layout-sidebar-left-expand');
-				tocExpandToggle.classList.remove('ti-layout-sidebar-right-expand');
-				tocSideToggle.classList.add('ti-arrow-left');
-				tocSideToggle.classList.remove('ti-arrow-right');
+				setToggleIcon( tocExpandToggle, 'ti-layout-sidebar-left-expand', 'ti-layout-sidebar-right-expand' );
+				setToggleIcon( tocSideToggle, 'ti-arrow-left', 'ti-arrow-right' );
 				tocExpandToggle.style.left = '98%';
 				localStorage.setItem('toc_side_state', '98%');
 			}
@@ -88,23 +85,29 @@ function setToc( toc, tocBox, tocCompressToggle, tocSideToggle, tocExpandToggle 
 			tocExpandToggle.style.left = tocSide;
 			if (tocSide === '98%'){
 				tocBox.style.left='85%';
-				tocExpandToggle.classList.add('ti-layout-sidebar-left-expand');
-				tocExpandToggle.classList.remove('ti-layout-sidebar-right-expand');
-				tocSideToggle.classList.add('ti-arrow-left');
-				tocSideToggle.classList.remove('ti-arrow-right');
+				setToggleIcon( tocExpandToggle, 'ti-layout-sidebar-left-expand', 'ti-layout-sidebar-right-expand' );
+				setToggleIcon( tocSideToggle, 'ti-arrow-left', 'ti-arrow-right' );
 			} 
 		} 
 
-		tocCompressToggle.addEventListener('click', function() {
+		// The focus follows the toggle that replaces the one hidden, on a click of the user only (not the restored state)
+		tocCompressToggle.addEventListener('click', function( e ) {
 			if (toc) toc.style.display = toc.style.display === 'none' ? '' : 'none';
-			if (tocExpandToggle) tocExpandToggle.style.display = '';
+			tocCompressToggle.setAttribute( 'aria-expanded', toc && toc.style.display !== 'none' ? 'true' : 'false' );
+			if (tocExpandToggle) {
+				tocExpandToggle.style.display = '';
+				tocExpandToggle.setAttribute( 'aria-expanded', 'false' );
+				if ( e.isTrusted ) tocExpandToggle.focus();
+			}
 			localStorage.setItem('toc_multiview_state', 'expand');
 		});
 
 		if (tocExpandToggle) {
-			tocExpandToggle.addEventListener('click', function() {
+			tocExpandToggle.addEventListener('click', function( e ) {
 				if (toc) toc.style.display = '';
 				this.style.display = 'none';
+				tocCompressToggle.setAttribute( 'aria-expanded', 'true' );
+				if ( e.isTrusted ) tocCompressToggle.focus();
 				localStorage.setItem('toc_multiview_state', 'compress');
 			});
 		}
@@ -186,29 +189,16 @@ document.addEventListener('DOMContentLoaded', function() {
 		}
 	}
 	
-	// Set link on whole tr
+	// The click on a whole row is a mouse shortcut: the first cell of each row holds the link to the response
 	const multiFormRows = document.querySelectorAll("#multi-form-list tbody > tr");
 	multiFormRows.forEach(function(row) {
 		row.addEventListener('click', function(e) {
+			if ( e.target.closest( 'a, button, input, select, textarea' ) ) {
+				return;
+			}
 			redirectOnClick(this);
 		});
 	});
-
-	// Add reset button to search text
-	const searchedText = document.getElementById("searched_text");
-	if (searchedText) {
-		if (searchedText.value.trim() !== '') {
-			const searchTextGroup = document.querySelector("#search-text .input-group-btn");
-			if (searchTextGroup) {
-				const btn = document.createElement('button');
-				btn.type = "button";
-				btn.className = "btn btn-danger";
-				btn.innerHTML = '<i class="fa fa-remove"></i>';
-				btn.onclick = resetForm;
-				searchTextGroup.appendChild(btn);
-			}
-		}
-	}
 
 	const headerLink = document.querySelector("section.content-header h1 a");
 	if (headerLink) {

@@ -1,14 +1,19 @@
 ${multiviewmap!''}
-<@table headBody=true>
+<@table headBody=true params={ 'aria-label': '#i18n{forms.multiviewForms.boxTitle}' }>
+<#-- The first column holds a real link to each response: the click on the row is a mouse shortcut only -->
+<@tr>
+<@th scope='col'>#i18n{forms.multiviewForms.responseDetails.response.number}</@th>
 <#if form_response_column_header_template_list?has_content>
 	<#list form_response_column_header_template_list as form_response_column_header_template>
 		${form_response_column_header_template}
 	</#list>
 </#if>
+</@tr>
 <@tableHeadBodySeparator />
 <#if form_response_line_template_list?has_content>
 	<#list form_response_line_template_list as form_response_line_template>
 		<@tr params={"data-url": "${redirect_details_base_url}&id_form_response=${form_response_line_template.idFormResponse}"}>
+			<@td><@link href=safeUrl( redirect_details_base_url + '&id_form_response=' + form_response_line_template.idFormResponse?c )>${i18n( 'forms.multiviewForms.responseDetails.response.link', form_response_line_template.idFormResponse?c )}</@link></@td>
 			<#if form_response_line_template.formColumnCellTemplateList?has_content>
 				<#list form_response_line_template.formColumnCellTemplateList as form_column_cell_template>
 					${form_column_cell_template?no_esc}
