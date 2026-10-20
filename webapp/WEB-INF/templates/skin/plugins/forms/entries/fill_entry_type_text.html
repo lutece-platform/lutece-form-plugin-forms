@@ -17,14 +17,14 @@
 <#assign field_value=''>
 <#assign field_max_size=getFieldValueByCode( entry, "max_size") >
 <#assign field_autocomplete = getFieldByCode( entry, "autocomplete" )!{} >
-<#assign entryAutocomplete><#if field_autocomplete?? && field_autocomplete.value??>autocomplete="${field_autocomplete.value}"</#if></#assign>
+<#assign entryAutocomplete = ( field_autocomplete.value )!'' />
 <#assign field_max_size_number = ( field_max_size?number!=-1 )?then( ( field_max_size?number )?string, '0' ) />
 <#if list_responses?has_content><#list list_responses as response><#if response.entry.idEntry == entry.idEntry><#if response.toStringValueResponse??><#assign fieldValue = ( response.toStringValueResponse )?string /></#if></#if></#list><#else><#if field_default.value?exists><#assign fieldValue = ( field_default.value )?string /><#else><#assign fieldValue=''></#if></#if>
-<#assign fieldParams><#if field_width!?number gt 0> style="width:${field_width?number}px;"</#if><#if entryAutocomplete?has_content> ${entryAutocomplete}</#if></#assign>
+<#assign fieldWidth = ( field_width!'' )?has_content?then( field_width?number, 0 ) />
 <#assign placeholder = getFieldValueByCode(entry, "placeholder") >
 <#assign entryCSSClass = ( entry.CSSClass?split(' ') )?map( ecc -> ( !ecc?contains('col') )?then( ' ' + ( ecc )?string + ' ', '' ) )?join( '' ) />
 <@cField label=entry.title! for=idName! required=entry.mandatory! class=entryCSSClass!?trim > 
-	<@cInput name=idName placeholder=placeholder required=entry.mandatory! html5Required=false value=fieldValue?string maxlength=field_max_size_number?number helpMsg=helpMsg errorMsg=errorMsg params=fieldParams />
+	<@cInput name=idName placeholder=placeholder required=entry.mandatory! html5Required=false value=fieldValue?string maxlength=field_max_size_number?number helpMsg=helpMsg errorMsg=errorMsg width=fieldWidth autocomplete=entryAutocomplete />
 	<#if imageCode?has_content>${imageCode!}</#if>
 </@cField>
 <#assign confirmField=getFieldByCode( entry, "confirm_field")>
@@ -35,10 +35,10 @@
 <#assign field_autocomplete = getFieldByCode( entry, "autocomplete" )!{} >
 <#-- assign field_width_number><#if field_width?number!=-1>${field_width?number}<#else>0</#if></#assign -->
 <#assign field_max_size=getFieldValueByCode( entry, "max_size")>
-<#assign fieldParams><#if field_autocomplete??>autocomplete="${field_autocomplete.value?if_exists}"</#if></#assign>
+<#assign confirmAutocomplete = ( field_autocomplete.value )!'' />
 <@cField>
 	<@cLabel label=confirmField.title for='${idName}_confirm_field' required=entry.mandatory /> 
-	<@cInput name='${idName}_confirm_field' class='form-control input-sm' required=entry.mandatory! html5Required=false maxlength=field_max_size_number?number helpMsg=helpMsg errorMsg=errorMsg params=fieldParams />
+	<@cInput name='${idName}_confirm_field' class='form-control input-sm' required=entry.mandatory! html5Required=false maxlength=field_max_size_number?number helpMsg=helpMsg errorMsg=errorMsg autocomplete=confirmAutocomplete />
 </@cField>
 </#if>
 </#if>

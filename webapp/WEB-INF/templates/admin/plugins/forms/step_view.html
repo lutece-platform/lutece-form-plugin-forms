@@ -32,7 +32,7 @@
 function getInputElement( displayControl ){
 	const types = ['input','select','textarea'];
 	let elm = null;
-	const container = document.querySelector("div[displayControl='" + displayControl + "']");
+	const container = document.querySelector("div[data-display-control='" + displayControl + "']");
 	if (!container) return [];
 	
 	for(let i=0; i<types.length && (elm == null || elm.length === 0); i++){

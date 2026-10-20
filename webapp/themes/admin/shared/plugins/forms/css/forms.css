@@ -712,3 +712,11 @@ table.table-hover tbody tr:hover {
 .cam-wrapper{ position: relative; border: 1px dotted #000; display: flex; justify-content: center;}
 .cam-wrapper > video{ max-width: 100%; }
 .btn-cam{  position: absolute !important; bottom:15px; right:15px; }
+
+/* LUT-33387: styles that the templates passed through params (no style attribute in params) */
+.forms-mw-180 { max-width: 180px !important; }
+.forms-mw-400 { max-width: 400px !important; }
+.forms-mh-200 { max-height: 200px !important; }
+.forms-min-h-10rem { min-height: 10rem !important; }
+.forms-min-h-15rem { min-height: 15rem !important; }
+.forms-bottom-bar { --tblr-bg-opacity: .5; }

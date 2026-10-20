@@ -1,6 +1,6 @@
 <@cTpl>
 <#assign classDisp = ( id_display?? )?then( 'display_field_' + ( id_display )?string + '_' + ( question.iterationNumber )?string, '' ) />
-<#assign param>displayControl="${question.id}_${question.iterationNumber}" </#assign>
+<#assign param = { 'data-display-control': '${question.id}_${question.iterationNumber}' } />
 <#assign entryCSSClass = ( classDisp )?string + ' mt-3' + ( question.entry.CSSClass?? )?then( ( question.entry.CSSClass?trim?starts_with('col-') )?then( ' ' + ( question.entry.CSSClass )?string, ' col-12' ), '' ) />
 <@cCol class=entryCSSClass params=param>
 	${questionContent}
@@ -88,7 +88,7 @@
 							}
 						});
 						const inputValue = getFieldValue(inputItem);
-						const ctrlDiv = document.querySelector("div[displayControl='" + displayItemControl + "']");
+						const ctrlDiv = document.querySelector("div[data-display-control='" + displayItemControl + "']");
 						if( ( ctrlDiv !== null && ctrlDiv.classList.contains("control_invalid") )
 								|| !validator_${itemControl.validatorName?replace('.','_')}( inputValue, '${itemControl.value?js_string?no_esc}') )
 						{
@@ -141,14 +141,14 @@
 
 <script>
 function resolveDisplayControl( controllerId, iteration ){
-	if( document.querySelector("div[displayControl='" + controllerId + "_" + iteration + "']") !== null ){
+	if( document.querySelector("div[data-display-control='" + controllerId + "_" + iteration + "']") !== null ){
 		return controllerId + "_" + iteration;
 	}
 	return controllerId + "_0";
 }
 
 function getInputElement( displayControl ){
-	const container = document.querySelector("div[displayControl='" + displayControl + "']");
+	const container = document.querySelector("div[data-display-control='" + displayControl + "']");
 	let elements = [];
 	if ( container !== null ){
 		const types = ['input','select','textarea'];

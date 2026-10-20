@@ -1,4 +1,4 @@
-<div class="row <#if question??>display_field_${question.id}_${question.iterationNumber}</#if>" displayControl="${question.id}_${question.iterationNumber}">${questionContent}</div>
+<div class="row <#if question??>display_field_${question.id}_${question.iterationNumber}</#if>" data-display-control="${question.id}_${question.iterationNumber}">${questionContent}</div>
 <#if list_validator??>
 <input name='displayed_questions' id='${question.id}_${question.iterationNumber}' value='' hidden />
 <script>
@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
 						});
 						inputValue = getFieldValue(input${itemControl.id}_${question.iterationNumber});
 						// AND condition : if at least 1 control value isn't present, do not display question
-						var controlDiv = document.querySelector("div[displayControl='${itemControl.listIdQuestion[0]?js_string?no_esc}_${question.iterationNumber?js_string?no_esc}']");
+						var controlDiv = document.querySelector("div[data-display-control='${itemControl.listIdQuestion[0]?js_string?no_esc}_${question.iterationNumber?js_string?no_esc}']");
 						if((controlDiv && controlDiv.classList.contains("control_invalid"))	|| !validator_${itemControl.validatorName?replace('.','_')}( inputValue, '${itemControl.value?js_string?no_esc}')){
 							nNotValidControlsCount++;
 						} else {
@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', function() {
  * This function helps ensure that only visible fields are validated as required.
  */
 function toggleRequiredAttributesByVisibility() {
-	document.querySelectorAll("div[displayControl]").forEach(function (div) {
+	document.querySelectorAll("div[data-display-control]").forEach(function (div) {
 		var inputs = div.querySelectorAll("input, select, textarea");
 
 		// Check if this element is visible or has the class "control_invalid"
@@ -161,7 +161,7 @@ function toggleRequiredAttributesByVisibility() {
 function getInputElement( displayControl ){
 	var types = ['input','select','textarea'];
 	var elm = null;
-	var container = document.querySelector("div[displayControl='" + displayControl + "']");
+	var container = document.querySelector("div[data-display-control='" + displayControl + "']");
 	if (!container) return null;
 	
 	for(var i=0; i < types.length && (elm == undefined || elm == null || elm.length <= 0); i++){

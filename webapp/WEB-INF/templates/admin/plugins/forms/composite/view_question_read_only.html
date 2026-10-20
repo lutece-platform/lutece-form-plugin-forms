@@ -1,5 +1,5 @@
 <#if question.visible && questionContent?? && questionContent?markup_string?trim != ''>
-<li class="list-group-item<#if id_display??> display_field_${id_display}</#if>" displayControl="${question.id}_${question.iterationNumber}">
+<li class="list-group-item<#if id_display??> display_field_${id_display}</#if>" data-display-control="${question.id}_${question.iterationNumber}">
 ${questionContent}
 </li>
 </#if>

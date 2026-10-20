@@ -22,7 +22,7 @@
 					<@box>
 						<@boxHeader title='#i18n{forms.create_entry.sortableList.availableItems}' />
 						<@boxBody class='p-3'>
-							<@listGroup id='sortable1' class="connectedSortable ${inputClass}" params='style="min-height:10rem;"'>
+							<@listGroup id='sortable1' class="connectedSortable forms-min-h-10rem ${inputClass}">
 								<#list entry.fields as field>
 									<#if field.code == 'answer_choice'>
 										<#assign isSelected=false />
@@ -52,7 +52,7 @@
 					<@box>
 						<@boxHeader title='#i18n{forms.create_entry.sortableList.selectedItems}' />
 						<@boxBody class='p-3'>
-							<@listGroup id='sortable2' class="connectedSortable ${inputClass}" params='style="min-height:10rem;"'>
+							<@listGroup id='sortable2' class="connectedSortable forms-min-h-10rem ${inputClass}">
 								<#if list_responses?has_content>
 									<#list list_responses?sort_by('sortOrder') as response>
 										<#if response.entry.idEntry == entry.idEntry && response.entry.error??>
