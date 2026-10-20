@@ -55,9 +55,12 @@ import fr.paris.lutece.portal.business.physicalfile.PhysicalFile;
 import fr.paris.lutece.portal.business.physicalfile.PhysicalFileHome;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
+import fr.paris.lutece.portal.service.message.SiteMessage;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
+import fr.paris.lutece.portal.service.message.SiteMessageService;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.web.constants.Messages;
 import fr.paris.lutece.util.filesystem.FileSystemUtil;
 
@@ -114,7 +117,7 @@ public final class FormsDownloadFile
      * @param response
      *            The HttpServletResponse to set the file to download
      */
-    public static void doDownloadFileFO( HttpServletRequest request, HttpServletResponse response ) throws SiteMessageException
+    public static void doDownloadFileFO( HttpServletRequest request, HttpServletResponse response )
     {
         int nIdFile = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FILE ), ID_FILE_INCORRECT );
         int nIdFormQuestionResponse = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM_QUESTION_REPONSE), ID_RESPONSE_INCORRECT );
@@ -130,8 +133,39 @@ public final class FormsDownloadFile
 	        	|| FormsResponseUtils.isAuthorized(formResponse, SecurityService.getInstance( ).getRegisteredUser( request ) ) 
 	        	))        
 	        { 
-	        		addFileContentToResponse(  response,  nIdFile );
+                if ( addFileContentToResponse( response, nIdFile ) )
+                {
+                    return;
+                }
 	        }  
+        }
+        redirectToDownloadError( request, response );
+    }
+
+    /**
+     * Redirect the FO user to a site message telling that the file can not be downloaded
+     * 
+     * @param request
+     *            The HttpServletRequest
+     * @param response
+     *            The HttpServletResponse
+     */
+    private static void redirectToDownloadError( HttpServletRequest request, HttpServletResponse response )
+    {
+        try
+        {
+            SiteMessageService.setMessage( request, MESSAGE_ERROR_DURING_DOWNLOAD_FILE, SiteMessage.TYPE_STOP );
+        }
+        catch( SiteMessageException e )
+        {
+            try
+            {
+                response.sendRedirect( AppPathService.getSiteMessageUrl( request ) );
+            }
+            catch( IOException ex )
+            {
+                AppLogService.error( ex.getMessage( ), ex );
+            }
         }
     }
     /**
@@ -140,12 +174,13 @@ public final class FormsDownloadFile
      * @param response
      *            The httpServletResponse on which to add the content of the PhysicalFile
      * @param nIdFile the id file
+     * @return true if the file content has been added to the response
      */
-    private static void addFileContentToResponse( HttpServletResponse response, int nIdFile ) {
+    private static boolean addFileContentToResponse( HttpServletResponse response, int nIdFile ) {
     	
     	PhysicalFile physicalFile = null;
         File file = FileHome.findByPrimaryKey( nIdFile );
-        if ( file != null )
+        if ( file != null && file.getPhysicalFile( ) != null )
         {
             physicalFile = PhysicalFileHome.findByPrimaryKey( file.getPhysicalFile( ).getIdPhysicalFile( ) );
         }
@@ -153,7 +188,9 @@ public final class FormsDownloadFile
         if ( physicalFile != null )
         {
             addFileContentToResponse( response, file, physicalFile );
+            return true;
         }
+        return false;
     }
     /**
      * Add the information of the given File with the content of its PhysicalFile to the HttpServletResponse
