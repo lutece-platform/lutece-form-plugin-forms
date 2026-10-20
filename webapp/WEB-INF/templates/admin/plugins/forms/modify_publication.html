@@ -1,4 +1,11 @@
-<@tform method='post' name='modify_form' action="jsp/admin/plugins/forms/ManageForms.jsp" params={"target": "_top"}>
+<#-- A page of its own, reached by a link from the list of the forms (no offcanvas) -->
+<@pageContainer>
+	<@pageColumn>
+		<@pageHeader title='#i18n{forms.action.publish.name} : ${form.title!}' />
+		<@formBreadCrumb>
+			<@breadcrumbItem>#i18n{forms.action.publish.name}</@breadcrumbItem>
+		</@formBreadCrumb>
+<@tform method='post' name='modify_form' action="jsp/admin/plugins/forms/ManageForms.jsp">
 <@messages errors=errors />
 <@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
 <@div class='container'>
@@ -24,6 +31,8 @@
         </@formGroup>
     </@columns>
 </@row>
-<@formsButton okAction='modifyFormPublication' viewAction='' />
+<@formsButton okAction='modifyFormPublication' viewAction='manageForms' />
 </@div>
 </@tform>
+	</@pageColumn>
+</@pageContainer>
