@@ -35,7 +35,7 @@
     </#if>
     <#if editModeValue == '' || editModeValue?starts_with('Address') || editModeValue?starts_with('Adresse')>
         <#if useAddressAutocomplete>
-            <@suggestPOIInput id="${idName}_address" name="${idName}_address" currentValue="${addressValue!}" required=entry.mandatory cssClass="form-geoloc<#if hasError> is-invalid</#if>" />
+            <@suggestPOIInput id="${idName}_address" name="${idName}_address" currentValue="${addressValue!}" required=entry.mandatory cssClass='form-geoloc' + hasError?then( ' is-invalid', '' ) />
         <#else>
             <input type="text" class="form-control form-geoloc<#if hasError> is-invalid</#if>" name="${idName}_address" id="${idName}_address" value="${addressValue!}"<#if entry.mandatory> required</#if> />
         </#if>
