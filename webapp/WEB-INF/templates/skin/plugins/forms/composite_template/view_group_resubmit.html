@@ -13,14 +13,12 @@
 							<#if group.description != ''><br><@cInline type='small' class='group-desc'>${richText( group.description )}</@cInline></#if>
 						</@cBlock>
 						<#if iterationNumber gte group.iterationMin>
-							<#assign removeParams>formnovalidate name="action_removeIteration" value="${group.id}_${iterationNumber}"</#assign>
-							<@cBtn class='danger ms-auto mt-0 me-m action-group' id='group_remove_${group.id}_${iterationNumber}' label=group.iterationRemoveLabel! params=removeParams>
+							<@cBtn class='danger ms-auto mt-0 me-m action-group' id='group_remove_${group.id}_${iterationNumber}' label=group.iterationRemoveLabel! params={"formnovalidate": true, "name": "action_removeIteration", "value": "${group.id}_${iterationNumber}"}>
 								<@cIcon name='trash' />
 							</@cBtn>
 						</#if>
 						<#if isIterable>
-							<#assign addParams>formnovalidate value="${id_group}" name="action_addIteration"</#assign>
-							<@cBtn class='primary ms-auto action-group' id='group_add_${id_group}' label=group.iterationAddLabel! params=addParams>
+							<@cBtn class='primary ms-auto action-group' id='group_add_${id_group}' label=group.iterationAddLabel! params={"formnovalidate": true, "value": id_group, "name": "action_addIteration"}>
 								<@cIcon name='plus' />
 							</@cBtn>
 						</#if>

@@ -51,7 +51,7 @@
     </#if>
     <#if entry.helpMessage?exists&&entry.helpMessage!=''><small class="form-text text-muted">${entry.helpMessage}</small></#if>
     <#if entry.mapProvider?has_content>
-        <@p params='hidden'>${entry.mapProvider.key!}</@p>
+        <@p params={"hidden": true}>${entry.mapProvider.key!}</@p>
         <#if viewNumberValue?has_content && entry.mapProvider.getParameter(viewNumberValue?number)?? && entry.mapProvider.getParameter(viewNumberValue?number).mapParameter??>
             <#assign map_parameter = entry.mapProvider.getParameter(viewNumberValue?number).mapParameter >
         </#if>

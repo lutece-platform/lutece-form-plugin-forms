@@ -20,16 +20,16 @@
 					<@table id='list' headBody=true class='table-striped mb-3'>
 						<@tr>
 							<@th>#i18n{forms.manage_question_response.columnTitle}</@th>
-							<@th params='aria-sort="none" id="forms-publication-status"'><button type="button" class="btn btn-link p-0" id="forms-publication-sort">#i18n{forms.manage_question_response.status} (Publi&eacute; / Non publi&eacute;) <i class="ti ti-arrows-sort" aria-hidden="true"></i></button></@th>
+							<@th id="forms-publication-status" params={"aria-sort": "none"}><button type="button" class="btn btn-link p-0" id="forms-publication-sort">#i18n{forms.manage_question_response.status} (Publi&eacute; / Non publi&eacute;) <i class="ti ti-arrows-sort" aria-hidden="true"></i></button></@th>
 						</@tr>
 						<@tableHeadBodySeparator />
 						<#list stepTitles as stepTitle>
-							<@tr class='forms-publication-group' params='data-group="${stepTitle?index}"'>
+							<@tr class='forms-publication-group' params={"data-group": (stepTitle?index)}>
 								<@th scope='rowgroup' colspan=2>${stepTitle!}</@th>
 							</@tr>
 							<#list questionList as question>
 								<#if question.step.title!?replace("- hidden","") == stepTitle>
-								<@tr class='forms-publication-question' params='data-group="${stepTitle?index}" data-order="${question?index}"'>
+								<@tr class='forms-publication-question' params={"data-group": (stepTitle?index), "data-order": (question?index)}>
 									<@td>${question.title!}</@td>
 									<@td>
 										<#assign status><#if question?has_content && question.published!>Publié<#else>Non publié</#if></#assign>

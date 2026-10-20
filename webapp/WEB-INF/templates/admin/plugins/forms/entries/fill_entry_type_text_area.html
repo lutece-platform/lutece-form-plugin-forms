@@ -9,9 +9,9 @@
 </#if>
 
 <#if field_autocomplete?? && field_autocomplete.value??>
-	<#assign autocomplete>autocomplete="${field_autocomplete.value}"</#assign>
+	<#assign autocomplete = {"autocomplete": field_autocomplete.value} />
 <#else>
-	<#assign autocomplete = "" />
+	<#assign autocomplete = {} />
 </#if>
 
 <#if list_responses?? && list_responses?has_content>

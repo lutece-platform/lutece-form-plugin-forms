@@ -70,7 +70,7 @@ document.getElementById("default_today_date").addEventListener("change", changeV
 <#include "/admin/util/editor/editor.html" />
 </#if>
 ${breadcrumb_template}
-<#if multipart><#assign formParams='enctype="multipart/form-data"'><#else><#assign formParams=''></#if>
+<#if multipart><#assign formParams = {"enctype": "multipart/form-data"} /><#else><#assign formParams = {} /></#if>
 <@tform id='modifyEntryForm' action="${action}" params=formParams>
 <#assign xs=12 />
 <#assign md=12 />
@@ -158,7 +158,7 @@ ${breadcrumb_template}
 				<#if datalist?size != 0>
 				<@formGroup rows=2 labelFor='autocomplete' labelKey='#i18n{forms.create_entry.labelAutocomplete}' helpKey='#i18n{forms.create_entry.labelHelpMessageAutocomplete}'>
 				<#assign field_autocomplete = getFieldByCode(entry, "autocomplete")!{}>
-					<@input type='text' name='autocomplete' id='autocomplete' value="${field_autocomplete.value?if_exists}" params=' list="autocompleteList"' />
+					<@input type='text' name='autocomplete' id='autocomplete' value="${field_autocomplete.value?if_exists}" params={"list": "autocompleteList"} />
 					<datalist id="autocompleteList"><#list datalist as opt><option value="${opt!}"></#list></datalist>
 				</@formGroup>
 				</#if>
@@ -258,7 +258,7 @@ ${breadcrumb_template}
 							<#if field.code == 'answer_choice'>
 								<#assign cpt=cpt+1>
 								<@li class='list-group-item d-flex justify-content-between'>
-								<@span class='text-truncate w-50' attrs={ 'title': ( field.title!'' ) + ' > ' + ( field.value!'' ) }>${field.title!} &gt; ${field.value!}</@span>
+								<@span class='text-truncate w-50' params={"title": ( field.title!'' ) + ' > ' + ( field.value!'' )}>${field.title!} &gt; ${field.value!}</@span>
 								<@btnToolbar>
 								<#if field.defaultValue><@tag color='success'><@icon style='check' title='#i18n{forms.create_entry.manageField.rowDefaultValue}' /></@tag></#if>
 									<@offcanvas targetUrl="jsp/admin/plugins/forms/ModifyEntry.jsp?view=modifyField&id_question=${question.id}&id_field=${field.idField}&option_no_display_title=true" useIframe=true targetElement="#manageEntry" id="q_${question.id}_f_${field.idField}" title="#i18n{forms.modifyField.title}" hideTtitle=['all'] btnTitle="#i18n{portal.util.labelModify}" btnIcon="pencil" position="end" size="half" />

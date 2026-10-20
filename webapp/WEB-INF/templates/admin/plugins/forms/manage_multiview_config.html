@@ -23,14 +23,14 @@
 									<@tform class='form' method='post' name='manage_export' action='jsp/admin/plugins/forms/ManageFormMultiviewConfig.jsp'>
 									    <@input type='hidden' id='token' name='token' value='${token}' />
 										<@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
-										<@table id='list' headBody=true  class='table-striped is-fullwidth' params=' data-toggle="table" data-group-by="true" data-group-by-field="step" data-search="true" data-show-columns="true"'>
+										<@table id='list' headBody=true  class='table-striped is-fullwidth' params={"data-toggle": "table", "data-group-by": "true", "data-group-by-field": "step", "data-search": "true", "data-show-columns": "true"}>
 											<@tr>
-												<@th params='data-field="step"'>#i18n{forms.manage_question_response.step}</@th>
-												<@th params='data-field="title"'>#i18n{forms.manage_question_response.columnTitle}</@th>
-												<@th params='data-sortable="true" data-field="visibleGlobal"'><@span params=' data-bs-toggle="tooltip" title="#i18n{forms.modify_question.labelDisplayMultiviewGlobal}"'>#i18n{forms.modify_question.globalView} <@icon style='help-circle' /></@span></@th>
-												<@th params='data-sortable="true" data-field="visibleForm"'><@span params=' data-bs-toggle="tooltip" title="#i18n{forms.modify_question.labelDisplayMultiviewFormSelected}"'>#i18n{forms.modify_question.formSelectedView} <@icon style='help-circle' /></@span></@th>
-												<@th params='data-sortable="true" data-field="column"'>#i18n{forms.modify_question.labelColumnTitle}</@th>
-												<@th params='data-sortable="true" data-field="order"'><@span params=' data-bs-toggle="tooltip" title="#i18n{forms.modify_question.labelColumnOrderTitle}"'>#i18n{forms.modify_form.labelOrder}<@icon style='help-circle' /></@span></@th>
+												<@th params={"data-field": "step"}>#i18n{forms.manage_question_response.step}</@th>
+												<@th params={"data-field": "title"}>#i18n{forms.manage_question_response.columnTitle}</@th>
+												<@th params={"data-sortable": "true", "data-field": "visibleGlobal"}><@span params={"data-bs-toggle": "tooltip", "title": "#i18n{forms.modify_question.labelDisplayMultiviewGlobal}"}>#i18n{forms.modify_question.globalView} <@icon style='help-circle' /></@span></@th>
+												<@th params={"data-sortable": "true", "data-field": "visibleForm"}><@span params={"data-bs-toggle": "tooltip", "title": "#i18n{forms.modify_question.labelDisplayMultiviewFormSelected}"}>#i18n{forms.modify_question.formSelectedView} <@icon style='help-circle' /></@span></@th>
+												<@th params={"data-sortable": "true", "data-field": "column"}>#i18n{forms.modify_question.labelColumnTitle}</@th>
+												<@th params={"data-sortable": "true", "data-field": "order"}><@span params={"data-bs-toggle": "tooltip", "title": "#i18n{forms.modify_question.labelColumnOrderTitle}"}>#i18n{forms.modify_form.labelOrder}<@icon style='help-circle' /></@span></@th>
 											</@tr>
 											<@tableHeadBodySeparator />
 											<#list questionList as question>
@@ -41,7 +41,7 @@
 													<@td>
 														<#if isQuestionTypeFileOrImg(question, nonDisplayableQuestionList)>
 															<@checkBox disabled=true orientation='switch' name='is_visible_multiview_global_${question.id}' value='0' disabled=true checked=false/>
-															<@icon style='help-circle' params='data-bs-toggle="tooltip" title="#i18n{forms.modify_question.nonDisplayable.question.help}"' />
+															<@icon style='help-circle' title="#i18n{forms.modify_question.nonDisplayable.question.help}" params={"data-bs-toggle": "tooltip"} />
 														<#else>
 															<@checkBox orientation='switch' labelKey='#i18n{forms.modify_question.labelDisplayMultiviewGlobal}' labelClass='visually-hidden'  name='is_visible_multiview_global_${question.id}' value='1' checked=question.isVisibleMultiviewGlobal()/>
 														</#if>
@@ -49,7 +49,7 @@
 													<@td>
 														<#if isQuestionTypeFileOrImg(question, nonDisplayableQuestionList)>
 															<@checkBox disabled=true orientation='switch' name='is_visible_multiview_form_selected_${question.id}' value='0' disabled=true checked=false />
-															<@icon style='help-circle' params='data-bs-toggle="tooltip" title="#i18n{forms.modify_question.nonDisplayable.question.help}"' />
+															<@icon style='help-circle' title="#i18n{forms.modify_question.nonDisplayable.question.help}" params={"data-bs-toggle": "tooltip"} />
 														<#else>
 															<@checkBox orientation='switch' labelKey='#i18n{forms.modify_question.labelDisplayMultiviewFormSelected}' labelClass='visually-hidden'  name='is_visible_multiview_form_selected_${question.id}' value='1' checked=question.isVisibleMultiviewFormSelected() />
 														</#if>
@@ -74,12 +74,12 @@
 									<@tform class='form' method='post' name='manage_export' action='jsp/admin/plugins/forms/ManageFormMultiviewConfig.jsp'>
 									    <@input type='hidden' id='token' name='token' value='${token}' />
 										<@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
-										<@table id='list' headBody=true  class='table-striped is-fullwidth' params=' data-toggle="table" data-group-by="true" data-group-by-field="step" data-search="true" data-show-columns="true"'>
+										<@table id='list' headBody=true  class='table-striped is-fullwidth' params={"data-toggle": "table", "data-group-by": "true", "data-group-by-field": "step", "data-search": "true", "data-show-columns": "true"}>
 											<@tr>
-												<@th params='data-field="step"'>#i18n{forms.manage_question_response.step}</@th>
-												<@th params='data-field="title"'>#i18n{forms.manage_question_response.columnTitle}</@th>
-												<@th params='data-sortable="true" data-field="filterGlobal"'><@span params=' data-bs-toggle="tooltip" title="#i18n{forms.modify_question.labelFilterableMultiviewGlobal}"'>#i18n{forms.modify_question.globalView} <@icon style='help-circle' /></@span></@th>
-												<@th params='data-sortable="true" data-field="filterForm"'><@span params=' data-bs-toggle="tooltip" title="#i18n{forms.modify_question.labelFilterableMultiviewFormSelected}"'>#i18n{forms.modify_question.formSelectedView} <@icon style='help-circle' /></@span></@th>
+												<@th params={"data-field": "step"}>#i18n{forms.manage_question_response.step}</@th>
+												<@th params={"data-field": "title"}>#i18n{forms.manage_question_response.columnTitle}</@th>
+												<@th params={"data-sortable": "true", "data-field": "filterGlobal"}><@span params={"data-bs-toggle": "tooltip", "title": "#i18n{forms.modify_question.labelFilterableMultiviewGlobal}"}>#i18n{forms.modify_question.globalView} <@icon style='help-circle' /></@span></@th>
+												<@th params={"data-sortable": "true", "data-field": "filterForm"}><@span params={"data-bs-toggle": "tooltip", "title": "#i18n{forms.modify_question.labelFilterableMultiviewFormSelected}"}>#i18n{forms.modify_question.formSelectedView} <@icon style='help-circle' /></@span></@th>
 											</@tr>
 											<@tableHeadBodySeparator />
 											<#list filterableQuestionList?sort_by('id') as question>

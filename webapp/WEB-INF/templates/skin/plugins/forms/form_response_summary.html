@@ -41,7 +41,7 @@
 			<#if form.labelFinalButton?has_content>
 				<#assign label_button=form.labelFinalButton />
 			</#if>
-			<@cBtn label=label_button class='primary' params=' name="action_doSaveResponseSummary" ' />
+			<@cBtn label=label_button class='primary' params={"name": "action_doSaveResponseSummary"} />
 		</@cCol>
 	</@cRow>
 </@cContainer>

@@ -7,7 +7,7 @@
             <@listGroup id='form-available' params='style="min-height:15rem;"'>
             <#if available_forms_list?? && available_forms_list?size gt 0>
                 <#list available_forms_list as aForm>
-                <@listGroupItem id=aForm.id!?string class='bg-gray-100 border border-gray-300 min-h-40 d-flex justify-content-between' params='draggable="true" tabindex="0"'>
+                <@listGroupItem id=aForm.id!?string class='bg-gray-100 border border-gray-300 min-h-40 d-flex justify-content-between' params={"draggable": "true", "tabindex": "0"}>
                   <@span>${aForm.title}</@span> <@icon style='arrows-move ms-auto' />
                 </@listGroupItem>
               </#list>
@@ -27,7 +27,7 @@
             <@listGroup id='form-published' params='style="min-height:15rem;"'>
             <#if published_forms_list?? && published_forms_list?size gt 0>
                 <#list published_forms_list as pForm>
-                    <@listGroupItem id=pForm.id!?string class='bg-gray-100 border border-gray-300 min-h-40 d-flex justify-content-between' params='draggable="true" tabindex="0"'>
+                    <@listGroupItem id=pForm.id!?string class='bg-gray-100 border border-gray-300 min-h-40 d-flex justify-content-between' params={"draggable": "true", "tabindex": "0"}>
                       <@span>${pForm.title}</@span> <@icon style='arrows-move ms-auto' />
                     </@listGroupItem>
                 </#list>

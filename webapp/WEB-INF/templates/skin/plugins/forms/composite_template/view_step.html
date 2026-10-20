@@ -47,11 +47,10 @@
 		<#assign doResetBackUpAction='action_doResetBackup' />
 	</#if>
 </#if>
-<#assign stepParams = '' />
 <#if !current_step_index??>
 	<#assign current_step_index=0 />
 </#if>
-<@cStepCurrent step=current_step_index title=step.title showTitle=showTitle actionNextStep=doNextAction labelNextStep=labelNextAction actionPrevStep=doPrevAction labelPrevStep=labelPrevAction actionSaveStep=doSaveAction labelSaveStep=labelSaveAction actionSaveForBackUpStep=doSaveForBackUpAction labelForBackUpStep=labelForBackUpAction actionResetBackUpStep=doResetBackUpAction labelResetBackUpStep=labelResetBackUpAction showPrevStep=false hasSteps=hasSteps params=stepParams >
+<@cStepCurrent step=current_step_index title=step.title showTitle=showTitle actionNextStep=doNextAction labelNextStep=labelNextAction actionPrevStep=doPrevAction labelPrevStep=labelPrevAction actionSaveStep=doSaveAction labelSaveStep=labelSaveAction actionSaveForBackUpStep=doSaveForBackUpAction labelForBackUpStep=labelForBackUpAction actionResetBackUpStep=doResetBackUpAction labelResetBackUpStep=labelResetBackUpAction showPrevStep=false hasSteps=hasSteps >
 ${stepContent}
 <#if display_captcha>
 <@cCol class='12' class='step-group'>
