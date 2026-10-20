@@ -15,21 +15,22 @@
 <#assign entryCSSClass = ( entry.CSSClass?split(' ') )?map( ecc -> ( !ecc?contains('col') )?then( ' ' + ( ecc )?string + ' ', '' ) )?join( '' ) />
 <#if list_responses??><#list list_responses as response><#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError><#assign hasError = true /><#assign error = response.entry.error></#if></#list></#if>
 <#assign helpMsg = ( entry.helpMessage?? && entry.helpMessage != '' )?then( ( entry.helpMessage )?string, '' ) />
+<#assign errorMsg = ( hasError )?then( ( error.mandatoryError )?then( '#i18n{forms.message.mandatory.entry}', ( error.errorMessage )?string ), '' ) />
 <#assign nbRows = getFieldValueByCode( entry, "array_row" )?number>
 <#assign nbColumns = getFieldValueByCode( entry, "array_column" )?number>
-<@cFieldset class=entryCSSClass!?trim legend=entry.title id=idName helpMsg=helpMsg required=entry.mandatory > 
+<@cFieldset class=entryCSSClass!?trim legend=entry.title id=idName helpMsg=helpMsg errorMsg=errorMsg required=entry.mandatory > 
 <#-- Not copied into the mobile accordion, which would duplicate its fields -->
 <@cTable id='' responsive=false caption=entry.title! >
 <@cThead>
 <@cTr>
 <@cTd><@cInline class='font-bold'>${entry.comment!}</@cInline></@cTd>
-<#list 2..nbColumns+1 as j><@cTh id='${idName}_col_${j}' scope='col'>${arrayCellTitle( 1, j )}</@cTh></#list>
+<#list 2..nbColumns+1 as j><@cTh id='${idName}_col_${j}' scope='col'><#if arrayCellTitle( 1, j )?has_content>${arrayCellTitle( 1, j )}<#else><@cInline class='visually-hidden'>${i18n( 'forms.xpage.form.array.column', j - 1 )}</@cInline></#if></@cTh></#list>
 </@cTr>
 </@cThead>
 <@cTbody>
 <#list 2..nbRows+1 as i>
 <@cTr>
-<@cTh id='${idName}_row_${i}' scope='row'>${arrayCellTitle( i, 1 )}</@cTh>
+<@cTh id='${idName}_row_${i}' scope='row'><#if arrayCellTitle( i, 1 )?has_content>${arrayCellTitle( i, 1 )}<#else><@cInline class='visually-hidden'>${i18n( 'forms.xpage.form.array.row', i - 1 )}</@cInline></#if></@cTh>
 <#list 2..nbColumns+1 as j>
 <@cTd><@cInput name='nIt' + entry_iteration_number + '_response_' + i + '_' + j value=arrayCellValue( i, j ) params={ 'aria-labelledby': idName + '_row_' + i + ' ' + idName + '_col_' + j } /></@cTd>
 </#list>

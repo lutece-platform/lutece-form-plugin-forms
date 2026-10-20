@@ -47,7 +47,7 @@
                             <#list form.actions as action>
                                 <#if action.permission=='MODIFY'>
                                     <@link href='${action.url}&id_form=${form.id}${linkToken(action.url)}' title='${form.title}'>
-                                        <@h level=3 class='mb-0 searchable text-truncate text-wrap' params={"title": ( form.title )}>
+                                        <@h level=2 class='h3 mb-0 searchable text-truncate text-wrap' params={"title": ( form.title )}>
                                             <#if !form.active><@icon style='times' class='text-danger fs-2' title='#i18n{portal.util.labelDisabled}' />	<#else>	<@icon style='check' class='text-success fs-2' title='#i18n{portal.util.labelEnabled}' /></#if>
                                             ${form.title}
                                         </@h>
@@ -57,7 +57,7 @@
                                 </#if> 
                             </#list>
                         <#else>
-                            <@h level=3 class='mb-0 searchable'>${form.title}</@h>   
+                            <@h level=2 class='h3 mb-0 searchable'>${form.title}</@h>   
                             <@p class='searchable fs-5 fw-light mb-0 d-none d-lg-inline-block'>#i18n{forms.manageForm.columnCreationDate} <@span class='fw-bold'>${form.creationDate}</@span></@p>
                         </#if>
                     </#if>
