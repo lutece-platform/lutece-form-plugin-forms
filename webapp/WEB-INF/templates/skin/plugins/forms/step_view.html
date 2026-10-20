@@ -219,6 +219,12 @@ document.addEventListener('DOMContentLoaded', function(){
 	// Title and breadcrumb
 	if( document.querySelector('.banner h1') ){
 		document.querySelector('.banner h1').textContent = "${form.title?js_string?no_esc}";
+	} else if ( !document.querySelector('h1') ) {
+		// The theme shows no banner: the page keeps a level 1 heading, the title of the form
+		const pageTitle = document.createElement('h1');
+		pageTitle.className = 'visually-hidden';
+		pageTitle.textContent = "${form.title?js_string?no_esc}";
+		( document.querySelector('main') || document.body ).prepend( pageTitle );
 	}
 	var stepTitleEl = document.querySelector('#current_step .title span:not(.step-number)');
 	var stepTitle = stepTitleEl ? stepTitleEl.textContent.trim() : '';
