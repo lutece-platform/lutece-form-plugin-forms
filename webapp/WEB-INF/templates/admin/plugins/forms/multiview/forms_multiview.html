@@ -101,10 +101,9 @@ document.addEventListener('DOMContentLoaded', function () {
 		});
 	});
 
+	// The checkboxes of the filter work with the keyboard too: set once the page is loaded, not on a mouse press
 	if( document.getElementById("${( filter_name! )?js_string?no_esc}_button") ){
-		document.getElementById("${( filter_name! )?js_string?no_esc}_button").addEventListener('mousedown', () => {
-			setInputAndListener("${( filter_name! )?js_string?no_esc}")
-		});
+		setInputAndListener("${( filter_name! )?js_string?no_esc}");
 	}
 
 	<#if export_success?has_content>
@@ -146,14 +145,13 @@ function setInputAndListener(filterName) {
 				checkboxes[0].name = "";
 				document.getElementById(filterName + "_select_all_filters").innerText = "${i18n('forms.multiviewForms.form_filter.unselect_all')?js_string?no_esc}";
 			}
+			// No submission on change (a change of context on input): the filter button submits the form
 			checkbox.addEventListener('change', function (ev) {
-				let form = ev.target.form;
 				if (ev.target.value === "") {
 					for (let i = 1; i < checkboxes.length; i++) {
 						checkboxes[i].checked = false;
 					}
 				}
-				form.submit();
 			});
 		}
 	}
