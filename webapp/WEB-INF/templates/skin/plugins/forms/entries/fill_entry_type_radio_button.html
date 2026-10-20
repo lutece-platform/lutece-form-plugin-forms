@@ -41,7 +41,7 @@
 			<#else>
 				<#if field.defaultValue><#assign isChecked=true></#if>
 			</#if> 
-			<#assign fieldParams><#if field.comment?? && field.comment != ''>title="${field.comment}"</#if><#if field.conditionalQuestions?exists&&field.conditionalQuestions?size!=0> onclick="${hide}<#assign idName = 'div'><#if entry_iteration_number?has_content><#assign idName = 'div_nIt' + entry_iteration_number + '_'></#if><#assign idConditional = idName + field.idField>displayId(${idConditional}.id);</#if></#assign>
+			<#assign fieldParams = ( field.comment?? && field.comment != '' )?then( { 'title': field.comment }, {} ) />
 			<#assign isRequiredLabel=(!hasTitle && entry.mandatory) >
 			<@cRadio name=idName! label=field.title! id='${idName}_${field.idField}' value='${field.idField!}' labelClass=labelClass! inline=inLine! checked=isChecked! required=entry.mandatory! html5Required=false showRequiredLabel=isRequiredLabel params=fieldParams! />
 			<#if field.fileImage.url??><@cImg src=field.fileImage.url alt=field.title params='style="height:80px;width:80px"' /></#if>
@@ -70,7 +70,7 @@
 			<#else>
 				<#if field.defaultValue><#assign isChecked=true></#if>
 			</#if> 
-			<#assign fieldParams><#if field.comment?? && field.comment != ''>title="${field.comment}"</#if><#if field.conditionalQuestions?exists&&field.conditionalQuestions?size!=0> onclick="${hide}<#assign idName = 'div'><#if entry_iteration_number?has_content><#assign idName = 'div_nIt' + entry_iteration_number + '_'></#if><#assign idConditional = idName + field.idField>displayId(${idConditional}.id);</#if></#assign>
+			<#assign fieldParams = ( field.comment?? && field.comment != '' )?then( { 'title': field.comment }, {} ) />
 			<#assign isRequiredLabel=(!hasTitle && entry.mandatory) >
 			<@cRadio name=idName! label=field.title! id='${idName}_${field.idField}' class='form-check ${entryCSSClass!?trim}' value='${field.idField!}' labelClass=labelClass! inline=inLine! checked=isChecked! required=entry.mandatory! html5Required=false errorMsg=errorMsg helpMsg=helpMsg showRequiredLabel=isRequiredLabel params=fieldParams! />
 			<#if field.fileImage.url??><@cImg src=field.fileImage.url alt=field.title params='style="height:80px;width:80px"' /></#if>
