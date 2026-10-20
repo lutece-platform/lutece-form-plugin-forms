@@ -17,12 +17,12 @@
 		<#if indexIteration gt 0>(${indexIteration+1})</#if>
 		<#if ( nbTotalIteration gt nbIterationMin ) && ( isIterable && indexIteration = nbTotalIteration - 1 )><div class="btn btn-group ms-auto mt-0"></#if>
 		<#if nbTotalIteration gt nbIterationMin>
-			<@cBtn class='danger ms-auto me-sm action-group' id='group_remove_${group.id!}_${indexIteration}' label=group.iterationRemoveLabel! attrs={'formnovalidate': true, 'name': "action_removeIteration", 'value': "${group.id}_${indexIteration}"}>
+			<@cBtn class='danger ms-auto me-sm action-group' id='group_remove_${group.id!}_${indexIteration}' label=group.iterationRemoveLabel! params={"formnovalidate": true, "name": "action_removeIteration", "value": "${group.id}_${indexIteration}"}>
 				<@cIcon name='trash' />
 			</@cBtn>
 		</#if>
 		<#if isIterable && indexIteration = nbTotalIteration - 1>
-			<@cBtn class='primary ms-auto action-group' id='group_add_${group.id!}_${indexIteration}' label=group.iterationAddLabel attrs={'formnovalidate': true, 'value': ( id_group ), 'name': "action_addIteration"}>
+			<@cBtn class='primary ms-auto action-group' id='group_add_${group.id!}_${indexIteration}' label=group.iterationAddLabel params={"formnovalidate": true, "value": ( id_group ), "name": "action_addIteration"}>
 				<@cIcon name='plus' />
 			</@cBtn>
 		</#if>

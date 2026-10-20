@@ -3,7 +3,7 @@
 <#assign defaultUserFrontId=5>
 <@ul class="timeline-form">
 <#list history_information_list as history_information>
-  <@li params=' tabindex=0'>
+  <@li params={"tabindex": "0"}>
       <@h level=3 class='h5 text-primary'>${history_information.resource_history.action.description!}
         <small>${history_information.resource_history.creationDate!}</small>
       </@h>
@@ -30,7 +30,7 @@
 </#list>
 </@ul>
 <#else>
-  <@alert color='warning' params=' tabindex=0'>
+  <@alert color='warning' params={"tabindex": "0"}>
     <@icon style='exclamation-triangle' /> #i18n{forms.multiviewForms.view_record_history.history_empty}
   </@alert>
 </#if>

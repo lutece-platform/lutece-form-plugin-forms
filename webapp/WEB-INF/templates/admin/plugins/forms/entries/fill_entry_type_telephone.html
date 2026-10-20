@@ -7,9 +7,9 @@
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
 <#assign field = getFieldByCode( entry, "autocomplete" ) >
 <#if field?? && field.value??>
-	<#assign autocomplete>autocomplete="${field.value}"</#assign>
+	<#assign autocomplete = {"autocomplete": field.value} />
 <#else>
-	<#assign autocomplete = "" />
+	<#assign autocomplete = {} />
 </#if>
 <#if error??><#assign groupStyle = 'error' /><#else><#assign groupStyle = '' /></#if>
 <#if entry.helpMessage?exists&&entry.helpMessage!=''>

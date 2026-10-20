@@ -29,7 +29,7 @@
 				<#else>
 					<#if field.defaultValue><#assign isSelected=true></#if>
 				</#if>
-				<@cOption label=field.title! value=field.idField! selected=isSelected attrs=( fieldComment?has_content )?then( { 'title': fieldComment }, { } ) />
+				<@cOption label=field.title! value=field.idField! selected=isSelected params=( fieldComment?has_content )?then( { 'title': fieldComment }, { } ) />
 			</#if>
 		</#list>
 	</@cSelect>
