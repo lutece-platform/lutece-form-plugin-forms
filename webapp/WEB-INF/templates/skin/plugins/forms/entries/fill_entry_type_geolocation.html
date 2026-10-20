@@ -20,7 +20,9 @@
 <#assign editModeValue = getFieldValueByCode( entry, "editMode" )>
 </#if>
 <#if entry.mapProvider??>
-	<@cField label=entry.title! for=idName! class=entryClass required=entry.mandatory!>
+	<#-- The label names the address field (id <name>_address); in a map only mode the address is hidden and names nothing -->
+	<#assign hasAddressField = editModeValue == '' || editModeValue?starts_with('Address') />
+	<@cField label=entry.title! for=( hasAddressField )?then( idName + '_address', '' ) class=entryClass required=entry.mandatory!>
 		<#if list_responses?? && list_responses?has_content>
 			<#if getResponseContainingTheFieldWithCode(list_responses, "address")??><#assign addressValue = getResponseContainingTheFieldWithCode(list_responses, "address").toStringValueResponse /></#if>
 			<#if getResponseContainingTheFieldWithCode(list_responses, "idAddress")??><#assign idAddressValue = getResponseContainingTheFieldWithCode(list_responses, "idAddress").toStringValueResponse /></#if>

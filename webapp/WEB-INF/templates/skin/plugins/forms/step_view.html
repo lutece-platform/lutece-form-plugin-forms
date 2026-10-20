@@ -1,8 +1,8 @@
 <@cTpl>
 <#if dskey('portal.theme.site_property.bannerForm.showFormImg.checkbox')?number=1 && form.logo??><style>.banner{ background: transparent url("${cssUrl( 'data:' + form.logo.mimeType + ';base64,' + form.logoBase64 )}") top left/contain no-repeat !important; }</style></#if>
 <#if dskey('portal.theme.site_property.bannerForm.showFormTitle.checkbox')?number=0><style>.banner > header > h1{ display: none !important; }</style></#if>
-<@cBreadCrumb home='Accueil'>
-	<@chItem class='breadcrumb-item active' params={"aria-current": "page"} />
+<@cBreadCrumb>
+	<@chItem class='breadcrumb-item active' params={"aria-current": "page"}>${( form.title )!}</@chItem>
 </@cBreadCrumb>
 <!-- #current_step : Add for breadcrumbs -->
 <#if noScriptMessage?? ><@noScriptMessage id='form-validate' alertTitle='#i18n{forms.noscript.message}' linkIcon='' linkLabel='#i18n{forms.noscript.linkLabel}' linkUrl='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' /></#if>
@@ -34,9 +34,10 @@
 </#if>
 ${formTopBreadcrumb!}
 ${stepContent!}
+<#-- Upload in progress: a status region, empty until the message is written in it, so that it is announced -->
+<@cBlock id='upload-info-message' params={ 'role': 'status', 'data-message': i18n( 'forms.create_entry.warning.upload.inprogress' ) } />
 ${formBottomBreadcrumb!} 
 </@cForm>
-<@cAlert id='upload-info-message' title='#i18n{forms.create_entry.warning.upload.inprogress}' class='warning d-none'  />
 <#include "/skin/plugins/asynchronousupload/upload_commons.html" />
 <@addRequiredJsFiles />
 <script src="jsp/site/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=formsAsynchronousUploadHandler" ></script>
@@ -184,15 +185,21 @@ document.addEventListener('DOMContentLoaded', function(){
 		isUploading = true;
 	});
 
+	const uploadInfo = document.getElementById('upload-info-message');
 	document.addEventListener('fileuploadstop', function () {
 		isUploading = false;
-		document.getElementById('upload-info-message').classList.add('d-none');
+		uploadInfo.replaceChildren();
 	});
 
 	document.getElementById('form-validate').addEventListener('submit', function(e) {
 		if ( isUploading ){
 			e.preventDefault();
-			document.getElementById('upload-info-message').classList.remove('d-none');
+			if ( !uploadInfo.hasChildNodes() ) {
+				const alert = document.createElement('p');
+				alert.className = 'alert alert-warning mb-m';
+				alert.textContent = uploadInfo.dataset.message;
+				uploadInfo.appendChild( alert );
+			}
 		}
 	});
 
