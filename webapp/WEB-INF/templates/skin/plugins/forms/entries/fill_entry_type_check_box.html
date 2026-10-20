@@ -1,31 +1,21 @@
 <@cTpl>
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
 <#assign hasError = false />
-<#assign hasTitle=true>
 <#assign legendClass=''>
-<#assign labelCheckClass=''>
 <#assign nbCheckbox=0>
-<#assign checkImg=''>
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
 <#assign inLine = entry.fieldInLine>
 <#if list_responses??><#list list_responses as response><#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError><#assign hasError = true /><#assign error = response.entry.error><#assign legendClass='is-invalid'></#if></#list></#if>
 <#list entry.fields as field><#if field.code == 'answer_choice'><#assign nbCheckbox+=1></#if></#list>
-<#list entry.fields as field><#if field.noDisplayTitle><#if nbCheckbox == 1><#assign legendClass+=' visually-hidden'><#else><#assign labelCheckClass=' visually-hidden'></#if></#if></#list>
+<#assign errorMsg = ( hasError )?then( ( error.mandatoryError )?then( entry.errorMessage?has_content?then( ( entry.errorMessage )?string, '#i18n{forms.message.mandatory.entry}' ), ( error.errorMessage )?string ), '' ) />
+<#assign helpMsg = ( entry.helpMessage?? && entry.helpMessage != '' )?then( ( entry.helpMessage )?string, '' ) />
 <#assign entryCSSClass = ( entry.CSSClass?split(' ') )?map( ecc -> ( !ecc?contains('col') )?then( ' ' + ( ecc )?string + ' ', '' ) )?join( '' ) />
 <#if nbCheckbox gt 1>
-<@cFormCheckGroup legend='${entry.title}' id='${entry.idEntry}' legendClass=legendClass class=entryCSSClass!?trim required=entry.mandatory >
-	<#if entry.helpMessage?exists&&entry.helpMessage!=''><@cFormHelp id=idName! label=entry.helpMessage! /></#if>
-	<#if hasError>
-	<#assign errorMsg = ( error.mandatoryError )?then( entry.errorMessage?has_content?then( ( entry.errorMessage )?string, '#i18n{forms.message.mandatory.entry}' ), ( error.errorMessage )?string ) />
-	<@cFormError id=idName label=errorMsg />
-	</#if>
+<#-- The help and the error belong to the group: the macro writes them after the legend and describes the fieldset by them -->
+<@cFormCheckGroup legend=entry.title id=idName legendClass=legendClass class=entryCSSClass!?trim required=entry.mandatory helpMsg=helpMsg errorMsg=errorMsg >
 	<#list entry.fields as field>
 		<#assign isChecked=false >
 		<#if field.code == 'answer_choice'>
-			<#if field.noDisplayTitle><#assign hasTitle=false></#if>
-			<#assign idName = buildEntryName( entry, entry_iteration_number )>
-			<#assign title = ( hasTitle )?then( ( field.title )?string, ( nbCheckbox == 1 )?then( ( entry.title )?string, '' ) ) + ' ' />
-			<#assign labelClass = ( field.noDisplayTitle && nbCheckbox gt 1 )?then( 'visually-hidden-focusable', '' ) />
 			<#if list_responses?? && list_responses?has_content>
 				<#list list_responses as response>
 					<#if response.entry.idEntry == entry.idEntry && response.field??>
@@ -35,27 +25,23 @@
 			<#else>
 				<#if field.defaultValue><#assign isChecked=true></#if>
 			</#if> 
-			<#assign fieldParams = ( field.comment?? && field.comment != '' )?then( { 'title': field.comment }, {} ) />
-			<#assign isRequiredLabel=(!hasTitle && entry.mandatory) >
-			<@cCheckbox name=idName! label=title labelClass=labelClass id='${idName}_${field.idField}' value='${field.idField!}' inline=entry.fieldInLine! checked=isChecked required=entry.mandatory! html5Required=false showRequiredLabel=isRequiredLabel params=fieldParams />
-			<#if field.fileImage.url??><@cImg src=field.fileImage.url alt=field.title params={'width': 80, 'height': 80} /></#if>
+			<#assign optionId = '${idName}_${field.idField}' />
+			<#assign hasImage = ( field.fileImage.url )?? />
+			<#assign hasComment = field.comment?? && field.comment != '' />
+			<#-- The title stays the name of the option: hidden alone, and only when an image replaces it, the label keeping the image -->
+			<#assign optionLabel><#if field.noDisplayTitle && hasImage><@cInline class='visually-hidden'>${field.title!}</@cInline><#else>${field.title!}</#if></#assign>
+			<#assign optionParams = { } + ( hasComment )?then( { 'aria-describedby': 'comment_' + optionId }, { } ) + ( hasError )?then( { 'aria-invalid': 'true' }, { } ) />
+			<@cFormCheck type='checkbox' name=idName label=optionLabel id=optionId value='${field.idField!}' inline=inLine! checked=isChecked required=entry.mandatory! html5Required=false showRequiredLabel=false params=optionParams><#if hasImage><@cImg src=field.fileImage.url alt='' params={'width': 80, 'height': 80} /></#if></@cFormCheck>
+			<#if hasComment><@cText type='span' id='comment_${optionId}' class=( inLine )?then( 'helptext font-s me-m', 'd-block helptext font-s ms-l' )>${field.comment}</@cText></#if>
 		</#if>
 	</#list>
 	<#if inLine><#if list_entry_children??><#list list_entry_children as children><#if children.conditionalEntries??>${children.conditionalEntries}</#if></#list></#if></#if>
 </@cFormCheckGroup>
 <#else>
-	<#if entry.helpMessage?exists&&entry.helpMessage!=''><@cFormHelp id=idName! label=entry.helpMessage! /></#if>
-	<#if hasError>
-	<#assign errorMsg = ( error.mandatoryError )?then( entry.errorMessage?has_content?then( ( entry.errorMessage )?string, '#i18n{forms.message.mandatory.entry}' ), ( error.errorMessage )?string ) />
-	<@cFormError id=idName label=errorMsg />
-	</#if>
 	<#list entry.fields as field>
 		<#assign isChecked=false >
 		<#if field.code == 'answer_choice'>
-			<#if field.noDisplayTitle><#assign hasTitle=false></#if>
-			<#assign idName = buildEntryName( entry, entry_iteration_number )>
-			<#assign title = ( hasTitle )?then( ( field.title )?string, ( entry.title )?string ) />
-			<#assign labelClass = ( field.noDisplayTitle )?then( ( labelCheckClass )?string, '' ) />
+			<#assign title = ( field.noDisplayTitle )?then( ( entry.title )?string, ( field.title )?string ) />
 			<#if list_responses?? && list_responses?has_content>
 				<#list list_responses as response>
 					<#if response.entry.idEntry == entry.idEntry && response.field??>
@@ -65,10 +51,13 @@
 			<#else>
 				<#if field.defaultValue><#assign isChecked=true></#if>
 			</#if> 
-			<#assign fieldParams = ( field.comment?? && field.comment != '' )?then( { 'title': field.comment }, {} ) />
-			<#assign isRequiredLabel=(!hasTitle && entry.mandatory) >
-			<@cCheckbox name=idName! label=title labelClass=labelClass id='${idName}_${field.idField}' value='${field.idField!}' inline=entry.fieldInLine! checked=isChecked errorMsg=errorMsg required=entry.mandatory! html5Required=false showRequiredLabel=isRequiredLabel params=fieldParams />
-			<#if field.fileImage.url??><@cImg src=field.fileImage.url alt=field.title params={'width': 80, 'height': 80} /></#if>
+			<#assign optionId = '${idName}_${field.idField}' />
+			<#assign hasImage = ( field.fileImage.url )?? />
+			<#assign hasComment = field.comment?? && field.comment != '' />
+			<#-- The macro writes the error and the help, the comment of the box included, and describes the box by them -->
+			<#assign optionHelp><#if helpMsg?has_content>${helpMsg}</#if><#if hasComment><@cInline class='d-block'>${field.comment}</@cInline></#if></#assign>
+			<#assign isRequiredLabel = field.noDisplayTitle && entry.mandatory >
+			<@cFormCheck type='checkbox' name=idName label=title id=optionId value='${field.idField!}' inline=inLine! checked=isChecked errorMsg=errorMsg helpMsg=optionHelp required=entry.mandatory! html5Required=false showRequiredLabel=isRequiredLabel><#if hasImage><@cImg src=field.fileImage.url alt='' params={'width': 80, 'height': 80} /></#if></@cFormCheck>
 		</#if>
 	</#list>
 	<#if inLine><#if list_entry_children??><#list list_entry_children as children><#if children.conditionalEntries??>${children.conditionalEntries}</#if></#list></#if></#if>
@@ -102,4 +91,4 @@ if(document.getElementById && document.getElementById(baliseId) != null){
 </#list>
 </#if>
 </#if>
-</@cTpl>
+</@cTpl>

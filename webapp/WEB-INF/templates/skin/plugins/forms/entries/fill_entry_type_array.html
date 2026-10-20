@@ -1,39 +1,41 @@
+<#-- The title of the cell of row i and column j: the titles of the columns are in row 1, the titles of the rows in column 1 -->
+<#function arrayCellTitle i j>
+<#list entry.fields as field><#if field.value == i + "_" + j><#return field.title!''></#if></#list>
+<#return ''>
+</#function>
+<#-- The answer of the cell of row i and column j -->
+<#function arrayCellValue i j>
+<#local cellValue = ''>
+<#if list_responses??><#list list_responses as response><#if response.field?has_content && response.field.value == i + "_" + j && response.toStringValueResponse?has_content><#local cellValue = response.toStringValueResponse></#if></#list></#if>
+<#return cellValue>
+</#function>
 <@cTpl>
-<#assign title = '' >
-<#assign inputValue = '' >
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
 <#assign hasError = false />
 <#assign entryCSSClass = ( entry.CSSClass?split(' ') )?map( ecc -> ( !ecc?contains('col') )?then( ' ' + ( ecc )?string + ' ', '' ) )?join( '' ) />
 <#if list_responses??><#list list_responses as response><#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError><#assign hasError = true /><#assign error = response.entry.error></#if></#list></#if>
-<@cFieldset class=entryCSSClass!?trim legend=entry.title for=idName required=entry.mandatory > 
-<#if entry.helpMessage?exists && entry.helpMessage!=''><@cFormHelp id=idName! label=entry.helpMessage! /></#if>
-<#-- TODO : Caption à traiter -->
-<@cTable id='tbl_${idName}' caption=entry.title! >
-<#assign x=getFieldValueByCode(entry, "array_row")?number>
-<#list 1..x+1 as i>
+<#assign helpMsg = ( entry.helpMessage?? && entry.helpMessage != '' )?then( ( entry.helpMessage )?string, '' ) />
+<#assign nbRows = getFieldValueByCode( entry, "array_row" )?number>
+<#assign nbColumns = getFieldValueByCode( entry, "array_column" )?number>
+<@cFieldset class=entryCSSClass!?trim legend=entry.title id=idName helpMsg=helpMsg required=entry.mandatory > 
+<#-- Not copied into the mobile accordion, which would duplicate its fields -->
+<@cTable id='' responsive=false caption=entry.title! >
+<@cThead>
 <@cTr>
-<#assign y=getFieldValueByCode(entry, "array_column")?number>
-<#list 1..y+1 as j>
-<@cTd>
-<#list entry.fields as field>
-<#assign value=i+"_"+j>
-<#if field.value == value>
-    <#assign title=field.title!>
-    <#assign inputValue=''>
-    <#if list_responses??>
-        <#list list_responses as response>
-            <#if response.field?has_content && response.field.value == value && response.toStringValueResponse?has_content>
-                <#assign inputValue = response.toStringValueResponse>
-            </#if>
-        </#list>
-    </#if>
-</#if>
-</#list>
-<#if j==1 && i!=1>${title!}<#elseif i == 1 && j != 1>${title!}<#elseif i == 1 && j == 1><@cInline class='font-bold'>${entry.comment}</@cInline ><#else><#assign idName = 'nIt' + entry_iteration_number +  '_response_' + i + '_' + j><@cInput name=idName! value=inputValue! /></#if>
-</@cTd>
+<@cTd><@cInline class='font-bold'>${entry.comment!}</@cInline></@cTd>
+<#list 2..nbColumns+1 as j><@cTh id='${idName}_col_${j}' scope='col'>${arrayCellTitle( 1, j )}</@cTh></#list>
+</@cTr>
+</@cThead>
+<@cTbody>
+<#list 2..nbRows+1 as i>
+<@cTr>
+<@cTh id='${idName}_row_${i}' scope='row'>${arrayCellTitle( i, 1 )}</@cTh>
+<#list 2..nbColumns+1 as j>
+<@cTd><@cInput name='nIt' + entry_iteration_number + '_response_' + i + '_' + j value=arrayCellValue( i, j ) params={ 'aria-labelledby': idName + '_row_' + i + ' ' + idName + '_col_' + j } /></@cTd>
 </#list>
 </@cTr>
-</#list>  
+</#list>
+</@cTbody>
 </@cTable>
 </@cFieldset>
 </@cTpl>
