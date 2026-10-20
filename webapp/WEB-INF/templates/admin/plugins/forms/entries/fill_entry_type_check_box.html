@@ -52,6 +52,7 @@
 </#if>
 <#if list_responses??>
 <script>
+<#list list_responses as response>
 <#if response.entry.idEntry == entry.idEntry && response.field??>
 (function() {
 	const idName = <#if entry_iteration_number?has_content>'_nIt' + ${entry_iteration_number} + '_'<#else>''</#if>;
@@ -62,6 +63,7 @@
 	}
 })();
 </#if>
+</#list>
 </script>
 <#else>
 <#list entry.fields as field>
