@@ -127,6 +127,7 @@ public class TermsOfServiceXPage extends MVCApplication
         if ( nIdEntry == FormsConstants.DEFAULT_ID_VALUE )
         {
             SiteMessageService.setMessage( request, MESSAGE_ERROR_TERMS_OF_SERVICE_NOT_FOUND, SiteMessage.TYPE_STOP );
+            return null;
         }
 
         Entry entry = EntryHome.findByPrimaryKey( nIdEntry );
@@ -134,6 +135,7 @@ public class TermsOfServiceXPage extends MVCApplication
         if ( entry == null )
         {
             SiteMessageService.setMessage( request, MESSAGE_ERROR_TERMS_OF_SERVICE_NOT_FOUND, SiteMessage.TYPE_STOP );
+            return null;
         }
 
         Field fieldTermsOfService = entry.getFieldByCode( EntryTypeTermsOfService.FIELD_TOS_CODE );
@@ -141,6 +143,7 @@ public class TermsOfServiceXPage extends MVCApplication
         if ( fieldTermsOfService == null )
         {
             SiteMessageService.setMessage( request, MESSAGE_ERROR_TERMS_OF_SERVICE_NOT_FOUND, SiteMessage.TYPE_STOP );
+            return null;
         }
 
         return fieldTermsOfService.getValue( );
@@ -219,6 +222,7 @@ public class TermsOfServiceXPage extends MVCApplication
         if ( nIdResponse == FormsConstants.DEFAULT_ID_VALUE )
         {
             SiteMessageService.setMessage( request, MESSAGE_ERROR_TERMS_OF_SERVICE_NOT_FOUND, SiteMessage.TYPE_STOP );
+            return null;
         }
 
         Response response = ResponseHome.findByPrimaryKey( nIdResponse );
@@ -226,6 +230,7 @@ public class TermsOfServiceXPage extends MVCApplication
         if ( response == null || response.getField( ) == null )
         {
             SiteMessageService.setMessage( request, MESSAGE_ERROR_TERMS_OF_SERVICE_NOT_FOUND, SiteMessage.TYPE_STOP );
+            return null;
         }
 
         Field fieldTermsOfService = FieldHome.findByPrimaryKey( response.getField( ).getIdField( ) );
@@ -233,6 +238,7 @@ public class TermsOfServiceXPage extends MVCApplication
         if ( fieldTermsOfService == null || !EntryTypeTermsOfService.FIELD_TOS_CODE.equals( fieldTermsOfService.getCode( ) ) )
         {
             SiteMessageService.setMessage( request, MESSAGE_ERROR_TERMS_OF_SERVICE_NOT_FOUND, SiteMessage.TYPE_STOP );
+            return null;
         }
 
         return response.getToStringValueResponse( );
