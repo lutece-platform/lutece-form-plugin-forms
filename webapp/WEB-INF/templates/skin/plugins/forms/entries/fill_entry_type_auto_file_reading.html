@@ -13,7 +13,7 @@
 </@cField>		
 <@cRow>
 	<@cCol cols='12 col-sm-6'>
-		<@cBtn id='action_doSynchronousUploadDocument' attrs={'name': "action_doSynchronousUploadDocument", 'value': "${uploadHandler.uploadSubmitPrefix}${fieldName}"} label='#i18n{forms.entryType.autoFileReading.label.process.ocr}' />
+		<@cBtn id='action_doSynchronousUploadDocument' params={"name": "action_doSynchronousUploadDocument", "value": "${uploadHandler.uploadSubmitPrefix}${fieldName}"} label='#i18n{forms.entryType.autoFileReading.label.process.ocr}' />
 	</@cCol>
 	<@cCol cols='12 col-sm-6'>
 		<canvas id="loader" width="50" height="50"></canvas>

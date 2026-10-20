@@ -20,8 +20,8 @@
 	<#if entry.helpMessage?exists&&entry.helpMessage!=''><@cFormHelp label=helpMsg id=idName /></#if>
 	<#if hasError><@cFormError label=errorMsg id=idName /></#if>
 	<@cInput type='hidden' name='${idName}' id='${idName}' />
-	<@cBlock id='sortable-status-${entry.idEntry!}' class='visually-hidden' params='role="status" aria-live="polite" aria-atomic="true"' />
-	<@chList id='sortable_${entry.idEntry!}_1' class='list-group mt-xs ${entryClass!}' attrs={'role': "listbox", 'aria-labelledby': "label-${idName}", 'aria-multiselectable': "false"}>
+	<@cBlock id='sortable-status-${entry.idEntry!}' class='visually-hidden' params={"role": "status", "aria-live": "polite", "aria-atomic": "true"} />
+	<@chList id='sortable_${entry.idEntry!}_1' class='list-group mt-xs ${entryClass!}' params={"role": "listbox", "aria-labelledby": "label-${idName}", "aria-multiselectable": "false"}>
 		<#list entry.fields as field>
 			<#if field.code == 'answer_choice'>
 				<#assign notSelected=true />
@@ -35,18 +35,18 @@
 					</#list>
 				</#if>
 				<#if notSelected>
-					<@chItem id='field_${field.idField}' class='list-group-item sortable-list ' attrs={'role': "option", 'data-sortable-id': ( field.idField )}>${field.title}</@chItem>
+					<@chItem id='field_${field.idField}' class='list-group-item sortable-list ' params={"role": "option", "data-sortable-id": ( field.idField )}>${field.title}</@chItem>
 				</#if>
 			</#if>
 		</#list>
 	</@chList>
 	<#if list_responses?has_content>
-	<@chList id='sortable_${entry.idEntry!}_2' class='list-group ${entryClass!}' attrs={'role': "listbox", 'tabindex': "0", 'aria-labelledby': "label-${idName}", 'aria-multiselectable': "false"}>
+	<@chList id='sortable_${entry.idEntry!}_2' class='list-group ${entryClass!}' params={"role": "listbox", "tabindex": "0", "aria-labelledby": "label-${idName}", "aria-multiselectable": "false"}>
 		<#assign nIdx=0 />
 		<#list list_responses?sort_by('sortOrder') as response>
 			<#list entry.fields as field>
 				<#if response.field?? && response.field.idField == field.idField>
-					<@chItem id='field_${field.idField}' class='list-group-item sortable-list ${acClass!}' attrs={'role': "option", 'tabindex': "0", 'data-sortable-id': ( field.idField )}>${field.title}</@chItem>
+					<@chItem id='field_${field.idField}' class='list-group-item sortable-list ${acClass!}' params={"role": "option", "tabindex": "0", "data-sortable-id": ( field.idField )}>${field.title}</@chItem>
 				</#if>
 			</#list>
 		</#list>

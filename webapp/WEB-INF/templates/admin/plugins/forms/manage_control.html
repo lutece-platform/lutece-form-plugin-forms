@@ -19,7 +19,7 @@
             <#else>
                 <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&id_control=${control.id}&id_step=${step.id!}' title='#i18n{forms.manage_questions.action.control}' hideTitle=['all'] buttonIcon='pencil'/> 
             </#if>
-            <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${control.id}' title='#i18n{forms.manage_controls.action.removeControl}' hideTitle=['all'] buttonIcon='trash' color='danger' params=' target="_top"' />
+            <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${control.id}' title='#i18n{forms.manage_controls.action.removeControl}' hideTitle=['all'] buttonIcon='trash' color='danger' target="_top" />
         </@span>
     </@li>
     </#list>

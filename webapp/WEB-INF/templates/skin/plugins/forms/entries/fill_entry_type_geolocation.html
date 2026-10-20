@@ -46,7 +46,7 @@
 		<@cInput type='hidden' name='${idName}_y' id='${idName}_y' value=yValue! />
 		<@cInput type='hidden' name='${idName}_geometry' id='${idName}_geometry' value=geometryValue! />
 		<#if entry.mapProvider?has_content>
-			<@cText params='hidden'>${entry.mapProvider.key!}</@cText>
+			<@cText params={"hidden": true}>${entry.mapProvider.key!}</@cText>
 			<#if viewNumberValue?has_content && entry.mapProvider.getParameter(viewNumberValue?number)?? && entry.mapProvider.getParameter(viewNumberValue?number).mapParameter??>
 				<#assign map_parameter = entry.mapProvider.getParameter(viewNumberValue?number).mapParameter >
 			</#if>

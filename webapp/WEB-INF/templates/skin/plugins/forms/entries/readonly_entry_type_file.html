@@ -7,8 +7,8 @@
 	<@cInline type='strong' id='label_${idName!}'>${entry.title!''} :</@cInline>
 	<#if list_responses?has_content>
 		<@cInline class='d-inline-block ms-xs me-m' type='strong'>${i18n("portal.theme.labelNumberOfFiles", list_responses?size )}</@cInline>
-		<@cBtn label='' type='button' id='btn-${idName!}' class='secondary btn-mini btn-show-files py-0' attrs={'data-hide': "#i18n{portal.theme.labelHideUploadedFiles}", 'data-show': "#i18n{portal.theme.labelShowUploadedFiles}", 'aria-expanded': "false", 'aria-controls': "list_${idName!}", 'aria-labelledby': "label_${idName}"}>#i18n{portal.theme.labelShowUploadedFiles}</@cBtn>
-		<@chList class='list-uploaded-files visually-hidden mb-3' id='list_${idName!}' attrs={'role': "region", 'aria-labelledby': "label_${idName}"}>
+		<@cBtn label='' type='button' id='btn-${idName!}' class='secondary btn-mini btn-show-files py-0' params={"data-hide": "#i18n{portal.theme.labelHideUploadedFiles}", "data-show": "#i18n{portal.theme.labelShowUploadedFiles}", "aria-expanded": "false", "aria-controls": "list_${idName!}", "aria-labelledby": "label_${idName}"}>#i18n{portal.theme.labelShowUploadedFiles}</@cBtn>
+		<@chList class='list-uploaded-files visually-hidden mb-3' id='list_${idName!}' params={"role": "region", "aria-labelledby": "label_${idName}"}>
 		<#list list_responses as response>
 		<#if response.file?exists>
 			<#if response.file.size??>
