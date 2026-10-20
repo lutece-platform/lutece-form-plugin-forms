@@ -6,8 +6,8 @@
 				<@chList class='custom-list list-default'>
 				<#list form_list as form>
 					<#if form.active>
-						<#assign chItemParams = form.countResponses?then( { 'class': 'item-number', 'data-number': '${form.currentNumberResponse!} #i18n{forms.xpage.response.label}' }, {} ) />
-						<@chItem params=chItemParams >
+						<#assign chItemParams = form.countResponses?then( { 'data-number': '${form.currentNumberResponse!} #i18n{forms.xpage.response.label}' }, {} ) />
+						<@chItem class=form.countResponses?then( 'item-number', '' ) params=chItemParams >
 							<#assign linkTitle = ( form.countResponses )?then( ( form.currentNumberResponse!'' )?string + ' #i18n{forms.xpage.response.label} | ', '' ) + ' ' + ( form.title )?string />
 							<@cLink href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' label=form.title title=linkTitle titleClass='truncate' target='_blank' />
 						</@chItem>
