@@ -20,27 +20,38 @@ function resetForm( ){
 	document.getElementById("searchForm").submit();
 }
 
+/**
+ * Builds the link to a response, with the DOM: neither its label nor the identifier in its URL is read as HTML.
+ */
+function createNavButton( url, label, iconClass, iconFirst ){
+	const link = document.createElement( 'a' );
+	link.className = 'btn btn-primary btn-flat';
+	link.href = url;
+	const icon = document.createElement( 'i' );
+	icon.className = iconClass;
+	if( iconFirst ){
+		link.append( icon, ' ', label );
+	} else {
+		link.append( label, ' ', icon );
+	}
+	return link;
+}
+
+/**
+ * Adds the links to the previous and next responses of the current list; the labels are text.
+ */
 function setNavButtons( idResp, labelPrev, labelNext ){
 	const respUrl=sessionStorage.getItem('multiview_base_url') + '&id_form_response=';
 	const item_list=sessionStorage.getItem('multiview_current_list');
 	const boxTool = document.querySelector('#info-box-header.boxTool');
-	if( boxTool )	{
+	if( boxTool && item_list )	{
         var response_list=item_list.split(','), maxIdx=response_list.length - 1, currentIdx=response_list.indexOf(idResp);
-        var nNext=currentIdx+1, nPrev=currentIdx-1;
         if( currentIdx > -1 ){
             if( currentIdx > 0 ){
-                nPrev=response_list[nPrev];
-                boxTool.insertAdjacentHTML(
-                    'beforeend',
-                    `<a class="btn btn-primary btn-flat" href="${respUrl}${nPrev}">${labelPrev}</a>`
-                );
+                boxTool.append( createNavButton( respUrl + encodeURIComponent( response_list[currentIdx - 1] ), labelPrev, 'bi bi-arrow-left', true ) );
             }
             if( currentIdx != maxIdx ){
-                nNext=response_list[nNext];
-                boxTool.insertAdjacentHTML(
-                    'beforeend',
-                    `<a class="btn btn-primary btn-flat" href="${respUrl}${nNext}">${labelNext}</a>`
-                );
+                boxTool.append( createNavButton( respUrl + encodeURIComponent( response_list[currentIdx + 1] ), labelNext, 'bi bi-arrow-right', false ) );
             }
         }
 	}
@@ -105,20 +116,27 @@ function setToc( toc, tocBox, tocCompressToggle, tocSideToggle, tocExpandToggle 
 
 }
 
+/**
+ * Escapes a text read from the page (a title, an identifier) before it is put in HTML.
+ */
+function escapeHtml( text ){
+	return String( text ).replace( /&/g, '&amp;' ).replace( /</g, '&lt;' ).replace( />/g, '&gt;' ).replace( /"/g, '&quot;' ).replace( /'/g, '&#39;' );
+}
+
 function setStepsIndex(){
 	let stepList=document.querySelectorAll('#steps-content > .step'), stepLinks='<ul class="list-unstyled flex-grow-1">', active=true;
 	let stepLinksContent = '';
 	let isActive = true;
 	stepList.forEach(function(step) {
-		const pId = step.id;
-		const t = step.dataset.title || '';
+		const pId = escapeHtml( step.id );
+		const t = escapeHtml( step.dataset.title || '' );
 		const groups = step.querySelectorAll('.fieldset-group');
 		let listGroup = '';
 		if (groups.length > 1) {
 			listGroup = '<ul>';
 			groups.forEach(function(group) {
-				const gId = group.id;
-				const gt = group.querySelector('legend') ? group.querySelector('legend').textContent : '';
+				const gId = escapeHtml( group.id );
+				const gt = escapeHtml( group.querySelector('legend') ? group.querySelector('legend').textContent : '' );
 				listGroup += `<li tabindex="0"><a class="nav-link" href="#${gId}" title="${gt}"><span>${gt}</span></a></li>`;
 			});
 			listGroup += '</ul>';
