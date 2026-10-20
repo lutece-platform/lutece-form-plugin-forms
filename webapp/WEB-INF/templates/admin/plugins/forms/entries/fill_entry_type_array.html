@@ -32,7 +32,7 @@
               <#assign rowTitle = ( entry.fields?filter( f -> f.value == i + '_1' )?map( f -> f.title! )?first )!'' />
               <#assign columnTitle = ( entry.fields?filter( f -> f.value == '1_' + j )?map( f -> f.title! )?first )!'' />
               <#assign cellTitle = ( rowTitle?has_content )?then( rowTitle, i18n( 'forms.xpage.form.array.row', i - 1 ) ) + ' - ' + ( columnTitle?has_content )?then( columnTitle, i18n( 'forms.xpage.form.array.column', j - 1 ) ) />
-              <@input type='text' id='${idName}' name='${idName}' value='${inputValue}' title=cellTitle />
+              <@input type='text' id='${idName}' name='${idName}' value='${inputValue}' title=cellTitle params={ 'aria-label': cellTitle } />
             </#if>
           </@td>
           </#list>
