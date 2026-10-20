@@ -11,7 +11,7 @@
 <@div class='container'>
 <@row>
     <@columns>
-        <@formGroup labelKey='#i18n{forms.modify_form.labelStartDate}' helpKey='#i18n{forms.modify_form.labelStartDate.help}' rows=2>
+        <@formGroup labelFor='availabilityStartDate' labelKey='#i18n{forms.modify_form.labelStartDate}' helpKey='#i18n{forms.modify_form.labelStartDate.help}' rows=2>
             <@inputGroup>
                 <@input type='datetime' language=locale name='availabilityStartDate' id='availabilityStartDate'  value=form.availabilityStartDate />
                 <@inputGroupItem type='text'><@icon style='calendar' /></@inputGroupItem>
@@ -21,7 +21,7 @@
 </@row>
 <@row>
     <@columns>
-        <@formGroup labelKey='#i18n{forms.modify_form.labelEndDate}' helpKey='#i18n{forms.modify_form.labelEndDate.help}' rows=2>
+        <@formGroup labelFor='availabilityEndDate' labelKey='#i18n{forms.modify_form.labelEndDate}' helpKey='#i18n{forms.modify_form.labelEndDate.help}' rows=2>
             <@inputGroup>
                 <@input type='datetime' language=locale name='availabilityEndDate' id='availabilityEndDate' value=form.availabilityEndDate />
                 <@inputGroupItem type='text'>
