@@ -18,4 +18,15 @@
 		</@cCol>
 	</@cRow>
 </@cContainer>
+<script>
+document.addEventListener( 'DOMContentLoaded', function( ) {
+	// The theme shows no banner: the page keeps a level 1 heading, the title of the page
+	if ( !document.querySelector( 'h1' ) ) {
+		const pageTitle = document.createElement( 'h1' );
+		pageTitle.className = 'visually-hidden';
+		pageTitle.textContent = document.title;
+		( document.querySelector( 'main' ) || document.body ).prepend( pageTitle );
+	}
+} );
+</script>
 </@cTpl>
