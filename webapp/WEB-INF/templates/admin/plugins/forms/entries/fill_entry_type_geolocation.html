@@ -24,7 +24,7 @@
     <#include "/admin/plugins/address/modules/autocomplete/include/suggestPOI.html" />
 </#if>
 <#if entry.mapProvider??>
-    <@formGroup labelFor='${idName}_address' labelKey='${entry.title}' helpKey=helpKey!'' class=entryClass! mandatory=entry.mandatory htmlRequired=false rows=2>
+    <@formGroup labelFor=useAddressAutocomplete?then( '${idName}_address-input', '${idName}_address' ) labelKey='${entry.title}' helpKey=helpKey!'' class=entryClass! mandatory=entry.mandatory htmlRequired=false rows=2>
     <#if list_responses?? && list_responses?has_content>
         <#assign addressValue = getResponseContainingTheFieldWithCode(list_responses, "address").toStringValueResponse />
         <#assign idAddressValue = getResponseContainingTheFieldWithCode(list_responses, "idAddress").toStringValueResponse />
