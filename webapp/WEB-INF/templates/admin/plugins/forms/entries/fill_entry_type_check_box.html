@@ -52,29 +52,29 @@
 </#if>
 <#if list_responses??>
 <script>
-<#list list_responses as response>
-var idName = '';
-<#if entry_iteration_number?has_content && entry_iteration_number gt 0>idName = '_nIt' + ${entry_iteration_number} + '_';</#if>
 <#if response.entry.idEntry == entry.idEntry && response.field??>
-var baliseId = "div" + idName + ${response.field.idField};
-if(document.getElementById && document.getElementById(baliseId) != null){
-  document.getElementById(baliseId).style.visibility='visible';
-  document.getElementById(baliseId).style.display='block';
-}
+(function() {
+	const idName = <#if entry_iteration_number?has_content>'_nIt' + ${entry_iteration_number} + '_'<#else>''</#if>;
+	const conditional = document.getElementById( 'div' + idName + ${response.field.idField} );
+	if ( conditional ) {
+		conditional.style.visibility = 'visible';
+		conditional.style.display = 'block';
+	}
+})();
 </#if>
-</#list>
 </script>
 <#else>
 <#list entry.fields as field>
 <#if field.defaultValue && field.conditionalQuestions?exists && field.conditionalQuestions?size != 0>
 <script>
-var idName = '';
-<#if entry_iteration_number?has_content && entry_iteration_number gt 0>idName = '_nIt' + ${entry_iteration_number} + '_';</#if>
-var baliseId = "div" + idName + ${field.idField};
-if(document.getElementById && document.getElementById(baliseId) != null){
-document.getElementById(baliseId).style.visibility='visible';
-document.getElementById(baliseId).style.display='block';
-}
+(function() {
+	const idName = <#if entry_iteration_number?has_content>'_nIt' + ${entry_iteration_number} + '_'<#else>''</#if>;
+	const conditional = document.getElementById( 'div' + idName + ${field.idField} );
+	if ( conditional ) {
+		conditional.style.visibility = 'visible';
+		conditional.style.display = 'block';
+	}
+})();
 </script>
 </#if>
 </#list>
