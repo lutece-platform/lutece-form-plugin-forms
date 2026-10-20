@@ -83,11 +83,11 @@ document.addEventListener('DOMContentLoaded', function() {
 	<#list list_control as control>
 		var displayControl = getControlId(${control.listIdQuestion[0]}, ${question.iterationNumber}),
 		input${control.id}_${question.iterationNumber} = getInputElement(displayControl);
-		/* Set aria-controls and initial aria-expanded on controlling inputs */
+		/* Set aria-controls on controlling inputs; aria-expanded is not allowed on a radio, a checkbox or a text field,
+		   the revealed question follows its control in the DOM */
 		input${control.id}_${question.iterationNumber}.forEach(function(el) {
 			var ac = el.getAttribute('aria-controls') || '';
 			if (ac.indexOf(targetFieldId) === -1) el.setAttribute('aria-controls', (ac ? ac + ' ' : '') + targetFieldId);
-			el.setAttribute('aria-expanded', displayField ? displayField.style.display !== 'none' : 'false');
 		});
 		['change', 'keyup', 'paste', 'mouseup', 'input'].forEach(function(eventType) {
 			input${control.id}_${question.iterationNumber}.forEach(function(inputEl) {
@@ -143,10 +143,6 @@ document.addEventListener('DOMContentLoaded', function() {
 						if( hasCollapse && toCollapse ){ toCollapse.style.display = 'none'; } // Hide parent group if is in a collapse step-group
 						document.getElementById('${question.id?js_string?no_esc}_${question.iterationNumber?js_string?no_esc}').value = '';
 					}
-					/* Update aria-expanded on all controlling inputs */
-					document.querySelectorAll('[aria-controls~="' + targetFieldId + '"]').forEach(function(ctrl) {
-						ctrl.setAttribute('aria-expanded', String(bIsQuestionDisplayed));
-					});
 					var currentControl = "${question.id?js_string?no_esc}_${question.iterationNumber?js_string?no_esc}";
 					var currentInput = getInputElement(currentControl);
 					if ( currentInput[0] != undefined && currentInput[0].type != 'file' ){

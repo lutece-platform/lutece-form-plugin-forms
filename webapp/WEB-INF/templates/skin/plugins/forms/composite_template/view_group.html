@@ -1,41 +1,40 @@
 <@cTpl>
-<#assign indexIteration=-1>
 <#assign nbIterationMin=group.iterationMin>
-<#assign isShownTitle = ( group.title?ends_with('hidden') )?then( 'false', 'true' ) />
+<#assign isShownTitle = !group.title?ends_with('hidden') />
+<#assign groupTitle = group.title?replace('hidden','') />
+<#assign hasDescription = group.description?? && group.description != '' />
 <@cBlock class='step-group'>
-	<#list groupContent as childrenHtml>
-	<#assign currentIteration = (childrenHtml?index / nbBaseChildren)?int />
-	<#if currentIteration != indexIteration>
-	<#if indexIteration gte 0></fieldset></#if>
-		<#assign indexIteration = currentIteration />
-		<#assign nbTotalIteration = ( groupContent?size / nbBaseChildren )?int />
-		<fieldset class="step-group-item" id="group_${group.id!}_${indexIteration}"></a>
-		<#assign cClass = ( childrenHtml?index gte 1 )?then( 'border-top col-12 pt-m mt-l', '' ) + ( id_display?? )?then( 'display_field_' + ( id_display )?string + ' hidden', '' ) />
-		<#if cClass?trim !=''><div class="${cClass}"></#if>
-		<#assign legend>
-		<@cInline class='h3 group-title'>${group.title?replace('hidden','')}
-		<#if indexIteration gt 0>(${indexIteration+1})</#if>
-		<#if ( nbTotalIteration gt nbIterationMin ) && ( isIterable && indexIteration = nbTotalIteration - 1 )><div class="btn btn-group ms-auto mt-0"></#if>
-		<#if nbTotalIteration gt nbIterationMin>
-			<@cBtn class='danger ms-auto me-sm action-group' id='group_remove_${group.id!}_${indexIteration}' label=group.iterationRemoveLabel! params={"formnovalidate": true, "name": "action_removeIteration", "value": "${group.id}_${indexIteration}"}>
-				<@cIcon name='trash' />
+<#if nbBaseChildren gt 0 && groupContent?has_content>
+<#assign nbTotalIteration = ( groupContent?size / nbBaseChildren )?int />
+<#list 0..<( groupContent?size / nbBaseChildren )?ceiling as indexIteration>
+	<#assign groupItemId = 'group_${group.id}_${indexIteration}' />
+	<#assign descriptionId = 'group_description_${group.id}_${indexIteration}' />
+	<#assign iterationTitle><#if indexIteration gt 0>${groupTitle} (${indexIteration+1})<#else>${groupTitle}</#if></#assign>
+	<#-- The legend is the first child of the fieldset and names it alone. The buttons follow it, as in @cStepGroup, whose
+	     protocol (rm_n, add_n) differs from the one of forms (group and display ids): the hidden text names the occurrence -->
+	<@cFieldset legend=iterationTitle legendClass='h3 group-title' showLabel=isShownTitle id=groupItemId class=( indexIteration gt 0 )?then( 'step-group-item border-top pt-m mt-l', 'step-group-item' ) params=( hasDescription )?then( { 'aria-describedby': descriptionId }, { } ) >
+		<#assign hasRemove = nbTotalIteration gt nbIterationMin />
+		<#assign hasAdd = isIterable && indexIteration == nbTotalIteration - 1 />
+		<#if hasRemove || hasAdd>
+		<@cBlock class='d-flex justify-content-end mb-m'>
+			<#if hasRemove>
+			<@cBtn class='danger me-sm action-group' id='group_remove_${group.id!}_${indexIteration}' label='' params={"formnovalidate": true, "name": "action_removeIteration", "value": "${group.id}_${indexIteration}"}>
+				<@cIcon name='trash' /><@cInline class='btn-label'>${group.iterationRemoveLabel!}</@cInline><@cInline class='visually-hidden'> ${iterationTitle}</@cInline>
 			</@cBtn>
-		</#if>
-		<#if isIterable && indexIteration = nbTotalIteration - 1>
-			<@cBtn class='primary ms-auto action-group' id='group_add_${group.id!}_${indexIteration}' label=group.iterationAddLabel params={"formnovalidate": true, "value": ( id_group ), "name": "action_addIteration"}>
-				<@cIcon name='plus' />
+			</#if>
+			<#if hasAdd>
+			<@cBtn class='primary action-group' id='group_add_${group.id!}_${indexIteration}' label='' params={"formnovalidate": true, "value": ( id_group ), "name": "action_addIteration"}>
+				<@cIcon name='plus' /><@cInline class='btn-label'>${group.iterationAddLabel!}</@cInline><@cInline class='visually-hidden'> ${groupTitle}</@cInline>
 			</@cBtn>
+			</#if>
+		</@cBlock>
 		</#if>
-		</@cInline>
-		<#if ( nbTotalIteration gt nbIterationMin ) && ( isIterable && indexIteration = nbTotalIteration - 1 )></div></#if>
-		</#assign>
-		<@cLegend label=legend showLabel=isShownTitle?boolean class='col-12 d-flex align-items-center justify-space-between' id='group-${indexIteration+1!}' />
-		<div class="row">
-		<#if cClass !=''></div></div></#if>
-		</#if>
-		<#if group.description!=''><@cCol cols='12'>${richText( group.description )}</@cCol></#if>
-		${childrenHtml}
-	</#list>
-	<#if indexIteration gte 0></fieldset></#if>
+		<@cRow>
+			<#if hasDescription><@cCol cols='12' id=descriptionId>${richText( group.description )}</@cCol></#if>
+			<#list groupContent as childrenHtml><#if ( childrenHtml?index / nbBaseChildren )?int == indexIteration>${childrenHtml}</#if></#list>
+		</@cRow>
+	</@cFieldset>
+</#list>
+</#if>
 </@cBlock>
 </@cTpl>
