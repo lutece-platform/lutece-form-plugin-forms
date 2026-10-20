@@ -44,7 +44,7 @@
 			<#assign fieldParams = ( field.comment?? && field.comment != '' )?then( { 'title': field.comment }, {} ) />
 			<#assign isRequiredLabel=(!hasTitle && entry.mandatory) >
 			<@cRadio name=idName! label=field.title! id='${idName}_${field.idField}' value='${field.idField!}' labelClass=labelClass! inline=inLine! checked=isChecked! required=entry.mandatory! html5Required=false showRequiredLabel=isRequiredLabel params=fieldParams! />
-			<#if field.fileImage.url??><@cImg src=field.fileImage.url alt=field.title params='style="height:80px;width:80px"' /></#if>
+			<#if field.fileImage.url??><@cImg src=field.fileImage.url alt=field.title params={'width': 80, 'height': 80} /></#if>
 		</#if>
 	</#list>
 	<#if inLine><#if list_entry_children??><#list list_entry_children as children><#if children.conditionalEntries??>${children.conditionalEntries}</#if></#list></#if></#if>
@@ -73,7 +73,7 @@
 			<#assign fieldParams = ( field.comment?? && field.comment != '' )?then( { 'title': field.comment }, {} ) />
 			<#assign isRequiredLabel=(!hasTitle && entry.mandatory) >
 			<@cRadio name=idName! label=field.title! id='${idName}_${field.idField}' class='form-check ${entryCSSClass!?trim}' value='${field.idField!}' labelClass=labelClass! inline=inLine! checked=isChecked! required=entry.mandatory! html5Required=false errorMsg=errorMsg helpMsg=helpMsg showRequiredLabel=isRequiredLabel params=fieldParams! />
-			<#if field.fileImage.url??><@cImg src=field.fileImage.url alt=field.title params='style="height:80px;width:80px"' /></#if>
+			<#if field.fileImage.url??><@cImg src=field.fileImage.url alt=field.title params={'width': 80, 'height': 80} /></#if>
 		</#if>
 	</#list>
 	<#if inLine><#if list_entry_children??><#list list_entry_children as children><#if children.conditionalEntries??>${children.conditionalEntries}</#if></#list></#if></#if>

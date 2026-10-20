@@ -12,7 +12,7 @@
 	<#list list_responses as response>
 		<#if response.file?exists>
 			<#assign hasFile=true>
-			<@cImg src='' alt="${entry.title!''}" id='img${entry.idEntry}' title="${entry.title!''}" class="img-fluid img-responsive img-thumbnail" attrs={'style': "width:${width};"} />
+			<@cImg src='' alt="${entry.title!''}" id='img${entry.idEntry}' title="${entry.title!''}" class="img-fluid img-responsive img-thumbnail" params={'width': width} />
 		<#else>
 			<@cInline type='em'>#i18n{portal.theme.labelNoDataProvided}</@cInline>
 		</#if>

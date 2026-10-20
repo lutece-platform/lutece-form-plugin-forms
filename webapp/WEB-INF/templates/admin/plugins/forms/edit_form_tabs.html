@@ -1,4 +1,4 @@
-<#macro formTabs tab class='' type='form' params=''>
+<#macro formTabs tab class='' type='form' extraTabs=''>
 <@tabs>
 <@tabList class=class>
 <#if type='form'>
@@ -23,7 +23,7 @@
 <#if tab='transitions' || tab='general'><#assign active = true /><#else><#assign active = false /></#if>
 <@tabLink active=active href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=${step.id}' tabIcon='cog' title='#i18n{forms.modify_step.labelTitle}' />
 </#if>
-${params}
+${extraTabs}
 </@tabList>
 <#nested>
 </@tabs>

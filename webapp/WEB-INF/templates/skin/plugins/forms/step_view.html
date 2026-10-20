@@ -44,7 +44,7 @@ ${formBottomBreadcrumb!}
 function getInputElement( displayControl ){
 	const types = ['input','select','textarea'];
 	let elm = null;
-	const container = document.querySelector("div[displayControl='" + displayControl + "']");
+	const container = document.querySelector("div[data-display-control='" + displayControl + "']");
 	if (!container) return [];
 	
 	for(let i=0; i<types.length && (elm == null || elm.length === 0); i++){
@@ -64,7 +64,7 @@ function getInputElement( displayControl ){
  */
 function getControlId( idQuestion, iteration ){
 	const controlId = idQuestion + '_' + iteration;
-	return document.querySelector( 'div[displayControl="' + controlId + '"]' ) ? controlId : idQuestion + '_0';
+	return document.querySelector( 'div[data-display-control="' + controlId + '"]' ) ? controlId : idQuestion + '_0';
 }
 
 function getFieldValue(elm) {
@@ -112,7 +112,7 @@ function getParentsUntil(element, stopSelector) {
  * This function helps ensure that only visible fields are validated as required.
  */
 function toggleRequiredAttributesByVisibility() {
-	document.querySelectorAll("div[displayControl]").forEach(function (div) {
+	document.querySelectorAll("div[data-display-control]").forEach(function (div) {
 		var inputs = div.querySelectorAll("input, select, textarea");
 
 		// Check if this element is visible or has the class "control_invalid"
@@ -137,7 +137,7 @@ function toggleRequiredAttributesByVisibility() {
 /**
  * Hides a step group when none of its questions is displayed, shows it otherwise.
  * A question belongs to the group through its hidden "displayed_questions" input, which never moves.
- * Its visible field (div[displayControl]) may have been moved into the controlling fieldset of a
+ * Its visible field (div[data-display-control]) may have been moved into the controlling fieldset of a
  * previous group (see view_question.html), so it is looked up in the whole document: an iterable
  * group whose fields are all conditional keeps its title and "add iteration" button visible as
  * long as at least one of its fields is displayed.
@@ -145,7 +145,7 @@ function toggleRequiredAttributesByVisibility() {
 function stepGroupDisplay( stepGroup ){
 	const questionIds = Array.from( stepGroup.querySelectorAll( 'input[name="displayed_questions"]' ) ).map( input => input.id );
 	const hasDisplayedQuestion = questionIds.some( function( questionId ){
-		const field = document.querySelector( 'div[displayControl="' + questionId + '"]' );
+		const field = document.querySelector( 'div[data-display-control="' + questionId + '"]' );
 		return field !== null && !field.classList.contains( 'control_invalid' );
 	});
 	stepGroup.classList.toggle( 'd-none', !hasDisplayedQuestion );
