@@ -1,6 +1,6 @@
 <@cTpl>
 <#assign classDisp = ( id_display?? )?then( 'display_field_' + ( id_display )?string, '' ) + ( group.title?contains('- hidden') )?then( 'visually-hidden', '' ) />
-<#assign param = ( id_display?? )?then( ' hidden ', '' ) />
+<#assign param = { 'hidden': id_display?? } />
 <@chItem class='pt-m'><@cInline class=classDisp params=param>${group.title!} </@cInline>
 <#list groupContentByIteration as iterationNumber, groupContent >
 <#if groupContent?size != 0>

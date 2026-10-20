@@ -40,7 +40,7 @@
 		if ( group === null ) {
 			return;
 		}
-		const allFields = group.querySelectorAll('div[displayControl]');
+		const allFields = group.querySelectorAll('div[data-display-control]');
 		const condFields = group.querySelectorAll('div[class*="display_field_"]');
 		if ( allFields.length === 0 || allFields.length !== condFields.length ) {
 			return;

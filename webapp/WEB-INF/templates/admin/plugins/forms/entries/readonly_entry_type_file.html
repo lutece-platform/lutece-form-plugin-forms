@@ -32,7 +32,7 @@
 			    </#if>
 				<#if response.file.mimeType?? && response.file.mimeType?contains('image')>
 					<#if response.file.url?? && response.file.url != ''>
-						<@img url='${response.file.url}' alt='${response.file.title}' class='img-fluid img-thumbnail ms-xs' params='style="max-height: 200px;"'/>
+						<@img url='${response.file.url}' alt='${response.file.title}' class='img-fluid img-thumbnail ms-xs forms-mh-200'/>
 					</#if>
 				</#if>
 			</@li>

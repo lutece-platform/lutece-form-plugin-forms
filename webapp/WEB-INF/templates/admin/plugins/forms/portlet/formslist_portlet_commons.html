@@ -4,7 +4,7 @@
     <@box>
         <@boxHeader title='#i18n{forms.portlet.formsList.titleAvailableFormsList}' boxTools=true />
         <@boxBody class='p-3'>
-            <@listGroup id='form-available' params='style="min-height:15rem;"'>
+            <@listGroup id='form-available' class='forms-min-h-15rem'>
             <#if available_forms_list?? && available_forms_list?size gt 0>
                 <#list available_forms_list as aForm>
                 <@listGroupItem id=aForm.id!?string class='bg-gray-100 border border-gray-300 min-h-40 d-flex justify-content-between' params={"draggable": "true", "tabindex": "0"}>
@@ -24,7 +24,7 @@
     <@box>
         <@boxHeader title='#i18n{forms.portlet.formsList.titlePublishedFormsList}' />
         <@boxBody class='p-3'>
-            <@listGroup id='form-published' params='style="min-height:15rem;"'>
+            <@listGroup id='form-published' class='forms-min-h-15rem'>
             <#if published_forms_list?? && published_forms_list?size gt 0>
                 <#list published_forms_list as pForm>
                     <@listGroupItem id=pForm.id!?string class='bg-gray-100 border border-gray-300 min-h-40 d-flex justify-content-between' params={"draggable": "true", "tabindex": "0"}>

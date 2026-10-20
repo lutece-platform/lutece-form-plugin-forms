@@ -13,9 +13,7 @@
 <#if entryStep=''><#assign entryStep=0></#if>
 <#assign beginHour=''>
 <#assign beginEnd=''>
-<#assign inputParams = 'min="00:00" max="23:59"' />
 <#if list_responses?has_content>
-<#assign inputParams=''>
 <#assign beginHourCode = 'begin_hour'>
 <#assign endHourCode = 'end_hour'>
 <#list list_responses?chunk(2) as row>
@@ -25,6 +23,6 @@
 <#if row[1].field.code == endHourCode><#if row[1]?? && row[1].toStringValueResponse??><#assign endHour = row[1].toStringValueResponse></#if></#if>
 </#list>
 </#if>
-<@cInputTimeSlot name=idName! legend=entry.title! legendClass=legendClass! beginHour=beginHour! endHour=endHour! step=entryStep! hideErrorMsg=true errorMsg=errorMsg! class=entryCSSClass!?trim html5Required=false required=entry.mandatory! helpMsg=helpMsg! params=inputParams! />
+<@cInputTimeSlot name=idName! legend=entry.title! legendClass=legendClass! beginHour=beginHour! endHour=endHour! step=entryStep! hideErrorMsg=true errorMsg=errorMsg! class=entryCSSClass!?trim html5Required=false required=entry.mandatory! helpMsg=helpMsg! />
 </#if>
 </@cTpl>

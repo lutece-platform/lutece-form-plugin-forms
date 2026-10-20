@@ -273,7 +273,7 @@
 <#if typeToast?? && typeToast != ''><@initToast><@addToast content=messageToast class='bg-${typeToast} text-${typeToast}-fg' /></@initToast></#if>
 </#macro>    
 <#macro formBreadCrumb home='jsp/admin/plugins/forms/ManageForms.jsp' homeLabel=false>
-<@breadcrumbs id='breadforms' params=' style="margin-bottom:1em; background-color:transparent;"'>
+<@breadcrumbs id='breadforms' class='mb-3 bg-transparent'>
 	<@breadcrumbItem>
 		<@link href=home title='#i18n{forms.form.returnPage} #i18n{forms.manageForm.title}'>
 			<@icon style='home' />
@@ -284,8 +284,8 @@
 </@breadcrumbs>
 </#macro>   
 <#macro bottomFormFixedButtons>
-<#assign bottomParams>class="<#if commonsThemeCode='tabler'>fixed-bottom </#if>d-flex gap-2 justify-content-end bg-light bg-gradient left-0 w-100 d-flex justify-content-center py-3" style="--tblr-bg-opacity:.5;"</#assign>
-<@div params=bottomParams>
+<#assign bottomClass = ( commonsThemeCode == 'tabler' )?then( 'fixed-bottom ', '' ) + 'd-flex gap-2 justify-content-end bg-light bg-gradient left-0 w-100 justify-content-center py-3 forms-bottom-bar' />
+<@div class=bottomClass>
 <#nested>
 </@div>
 </#macro>

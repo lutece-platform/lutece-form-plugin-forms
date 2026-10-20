@@ -11,7 +11,7 @@
 				<@div class='col ps-0'>
 					<@h level=3 class='mb-0 d-flex align-items-center' params={"title": "#i18n{portal.util.labelModify} ${form.title}"}>
 						<#if !form.active><@icon style='times' class='text-danger fs-2' title='#i18n{portal.util.labelDisabled}' /><#else><@icon style='check' class='text-success fs-2' title='#i18n{portal.util.labelEnabled}' /></#if>
-						<@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}' label='${form.title}' class='d-inline-block text-truncate' params='style="max-width:180px"' />
+						<@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}' label='${form.title}' class='d-inline-block text-truncate forms-mw-180' />
 					</@h>
 				</@div>
 				<@div class='col-auto d-flex align-items-center'>
