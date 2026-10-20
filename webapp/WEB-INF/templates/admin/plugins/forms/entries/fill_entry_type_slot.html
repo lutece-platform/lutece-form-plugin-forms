@@ -35,11 +35,11 @@
                 <#if hasError><@p class='invalid-feedback'><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></@p></#if>
             <#else>
                 <@columns xs=6 sm=4 md=3 xl=2>
-                    <label>#i18n{forms.message.slot.preposition.from}</label>
+                    <label for="${idName}_begin">#i18n{forms.message.slot.preposition.from}</label>
                     <input type="time" class="form-control<#if hasError> is-invalid</#if>" id="${idName}_begin" name="${idName}_begin" min="00:00" max="23:59" />
                 </@columns>
                 <@columns xs=6 sm=4 md=3 xl=2>
-                    <label>#i18n{forms.message.slot.preposition.to}</label>
+                    <label for="${idName}_end">#i18n{forms.message.slot.preposition.to}</label>
                     <input type="time" class="form-control<#if hasError> is-invalid</#if>" id="${idName}_end" name="${idName}_end" min="00:00" max="23:59" />
                 </@columns>
                 <#if hasError><@p class='invalid-feedback'><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></@p></#if>

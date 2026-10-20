@@ -1,4 +1,5 @@
 <@cTpl>
+<h1 class="visually-hidden" id="forms-page-title">#i18n{forms.xpage.listForms.pagetitle}</h1>
 <@cContainer>
     <@cRow>
         <@cCol>
@@ -20,12 +21,10 @@
 </@cContainer>
 <script>
 document.addEventListener( 'DOMContentLoaded', function( ) {
-	// The theme shows no banner: the page keeps a level 1 heading, the title of the page
-	if ( !document.querySelector( 'h1' ) ) {
-		const pageTitle = document.createElement( 'h1' );
-		pageTitle.className = 'visually-hidden';
-		pageTitle.textContent = document.title;
-		( document.querySelector( 'main' ) || document.body ).prepend( pageTitle );
+	// The banner shows the title: the level 1 heading rendered for the themes without banner is not needed
+	var bannerTitle = document.querySelector( '.banner h1' );
+	if ( bannerTitle && getComputedStyle( bannerTitle ).display !== 'none' ) {
+		document.getElementById( 'forms-page-title' ).remove( );
 	}
 } );
 </script>
