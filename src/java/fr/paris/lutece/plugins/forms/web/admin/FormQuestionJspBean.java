@@ -86,6 +86,7 @@ import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
+import fr.paris.lutece.portal.util.mvc.utils.MVCUtils;
 import fr.paris.lutece.portal.service.template.HtmlMarkup;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
@@ -335,6 +336,24 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         }
         return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
 
+    }
+
+    /**
+     * Return the URL of the JSP manage questions of a step
+     * 
+     * @param request
+     *            The HTTP request
+     * @param nIdStep
+     *            The step identifier
+     * @return The URL of the JSP manage questions
+     */
+    private String getJspManageQuestions( HttpServletRequest request, int nIdStep )
+    {
+        UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_MANAGE_QUESTIONS );
+        url.addParameter( MVCUtils.PARAMETER_VIEW, VIEW_MANAGE_QUESTIONS );
+        url.addParameter( FormsConstants.PARAMETER_ID_STEP, nIdStep );
+
+        return url.getUrl( );
     }
 
     /**
@@ -607,7 +626,8 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         catch ( AccessDeniedException e )
         {
             return redirect( request,
-                    AdminMessageService.getMessageUrl( request, WARNING_INSUFFICIENT_MODIFY_PERMISSION_TO_DELETE_COMPOSITE, AdminMessage.TYPE_STOP ) );
+                    AdminMessageService.getMessageUrlReturningTo( request, WARNING_INSUFFICIENT_MODIFY_PERMISSION_TO_DELETE_COMPOSITE, AdminMessage.TYPE_STOP,
+                            getJspManageQuestions( request, _formDisplay.getStepId( ) ) ) );
         }
 
         if ( _formService.existCompositeResponses( _formDisplay ) )
@@ -615,11 +635,13 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
             boolean bIsQuestion = CompositeDisplayType.QUESTION.getLabel( ).equalsIgnoreCase( _formDisplay.getCompositeType( ) );
             String strMessage = bIsQuestion ? MESSAGE_CANT_REMOVE_ENTRY_RESOURCES_ATTACHED : MESSAGE_CANT_REMOVE_GROUP_RESOURCES_ATTACHED;
             
-            return redirect( request, AdminMessageService.getMessageUrl( request, strMessage, AdminMessage.TYPE_STOP ) );
+            return redirect( request, AdminMessageService.getMessageUrlReturningTo( request, strMessage, AdminMessage.TYPE_STOP,
+                    getJspManageQuestions( request, _formDisplay.getStepId( ) ) ) );
         }
         else if ( existsCondtionalControlUsingQuestion( _formDisplay ) )
         {
-            return redirect( request, AdminMessageService.getMessageUrl( request, MESSAGE_CANT_REMOVE_ENTRY_CONDITION_ATTACHED, AdminMessage.TYPE_STOP ) );
+            return redirect( request, AdminMessageService.getMessageUrlReturningTo( request, MESSAGE_CANT_REMOVE_ENTRY_CONDITION_ATTACHED, AdminMessage.TYPE_STOP,
+                    getJspManageQuestions( request, _formDisplay.getStepId( ) ) ) );
         }
 
         String strMessage = getConfirmMessageRemoveQuestion( _form, _formDisplay );
