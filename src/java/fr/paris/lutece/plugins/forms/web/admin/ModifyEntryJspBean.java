@@ -293,7 +293,7 @@ public class ModifyEntryJspBean extends AbstractJspBean
         Field field = new Field( );
         field.setParentEntry( entry );
 
-        String strError = getFieldData( request, field );
+        String strError = getFieldData( request, field, getJspModifyQuestion( request, _step.getId( ), _question.getId( ) ) );
 
         if ( strError != null )
         {
@@ -346,7 +346,7 @@ public class ModifyEntryJspBean extends AbstractJspBean
 
         if ( field != null )
         {
-            String strError = getFieldData( request, field );
+            String strError = getFieldData( request, field, getJspModifyQuestion( request, _step.getId( ), _question.getId( ) ) );
 
             if ( strError != null )
             {
@@ -523,9 +523,11 @@ public class ModifyEntryJspBean extends AbstractJspBean
      *            the request
      * @param field
      *            field
+     * @param strReturnUrl
+     *            the URL of the screen of the question, opened by the button of an error message when there is no page to go back to
      * @return null if there is no error or else return the error page URL
      */
-    private String getFieldData( HttpServletRequest request, Field field )
+    private String getFieldData( HttpServletRequest request, Field field, String strReturnUrl )
     {
         String strTitle = request.getParameter( PARAMETER_TITLE );
         String strValue = request.getParameter( PARAMETER_VALUE );
@@ -550,12 +552,12 @@ public class ModifyEntryJspBean extends AbstractJspBean
                     I18nService.getLocalizedString( strFieldError, getLocale( ) ),
             };
 
-            return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP, strReturnUrl );
         }
 
         if ( !StringUtil.checkCodeKey( strValue ) )
         {
-            return AdminMessageService.getMessageUrl( request, MESSAGE_FIELD_VALUE_FIELD, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, MESSAGE_FIELD_VALUE_FIELD, AdminMessage.TYPE_STOP, strReturnUrl );
         }
 
         field.setCode( IEntryTypeService.FIELD_ANSWER_CHOICE );
@@ -581,6 +583,22 @@ public class ModifyEntryJspBean extends AbstractJspBean
      */
     private String redirectToViewModifyQuestion( HttpServletRequest request, int nIdStep, int nIdQuestion )
     {
+        return redirect( request, getJspModifyQuestion( request, nIdStep, nIdQuestion ) );
+    }
+
+    /**
+     * Return the URL of the JSP modify question, on the list of its fields
+     * 
+     * @param request
+     *            The HTTP request
+     * @param nIdStep
+     *            the parent step identifier
+     * @param nIdQuestion
+     *            the question identifier
+     * @return the URL of the JSP modify question
+     */
+    private String getJspModifyQuestion( HttpServletRequest request, int nIdStep, int nIdQuestion )
+    {
         UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_MODIFY_QUESTION );
         url.addParameter( MVCUtils.PARAMETER_VIEW, VIEW_MODIFY_QUESTION );
 
@@ -588,8 +606,7 @@ public class ModifyEntryJspBean extends AbstractJspBean
         url.addParameter( FormsConstants.PARAMETER_ID_QUESTION, nIdQuestion );
         url.setAnchor( ANCHOR_LIST );
 
-        return redirect( request, url.getUrl( ) );
-
+        return url.getUrl( );
     }
 
     /**
