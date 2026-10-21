@@ -46,6 +46,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -57,7 +58,12 @@ import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnFormResponseDateCreationMock;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnFormsMock;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnWorkflowStateMock;
+import fr.paris.lutece.plugins.forms.business.Form;
+import fr.paris.lutece.plugins.forms.business.FormHome;
+import fr.paris.lutece.plugins.forms.business.FormResponse;
+import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.plugins.forms.business.form.list.FormListDAOMock;
+import fr.paris.lutece.plugins.forms.business.form.panel.initializer.impl.FormPanelFormResponseInitializer;
 import fr.paris.lutece.plugins.forms.business.form.list.FormListFacade;
 import fr.paris.lutece.plugins.forms.business.form.list.IFormListDAO;
 import fr.paris.lutece.api.user.User;
@@ -79,8 +85,13 @@ public class FormsMultiviewAuthorizationServiceTest extends LuteceTestCase
 {
     private static final String ATTRIBUTE_ADMIN_USER = "lutece_admin_user";
 
+    private static final String INITIALIZER_FORMS = "fr.paris.lutece.plugins.forms.business.form.panel.initializer.impl.FormPanelFormsInitializer";
+    private static final String INITIALIZER_FORM_RESPONSE = "fr.paris.lutece.plugins.forms.business.form.panel.initializer.impl.FormPanelFormResponseInitializer";
+
     // Variables
     private FormPanel _formPanel;
+    private FormPanelConfiguration _standardPanelConfiguration;
+    private Form _form;
     @Inject
     private FormColumnFactory _formColumnFactory;
 
@@ -103,9 +114,12 @@ public class FormsMultiviewAuthorizationServiceTest extends LuteceTestCase
     public void setUp( ) throws Exception
     {
 
+        // A panel with an initializer of the site: the authorization keeps asking the multiview list
         List<String> listFormPanelInitializerName = new ArrayList<>( );
-        listFormPanelInitializerName.add( "fr.paris.lutece.plugins.forms.business.form.panel.initializer.impl.FormPanelFormsInitializer" );
-        listFormPanelInitializerName.add( "fr.paris.lutece.plugins.forms.business.form.panel.initializer.impl.FormPanelFormResponseInitializer" );
+        listFormPanelInitializerName.add( INITIALIZER_FORMS );
+        listFormPanelInitializerName.add( INITIALIZER_FORM_RESPONSE );
+        listFormPanelInitializerName.add( SiteFormPanelInitializer.class.getName( ) );
+        _standardPanelConfiguration = new FormPanelConfiguration( "forms", 1, "titre", Arrays.asList( INITIALIZER_FORMS, INITIALIZER_FORM_RESPONSE ) );
 
         FormPanelConfiguration formPanelConfiguration = new FormPanelConfiguration( "code_technique", 1, "titre", listFormPanelInitializerName );
         _formPanel = new FormPanel( );
@@ -242,6 +256,99 @@ public class FormsMultiviewAuthorizationServiceTest extends LuteceTestCase
         {
             executor.shutdownNow( );
         }
+    }
+
+    @AfterEach
+    public void tearDown( )
+    {
+        if ( _form != null )
+        {
+            FormResponseHome.removeByForm( _form.getId( ) );
+            FormHome.remove( _form.getId( ) );
+            _form = null;
+        }
+    }
+
+    /**
+     * A published response not indexed yet (the indexer daemon has not run since its creation) is authorized with the standard panel: the
+     * authorization reads the database, not the index
+     */
+    @Test
+    public void testIsUserAuthorizedOnPublishedResponseNotIndexedYet( )
+    {
+        FormResponse formResponse = createResponse( false );
+
+        assertThat( buildStandardService( ).isUserAuthorizedOnFormResponse( buildAuthenticatedRequest( ), formResponse.getId( ) ), is( Boolean.TRUE ) );
+    }
+
+    /**
+     * A draft is not a response of the multiview, as the index excludes it
+     */
+    @Test
+    public void testIsUserAuthorizedOnDraftWithStandardPanel( )
+    {
+        FormResponse formResponse = createResponse( true );
+
+        assertThat( buildStandardService( ).isUserAuthorizedOnFormResponse( buildAuthenticatedRequest( ), formResponse.getId( ) ), is( Boolean.FALSE ) );
+    }
+
+    /**
+     * A response whose form no longer exists is not a response of the multiview, as the index skips it
+     */
+    @Test
+    public void testIsUserAuthorizedOnResponseOfRemovedFormWithStandardPanel( )
+    {
+        FormResponse formResponse = createResponse( false );
+        FormHome.remove( _form.getId( ) );
+
+        assertThat( buildStandardService( ).isUserAuthorizedOnFormResponse( buildAuthenticatedRequest( ), formResponse.getId( ) ), is( Boolean.FALSE ) );
+    }
+
+    /**
+     * An unknown response and a request without an administrator are not authorized with the standard panel
+     */
+    @Test
+    public void testIsUserAuthorizedOnUnknownResponseOrWithoutUserWithStandardPanel( )
+    {
+        FormResponse formResponse = createResponse( false );
+        IFormsMultiviewAuthorizationService service = buildStandardService( );
+
+        assertThat( service.isUserAuthorizedOnFormResponse( buildAuthenticatedRequest( ), formResponse.getId( ) + 1000 ), is( Boolean.FALSE ) );
+        assertThat( service.isUserAuthorizedOnFormResponse( new MockHttpServletRequest( ), formResponse.getId( ) ), is( Boolean.FALSE ) );
+    }
+
+    /**
+     * The service with the standard panel of plugin-forms and an empty index
+     */
+    private IFormsMultiviewAuthorizationService buildStandardService( )
+    {
+        FormListFacade formListFacade = new FormListFacade( new FormListDAOMock( new ArrayList<>( ) ) );
+
+        return new FormsMultiviewAuthorizationService( _standardPanelConfiguration, formListFacade, _formColumnFactory );
+    }
+
+    private FormResponse createResponse( boolean bDraft )
+    {
+        _form = new Form( );
+        _form.setTitle( "FormsMultiviewAuthorizationServiceTest" );
+        _form.setBreadcrumbName( "forms.horizontalBreadcrumb" );
+        FormHome.create( _form );
+
+        FormResponse formResponse = new FormResponse( );
+        formResponse.setFormId( _form.getId( ) );
+        formResponse.setGuid( "guid" );
+        formResponse.setFromSave( bDraft );
+        formResponse.setSteps( new ArrayList<>( ) );
+        FormResponseHome.create( formResponse );
+
+        return formResponse;
+    }
+
+    /**
+     * An initializer a site adds to the panel: it may filter the responses, so the authorization keeps asking the multiview list
+     */
+    public static final class SiteFormPanelInitializer extends FormPanelFormResponseInitializer
+    {
     }
 
     /**

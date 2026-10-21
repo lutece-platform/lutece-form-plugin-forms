@@ -35,6 +35,9 @@ package fr.paris.lutece.plugins.forms.service;
 
 import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.forms.business.Form;
+import fr.paris.lutece.plugins.forms.business.FormHome;
+import fr.paris.lutece.plugins.forms.business.FormResponse;
+import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +60,8 @@ import fr.paris.lutece.plugins.forms.business.form.list.FormListFacade;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanelFactory;
 import fr.paris.lutece.plugins.forms.business.form.panel.configuration.IFormPanelConfiguration;
+import fr.paris.lutece.plugins.forms.business.form.panel.initializer.impl.FormPanelFormResponseInitializer;
+import fr.paris.lutece.plugins.forms.business.form.panel.initializer.impl.FormPanelFormsInitializer;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.form.FormDisplayFactory;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
@@ -73,6 +78,10 @@ import org.apache.commons.lang3.StringUtils;
 public class FormsMultiviewAuthorizationService implements IFormsMultiviewAuthorizationService
 {
     public static final String BEAN_NAME = "forms.formsMultiviewAuthorizationService";
+
+    // The initializers of the panel of plugin-forms: without a user, they select every response of the index
+    private static final List<String> LIST_STANDARD_PANEL_INITIALIZER = List.of( FormPanelFormsInitializer.class.getName( ),
+            FormPanelFormResponseInitializer.class.getName( ) );
 
     @Inject
     private FormListFacade _formListFacade;
@@ -122,6 +131,13 @@ public class FormsMultiviewAuthorizationService implements IFormsMultiviewAuthor
 
         if ( nIdFormResponse != NumberUtils.INTEGER_MINUS_ONE && _formPanelConfiguration != null )
         {
+            if ( isStandardPanel( ) )
+            {
+                // The panel filters nothing but the response id: read the database, a new response is not in the index before the next pass of
+                // the indexer daemon
+                return isResponseOfMultiview( nIdFormResponse );
+            }
+
             // The panel is built for each call: this bean is shared by all the requests and must stay stateless
             FormPanel formPanel = new FormPanelFactory( ).buildFormPanel( _formPanelConfiguration );
 
@@ -144,6 +160,32 @@ public class FormsMultiviewAuthorizationService implements IFormsMultiviewAuthor
         }
 
         return bIsUserAuthorizedOnFormResponse;
+    }
+
+    /**
+     * Tells whether the panel only has the initializers of plugin-forms, which filter no response
+     *
+     * @return true if a site added no initializer to the panel
+     */
+    private boolean isStandardPanel( )
+    {
+        List<String> listInitializerName = _formPanelConfiguration.getListFormPanelInitializerName( );
+
+        return listInitializerName != null && LIST_STANDARD_PANEL_INITIALIZER.containsAll( listInitializerName );
+    }
+
+    /**
+     * Tells whether a response is one the multiview lists, as the indexer selects them: not a draft, and its form exists
+     *
+     * @param nIdFormResponse
+     *            the response id
+     * @return true if the response is listed by the multiview once indexed
+     */
+    private static boolean isResponseOfMultiview( int nIdFormResponse )
+    {
+        FormResponse formResponse = FormResponseHome.loadById( nIdFormResponse );
+
+        return formResponse != null && !formResponse.isFromSave( ) && FormHome.findByPrimaryKey( formResponse.getFormId( ) ) != null;
     }
 
     /**
