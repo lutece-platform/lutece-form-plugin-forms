@@ -544,11 +544,6 @@ public class ModifyEntryJspBean extends AbstractJspBean
             {
                 strValue = FileUtil.normalizeFileName( strTitle );
             }
-        if ( !StringUtil.checkCodeKey( strValue ) )
-        {
-            return AdminMessageService.getMessageUrl( request, MESSAGE_FIELD_VALUE_FIELD, AdminMessage.TYPE_STOP );
-        }
-
         if ( !strFieldError.equals( EMPTY_STRING ) )
         {
             Object [ ] tabRequiredFields = {
@@ -556,6 +551,11 @@ public class ModifyEntryJspBean extends AbstractJspBean
             };
 
             return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );
+        }
+
+        if ( !StringUtil.checkCodeKey( strValue ) )
+        {
+            return AdminMessageService.getMessageUrl( request, MESSAGE_FIELD_VALUE_FIELD, AdminMessage.TYPE_STOP );
         }
 
         field.setCode( IEntryTypeService.FIELD_ANSWER_CHOICE );
