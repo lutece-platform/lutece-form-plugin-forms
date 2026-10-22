@@ -7,7 +7,7 @@
 <#-- is installed and active. Forms with the Theme paris.fr must 			-->
 <#-- have "module-forms-breadcrumbaccordion" selected in breadcrumb type 	-->
 <#assign hasSteps=!(step.initial && step.final)>
-<#assign showTitle=!step.title?ends_with('hidden')>
+<#assign showTitle=step.titleDisplayed && !step.title?ends_with('hidden')>
 <#assign doPrevAction='' />
 <#assign doNextAction='' />
 <#assign doSaveAction='' />
