@@ -532,6 +532,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
             else
             {
                 AppLogService.error( "Error processing action for id response '" + nIdFormResponse + "' - cause : " + e.getMessage( ), e );
+                addError( MESSAGE_ACTION_ERROR, locale );
             }
         }
 
@@ -577,6 +578,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
                 else
                 {
                     AppLogService.error( "Error processing action for record " + nIdFormResponse, e );
+                    addError( MESSAGE_ACTION_ERROR, getLocale( ) );
                 }
             }
         }
