@@ -12,6 +12,7 @@
             <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=createCategory" id="create_category" useIframe=true targetElement="#create_category" btnIcon="plus" btnTitle="#i18n{forms.manageFormCategory.buttonAdd}" title="#i18n{forms.createFormCategory.title}" />
             <#-- <@aButton href='jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=createCategory' buttonIcon='plus' title='#i18n{forms.manageFormCategory.buttonAdd}' hideTitle=['xs','sm'] color='primary' hideTitle=['xs','sm','md','lg'] params='data-bs-toggle="offcanvas" data-bs-target="#modify_category" data-bs-scroll="true" data-bs-backdrop="false" data-url="jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=createCategory"' /> -->
         </@pageHeader>
+        <@messages errors=errors infos=infos />
         <@manageFeature>
         <#if form_category_list?size != 0>
             <#list form_category_list as category>
