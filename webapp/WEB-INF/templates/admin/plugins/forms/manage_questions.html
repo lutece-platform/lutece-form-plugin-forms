@@ -139,7 +139,7 @@
                                                             <#assign btnClass=isValidated?then('disabled','') /> 
                                                             <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}&control_type=VALIDATION" useIframe=true targetElement="offcanvasField" btnColor="" btnDisabled=isValidated btnClass="dropdown-item justify-content-start ${btnClass}" id="validate-${composite.formDisplay.id}"  btnIcon="check" btnTitle="#i18n{forms.manage_questions.action.control}" title="#i18n{forms.manage_questions.action.control}" size="half" />
                                                         </@li>
-                                                        <@li><@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?action=duplicateQuestion&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}&_csrftoken=${(link_tokens.duplicateQuestion)!}' class='btn-into dropdown-item justify-content-start' ><@span><@icon style='copy'/> #i18n{forms.manage_questions.action.copy}</@span></@link></@li>
+                                                        <@li><@button type='submit' formId='duplicate-question-${composite.formDisplay.compositeId}' color='link' class='btn-into dropdown-item justify-content-start'><@span><@icon style='copy'/> #i18n{forms.manage_questions.action.copy}</@span></@button></@li>
                                                         <@li>
                                                             <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageQuestions.jsp?view=moveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}" useIframe=true targetElement="offcanvasField" id="move-comp-${composite.formDisplay.id}" btnColor="" btnClass="dropdown-item justify-content-start"  btnIcon="sort" btnTitle="#i18n{forms.manage_questions.action.move}" title="#i18n{forms.manage_questions.action.move}" />
                                                         </@li>
@@ -178,6 +178,14 @@
                         </@columns>
                     </@row>
                     </@tform>
+                    <#list composite_list as composite>
+                    <@tform id='duplicate-question-${composite.formDisplay.compositeId}' action='jsp/admin/plugins/forms/ManageQuestions.jsp' method='post' class='d-none'>
+                        <@input type='hidden' name='action' value='duplicateQuestion' />
+                        <@input type='hidden' name='id_step' value='${step.id}' />
+                        <@input type='hidden' name='id_target' value='${composite.formDisplay.compositeId}' />
+                        <@input type='hidden' name='_csrftoken' value='${(link_tokens.duplicateQuestion)!}' />
+                    </@tform>
+                    </#list>
                 </@div>
             </@tabContent>
         </@formTabs>

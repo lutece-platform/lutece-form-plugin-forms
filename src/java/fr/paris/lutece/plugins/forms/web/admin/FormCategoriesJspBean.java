@@ -83,7 +83,7 @@ public class FormCategoriesJspBean extends AbstractJspBean
     private static final String ACTION_CREATE_CATEGORY = "createCategory";
     private static final String ACTION_MODIFY_CATEGORY = "modifyCategory";
     private static final String ACTION_REMOVE_CATEGORY = "removeCategory";
-    private static final String ACTION_CONFIRM_REMOVE_CATEGORY = "confirmRemoveCategory";
+    private static final String VIEW_CONFIRM_REMOVE_CATEGORY = "confirmRemoveCategory";
 
     // Properties for page titles
     private static final String PROPERTY_PAGE_TITLE_CREATE_CATEGORY = "forms.create_form_category.pageTitle";
@@ -204,7 +204,7 @@ public class FormCategoriesJspBean extends AbstractJspBean
      *            the request
      * @return the HTML code to confirm
      */
-    @Action( value = ACTION_CONFIRM_REMOVE_CATEGORY, securityTokenAction = ACTION_REMOVE_CATEGORY, securityTokenDisabled = true )
+    @View( value = VIEW_CONFIRM_REMOVE_CATEGORY, securityTokenAction = ACTION_REMOVE_CATEGORY )
     public String getConfirmRemoveCategory( HttpServletRequest request )
     {
         String strIdCategory = request.getParameter( PARAMETER_ID_CATEGORY );

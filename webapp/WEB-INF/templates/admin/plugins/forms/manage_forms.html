@@ -1,5 +1,6 @@
 <#-- The token of the action called by a form action URL (duplicateForm...), checked by the core as _csrftoken -->
 <#function linkToken url><#if url?contains('action=')><#return '&_csrftoken=' + (link_tokens[url?keep_after('action=')?keep_before('&')])!''></#if><#return ''></#function>
+<#macro formActionItem url class><#if url?contains('action=')><@tform action=url?keep_before('?') method='post' class='d-inline'><#list url?keep_after('?')?split('&') as param><#if param?contains('=')><@input type='hidden' name=param?keep_before('=') value=param?keep_after('=') /></#if></#list><@input type='hidden' name='_csrftoken' value=(link_tokens[url?keep_after('action=')?keep_before('&')])!'' /><@button type='submit' color='link' class=class><#nested></@button></@tform><#else><@link href=url class=class><#nested></@link></#if></#macro>
 <@pageContainer>
     <@pageColumn>
 		<@pageHeader title='#i18n{forms.manageForm.title}' titleClass='mb-3'>
@@ -98,7 +99,7 @@
                                             <#assign color = 'primary' />
                                         </#if>
                                         <#assign separator = action.url?contains("?")?then("&", "?")>
-                                        <@link href='${action.url}${separator}id_form=${form.id}&token=${token}${linkToken(action.url)}' label='' class='dropdown-item ${perm}'> <@span class='text-${color}'><@icon style=action.iconUrl! /> ${action.name!}</@span></@link>
+                                        <@formActionItem url='${action.url}${separator}id_form=${form.id}&token=${token}' class='dropdown-item ${perm}'> <@span class='text-${color}'><@icon style=action.iconUrl! /> ${action.name!}</@span></@formActionItem>
                                     </#list>
                                 </#if>
                                 <#if form.active>

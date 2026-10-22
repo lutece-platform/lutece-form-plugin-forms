@@ -63,7 +63,7 @@ public class FormStepJspBeanTest extends LuteceTestCase
     private static final String ROLE_FORMS_MANAGER = "forms_manager";
     // The "final" checkbox of the step creation form
     private static final Pattern CHECKBOX_FINAL = Pattern.compile( "<input[^>]*\\bid=\"final\"[^>]*>" );
-    private static final Pattern LINK_DUPLICATE_STEP = Pattern.compile( "action=duplicateStep&(?:amp;)?id_step=\\d+&(?:amp;)?token=[^&]+&(?:amp;)?_csrftoken=([^'\"&]+)" );
+    private static final Pattern FORM_DUPLICATE_STEP = Pattern.compile( "name=\"action\"[^>]*value=\"duplicateStep\"[\\s\\S]*?name=\"_csrftoken\"[^>]*value=\"([^\"]+)\"" );
 
     @Inject
     private FormStepJspBean _bean;
@@ -128,10 +128,11 @@ public class FormStepJspBeanTest extends LuteceTestCase
     }
 
     /**
-     * The link that duplicates a step is an action called by GET: it carries a token of this action, that the core checks as _csrftoken
+     * The button that duplicates a step posts a form (an action is never called by a GET link): the form carries a token of this action, that the core
+     * checks as _csrftoken
      */
     @Test
-    public void testDuplicateStepLinkCarriesItsToken( ) throws AccessDeniedException
+    public void testDuplicateStepFormCarriesItsToken( ) throws AccessDeniedException
     {
         Step initial = new Step( );
         initial.setTitle( "Initial" );
@@ -143,8 +144,8 @@ public class FormStepJspBeanTest extends LuteceTestCase
         MockHttpServletRequest request = newRequest( );
         String strHtml = _bean.getManageSteps( request );
 
-        Matcher matcher = LINK_DUPLICATE_STEP.matcher( strHtml );
-        assertTrue( matcher.find( ), "The page must contain the link that duplicates the step" );
+        Matcher matcher = FORM_DUPLICATE_STEP.matcher( strHtml );
+        assertTrue( matcher.find( ), "The page must contain the form that duplicates the step" );
         assertTrue( _securityTokenService.consumeToken( request, "duplicateStep", matcher.group( 1 ) ) );
     }
 

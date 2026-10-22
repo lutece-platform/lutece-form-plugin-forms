@@ -1,5 +1,6 @@
 <#-- The token of the action called by a form action URL (duplicateForm...), checked by the core as _csrftoken -->
 <#function linkToken url><#if url?contains('action=')><#return '&_csrftoken=' + (link_tokens[url?keep_after('action=')?keep_before('&')])!''></#if><#return ''></#function>
+<#macro formActionItem url class><#if url?contains('action=')><@tform action=url?keep_before('?') method='post' class='d-inline'><#list url?keep_after('?')?split('&') as param><#if param?contains('=')><@input type='hidden' name=param?keep_before('=') value=param?keep_after('=') /></#if></#list><@input type='hidden' name='_csrftoken' value=(link_tokens[url?keep_after('action=')?keep_before('&')])!'' /><@button type='submit' color='link' class=class><#nested></@button></@tform><#else><@link href=url class=class><#nested></@link></#if></#macro>
 <@adminDashboardWidget title='#i18n{forms.dashboard.formList}' id='forms_dashboard' url=url>
 <#if form_list?size gt 0>
 <@listGroup class='list-group-flush py-0' >
@@ -40,7 +41,7 @@
 									<#assign actionUrl="jsp/admin/plugins/forms/ManageForms.jsp?view=modifyForm&id_form=${form.id}"/>
 								</#if>
                                 <#assign separator = action.url?contains("?")?then("&", "?")>
-								<@link href='${actionUrl}${separator}id_form=${form.id}&token=${token!}${linkToken(actionUrl)}' class='dropdown-item ${actionClass}'><@icon style=action.iconUrl! /> ${action.name!}</@link>
+								<@formActionItem url='${actionUrl}${separator}id_form=${form.id}&token=${token!}' class='dropdown-item ${actionClass}'><@icon style=action.iconUrl! /> ${action.name!}</@formActionItem>
 							</#list>
 						</#if>
 						<@link href='jsp/admin/plugins/forms/ManageFormResponse.jsp?view=stepView&id_form=${form.id}&init=true' label='#i18n{forms.manageForm.BOLink.label}' class='dropdown-item' />

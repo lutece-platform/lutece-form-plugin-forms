@@ -19,7 +19,7 @@
                     <@manageFeatureItemColumn class='searchable'>#i18n{forms.manageFormCategory.columnCode} : <@span class='fw-bold mx-2'>${category.code}</@span> - #i18n{forms.manageFormCategory.columnName} : <@span class='fw-bold ms-2'>${category.name}</@span></@manageFeatureItemColumn>
                     <@manageFeatureItemColumn class='form-actions' align='end' >
                         <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=modifyCategory&id_category=${category.id}" useIframe=true targetElement="#modify_category" id="cat_${category.id}" title="#i18n{portal.util.labelModify}" btnTitle="#i18n{portal.util.labelModify}" btnIcon="pencil" position="end" />
-						<@aButton href='jsp/admin/plugins/forms/ManageFormsCategories.jsp?action=confirmRemoveCategory&id_category=${category.id}' title='#i18n{portal.util.labelDelete}' buttonIcon='trash' color='danger' hideTitle=['xs','sm','md','lg']/>
+						<@aButton href='jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=confirmRemoveCategory&id_category=${category.id}' title='#i18n{portal.util.labelDelete}' buttonIcon='trash' color='danger' hideTitle=['xs','sm','md','lg']/>
                     </@manageFeatureItemColumn>
                 </@manageFeatureItem>
             </#list>

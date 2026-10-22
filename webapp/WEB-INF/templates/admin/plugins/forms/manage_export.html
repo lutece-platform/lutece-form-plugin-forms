@@ -42,10 +42,10 @@
                                     <@td>
                                         <#if export_config_list?size gt 1>
                                             <#if config.order gt 1>
-                                                <@aButton href='jsp/admin/plugins/forms/ManageFormExport.jsp?action=doMoveUpExportConfig&_csrftoken=${(link_tokens.doMoveUpExportConfig)!}&id_config=${config.id}&id_form=${form.id}' title='#i18n{forms.modify_form.action.moveUpExportConfig}' hideTitle=['all'] buttonIcon='chevron-up' />
+                                                <@button type='submit' formId='move-up-export-config-${config.id}' title='#i18n{forms.modify_form.action.moveUpExportConfig}' hideTitle=['all'] buttonIcon='chevron-up' />
                                             </#if>
                                             <#if config.order lt export_config_list?size>
-                                                <@aButton href='jsp/admin/plugins/forms/ManageFormExport.jsp?action=doMoveDownExportConfig&_csrftoken=${(link_tokens.doMoveDownExportConfig)!}&id_config=${config.id}&id_form=${form.id}' title='#i18n{forms.modify_form.action.moveDownExportConfig}' hideTitle=['all'] buttonIcon='chevron-down' />
+                                                <@button type='submit' formId='move-down-export-config-${config.id}' title='#i18n{forms.modify_form.action.moveDownExportConfig}' hideTitle=['all'] buttonIcon='chevron-down' />
                                             </#if>
                                         </#if>
                                         <@aButton href='jsp/admin/plugins/forms/ManageFormExport.jsp?view=confirmRemoveExportConfig&id_config=${config.id}&id_form=${form.id}' title='#i18n{forms.modify_form.action.removeExportConfig}' hideTitle=['all'] buttonIcon='trash' color='danger' />
@@ -57,21 +57,37 @@
                                 <@alert color='warning' title='#i18n{forms.modify_form.export.config.text2}' iconTitle='exclamation-circle' />
                             </#if>
                         </@tform>
+                        <#list export_config_list as config>
+                        <#list ['doMoveUpExportConfig', 'doMoveDownExportConfig'] as moveAction>
+                        <@tform id='${moveAction?replace("doMove", "move-")?replace("ExportConfig", "-export-config")?lower_case}-${config.id}' action='jsp/admin/plugins/forms/ManageFormExport.jsp' method='post' class='d-none'>
+                            <@input type='hidden' name='action' value=moveAction />
+                            <@input type='hidden' name='id_config' value='${config.id}' />
+                            <@input type='hidden' name='id_form' value='${form.id}' />
+                            <@input type='hidden' name='_csrftoken' value=(link_tokens[moveAction])!'' />
+                        </@tform>
+                        </#list>
+                        </#list>
                     </@tabPanel>
                         <@tabPanel id='export-2' active=activeTabPannel2 >
                             <@input type='hidden' id='token' name='token' value='${token}' />
                             <@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
                             <label class="form-check form-switch" for="export_all">
                             <#if export_all?? && export_all>
-                                <input type="checkBox" class="form-check-input" name='export_all' id='export_all' value='false' checked data-query="jsp/admin/plugins/forms/ManageFormExport.jsp?action=modifyExportableQuestion&_csrftoken=${(link_tokens.modifyExportableQuestion)!}&id_form=${form.id}&export_all=false&exportable=false&token=${token}" onclick="location.replace(this.dataset.query);" >
+                                <input type="checkBox" class="form-check-input" name='export_all' id='export_all' value='false' checked data-query="jsp/admin/plugins/forms/ManageFormExport.jsp?action=modifyExportableQuestion&_csrftoken=${(link_tokens.modifyExportableQuestion)!}&id_form=${form.id}&export_all=false&exportable=false&token=${token}" >
                             <#else>
                                 <label class="form-check form-switch" >
-                                <input type="checkBox" class="form-check-input" name='export_all' id='export_all' value='true' data-query="jsp/admin/plugins/forms/ManageFormExport.jsp?action=modifyExportableQuestion&_csrftoken=${(link_tokens.modifyExportableQuestion)!}&id_form=${form.id}&export_all=true&exportable=false&token=${token}" onclick="location.replace(this.dataset.query);" >
+                                <input type="checkBox" class="form-check-input" name='export_all' id='export_all' value='true' data-query="jsp/admin/plugins/forms/ManageFormExport.jsp?action=modifyExportableQuestion&_csrftoken=${(link_tokens.modifyExportableQuestion)!}&id_form=${form.id}&export_all=true&exportable=false&token=${token}" >
                             </#if>
                                 <span class="form-check-label">#i18n{forms.modify_form.export.config.exportAllNone}</span>
                             </label>
                             <div class="d-flex justify-content-end">
-                                <@aButton href='jsp/admin/plugins/forms/ManageFormExport.jsp?action=doSetDefaultOrder&_csrftoken=${(link_tokens.doSetDefaultOrder)!}&id_form=${form.id}&token=${token}' title='#i18n{forms.modify_form.action.setDefaultOrder}' hideTitle=['xs','sm'] buttonIcon='arrows-sort' color='primary' />
+                                <@tform action='jsp/admin/plugins/forms/ManageFormExport.jsp' method='post'>
+                                    <@input type='hidden' name='action' value='doSetDefaultOrder' />
+                                    <@input type='hidden' name='id_form' value='${form.id}' />
+                                    <@input type='hidden' name='token' value='${token}' />
+                                    <@input type='hidden' name='_csrftoken' value='${(link_tokens.doSetDefaultOrder)!}' />
+                                    <@button type='submit' title='#i18n{forms.modify_form.action.setDefaultOrder}' hideTitle=['xs','sm'] buttonIcon='arrows-sort' color='primary' />
+                                </@tform>
                             </div>
                             <@table id='list' headBody=true  class='table-striped is-fullwidth' params=' data-toggle="table" data-group-by="true" data-group-by-field="step" data-search="true" data-show-columns="true"'>
                                 <@tr>
@@ -90,9 +106,9 @@
                                 <@td>
                                     <label class="form-check form-switch" for="exportable_${question.id}">
                                     <#if question.entry.exportable!>
-                                        <input type="checkBox" class="form-check-input" name='exportable' id='exportable_${question.id}' value='${question.id}' checked data-query="jsp/admin/plugins/forms/ManageFormExport.jsp?action=modifyExportableQuestion&_csrftoken=${(link_tokens.modifyExportableQuestion)!}&id_form=${form.id}&id_question=${question.id}&exportable=false&token=${token}#exportable_${question.id}" onclick="location.replace(this.dataset.query);" >
+                                        <input type="checkBox" class="form-check-input" name='exportable' id='exportable_${question.id}' value='${question.id}' checked data-query="jsp/admin/plugins/forms/ManageFormExport.jsp?action=modifyExportableQuestion&_csrftoken=${(link_tokens.modifyExportableQuestion)!}&id_form=${form.id}&id_question=${question.id}&exportable=false&token=${token}#exportable_${question.id}" >
                                     <#else>
-                                        <input type="checkBox" class="form-check-input" name='exportable' id='exportable_${question.id}' value='${question.id}' data-query="jsp/admin/plugins/forms/ManageFormExport.jsp?action=modifyExportableQuestion&_csrftoken=${(link_tokens.modifyExportableQuestion)!}&id_form=${form.id}&id_question=${question.id}&exportable=true&token=${token}#exportable_${question.id}" onclick="location.replace(this.dataset.query);" >
+                                        <input type="checkBox" class="form-check-input" name='exportable' id='exportable_${question.id}' value='${question.id}' data-query="jsp/admin/plugins/forms/ManageFormExport.jsp?action=modifyExportableQuestion&_csrftoken=${(link_tokens.modifyExportableQuestion)!}&id_form=${form.id}&id_question=${question.id}&exportable=true&token=${token}#exportable_${question.id}" >
                                     </#if>
                                         <span class="form-check-label">#i18n{forms.create_entry.labelResponsesExportable}</span>
                                     </label>
@@ -101,12 +117,10 @@
                                     <label class="form-check form-switch" for="exportablePdf_${question.id}">
                                     <#if question.entry.exportablePdf!>
                                         <input type="checkBox" class="form-check-input" name='exportablePdf' id='exportablePdf_${question.id}' value='${question.id}' checked
-                                            data-query="jsp/admin/plugins/forms/ManageFormExport.jsp?action=modifyExportableQuestion&_csrftoken=${(link_tokens.modifyExportableQuestion)!}&id_form=${form.id}&id_question=${question.id}&exportable_pdf=false&token=${token}#exportablePdf_${question.id}"
-                                            onclick="location.replace(this.dataset.query);" />
+                                            data-query="jsp/admin/plugins/forms/ManageFormExport.jsp?action=modifyExportableQuestion&_csrftoken=${(link_tokens.modifyExportableQuestion)!}&id_form=${form.id}&id_question=${question.id}&exportable_pdf=false&token=${token}#exportablePdf_${question.id}" />
                                     <#else>
                                         <input type="checkBox" class="form-check-input" name='exportablePdf' id='exportablePdf_${question.id}' value='${question.id}'
-                                            data-query="jsp/admin/plugins/forms/ManageFormExport.jsp?action=modifyExportableQuestion&_csrftoken=${(link_tokens.modifyExportableQuestion)!}&id_form=${form.id}&id_question=${question.id}&exportable_pdf=true&token=${token}#exportablePdf_${question.id}"
-                                            onclick="location.replace(this.dataset.query);" />
+                                            data-query="jsp/admin/plugins/forms/ManageFormExport.jsp?action=modifyExportableQuestion&_csrftoken=${(link_tokens.modifyExportableQuestion)!}&id_form=${form.id}&id_question=${question.id}&exportable_pdf=true&token=${token}#exportablePdf_${question.id}" />
                                     </#if>
                                     <span class="form-check-label"> #i18n{forms.create_entry.labelResponsesExportablePdf}</span>
                                     </label>
@@ -114,7 +128,7 @@
                                 <@td>
                                     <@input type='hidden' name='id_question_${question.id}' value='${question.id}' />
                                     <@inputGroup>
-                                        <select id='export_display_order' name='export_display_order' class='form-select' onchange="location = this.value;">
+                                        <select id='export_display_order' name='export_display_order' class='form-select' data-query-select>
                                         <#list 1..number_max_order as order>
                                             <#if order == question.exportDisplayOrder>
                                                 <option disabled selected='selected'>${order}</a></option>
@@ -135,3 +149,28 @@
         </@formTabs>
     </@pageColumn>
 </@pageContainer>
+<script>
+document.addEventListener( 'DOMContentLoaded', function( ) {
+	function postQuery( query ) {
+		const url = new URL( query, document.baseURI );
+		const form = document.createElement( 'form' );
+		form.method = 'post';
+		form.action = url.pathname + url.hash;
+		url.searchParams.forEach( function( value, name ) {
+			const input = document.createElement( 'input' );
+			input.type = 'hidden';
+			input.name = name;
+			input.value = value;
+			form.appendChild( input );
+		} );
+		document.body.appendChild( form );
+		form.submit( );
+	}
+	document.querySelectorAll( 'input[data-query]' ).forEach( function( el ) {
+		el.addEventListener( 'change', function( ) { postQuery( el.dataset.query ); } );
+	} );
+	document.querySelectorAll( 'select[data-query-select]' ).forEach( function( el ) {
+		el.addEventListener( 'change', function( ) { postQuery( el.value ); } );
+	} );
+} );
+</script>
