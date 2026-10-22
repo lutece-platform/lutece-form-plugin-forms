@@ -6,8 +6,8 @@
 				<@chList class='custom-list list-default'>
 				<#list response_list as response>
 					<@chItem>
-						<#assign linkTitle>${response.formTitle}  <time datetime="${response.dateUpdate?date}" class="ms-1 ms-1">${response.dateUpdate?date}</time> <small class="ms-auto ms-auto">${response.workflowState!}</small></#assign>
-						<@cLink href='jsp/site/Portal.jsp?page=formsResponse&id_response=${response.idFormResponse}' label=form.title title='#i18n{forms.xpage.myformresponses.view.labelView}' />
+						<#-- The text of the link tells the responses apart: the form, the date and the state -->
+						<@cLink href='jsp/site/Portal.jsp?page=formsResponse&id_response=${response.idFormResponse}' label=response.formTitle!><@cInline class='ms-1'>${response.dateUpdate?date}</@cInline><#if response.workflowState?has_content> <@cInline type='small' class='ms-1'>${response.workflowState}</@cInline></#if></@cLink>
 					</@chItem>
 				</#list>
 				</@chList>
