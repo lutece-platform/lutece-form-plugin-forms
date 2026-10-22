@@ -322,6 +322,10 @@ public class FormXPage extends MVCApplication
         }, getLocale( request ) );
         String strPathForm = form.getTitle( );
 
+        if ( !form.isActive( ) && bypassInactiveState( form, request ) )
+        {
+            addWarning( MESSAGE_WARNING_INACTIVE_STATE_BYPASSED, getLocale( request ) );
+        }
         Map<String, Object> model = getModel( );
         if ( form.isActive( ) || bypassInactiveState( form, request ) )
         {
@@ -471,10 +475,6 @@ public class FormXPage extends MVCApplication
                 _stepDisplayTree.getCompositeHtml( request, _formResponseManager.findAllResponses( ), getLocale( request ), DisplayType.EDITION_FRONTOFFICE ) );
         model.put( FormsConstants.MARK_FORM_TOP_BREADCRUMB, _breadcrumb.getTopHtml( request, _formResponseManager ) );
         model.put( FormsConstants.MARK_FORM_BOTTOM_BREADCRUMB, _breadcrumb.getBottomHtml( request, _formResponseManager ) );
-        if ( bypassInactiveState( form, request ) )
-        {
-            addWarning( MESSAGE_WARNING_INACTIVE_STATE_BYPASSED, getLocale( request ) );
-        }
     }
 
     /**
@@ -829,13 +829,13 @@ public class FormXPage extends MVCApplication
         }
 
         saveFormResponse( form, request );
-        Map<String, Object> model = getModel( );
-
-        model.put( FormsConstants.PARAMETER_ID_FORM, form.getId( ) );
         if ( bypassInactiveState( form, request ) )
         {
             addWarning( MESSAGE_WARNING_INACTIVE_STATE_BYPASSED, getLocale( request ) );
         }
+        Map<String, Object> model = getModel( );
+
+        model.put( FormsConstants.PARAMETER_ID_FORM, form.getId( ) );
 
         FormMessage formMessage = FormMessageHome.findByForm( form.getId( ) );
         boolean bIsEndMessageDisplayed = formMessage.getEndMessageDisplay( );
