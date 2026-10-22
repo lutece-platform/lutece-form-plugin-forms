@@ -67,6 +67,7 @@ import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.Group;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.Step;
+import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.business.Transition;
 import fr.paris.lutece.plugins.forms.business.export.FormExportConfig;
 import fr.paris.lutece.plugins.forms.service.IFormDatabaseService;
@@ -199,6 +200,10 @@ public abstract class AbstractFormJsonService
         if ( strTitleCopyStep != null )
         {
             step.setTitle( strTitleCopyStep );
+        }
+        if ( step.isInitial( ) && StepHome.getInitialStep( idForm ) != null )
+        {
+            step.setInitial( false );
         }
 
         importSteps( idForm, Collections.singletonList( step ), groupList, null, questionList, formDisplayList );
