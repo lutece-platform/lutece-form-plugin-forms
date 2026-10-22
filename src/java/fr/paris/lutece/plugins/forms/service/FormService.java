@@ -527,7 +527,8 @@ public class FormService
 
     /**
      * Remove a given Form, all its steps and composites, workflow resources. Also remove all the related formResponses, QuestionsResposes, EntryResponses and
-     * entries.
+     * entries. A deletion event is fired for each removed form response, as for a response removed alone, so that the indexes (elasticdata, search) drop
+     * them.
      * 
      * @param nIdForm
      *            The identifier of the form to be deleted
@@ -538,6 +539,7 @@ public class FormService
     public void removeForm( int nIdForm, AdminUser adminUser )
     {
         List<Step> listStep = StepHome.getStepsListByForm( nIdForm );
+        List<FormResponse> listFormResponse = FormResponseHome.selectAllFormResponsesUncompleteByIdForm( nIdForm );
 
         for ( Step step : listStep )
         {
@@ -558,6 +560,11 @@ public class FormService
         FormHome.remove( nIdForm );
 
         _formWorkflowService.removeResources( nIdWorkflow, nIdForm, adminUser );
+
+        for ( FormResponse formResponse : listFormResponse )
+        {
+            fireFormResponseEventDelete( formResponse );
+        }
     }
 
     /**
