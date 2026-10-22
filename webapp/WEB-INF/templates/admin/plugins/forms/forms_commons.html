@@ -219,7 +219,6 @@
 </#function>
 <#macro formEditor >
 <#include "/admin/util/editor/editor.html" />
-<#assign cssFiles="editor.css, page_template_styles.css" />
 <#assign editorLocale="" />
 <#-- We only have the language pack for French (France) installed in webapp/js/editors/tinymce/langs -->
 <#-- Some lutece plugins pass locale.getLanguage() (="fr"), some pass the locale object (toString="fr_FR", or more complicated...) -->
@@ -227,7 +226,8 @@
 <#if locale?? && (2 <= locale?string?length) && (locale?string?substring(0,2) == "fr")>
 <#assign editorLocale="fr_FR" />
 </#if>
-<@initEditor cssFiles=cssFiles />
+<#-- No css given: the editor shows the content with the css of the front office theme -->
+<@initEditor />
 </#macro>
 <#macro formsToastr infos=[] warnings=[] errors=[]>
 <#assign typeToast=''>
