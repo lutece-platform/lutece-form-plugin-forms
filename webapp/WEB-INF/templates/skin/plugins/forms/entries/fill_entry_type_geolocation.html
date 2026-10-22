@@ -29,7 +29,14 @@
 			<#if getResponseContainingTheFieldWithCode(list_responses, "geometry")??><#assign geometryValue = getResponseContainingTheFieldWithCode(list_responses, "geometry").toStringValueResponse /></#if>
 		</#if>
 		<#if editModeValue == '' || editModeValue?starts_with('Address') >
-			<@cInput class='form-control form-geoloc address-autocomplete ${entryClass!}' required=entry.mandatory! html5Required=false name='${idName}_address' value=addressValue! errorMsg=errorMsg helpMsg=helpMsg />
+			<#if entry.mapProvider?has_content && ( entry.mapProvider.key='wsaddress' || entry.mapProvider.key='openstreetmap' )>
+				<#include "/skin/plugins/address/modules/autocomplete/include/suggestPOI.html" />
+				<@suggestPOIInput id='${idName}_autocomplete' name='${idName}_address' currentValue=addressValue! cssClass='form-geoloc address-autocomplete ${entryClass!}' />
+				<#if helpMsg?trim != ''><@cFormHelp id='${idName}_address' label=helpMsg /></#if>
+				<#if hasError><@cFormError id='${idName}_address' label=errorMsg class='d-block' /></#if>
+			<#else>
+				<@cInput class='form-control form-geoloc address-autocomplete ${entryClass!}' required=entry.mandatory! html5Required=false name='${idName}_address' value=addressValue! errorMsg=errorMsg helpMsg=helpMsg />
+			</#if>
 			<@cBlock id='labelAutocomplete'></@cBlock>
 		<#else>
 			<@cInput type='hidden' name='${idName}_address' id='${idName}' value=addressValue! />
@@ -81,24 +88,28 @@
 				}
 
 				var currStep = document.querySelector('.step-current .step-content');
-				var hasCheckAdr = currStep ? currStep.querySelectorAll('input.checkaddress').length : 0;
+				var hasCheckAdr = currStep ? currStep.querySelectorAll('.checkaddress').length : 0;
 				var btnSendStep = currStep ? currStep.querySelector('[name="action_doSaveStep"]') : null;
 
-				var jAdresse = document.getElementById('${idName}_address');
+				var jAdresseContainer = document.getElementById('${idName}_autocomplete');
+				var jAdresse = jAdresseContainer ? jAdresseContainer.querySelector('.lutece-autocomplete-search-input') : null;
+				if ( jAdresse == null ) {
+					return;
+				}
 				var jAdresseId = document.getElementById('${idName}_idAddress');
 				var jAdresseX = document.getElementById('${idName}_x');
 				var jAdresseY = document.getElementById('${idName}_y');
 				var jAdresseGeometry = document.getElementById('${idName}_geometry');
 
-				// suggestPOI est un plugin jQuery — nécessite jQuery pour l'initialisation
-				$(jAdresse).suggestPOI();
-				$(jAdresse).bind($.suggestPOI.EVT_SELECT, function( event ){
-					event.preventDefault();
-					if( event.poi != null){
-						jAdresseGeometry.value = event.poi.type;
-						jAdresseY.value = event.poi.y;
-						jAdresseX.value = event.poi.x;
-						jAdresseId.value = event.poi.id;
+				// SuggestPOI (module-address-autocomplete) : API JavaScript native, sans jQuery
+				new window.SuggestPOI( jAdresseContainer );
+				jAdresseContainer.addEventListener( window.SuggestPOI.EVT_SELECT, function( event ){
+					var poi = event.detail ? event.detail.poi : null;
+					if( poi != null){
+						jAdresseGeometry.value = poi.type;
+						jAdresseY.value = poi.y;
+						jAdresseX.value = poi.x;
+						jAdresseId.value = poi.id;
 						jAdresse.classList.add('wssuggest');
 						jAdresse.classList.remove('is-invalid');
 						var fb = jAdresse.nextElementSibling;
