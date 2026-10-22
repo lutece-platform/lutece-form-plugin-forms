@@ -476,8 +476,7 @@ public class FormStepJspBean extends AbstractJspBean
 
         if ( _step.isInitial() )
         {
-            addError( ERROR_REMOVE_INITIAL_STEP, getLocale( ) );
-            return redirect( request, VIEW_MANAGE_STEPS, FormsConstants.PARAMETER_ID_FORM, _form.getId() );
+            return redirect( request, AdminMessageService.getMessageUrl( request, ERROR_REMOVE_INITIAL_STEP, AdminMessage.TYPE_STOP ) );
         }
 
         String strConfirmRemoveMessage = MESSAGE_CONFIRM_REMOVE_STEP;
