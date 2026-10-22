@@ -505,7 +505,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
             AppLogService.error( ERROR_CODE_EXISTS, e );
             addError( ERROR_QUESTION_CODE_ALREADY_EXISTS, getLocale( ) );
         }
-        return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _step.getId( ), FormsConstants.PARAMETER_ID_QUESTION,
+        return redirect( request, VIEW_MODIFY_QUESTION, FormsConstants.PARAMETER_ID_STEP, _step.getId( ), FormsConstants.PARAMETER_ID_QUESTION,
                 _question.getId( ) );
     }
 
