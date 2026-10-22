@@ -108,4 +108,28 @@ public class FormJspBeanPublicationTest extends LuteceTestCase
         assertFalse( strHtml.contains( "name=\"maxNumberResponse\"" ) );
         assertFalse( strHtml.contains( "name=\"oneResponseByUser\"" ) );
     }
+
+    /**
+     * The publication of the questions does not load the v7 table library (missing in Lutece 8 and needing jQuery): the questions are grouped by step
+     * on the server and searched and sorted by a script of the page
+     *
+     * @throws AccessDeniedException
+     *             if the user is not authorized
+     */
+    @Test
+    public void testQuestionPublicationLoadsNoMissingLibrary( ) throws AccessDeniedException
+    {
+        MockHttpServletRequest request = new MockHttpServletRequest( );
+        request.addParameter( "id_form", String.valueOf( _form.getId( ) ) );
+        AdminUser user = new AdminUser( );
+        user.setRoles( Map.of( ROLE_FORMS_MANAGER, new RBACRole( ROLE_FORMS_MANAGER, ROLE_FORMS_MANAGER ) ) );
+        AdminUserUtils.registerAdminUserWithRight( request, user, ModifyEntryJspBean.RIGHT_MANAGE_FORMS );
+
+        String strHtml = _bean.getManageQuestionPublication( request );
+
+        assertFalse( strHtml.contains( "js/admin/lib/table/" ) );
+        assertFalse( strHtml.contains( "data-toggle=\"table\"" ) );
+        assertTrue( strHtml.contains( "id=\"forms-publication-search\"" ) );
+        assertTrue( strHtml.contains( "name=\"action_modifyFormQuestions\"" ) );
+    }
 }
