@@ -351,7 +351,7 @@ public class FormTransitionJspBean extends AbstractJspBean
         }
         populate( _transition, request, getLocale( ) );
 
-        if ( !isTransitionInOneForm( _transition ) || detectCircularTransition( _transition ) || !validateTransition( _transition ) )
+        if ( !validateTransition( _transition ) || !isTransitionInOneForm( _transition ) || detectCircularTransition( _transition ) )
         {
             return false;
         }
@@ -381,7 +381,7 @@ public class FormTransitionJspBean extends AbstractJspBean
         populate( _transition, request, getLocale( ) );
         _transition.setId( nIdTransition );
 
-        if ( !isTransitionInOneForm( _transition ) || detectCircularTransition( _transition ) || !validateTransition( _transition ) )
+        if ( !validateTransition( _transition ) || !isTransitionInOneForm( _transition ) || detectCircularTransition( _transition ) )
         {
             return redirect( request, VIEW_MODIFY_TRANSITION, FormsConstants.PARAMETER_ID_STEP, _transition.getFromStep( ),
                     FormsConstants.PARAMETER_ID_TRANSITION, _transition.getId( ) );
@@ -584,14 +584,6 @@ public class FormTransitionJspBean extends AbstractJspBean
     }
 
     /**
-     * Validate the Transition field values
-     * 
-     * @param transition
-     *            the Transition to validate
-     * 
-     * @return True if the transition is valid
-     */
-    /**
      * Check that the steps of the transition exist and belong to the same form
      * 
      * @param transition
@@ -606,6 +598,14 @@ public class FormTransitionJspBean extends AbstractJspBean
         return ( stepFrom != null ) && ( stepNext != null ) && ( stepFrom.getIdForm( ) == stepNext.getIdForm( ) );
     }
 
+    /**
+     * Validate the Transition field values
+     * 
+     * @param transition
+     *            the Transition to validate
+     * 
+     * @return True if the transition is valid
+     */
     private boolean validateTransition( Transition transition )
     {
         return validateBean( transition, TRANSITION_VALIDATION_ATTRIBUTES_PREFIX );
