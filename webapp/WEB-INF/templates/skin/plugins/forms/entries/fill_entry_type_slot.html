@@ -9,7 +9,7 @@
 <#if list_responses??><#list list_responses as response><#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError><#assign hasError = true /><#assign error = response.entry.error></#if></#list></#if>
 <#if hasError><#assign errorMsg><#if error.mandatoryError><#if entry.errorMessage?has_content>${entry.errorMessage}<#else>#i18n{forms.message.mandatory.entry}</#if><#else>${error.errorMessage}</#if></#assign></#if>
 <#assign helpMsg><#if entry.helpMessage?exists&&entry.helpMessage!=''>${entry.helpMessage}</#if></#assign>
-<#assign entryStep><#list entry.CSSClass?split(' ') as laClass><#if laClass?starts_with( 'step-' )> ${laClass?replace('step-','')!}<#break></#if></#list></#assign>
+<#assign entryStepClasses = entry.CSSClass?split(' ')?filter( laClass -> laClass?starts_with( 'step-' ) ) /><#assign entryStep = entryStepClasses?has_content?then( entryStepClasses?first?replace( 'step-', '' ), '' ) />
 <#if entryStep=''><#assign entryStep=0></#if>
 <#assign beginHour=''>
 <#assign beginEnd=''>
