@@ -80,6 +80,7 @@ public class FormGraphExportService
     private static final String STEP_URL_PART = "/jsp/admin/plugins/forms/ManageQuestions.jsp?id_step=";
     private static final String TRANSITION_URL_PART = "/jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=";
     private static final String NEWLINE = "\n";
+    private static final String MERMAID_ENCODED_CHARS = "#<>&\"";
 
     private FormService _formService;
 
@@ -105,6 +106,35 @@ public class FormGraphExportService
     {
         _formService = formService;
         _entryServiceManager = entryServiceManager;
+    }
+
+    /**
+     * Encodes a text written by a user for a label of the Mermaid graph: the characters that would open markup, close the label or form an
+     * entity are given as Mermaid entity codes, which Mermaid shows as the characters themselves
+     *
+     * @param strText
+     *            the text to encode, may be null
+     * @return the encoded text, empty when the text is null
+     */
+    static String encodeLabel( String strText )
+    {
+        if ( strText == null )
+        {
+            return "";
+        }
+        StringBuilder sbEncoded = new StringBuilder( strText.length( ) );
+        for ( char c : strText.toCharArray( ) )
+        {
+            if ( MERMAID_ENCODED_CHARS.indexOf( c ) >= 0 )
+            {
+                sbEncoded.append( '#' ).append( (int) c ).append( ';' );
+            }
+            else
+            {
+                sbEncoded.append( c );
+            }
+        }
+        return sbEncoded.toString( );
     }
 
     /**
@@ -137,14 +167,14 @@ public class FormGraphExportService
         {
             sb.append("S").append( step.getId( ) ).append( KEY_STEP_LABEL_START )
             	.append ("[")
-            	.append( step.getTitle( ).replaceAll( "\"", "'" ) )
+            	.append( encodeLabel( step.getTitle( ) ) )
             	.append ("]"); 
             
             // list questions
             List<ICompositeDisplay> listICompositeDisplay = _formService.getStepCompositeList( step.getId( ) );
             for ( ICompositeDisplay cd : listICompositeDisplay )
             {
-            	sb.append( NEWLINE ).append( cd.getTitle( ) );
+            	sb.append( NEWLINE ).append( encodeLabel( cd.getTitle( ) ) );
             }
             
             sb.append( KEY_STEP_LABEL_END )
@@ -184,7 +214,7 @@ public class FormGraphExportService
             {
         	// validator
         	IValidator validator = _entryServiceManager.getValidator( control.getValidatorName( ) );
-        	sb.append ( NEWLINE ).append ( validator.getValidatorDisplayName ( ) ).append( " : ").append ( control.getValue ( ) );
+        	sb.append ( NEWLINE ).append ( encodeLabel( validator.getValidatorDisplayName ( ) ) ).append( " : ").append ( encodeLabel( control.getValue ( ) ) );
             }
             
             sb.append( KEY_TRANSITION_LABEL_END )
