@@ -192,6 +192,7 @@ public class FormJspBean extends AbstractJspBean
     // Actions
     public static final String ACTION_CREATE_FORM = "createForm";
     public static final String ACTION_MODIFY_FORM = "modifyForm";
+    private static final String ACTION_MODIFY_PUBLICATION = "modifyFormPublication";
     private static final String ACTION_REMOVE_FORM = "removeForm";
     private static final String ACTION_DUPLICATE_FORM = "duplicateForm";
     private static final String ACTION_EXPORT_FORM = "doExportJson";
@@ -792,6 +793,55 @@ public class FormJspBean extends AbstractJspBean
             int idAccessControl = NumberUtils.toInt( request.getParameter( PARAMETER_ID_ACCESS_CONTROL ), -1 );
             _accessControlService.linkResourceToAccessControl( _form.getId( ), Form.RESOURCE_TYPE, idAccessControl );
         }
+
+        addInfo( INFO_FORM_UPDATED, getLocale( ) );
+
+        return redirectView( request, VIEW_MANAGE_FORMS );
+    }
+
+    /**
+     * Process the change of the publication dates of a form: only the availability dates are updated, the other settings of the form (maximum number of
+     * responses, counting of the responses, options, logo, access control) are kept
+     *
+     * @param request
+     *            The Http request
+     * @return The Jsp URL of the process result
+     * @throws AccessDeniedException
+     *             AccessDeniedException if the user isn't authorized to modify the params of the form
+     */
+    @Action( value = ACTION_MODIFY_PUBLICATION, securityTokenAction = ACTION_MODIFY_FORM )
+    public String doModifyFormPublication( HttpServletRequest request ) throws AccessDeniedException
+    {
+        int nId = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
+        if ( nId == FormsConstants.DEFAULT_ID_VALUE )
+        {
+            addError( ERROR_FORM_NOT_UPDATED, getLocale( ) );
+            return redirectView( request, VIEW_MANAGE_FORMS );
+        }
+
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY_PARAMS, request, null );
+
+        Form form = FormHome.findByPrimaryKey( nId );
+        if ( form == null )
+        {
+            addError( ERROR_FORM_NOT_UPDATED, getLocale( ) );
+            return redirectView( request, VIEW_MANAGE_FORMS );
+        }
+
+        checkWorkgroupPermission( form, request );
+
+        Form formPosted = new Form( );
+        populate( formPosted, request, request.getLocale( ) );
+        form.setAvailabilityStartDate( formPosted.getAvailabilityStartDate( ) );
+        form.setAvailabilityEndDate( formPosted.getAvailabilityEndDate( ) );
+
+        if ( !validateForm( form ) )
+        {
+            return redirect( request, VIEW_MODIFY_PUBLICATION, FormsConstants.PARAMETER_ID_FORM, form.getId( ) );
+        }
+
+        FormHome.update( form );
+        _formService.fireFormResponseEventUpdate( form );
 
         addInfo( INFO_FORM_UPDATED, getLocale( ) );
 

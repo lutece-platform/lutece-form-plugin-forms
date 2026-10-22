@@ -1,20 +1,6 @@
 <@tform method='post' name='modify_form' action="jsp/admin/plugins/forms/ManageForms.jsp" params=' target="_top"'>
 <@messages errors=errors />
 <@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
-<#-- problem with populate method because it puts the value of checkbox to false -->
-<#if form?has_content && form.displaySummary>
-    <@input type='hidden' name='displaySummary' value='1' />
-</#if>
-<#if formMessage?has_content && formMessage.endMessageDisplay>
-    <@input type='hidden' name='endMessageDisplay' value='1' />
-</#if>
-<#if form?has_content && form.oneResponseByUser>
-    <@input type='hidden' name='oneResponseByUser' value='1' />
-</#if>
-<#if form?has_content && form.authentificationNeeded>
-    <@input type='hidden' name='authentificationNeeded' value='1' />
-</#if>
-<@input type='hidden' name='maxNumberResponse' value='form.maxNumberResponse!\'0\'' />
 <@div class='container'>
 <@row>
     <@columns>
@@ -38,6 +24,6 @@
         </@formGroup>
     </@columns>
 </@row>
-<@formsButton okAction='modifyForm' viewAction='' />
+<@formsButton okAction='modifyFormPublication' viewAction='' />
 </@div>
 </@tform>
