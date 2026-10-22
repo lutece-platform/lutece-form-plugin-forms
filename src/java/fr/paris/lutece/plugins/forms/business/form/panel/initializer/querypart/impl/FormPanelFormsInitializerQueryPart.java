@@ -41,13 +41,10 @@ import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.lucene.document.IntPoint;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.BooleanQuery.Builder;
 import org.apache.lucene.search.MatchAllDocsQuery;
+import org.apache.lucene.search.MatchNoDocsQuery;
 import org.apache.lucene.search.Query;
 
 /**
@@ -79,17 +76,9 @@ public class FormPanelFormsInitializerQueryPart extends AbstractFormPanelInitial
         // Only keep the Forms that can be accessed by the current user
         listForms = (List<Form>) AdminWorkgroupService.getAuthorizedCollection( listForms, user );
 
-        // Create Lucene queries to retrieve the Forms that match the specified IDs
-        List<Query> queries = listForms.stream( ).map( form -> IntPoint.newExactQuery( FormsConstants.PARAMETER_ID_FORM, form.getId( ) ) )
-                .collect( Collectors.toList( ) );
-
-        // Create a Lucene Builder for Boolean Queries
-        Builder builder = new BooleanQuery.Builder( );
-        // Add all the created queries that will be applied
-        queries.forEach( query -> builder.add( query, BooleanClause.Occur.SHOULD ) );
-
-        // Initialize the Query used to retrieve specific Forms
-        Query queryForms = builder.build( );
+        // One set query of the ids: a boolean query of one clause per form fails beyond the clause limit of Lucene (1024)
+        int [ ] arrayIdForms = listForms.stream( ).mapToInt( Form::getId ).toArray( );
+        Query queryForms = ( arrayIdForms.length == 0 ) ? new MatchNoDocsQuery( ) : IntPoint.newSetQuery( FormsConstants.PARAMETER_ID_FORM, arrayIdForms );
 
         setFormPanelInitializerSelectQuery( queryForms );
     }
