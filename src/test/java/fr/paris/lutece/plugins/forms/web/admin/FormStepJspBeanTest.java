@@ -37,6 +37,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,6 +54,7 @@ import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.test.AdminUserUtils;
 import fr.paris.lutece.test.LuteceTestCase;
 import fr.paris.lutece.test.mocks.MockHttpServletRequest;
+import fr.paris.lutece.test.mocks.MockHttpServletResponse;
 import jakarta.inject.Inject;
 
 /**
@@ -147,6 +150,42 @@ public class FormStepJspBeanTest extends LuteceTestCase
         Matcher matcher = FORM_DUPLICATE_STEP.matcher( strHtml );
         assertTrue( matcher.find( ), "The page must contain the form that duplicates the step" );
         assertTrue( _securityTokenService.consumeToken( request, "duplicateStep", matcher.group( 1 ) ) );
+    }
+
+    /**
+     * Without the MODIFY permission on the form, the creation and modification views of a step are refused like its actions
+     */
+    @Test
+    public void testStepViewsRefusedWithoutModifyPermission( )
+    {
+        Step initial = new Step( );
+        initial.setTitle( "Initial" );
+        initial.setDescription( "" );
+        initial.setIdForm( _form.getId( ) );
+        initial.setInitial( true );
+        StepHome.create( initial );
+
+        MockHttpServletRequest requestCreate = newRequestWithoutPermission( );
+        requestCreate.addParameter( "view", "createStep" );
+        requestCreate.addParameter( PARAMETER_ID_FORM, String.valueOf( _form.getId( ) ) );
+        assertThrows( AccessDeniedException.class, ( ) -> _bean.processController( requestCreate, new MockHttpServletResponse( ) ) );
+
+        MockHttpServletRequest requestModify = newRequestWithoutPermission( );
+        requestModify.addParameter( "view", "modifyStep" );
+        requestModify.addParameter( "id_step", String.valueOf( initial.getId( ) ) );
+        assertThrows( AccessDeniedException.class, ( ) -> _bean.processController( requestModify, new MockHttpServletResponse( ) ) );
+    }
+
+    /**
+     * Builds a request of an administrator who has the right of the forms feature but no RBAC role, hence no permission on the form
+     *
+     * @return the request
+     */
+    private MockHttpServletRequest newRequestWithoutPermission( )
+    {
+        MockHttpServletRequest request = new MockHttpServletRequest( );
+        AdminUserUtils.registerAdminUserWithRight( request, new AdminUser( ), ModifyEntryJspBean.RIGHT_MANAGE_FORMS );
+        return request;
     }
 
     private MockHttpServletRequest newRequest( )

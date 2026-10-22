@@ -191,6 +191,17 @@ public class FormStepJspBean extends AbstractJspBean
     private final int _nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( PROPERTY_ITEM_PER_PAGE, 50 );
 
     /**
+     * {@inheritDoc} The user must be allowed to modify every form referenced by the request, whatever the view or action
+     */
+    @Override
+    public String processController( HttpServletRequest request, HttpServletResponse response ) throws AccessDeniedException
+    {
+        checkUserPermissionOnReferencedForms( request );
+
+        return super.processController( request, response );
+    }
+
+    /**
      * Build the Manage View
      * 
      * @param request
