@@ -146,7 +146,13 @@ public abstract class AbstractPatternValidator extends AbstractValidator
 
         try
         {
-            return RegularExpressionHome.findByPrimaryKey( Integer.parseInt( control.getValue( ) ), _plugin );
+            RegularExpression regularExpression = RegularExpressionHome.findByPrimaryKey( Integer.parseInt( control.getValue( ) ), _plugin );
+            if ( regularExpression == null )
+            {
+                AppLogService.error( "Forms - Control {} refers to the regular expression {} that no longer exists : validation refused", control.getId( ),
+                        control.getValue( ) );
+            }
+            return regularExpression;
         }
         catch( NumberFormatException e )
         {
