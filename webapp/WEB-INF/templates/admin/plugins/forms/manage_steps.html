@@ -213,7 +213,8 @@ new LuteceSearchList( searchInput, searchElementList, {
 const stepsArray = [];
 document.querySelectorAll('[id^="step_"]').forEach(step => {
 	const idStep = step.id.replace('step_', '');
-	const stepTitle = step.querySelector('.card-header .card-title').textContent.trim();
+	const stepHeading = step.querySelector('a.searchable h3');
+	const stepTitle = stepHeading ? Array.from( stepHeading.childNodes ).filter( node => node.nodeType === Node.TEXT_NODE ).map( node => node.textContent ).join( '' ).trim( ) : '';
 	stepsArray.push({ id: idStep, title: stepTitle });
 });
 sessionStorage.setItem('stepList${form.id}', JSON.stringify(stepsArray));
@@ -228,7 +229,7 @@ document.querySelectorAll('[id^="step_"]').forEach(card => {
 		document.body.style.cursor = 'crosshair';
 	});
 	card.addEventListener('dblclick', function(e) {
-		const cardTitleLink = this.querySelector('.card-header .card-title a');
+		const cardTitleLink = this.querySelector('a.searchable');
 		if (cardTitleLink) {
 			window.location.href = cardTitleLink.href;
 		}
