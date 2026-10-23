@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.validation.constraints.NotEmpty;
@@ -212,7 +213,7 @@ public class Control implements Cloneable
         }
 
         controlNew.setId( _nId );
-        controlNew.setListIdQuestion( _listIdQuestion );
+        controlNew.setListIdQuestion( _listIdQuestion != null ? new HashSet<>( _listIdQuestion ) : null );
         controlNew.setControlType( _strControlType );
         controlNew.setErrorMessage( _strErrorMessage );
         controlNew.setIdControlTarget( _nIdControlTarget );

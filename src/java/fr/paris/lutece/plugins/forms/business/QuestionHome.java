@@ -123,12 +123,8 @@ public final class QuestionHome
             question = _dao.load( nKey, _plugin );
             _cache.putInCache( cacheKey, question );
         }
-        else
-        {
-            question = new Question( question );
-        }
-        // return a copy to prevent dynamic members sharing
-        return question;
+        // return a copy to prevent dynamic members sharing, including on the first load
+        return question != null ? new Question( question ) : null;
     }
 
     /**

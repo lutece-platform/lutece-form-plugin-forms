@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import fr.paris.lutece.plugins.forms.service.cache.FormsCacheService;
@@ -114,11 +115,14 @@ public final class FormDisplayHome
             formDisplay = _dao.load( nKey, _plugin );
             _cache.putInCache( cacheKey, formDisplay );
         }
-        if ( formDisplay != null )
+        if ( formDisplay == null )
         {
-            initConditionalDisplayForFormDisplay( formDisplay );
+            return null;
         }
-        return formDisplay;
+        // never alter the cached instance: work on a copy, the cache is reset on each write
+        FormDisplay formDisplayCopy = new FormDisplay( formDisplay );
+        initConditionalDisplayForFormDisplay( formDisplayCopy );
+        return formDisplayCopy;
     }
 
     /**
@@ -155,11 +159,15 @@ public final class FormDisplayHome
             result = _dao.selectFormDisplayListByParent( nIdStep, nIdParent, _plugin );
             _cache.putInCache( cacheKey, result );
         }
+        // never alter the cached list or its instances: work on copies, the cache is reset on each write
+        List<FormDisplay> listCopy = new ArrayList<>( result.size( ) );
         for ( FormDisplay formDisplay : result )
         {
-            initConditionalDisplayForFormDisplay( formDisplay );
+            FormDisplay formDisplayCopy = new FormDisplay( formDisplay );
+            initConditionalDisplayForFormDisplay( formDisplayCopy );
+            listCopy.add( formDisplayCopy );
         }
-        return result;
+        return listCopy;
     }
     
     /**
