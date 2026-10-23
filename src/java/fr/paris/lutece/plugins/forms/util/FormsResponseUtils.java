@@ -349,11 +349,19 @@ public class FormsResponseUtils
         List<FormQuestionResponse> listResponsesTemp = new ArrayList<>( );
 
         int nIdForm = listQuestionStep.isEmpty( ) ? 0 : StepHome.findByPrimaryKey( listQuestionStep.get( 0 ).getIdStep( ) ).getIdForm( );
+        int nIdCurrentStep = listQuestionStep.isEmpty( ) ? 0 : listQuestionStep.get( 0 ).getIdStep( );
+
+        List<FormQuestionResponse> listPreviousStepsResponses = formResponseManager.findAllResponses( ).stream( )
+                .filter( r -> r.getQuestion( ) != null && r.getQuestion( ).getIdStep( ) != nIdCurrentStep )
+                .collect( Collectors.toList( ) );
 
         for ( Question question : listQuestionStep )
         {
 
-            question.setIsVisible( isQuestionConditionallyVisible( question, listResponsesTemp, nIdForm ) );
+            List<FormQuestionResponse> listContextResponses = new ArrayList<>( listPreviousStepsResponses );
+            listContextResponses.addAll( listResponsesTemp );
+
+            question.setIsVisible( isQuestionConditionallyVisible( question, listContextResponses, nIdForm ) );
 
             IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
             if ( question.getEntry( ).isOnlyDisplayInBack( ) )
@@ -386,7 +394,7 @@ public class FormsResponseUtils
         
         for ( FormQuestionResponse formQuestionResponse : listResponsesTemp )
         {
-        	if ( bValidateQuestionStep )
+        	if ( bValidateQuestionStep && formQuestionResponse.getQuestion( ).isVisible( ) )
         	{
 	        	List<Control> listControl = ControlHome.getControlByQuestionAndType( formQuestionResponse.getQuestion( ).getId( ), ControlType.VALIDATION.getLabel( ) );
 	        	
