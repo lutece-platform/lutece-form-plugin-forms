@@ -58,6 +58,7 @@
 			});
 
 			let bOtherStepValidated = true;
+			let bHasOtherStepControl = ${(other_step_validation??)?c};
 			<#if other_step_validation??>
 				<#if other_step_validation>
 					displayField.forEach(function(el){ el.style.display = ''; });
@@ -100,7 +101,7 @@
 					</#list>
 					let bIsQuestionDisplayed;
 					<#if logical_operator_label == 'or'>
-						bIsQuestionDisplayed = (nValidControlsCount > 0) || bOtherStepValidated;
+						bIsQuestionDisplayed = (nValidControlsCount > 0) || ( bHasOtherStepControl && bOtherStepValidated );
 					<#else>
 						bIsQuestionDisplayed = (nNotValidControlsCount == 0) && bOtherStepValidated;
 					</#if>

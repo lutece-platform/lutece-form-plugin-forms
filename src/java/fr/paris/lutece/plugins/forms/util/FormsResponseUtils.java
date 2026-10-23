@@ -81,6 +81,7 @@ import fr.paris.lutece.plugins.forms.web.StepDisplayTree;
 import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDataService;
 import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
+import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.plugins.workflowcore.service.state.IStateService;
 import fr.paris.lutece.plugins.workflowcore.service.state.StateService;
@@ -344,12 +345,19 @@ public class FormsResponseUtils
         boolean bValidStep = true;
         List<FormQuestionResponse> listResponsesTemp = new ArrayList<>( );
 
-        int nIdForm = listQuestionStep.isEmpty( ) ? 0 : StepHome.findByPrimaryKey( listQuestionStep.get( 0 ).getIdStep( ) ).getIdForm( );
+        int nIdStep = listQuestionStep.isEmpty( ) ? 0 : listQuestionStep.get( 0 ).getIdStep( );
+        int nIdForm = listQuestionStep.isEmpty( ) ? 0 : StepHome.findByPrimaryKey( nIdStep ).getIdForm( );
+
+        // Conditions may reference questions of the other steps : their responses are part of the evaluation context,
+        // as for the display of the step (CompositeQuestionDisplay)
+        List<FormQuestionResponse> listConditionContext = formResponseManager.findAllResponses( ).stream( )
+                .filter( response -> response.getIdStep( ) != nIdStep )
+                .collect( Collectors.toList( ) );
 
         for ( Question question : listQuestionStep )
         {
 
-            question.setIsVisible( isQuestionConditionallyVisible( question, listResponsesTemp, nIdForm ) );
+            question.setIsVisible( isQuestionConditionallyVisible( question, listConditionContext, nIdForm ) );
 
             IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
             if ( question.getEntry( ).isOnlyDisplayInBack( ) )
@@ -378,6 +386,7 @@ public class FormsResponseUtils
             }
 
             listResponsesTemp.add( formQuestionResponse );
+            listConditionContext.add( formQuestionResponse );
         }
         
         for ( FormQuestionResponse formQuestionResponse : listResponsesTemp )
@@ -422,7 +431,7 @@ public class FormsResponseUtils
      * Computes, server-side, whether a question with conditional display rules should be considered visible.
      *
      * @param question the question being evaluated
-     * @param listResponsesTemp the responses already built for this step
+     * @param listResponsesTemp the responses already built for this step and the responses of the other validated steps
      * @param nIdForm the id of the form the question belongs to
      * @return {@code true} if the question has no conditional display rule, or if its rule(s) are satisfied;
      *         {@code false} otherwise
@@ -459,7 +468,7 @@ public class FormsResponseUtils
                         .filter( response -> control.getListIdQuestion( ).contains( response.getQuestion( ).getId( ) ) )
                         .collect( Collectors.toList( ) );
 
-                if ( validator.validate( listControllingResponses, control ) )
+                if ( isConditionMet( question, control, validator, listControllingResponses ) )
                 {
                     nValidControlsCount++;
                 }
@@ -475,6 +484,55 @@ public class FormsResponseUtils
         boolean bIsOrOperator = controlGroup != null && LogicalOperator.OR.getLabel( ).equals( controlGroup.getLogicalOperator( ).getLabel( ) );
 
         return bIsOrOperator ? ( nValidControlsCount > 0 ) : ( nNotValidControlsCount == 0 );
+    }
+
+    /**
+     * Tells whether a conditional display control is met.
+     * <p>
+     * When the controlling question is on the same step as the question, a hidden or unanswered controlling question cannot
+     * satisfy the condition, like on client side : the validators return true for an empty response ("vacuous truth"). When it
+     * is on another step, the validator is applied as is, like {@code CompositeQuestionDisplay} does to display the question.
+     *
+     * @param question
+     *            the question displayed under condition
+     * @param control
+     *            the conditional control
+     * @param validator
+     *            the validator of the control
+     * @param listControllingResponses
+     *            the responses to the questions of the control
+     * @return {@code true} if the condition is met, {@code false} otherwise
+     */
+    private static boolean isConditionMet( Question question, Control control, IValidator validator, List<FormQuestionResponse> listControllingResponses )
+    {
+        boolean bIsSameStep = listControllingResponses.stream( ).anyMatch( response -> response.getQuestion( ).getIdStep( ) == question.getIdStep( ) );
+
+        if ( !bIsSameStep )
+        {
+            return validator.validate( listControllingResponses, control );
+        }
+
+        List<FormQuestionResponse> listFilledResponses = listControllingResponses.stream( )
+                .filter( response -> response.getQuestion( ).isVisible( ) && isResponseFilled( response ) )
+                .collect( Collectors.toList( ) );
+
+        return !listFilledResponses.isEmpty( ) && validator.validate( listFilledResponses, control );
+    }
+
+    /**
+     * Tells whether a form question response carries at least one filled value (a selected choice, a text or a file)
+     *
+     * @param formQuestionResponse
+     *            the form question response
+     * @return {@code true} if at least one response is filled, {@code false} otherwise
+     */
+    private static boolean isResponseFilled( FormQuestionResponse formQuestionResponse )
+    {
+        List<Response> listResponse = formQuestionResponse.getEntryResponse( );
+
+        return listResponse != null && listResponse.stream( )
+                .anyMatch( response -> ( response.getField( ) != null && response.getField( ).getIdField( ) > 0 )
+                        || StringUtils.isNotBlank( response.getResponseValue( ) ) || response.getFile( ) != null );
     }
 
     /**
