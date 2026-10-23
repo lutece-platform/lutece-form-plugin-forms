@@ -53,6 +53,28 @@ public class FormMessage
     private String _strLabelEndMessageButton;
 
     /**
+     * Default constructor
+     */
+    public FormMessage( )
+    {
+    }
+
+    /**
+     * Copy constructor
+     * 
+     * @param source
+     *            FormMessage to copy
+     */
+    public FormMessage( FormMessage source )
+    {
+        _nId = source._nId;
+        _nIdForm = source._nIdForm;
+        _bEndMessageDisplay = source._bEndMessageDisplay;
+        _strEndMessage = source._strEndMessage;
+        _strLabelEndMessageButton = source._strLabelEndMessageButton;
+    }
+
+    /**
      * @return the _nId
      */
     public int getId( )

@@ -65,7 +65,7 @@ public final class FormMessageHome
     public static FormMessage create( FormMessage formMessage )
     {
         _dao.insert( formMessage, _plugin );
-        _cache.putInCache( _cache.getFormMessageByFormCacheKey( formMessage.getIdForm( ) ), formMessage );
+        _cache.removeKey( _cache.getFormMessageByFormCacheKey( formMessage.getIdForm( ) ) );
         return formMessage;
     }
 
@@ -79,7 +79,7 @@ public final class FormMessageHome
     public static FormMessage update( FormMessage formMessage )
     {
         _dao.store( formMessage, _plugin );
-        _cache.putInCache( _cache.getFormMessageByFormCacheKey( formMessage.getIdForm( ) ), formMessage );
+        _cache.removeKey( _cache.getFormMessageByFormCacheKey( formMessage.getIdForm( ) ) );
         return formMessage;
     }
 
@@ -135,6 +135,7 @@ public final class FormMessageHome
             formMessage = _dao.selectByForm( nIdForm, _plugin );
             _cache.putInCache( cacheKey, formMessage );
         }
-        return formMessage;
+        // never return the cached instance: callers may alter it, the cache is reset on each write
+        return formMessage != null ? new FormMessage( formMessage ) : null;
     }
 }

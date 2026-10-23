@@ -50,6 +50,25 @@ public class ControlGroup implements Serializable
     private LogicalOperator _logicalOperator;
 
     /**
+     * Default constructor
+     */
+    public ControlGroup( )
+    {
+    }
+
+    /**
+     * Copy constructor
+     * 
+     * @param source
+     *            ControlGroup to copy
+     */
+    public ControlGroup( ControlGroup source )
+    {
+        _nId = source._nId;
+        _logicalOperator = source._logicalOperator;
+    }
+
+    /**
      * Returns the Id
      * @return The Id
      */

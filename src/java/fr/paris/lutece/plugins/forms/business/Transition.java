@@ -64,6 +64,31 @@ public class Transition implements Serializable
     private boolean _conditional;
 
     /**
+     * Default constructor
+     */
+    public Transition( )
+    {
+    }
+
+    /**
+     * Copy constructor
+     * 
+     * @param source
+     *            Transition to copy
+     */
+    public Transition( Transition source )
+    {
+        _nId = source._nId;
+        _nFromStep = source._nFromStep;
+        _strFromStepTitle = source._strFromStepTitle;
+        _nNextStep = source._nNextStep;
+        _strNextStepTitle = source._strNextStepTitle;
+        _strControlTitle = source._strControlTitle;
+        _nPriority = source._nPriority;
+        _conditional = source._conditional;
+    }
+
+    /**
      * Returns the Id
      * 
      * @return The Id

@@ -70,6 +70,32 @@ public class Group implements Serializable
     private boolean _bIsTitleDisplayed;
 
     /**
+     * Default constructor
+     */
+    public Group( )
+    {
+    }
+
+    /**
+     * Copy constructor
+     * 
+     * @param source
+     *            Group to copy
+     */
+    public Group( Group source )
+    {
+        _nId = source._nId;
+        _strTitle = source._strTitle;
+        _strDescription = source._strDescription;
+        _nIdStep = source._nIdStep;
+        _nIterationMin = source._nIterationMin;
+        _nIterationMax = source._nIterationMax;
+        _strIterationAddLabel = source._strIterationAddLabel;
+        _strIterationRemoveLabel = source._strIterationRemoveLabel;
+        _bIsTitleDisplayed = source._bIsTitleDisplayed;
+    }
+
+    /**
      * Returns the Id
      * 
      * @return The Id

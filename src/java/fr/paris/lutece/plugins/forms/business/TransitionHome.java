@@ -39,6 +39,7 @@ import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.ReferenceList;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -176,7 +177,13 @@ public final class TransitionHome
             transitions = _dao.selectTransitionsListFromStep( nIdStep, _plugin );
             _cache.putInCache( cacheKey, transitions );
         }
-        return transitions;
+        // never return the cached instance: callers may alter it, the cache is reset on each write
+        List<Transition> listCopy = new ArrayList<>( transitions.size( ) );
+        for ( Transition transition : transitions )
+        {
+            listCopy.add( new Transition( transition ) );
+        }
+        return listCopy;
     }
 
     /**

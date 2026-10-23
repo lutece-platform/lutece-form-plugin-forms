@@ -69,7 +69,7 @@ public final class ControlGroupHome
     public static ControlGroup create( ControlGroup controlGroup )
     {
         _dao.insert( controlGroup, _plugin );
-        _cache.putInCache( _cache.getControlGroupCacheKey( controlGroup.getId( ) ), controlGroup );
+        _cache.removeKey( _cache.getControlGroupCacheKey( controlGroup.getId( ) ) );
         return controlGroup;
     }
 
@@ -81,7 +81,7 @@ public final class ControlGroupHome
     public static ControlGroup update( ControlGroup controlGroup )
     {
         _dao.store( controlGroup, _plugin );
-        _cache.putInCache( _cache.getControlGroupCacheKey( controlGroup.getId( ) ), controlGroup );
+        _cache.removeKey( _cache.getControlGroupCacheKey( controlGroup.getId( ) ) );
         return controlGroup;
     }
 
@@ -110,7 +110,8 @@ public final class ControlGroupHome
             controlGroup = _dao.load( nKey, _plugin );
             _cache.putInCache( cacheKey, controlGroup );
         }
-        return controlGroup;
+        // never return the cached instance: callers may alter it, the cache is reset on each write
+        return controlGroup.map( ControlGroup::new );
     }
 
     /**

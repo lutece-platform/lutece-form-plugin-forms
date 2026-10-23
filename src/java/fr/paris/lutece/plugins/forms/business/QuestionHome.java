@@ -174,6 +174,23 @@ public final class QuestionHome
     }
 
     /**
+     * Copy a cached list of questions so that callers never alter the cached instances
+     * 
+     * @param listQuestion
+     *            the cached list
+     * @return a new list containing a copy of each question
+     */
+    private static List<Question> copyOf( List<Question> listQuestion )
+    {
+        List<Question> listCopy = new ArrayList<>( listQuestion.size( ) );
+        for ( Question question : listQuestion )
+        {
+            listCopy.add( new Question( question ) );
+        }
+        return listCopy;
+    }
+
+    /**
      * Load the data of the question objects related to multiview and returns them as a list
      * 
      * @return the list which contains the data of the question objects related to multiview
@@ -189,7 +206,8 @@ public final class QuestionHome
             _cache.putInCache( cacheKey, listQuestion );
         }
 
-        return listQuestion;
+        // never return the cached instance: callers may alter it, the cache is reset on each write
+        return copyOf( listQuestion );
     }
 
     /**
@@ -235,7 +253,8 @@ public final class QuestionHome
             _cache.putInCache( cacheKey, listQuestion );
         }
 
-        return listQuestion;
+        // never return the cached instance: callers may alter it, the cache is reset on each write
+        return copyOf( listQuestion );
     }
 
     /**
