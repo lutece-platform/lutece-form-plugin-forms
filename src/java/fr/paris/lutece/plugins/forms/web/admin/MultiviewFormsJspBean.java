@@ -365,6 +365,9 @@ public class MultiviewFormsJspBean extends AbstractJspBean
                 addError( "forms.export.error.filter", getLocale( ) );
                 return getMultiviewFormsView( request );
             }
+            // The form id comes from the request : check that the user is allowed to view its responses
+            checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( form.getId( ) ), FormsResourceIdService.PERMISSION_VIEW_FORM_RESPONSE, request, null );
+            checkWorkgroupPermission( form, request );
             List<FormFilter> listFormFilter = _listFormFilterDisplay.stream( ).map( IFormFilterDisplay::getFormFilter ).collect( Collectors.toList( ) );
 
             _temporaryFileGeneratorService.generateFile( formatExport.createFileGenerator( form.getTitle( ),
