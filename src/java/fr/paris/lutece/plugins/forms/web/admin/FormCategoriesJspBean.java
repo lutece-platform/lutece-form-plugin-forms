@@ -42,7 +42,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.asynchronousupload.service.IAsyncUploadHandler;
 import fr.paris.lutece.plugins.forms.business.FormCategory;
@@ -83,7 +83,7 @@ public class FormCategoriesJspBean extends AbstractJspBean
     private static final String ACTION_CREATE_CATEGORY = "createCategory";
     private static final String ACTION_MODIFY_CATEGORY = "modifyCategory";
     private static final String ACTION_REMOVE_CATEGORY = "removeCategory";
-    private static final String ACTION_CONFIRM_REMOVE_CATEGORY = "confirmRemoveCategory";
+    private static final String VIEW_CONFIRM_REMOVE_CATEGORY = "confirmRemoveCategory";
 
     // Properties for page titles
     private static final String PROPERTY_PAGE_TITLE_CREATE_CATEGORY = "forms.create_form_category.pageTitle";
@@ -187,8 +187,12 @@ public class FormCategoriesJspBean extends AbstractJspBean
     @Action( ACTION_REMOVE_CATEGORY )
     public String doRemoveCategory( HttpServletRequest request )
     {
-        String strIdCategory = request.getParameter( PARAMETER_ID_CATEGORY );
-        FormCategoryHome.remove( Integer.parseInt( strIdCategory ) );
+        int nIdCategory = NumberUtils.toInt( request.getParameter( PARAMETER_ID_CATEGORY ), NumberUtils.INTEGER_MINUS_ONE );
+        if ( nIdCategory == NumberUtils.INTEGER_MINUS_ONE )
+        {
+            return redirectView( request, VIEW_MANAGE_CATEGORY );
+        }
+        FormCategoryHome.remove( nIdCategory );
         addInfo( INFO_CATEGORY_REMOVED, getLocale( ) );
         return redirectView( request, VIEW_MANAGE_CATEGORY );
     }
@@ -200,15 +204,15 @@ public class FormCategoriesJspBean extends AbstractJspBean
      *            the request
      * @return the HTML code to confirm
      */
-    @Action( value = ACTION_CONFIRM_REMOVE_CATEGORY, securityTokenAction = ACTION_REMOVE_CATEGORY )
+    @View( value = VIEW_CONFIRM_REMOVE_CATEGORY, securityTokenAction = ACTION_REMOVE_CATEGORY )
     public String getConfirmRemoveCategory( HttpServletRequest request )
     {
         String strIdCategory = request.getParameter( PARAMETER_ID_CATEGORY );
-        if ( StringUtils.isEmpty( strIdCategory ) )
+        int nIdCategory = NumberUtils.toInt( strIdCategory, NumberUtils.INTEGER_MINUS_ONE );
+        if ( nIdCategory == NumberUtils.INTEGER_MINUS_ONE )
         {
             return redirectView( request, VIEW_MANAGE_CATEGORY );
         }
-        int nIdCategory = Integer.parseInt( strIdCategory );
         UrlItem url = new UrlItem( getActionUrl( ACTION_REMOVE_CATEGORY ) );
         url.addParameter( PARAMETER_ID_CATEGORY, nIdCategory );
         String strMessageUrl = AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_CATEGORY, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
@@ -225,9 +229,12 @@ public class FormCategoriesJspBean extends AbstractJspBean
     @View( VIEW_MODIFY_CATEGORY )
     public String getModifyCategory( HttpServletRequest request )
     {
-        String strIdCategory = request.getParameter( PARAMETER_ID_CATEGORY );
-        int nIdCategory = Integer.parseInt( strIdCategory );
+        int nIdCategory = NumberUtils.toInt( request.getParameter( PARAMETER_ID_CATEGORY ), NumberUtils.INTEGER_MINUS_ONE );
         FormCategory formCategory = FormCategoryHome.findByPrimaryKey( nIdCategory );
+        if ( formCategory == null )
+        {
+            return redirectView( request, VIEW_MANAGE_CATEGORY );
+        }
         Map<String, Object> model = getModel( );
         model.put( MARK_CATEGORY, formCategory );
         return getPage( PROPERTY_PAGE_TITLE_MODIFY_CATEGORY, TEMPLATE_MODIFY_CATEGORY, model );
@@ -243,8 +250,11 @@ public class FormCategoriesJspBean extends AbstractJspBean
     @Action( ACTION_MODIFY_CATEGORY )
     public String doModifyCategory( HttpServletRequest request )
     {
-        String strIdCategory = request.getParameter( PARAMETER_ID_CATEGORY );
-        int nIdCategory = Integer.parseInt( strIdCategory );
+        int nIdCategory = NumberUtils.toInt( request.getParameter( PARAMETER_ID_CATEGORY ), NumberUtils.INTEGER_MINUS_ONE );
+        if ( nIdCategory == NumberUtils.INTEGER_MINUS_ONE )
+        {
+            return redirectView( request, VIEW_MANAGE_CATEGORY );
+        }
         FormCategory formCategory = new FormCategory( ) ;
         formCategory.setId( nIdCategory );
         populate( formCategory, request );

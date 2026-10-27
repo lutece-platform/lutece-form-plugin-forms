@@ -122,7 +122,13 @@
 							<@manageFeatureItemColumn align='end' cols='12 col-md-2'>
 								<@link href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=${step.id}' label='' class='btn btn-primary me-1'><@icon style='cog' /><@span class='visually-hidden'> #i18n{forms.manage_steps.action.modifyStep}</@span></@link>
 								<@button type='button' id='forms-action' title='#i18n{portal.util.labelActions}' dropdownMenu=true >
-									<@link href='jsp/admin/plugins/forms/ManageSteps.jsp?action=duplicateStep&id_step=${step.id}&token=${token}' label='' class='dropdown-item'> <@icon style='copy' /> #i18n{forms.manage_steps.action.copyStep}</@link>
+									<@tform action='jsp/admin/plugins/forms/ManageSteps.jsp' method='post'>
+										<@input type='hidden' name='action' value='duplicateStep' />
+										<@input type='hidden' name='id_step' value='${step.id}' />
+										<@input type='hidden' name='token' value='${token}' />
+										<@input type='hidden' name='_csrftoken' value='${(link_tokens.duplicateStep)!}' />
+										<@button type='submit' color='link' class='dropdown-item'> <@icon style='copy' /> #i18n{forms.manage_steps.action.copyStep}</@button>
+									</@tform>
 									<@link href='jsp/admin/plugins/forms/export/DoExportStepJson.jsp?id_step=${step.id}' label='' class='dropdown-item'> <@icon style='download' /> #i18n{forms.manage_steps.action.exportStep}</@link>
 									<@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' label='' class='dropdown-item'> <@icon style='list' /> #i18n{forms.manage_steps.action.showquestions}</@link>
 									<@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=confirmRemoveStep&id_step=${step.id}' label='' class='dropdown-item'> <@icon style='trash text-danger' /> #i18n{forms.manage_steps.action.removeStep}</@link>
@@ -207,7 +213,8 @@ new LuteceSearchList( searchInput, searchElementList, {
 const stepsArray = [];
 document.querySelectorAll('[id^="step_"]').forEach(step => {
 	const idStep = step.id.replace('step_', '');
-	const stepTitle = step.querySelector('.card-header .card-title').textContent.trim();
+	const stepHeading = step.querySelector('a.searchable h3');
+	const stepTitle = stepHeading ? Array.from( stepHeading.childNodes ).filter( node => node.nodeType === Node.TEXT_NODE ).map( node => node.textContent ).join( '' ).trim( ) : '';
 	stepsArray.push({ id: idStep, title: stepTitle });
 });
 sessionStorage.setItem('stepList${form.id}', JSON.stringify(stepsArray));
@@ -222,7 +229,7 @@ document.querySelectorAll('[id^="step_"]').forEach(card => {
 		document.body.style.cursor = 'crosshair';
 	});
 	card.addEventListener('dblclick', function(e) {
-		const cardTitleLink = this.querySelector('.card-header .card-title a');
+		const cardTitleLink = this.querySelector('a.searchable');
 		if (cardTitleLink) {
 			window.location.href = cardTitleLink.href;
 		}
@@ -239,13 +246,14 @@ document.addEventListener('mouseover', function(e) {
 document.addEventListener('mouseup', function(e) {
 	if ( isLinking && e.target.closest('[id^="step_"]') != null ) {
 		const stepToken=encodeURIComponent('${token}')
+		const transitionToken=encodeURIComponent('${(link_tokens.createTransition)!}')
 		let endStepId = e.target.closest('[id^="step_"]').id.replace('step_', '');
 		if (startStepId && endStepId && startStepId !== endStepId) {
 			// AJAX call to define the link
 			fetch('jsp/admin/plugins/forms/ManageTransitions.jsp', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-				<#noparse>body: `action_createTransition=&id_step=${startStepId}&fromStep=${startStepId}&id_step=${endStepId}`</#noparse>
+				<#noparse>body: `action_createTransition=&id_step=${startStepId}&fromStep=${startStepId}&nextStep=${endStepId}&_csrftoken=${transitionToken}`</#noparse>
 			}).then(() => location.reload());
 		}
 	}

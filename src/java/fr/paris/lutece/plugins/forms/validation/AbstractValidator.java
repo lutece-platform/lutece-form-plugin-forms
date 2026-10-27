@@ -42,6 +42,7 @@ import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 
 public abstract class AbstractValidator implements IValidator
 {
@@ -167,4 +168,34 @@ public abstract class AbstractValidator implements IValidator
         return _locale;
     }
 
+    /**
+     * Retourne la valeur entiere portee par le controle.
+     *
+     * <p>La valeur peut etre absente ou non numerique lorsque le controle a ete enregistre sans
+     * validateur confirme. Dans ce cas aucune regle n'est applicable : la methode renvoie une valeur
+     * negative plutot que de laisser remonter une exception qui se traduirait par une erreur technique
+     * en front-office.</p>
+     *
+     * @param control
+     *            le controle portant la valeur du validateur
+     * @return la valeur entiere du controle, ou {@code -1} si le controle n'en porte aucune d'exploitable
+     */
+    protected int getControlValueAsInt( Control control )
+    {
+        if ( StringUtils.isEmpty( control.getValue( ) ) )
+        {
+            AppLogService.error( "Forms - Control without value : validation refused" );
+            return -1;
+        }
+
+        try
+        {
+            return Integer.parseInt( control.getValue( ) );
+        }
+        catch( NumberFormatException e )
+        {
+            AppLogService.error( "Error number format", e );
+            return -1;
+        }
+    }
 }

@@ -1,7 +1,7 @@
 <@cTpl>
 <#assign labelClass><#list entry.CSSClass?split(' ') as ecc>${ecc}</#list></#assign>
 <#if getError( list_responses, entry )?? ><#assign error = getError( list_responses, entry ) ></#if> 
-<#assign errorMsg><#if error?? && error.isDisplayableError><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#if></#assign>
+<#assign errorMsg><#if error?? && error.isDisplayableError><#if error.mandatoryError><#if entry.errorMessage?has_content>${entry.errorMessage}<#else>#i18n{forms.message.mandatory.entry}</#if><#else>${error.errorMessage}</#if></#if></#assign>
 <#assign name = buildEntryName( entry, entry_iteration_number )>
 <#assign fieldAgreement = getFieldByCode( entry, "agreement" ) >
 <#if list_responses?? && getResponseContainingTheFieldWithCode( list_responses, "agreement" )?? ><#assign responseAgreement = getResponseContainingTheFieldWithCode( list_responses, "agreement" ) ></#if>

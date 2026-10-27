@@ -40,7 +40,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -75,9 +74,6 @@ public class FormsMultiviewAuthorizationService implements IFormsMultiviewAuthor
 {
     public static final String BEAN_NAME = "forms.formsMultiviewAuthorizationService";
 
-    // Variables
-    private FormPanel _formPanel;
-
     @Inject
     private FormListFacade _formListFacade;
 
@@ -92,13 +88,6 @@ public class FormsMultiviewAuthorizationService implements IFormsMultiviewAuthor
 	{
 	}
 
-	@PostConstruct
-    public void initialize( ) 
-	{
-		_formPanel = new FormPanel( );
-		_formPanel.setFormPanelConfiguration( _formPanelConfiguration );
-	}
-	
 	/**
      * Constructor
      * 
@@ -112,8 +101,7 @@ public class FormsMultiviewAuthorizationService implements IFormsMultiviewAuthor
     public FormsMultiviewAuthorizationService( IFormPanelConfiguration formPanelConfiguration, FormListFacade formListFacade,
             FormColumnFactory formColumnFactory )
     {
-        _formPanel = new FormPanel( );
-        _formPanel.setFormPanelConfiguration( formPanelConfiguration );
+        _formPanelConfiguration = formPanelConfiguration;
         _formListFacade = formListFacade;
         _formColumnFactory = formColumnFactory;
     }
@@ -132,20 +120,21 @@ public class FormsMultiviewAuthorizationService implements IFormsMultiviewAuthor
             return bIsUserAuthorizedOnFormResponse;
         }
 
-        if ( nIdFormResponse != NumberUtils.INTEGER_MINUS_ONE && _formPanel.getFormPanelConfiguration( ) != null )
+        if ( nIdFormResponse != NumberUtils.INTEGER_MINUS_ONE && _formPanelConfiguration != null )
         {
-            _formPanel = new FormPanelFactory( ).buildFormPanel( _formPanel.getFormPanelConfiguration( ) );
+            // The panel is built for each call: this bean is shared by all the requests and must stay stateless
+            FormPanel formPanel = new FormPanelFactory( ).buildFormPanel( _formPanelConfiguration );
 
             List<IFormColumn> listFormResponseColumn = _formColumnFactory.buildFormColumnList( null, request.getLocale( ), user );
 
             // Rebuild all the FormPanelInitializer to reset the previous data
-            FormDisplayFactory.buildFormPanelDisplayInitializer( request, _formPanel );
+            FormDisplayFactory.buildFormPanelDisplayInitializer( request, formPanel );
 
             List<FormFilter> listFormFilters = new ArrayList<>( );
             listFormFilters.add( buildFormResponseIdFilter( nIdFormResponse ) );
 
-            _formListFacade.populateFormColumns( _formPanel, listFormResponseColumn, listFormFilters, 0, 1, null );
-            List<FormResponseItem> listFormResponseItem = _formPanel.getFormResponseItemList( );
+            _formListFacade.populateFormColumns( formPanel, listFormResponseColumn, listFormFilters, 0, 1, null );
+            List<FormResponseItem> listFormResponseItem = formPanel.getFormResponseItemList( );
 
             if ( !CollectionUtils.isEmpty( listFormResponseItem ) )
             {

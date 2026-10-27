@@ -54,6 +54,7 @@ public class IndexerActionDAO implements IIndexerActionDAO
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_indexer_action( id_form_response,id_task)" + " VALUES(?,?)";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_indexer_action";
     private static final String SQL_QUERY_DELETE_ID = SQL_QUERY_DELETE + " WHERE id_action = ? ";
+    private static final String SQL_QUERY_DELETE_ID_FORM_RESPONSE = SQL_QUERY_DELETE + " WHERE id_form_response = ? ";
     private static final String SQL_QUERY_DELETE_IN = SQL_QUERY_DELETE + " WHERE id_action IN (";
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_indexer_action SET id_action=?,id_form_response=?,id_task=? WHERE id_action = ? ";
     private static final String SQL_QUERY_SELECT = "SELECT id_action,id_form_response,id_task" + " FROM forms_indexer_action  ";
@@ -63,7 +64,7 @@ public class IndexerActionDAO implements IIndexerActionDAO
      * {@inheritDoc}
      */
     @Override
-    public synchronized void insert( IndexerAction indexerAction, Plugin plugin )
+    public void insert( IndexerAction indexerAction, Plugin plugin )
     {
 
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, plugin ) )
@@ -118,6 +119,19 @@ public class IndexerActionDAO implements IIndexerActionDAO
             daoUtil.executeUpdate( );
         }
 
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deleteByFormResponse( int nIdFormResponse, Plugin plugin )
+    {
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_ID_FORM_RESPONSE, plugin ) )
+        {
+            daoUtil.setInt( 1, nIdFormResponse );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**

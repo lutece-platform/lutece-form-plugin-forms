@@ -191,6 +191,17 @@ public class FormStepJspBean extends AbstractJspBean
     private final int _nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( PROPERTY_ITEM_PER_PAGE, 50 );
 
     /**
+     * {@inheritDoc} The user must be allowed to modify every form referenced by the request, whatever the view or action
+     */
+    @Override
+    public String processController( HttpServletRequest request, HttpServletResponse response ) throws AccessDeniedException
+    {
+        checkUserPermissionOnReferencedForms( request );
+
+        return super.processController( request, response );
+    }
+
+    /**
      * Build the Manage View
      * 
      * @param request
@@ -218,7 +229,8 @@ public class FormStepJspBean extends AbstractJspBean
         checkWorkgroupPermission(nIdForm, request);
 
         Form formParent = FormHome.findByPrimaryKey( nIdForm );
-        _step = new Step( );
+        // No step being edited: the next creation starts from a new step (see getCreateStep)
+        _step = null;
 
         Map<String, Object> model = getModel( );
         model.put( FormsConstants.MARK_FORM, formParent );
@@ -250,6 +262,8 @@ public class FormStepJspBean extends AbstractJspBean
         model.put( MARK_LOCALE, request.getLocale( ) );
         model.put( MARK_TEMPLATE_PROVIDER, _stepService.getStepTemplateProvider( ) );
         model.put( SecurityTokenService.MARK_TOKEN, _securityTokenService.getToken( request, ACTION_CREATE_STEP ) );
+        // The links of the steps between them (AJAX) call the creation of a transition of FormTransitionJspBean
+        putLinkTokens( request, model, ACTION_DUPLICATE_STEP, FormTransitionJspBean.ACTION_CREATE_TRANSITION );
         model.put( FormsConstants.MARK_PROD_URL, AppPathService.getProdUrl( request ) );
 
         setPageTitleProperty( EMPTY_STRING );
@@ -288,7 +302,8 @@ public class FormStepJspBean extends AbstractJspBean
         checkWorkgroupPermission(nIdForm, request);
 
         Form form = FormHome.findByPrimaryKey( nIdForm );
-        _step = new Step( );
+        // No step being edited: the next creation starts from a new step (see getCreateStep)
+        _step = null;
 
         Map<String, Object> model = getModel( );
         model.put( FormsConstants.MARK_FORM, form );
@@ -323,11 +338,19 @@ public class FormStepJspBean extends AbstractJspBean
             return redirectToViewManageForm( request );
         }
 
-        _step = ( _step != null ) ? _step : new Step( );
+        // New step unless the creation form is displayed again with the values already posted (validation error); a step
+        // left by the modification of another step is not reused
+        boolean bNewStep = ( _step == null || _step.getId( ) != 0 );
+        _step = bNewStep ? new Step( ) : _step;
         _step.setIdForm( nIdForm );
         if ( StepHome.getInitialStep( nIdForm ) == null )
         {
             _step.setInitial( true );
+            if ( bNewStep )
+            {
+                // First step: a single step form by default, unchecking "final" starts a multi-step form
+                _step.setFinal( true );
+            }
         }
 
         Map<String, Object> model = getModel( );
@@ -361,6 +384,10 @@ public class FormStepJspBean extends AbstractJspBean
     @Action( ACTION_CREATE_STEP )
     public String doCreateStep( HttpServletRequest request ) throws AccessDeniedException
     {
+        if ( _step == null || _step.getId( ) != 0 )
+        {
+            _step = new Step( );
+        }
         populate( _step, request, request.getLocale( ) );
 
         if ( !validateStep( _step ) )
@@ -370,7 +397,7 @@ public class FormStepJspBean extends AbstractJspBean
 
         Step initialStep = StepHome.getInitialStep( _step.getIdForm( ) );
         String strMultiStep = request.getParameter( PARAMETER_MULTI_STEP );
-        int multiStep = ( strMultiStep != null ) ? Integer.parseInt( strMultiStep ) : 0;
+        int multiStep = NumberUtils.toInt( strMultiStep, 0 );
 
         // Cas 1 : première étape + case cochée → formulaire multi-étapes
         if( multiStep == 1 )
@@ -379,11 +406,12 @@ public class FormStepJspBean extends AbstractJspBean
             _step.setFinal( false );
 
         }
-        // Cas 2 : première étape (aucune étape initiale existante) + case décochée → formulaire mono-étape
+        // Cas 2 : première étape (aucune étape initiale existante) : elle est initiale, et finale si la case est cochée.
+        // La case "multi-étapes" a disparu du gabarit : forcer l'étape finale empêchait de créer un formulaire multi-étapes
+        // (aucune liaison ne peut partir d'une étape finale).
         else if ( initialStep == null )
         {
             _step.setInitial( true );
-            _step.setFinal( true );
         }
 
         List<Step> finalsStepsList = StepHome.getFinalsStep( _step.getIdForm( ) );
@@ -405,8 +433,10 @@ public class FormStepJspBean extends AbstractJspBean
         _formService.removeBackupsByForm( _step.getIdForm( ) );
         addInfo( INFO_STEP_CREATED, getLocale( ) );
 
-        int previousStep = Integer.parseInt( request.getParameter( PARAMETER_PREVIOUS_STEP ) );
-        if ( previousStep != -1 )
+        // The previous step must be a step of the same form
+        int previousStep = NumberUtils.toInt( request.getParameter( PARAMETER_PREVIOUS_STEP ), NumberUtils.INTEGER_MINUS_ONE );
+        Step stepPrevious = ( previousStep != NumberUtils.INTEGER_MINUS_ONE ) ? StepHome.findByPrimaryKey( previousStep ) : null;
+        if ( stepPrevious != null && stepPrevious.getIdForm( ) == _step.getIdForm( ) )
         {
             Transition transition = new Transition( );
             transition.setFromStep( previousStep );
@@ -446,8 +476,7 @@ public class FormStepJspBean extends AbstractJspBean
 
         if ( _step.isInitial() )
         {
-            addError( ERROR_REMOVE_INITIAL_STEP, getLocale( ) );
-            return redirect( request, VIEW_MANAGE_STEPS, FormsConstants.PARAMETER_ID_FORM, _form.getId() );
+            return redirect( request, AdminMessageService.getMessageUrl( request, ERROR_REMOVE_INITIAL_STEP, AdminMessage.TYPE_STOP ) );
         }
 
         String strConfirmRemoveMessage = MESSAGE_CONFIRM_REMOVE_STEP;
@@ -761,7 +790,7 @@ public class FormStepJspBean extends AbstractJspBean
         int nIdForm = -1;
         try
         {
-            nIdForm = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ) );
+            nIdForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), NumberUtils.INTEGER_MINUS_ONE );
             checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nIdForm ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_CREATE_STEP );
             checkWorkgroupPermission(nIdForm, multipartRequest);
             _formJsonService.jsonImportStep( nIdForm, new String( fileItem.get( ), StandardCharsets.UTF_8 ), getLocale( ) );
@@ -779,10 +808,10 @@ public class FormStepJspBean extends AbstractJspBean
     public String doImportTemplate( HttpServletRequest request ) throws AccessDeniedException
     {
 
-        int nIdForm = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ) );
+        int nIdForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), NumberUtils.INTEGER_MINUS_ONE );
         checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nIdForm ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_CREATE_STEP );
         checkWorkgroupPermission(nIdForm, request);
-        int nIdTemplate = Integer.parseInt( request.getParameter( PARAMETER_ID_TEMPLATE ) );
+        int nIdTemplate = NumberUtils.toInt( request.getParameter( PARAMETER_ID_TEMPLATE ), NumberUtils.INTEGER_MINUS_ONE );
         StepJsonData template = _stepService.getStepTemplateData( nIdTemplate );
         if ( template != null )
         {

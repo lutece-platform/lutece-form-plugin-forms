@@ -57,7 +57,9 @@ import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.exception.FormNotFoundException;
+import fr.paris.lutece.plugins.forms.exception.FormResponseAlreadySubmittedException;
 import fr.paris.lutece.plugins.forms.exception.MaxFormResponseException;
+import fr.paris.lutece.plugins.forms.exception.QuotaLockTimeoutException;
 import fr.paris.lutece.plugins.forms.exception.QuestionValidationException;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler;
@@ -68,6 +70,7 @@ import fr.paris.lutece.plugins.forms.web.StepDisplayTree;
 import fr.paris.lutece.plugins.forms.web.breadcrumb.IBreadcrumb;
 import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
@@ -96,6 +99,10 @@ public class FormResponseJspBean extends AbstractJspBean
 	private static final String ACTION_SAVE_FORM_RESPONSE_SUMMARY = "doSaveResponseSummary";
     private static final String ACTION_ADD_ITERATION = "addIteration";
     private static final String ACTION_REMOVE_ITERATION = "removeIteration";
+
+    // Security token shared by the step form and the summary: the same form posts several actions (save the step, summary, add an iteration...).
+    // The navigation actions (previous step, go to step) are not checked, but they render the step form: they must generate its token too.
+    private static final String SECURITY_TOKEN_FORM_RESPONSE = "formResponse";
 	
 	// Templates
 	private static final String TEMPLATE_VIEW_STEP = "/admin/plugins/forms/step_view.html";
@@ -134,7 +141,7 @@ public class FormResponseJspBean extends AbstractJspBean
      * @return the view step content
      * 
      */
-    @View( value = VIEW_STEP )
+    @View( value = VIEW_STEP, securityTokenAction = SECURITY_TOKEN_FORM_RESPONSE )
     public String getStepView( HttpServletRequest request )
     {
 
@@ -252,7 +259,7 @@ public class FormResponseJspBean extends AbstractJspBean
      *            The Http request
      * @return the view
      */
-    @Action( value = ACTION_SAVE_STEP )
+    @Action( value = ACTION_SAVE_STEP, securityTokenAction = SECURITY_TOKEN_FORM_RESPONSE )
     public String doSaveStep( HttpServletRequest request )
     {
     	try
@@ -280,7 +287,7 @@ public class FormResponseJspBean extends AbstractJspBean
      *            The Http request
      * @return the view
      */
-    @Action( value = ACTION_SAVE_FORM_RESPONSE )
+    @Action( value = ACTION_SAVE_FORM_RESPONSE, securityTokenAction = SECURITY_TOKEN_FORM_RESPONSE )
     public String doSaveFormResponse( HttpServletRequest request )
     {
         Form form = null;
@@ -303,7 +310,7 @@ public class FormResponseJspBean extends AbstractJspBean
      *            The Http request
      * @return the View
      */
-    @Action( value = ACTION_PREVIOUS_STEP, securityTokenDisabled = true )
+    @Action( value = ACTION_PREVIOUS_STEP, securityTokenDisabled = true, securityTokenAction = SECURITY_TOKEN_FORM_RESPONSE )
     public String doReturnStep( HttpServletRequest request )
     {
         try
@@ -330,7 +337,7 @@ public class FormResponseJspBean extends AbstractJspBean
      *            The Http request
      * @return the View
      */
-    @Action( value = ACTION_GO_TO_STEP, securityTokenDisabled = true )
+    @Action( value = ACTION_GO_TO_STEP, securityTokenDisabled = true, securityTokenAction = SECURITY_TOKEN_FORM_RESPONSE )
     public String doGoToStep( HttpServletRequest request )
     {
         try
@@ -358,7 +365,7 @@ public class FormResponseJspBean extends AbstractJspBean
      *            The Http request
      * @return the View
      */
-    @Action( value = ACTION_SAVE_FOR_BACKUP )
+    @Action( value = ACTION_SAVE_FOR_BACKUP, securityTokenAction = SECURITY_TOKEN_FORM_RESPONSE )
     public String doSaveForBackup( HttpServletRequest request )
     {
         try
@@ -374,7 +381,21 @@ public class FormResponseJspBean extends AbstractJspBean
         FormResponse formResponse = _formResponseManager.getFormResponse( );
         formResponse.setAdmin( getUser().getAccessCode( ) );
 
-        _formService.saveFormForBackup( formResponse );
+        try
+        {
+            _formService.saveFormForBackup( formResponse );
+        }
+        catch( FormResponseAlreadySubmittedException e )
+        {
+            // The draft has been submitted or reset from another window
+            addError( FormsConstants.MESSAGE_ERROR_ALREADY_SUBMITTED, getLocale( ) );
+        }
+        catch( AppException e )
+        {
+            // The backup has been rolled back : tell the user rather than let them believe it was saved
+            AppLogService.error( "Unable to save the backup of the form response. The backup has been rolled back.", e );
+            addError( FormsConstants.MESSAGE_ERROR_SAVING_FORM_RESPONSE, getLocale( ) );
+        }
 
         return getStepView(  request );
     }
@@ -386,7 +407,7 @@ public class FormResponseJspBean extends AbstractJspBean
      *            The Http request
      * @return the View
      */
-    @Action( value = ACTION_RESET_BACKUP )
+    @Action( value = ACTION_RESET_BACKUP, securityTokenAction = SECURITY_TOKEN_FORM_RESPONSE )
     public String doResetBackup( HttpServletRequest request )
     {
         Form form = null;       
@@ -412,7 +433,7 @@ public class FormResponseJspBean extends AbstractJspBean
      *            The request
      * @return the summary page
      */
-    @Action( value = ACTION_FORM_RESPONSE_SUMMARY )
+    @Action( value = ACTION_FORM_RESPONSE_SUMMARY, securityTokenAction = SECURITY_TOKEN_FORM_RESPONSE )
     public String doFormResponseSummary( HttpServletRequest request )
     {
         Form form = null;
@@ -445,7 +466,7 @@ public class FormResponseJspBean extends AbstractJspBean
      *            The Http request
      * @return the view
      */
-    @Action( value = ACTION_SAVE_FORM_RESPONSE_SUMMARY, securityTokenDisabled = true )
+    @Action( value = ACTION_SAVE_FORM_RESPONSE_SUMMARY, securityTokenAction = SECURITY_TOKEN_FORM_RESPONSE )
     public synchronized String doSaveFormResponseSummary( HttpServletRequest request )
     {
         Form form = null;
@@ -469,7 +490,7 @@ public class FormResponseJspBean extends AbstractJspBean
      *            the request
      * @return the XPage
      */
-    @Action( value = ACTION_ADD_ITERATION )
+    @Action( value = ACTION_ADD_ITERATION, securityTokenAction = SECURITY_TOKEN_FORM_RESPONSE )
     public synchronized String doAddIteration( HttpServletRequest request )
     {
         try
@@ -499,7 +520,7 @@ public class FormResponseJspBean extends AbstractJspBean
      *            the request
      * @return the XPage
      */
-    @Action( value = ACTION_REMOVE_ITERATION )
+    @Action( value = ACTION_REMOVE_ITERATION, securityTokenAction = SECURITY_TOKEN_FORM_RESPONSE )
     public synchronized String doRemoveIteration( HttpServletRequest request )
     {
         try
@@ -517,17 +538,16 @@ public class FormResponseJspBean extends AbstractJspBean
         int nIdGroupParent;
         int nIndexIteration;
 
-        if ( strIterationInfo != null ){
-            String [ ] arrayIterationInfo = strIterationInfo.split( FormsConstants.SEPARATOR_UNDERSCORE );
+        // <id of the group>_<index of the iteration>: the group checks the index
+        String [ ] arrayIterationInfo = StringUtils.split( strIterationInfo, FormsConstants.SEPARATOR_UNDERSCORE );
 
-            nIdGroupParent = Integer.parseInt( arrayIterationInfo [0] );
-            nIndexIteration = Integer.parseInt( arrayIterationInfo [1] );
+        if ( arrayIterationInfo != null && arrayIterationInfo.length == 2 ){
+            nIdGroupParent = NumberUtils.toInt( arrayIterationInfo [0], FormsConstants.INCORRECT_ID );
+            nIndexIteration = NumberUtils.toInt( arrayIterationInfo [1], FormsConstants.INCORRECT_ID );
         } else {
             addError( MESSAGE_ERROR_REMOVE_ITERATION, getLocale() );
             return redirectView( request, VIEW_ERROR );
         }
-
-        String [ ] arrayIterationInfo = strIterationInfo.split( FormsConstants.SEPARATOR_UNDERSCORE );
 
         _stepDisplayTree.removeIteration( request, nIdGroupParent, nIndexIteration );
 
@@ -610,10 +630,23 @@ public class FormResponseJspBean extends AbstractJspBean
         {
 			_formService.saveFormResponse( _formResponseManager.getFormResponse( ) );
 		} 
+        catch ( QuotaLockTimeoutException e )
+        {
+            // Too many simultaneous submissions: the quota is not necessarily reached, the user can try again
+            addError( FormsConstants.MESSAGE_ERROR_QUOTA_BUSY, getLocale( ) );
+            return redirectView( request, VIEW_ERROR );
+        }
+        catch ( FormResponseAlreadySubmittedException e )
+        {
+            // The draft has been submitted or reset from another window
+            addError( FormsConstants.MESSAGE_ERROR_ALREADY_SUBMITTED, getLocale( ) );
+            return redirectView( request, VIEW_ERROR );
+        }
         catch ( MaxFormResponseException e )
         {
 			addError( e.getMessage( ) );
-			redirectView(request, VIEW_ERROR);
+			// The response is not saved: no form action on it
+			return redirectView( request, VIEW_ERROR );
 		}
         
         _formService.processFormAction( form, _formResponseManager.getFormResponse( ) );

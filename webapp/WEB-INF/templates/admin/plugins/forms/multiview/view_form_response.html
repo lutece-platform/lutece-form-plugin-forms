@@ -9,9 +9,15 @@
     <#if resource_actions.workflow_action_list?has_content>
 		<@div class="d-grid gap-2 position-relative mt-3">
 			<#list resource_actions.workflow_action_list as action>
-				<@aButton class='btn-block is-fullwidth my-1' href='jsp/admin/plugins/forms/ManageDirectoryFormResponseDetails.jsp?action=doProcessAction&amp;id_action=${action.id}&amp;id_form_response=${form_response.id}' >
-					<@img class='img-circle img-action' url='image?resource_type=workflow_icon_img&id=${action.icon.id}' title=action.name alt=action.name /> ${action.name}  
-				</@aButton>
+				<@tform action='jsp/admin/plugins/forms/ManageDirectoryFormResponseDetails.jsp' method='post' class='d-grid'>
+					<@input type='hidden' name='action' value='doProcessAction' />
+					<@input type='hidden' name='id_action' value='${action.id}' />
+					<@input type='hidden' name='id_form_response' value='${form_response.id}' />
+					<@input type='hidden' name='_csrftoken' value='${(link_tokens.doProcessAction)!}' />
+					<@button type='submit' class='btn-block is-fullwidth my-1'>
+						<@img class='img-circle img-action' url='image?resource_type=workflow_icon_img&id=${action.icon.id}' title=action.name alt=action.name /> ${action.name}
+					</@button>
+				</@tform>
 			</#list>
 		</@div>
     <#else>

@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	});
 	var displayField = document.querySelector('.display_field_${question.id!''}_${question.iterationNumber}');
 	var bOtherStepValidated = true;
+	var bHasOtherStepControl = ${(other_step_validation??)?c};
 	<#if other_step_validation??>
 		<#if other_step_validation>
 			if (displayField) displayField.style.display = '';
@@ -59,15 +60,18 @@ document.addEventListener('DOMContentLoaded', function() {
 		</#if>
 	</#if>
 	
-	/* Move conditional field inside the controlling fieldset if controller is radio/checkbox */
+	/* Move conditional field inside the controlling fieldset if controller is radio/checkbox.
+	   Only within the same step group: a field controlled from another group stays in its own group,
+	   otherwise the fields of an iterable group would all end up in the controller's group. */
 	(function() {
 		<#list list_control as control>
-		var ctrlInputs = getInputElement(${control.listIdQuestion[0]} + "_" + ${question.iterationNumber});
+		var ctrlInputs = getInputElement(getControlId(${control.listIdQuestion[0]}, ${question.iterationNumber}));
 		if (ctrlInputs.length > 0 && displayField) {
 			var ctrlType = ctrlInputs[0].type;
 			if (ctrlType === 'radio' || ctrlType === 'checkbox') {
 				var ctrlFieldset = ctrlInputs[0].closest('fieldset');
-				if (ctrlFieldset && !ctrlFieldset.contains(displayField)) {
+				var sameStepGroup = ctrlFieldset && ctrlFieldset.closest('.step-group') === displayField.closest('.step-group');
+				if (ctrlFieldset && sameStepGroup && !ctrlFieldset.contains(displayField)) {
 					ctrlFieldset.appendChild(displayField);
 				}
 			}
@@ -77,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	var targetFieldId = '${displayFieldId}';
 	<#list list_control as control>
-		var displayControl = ${control.listIdQuestion[0]} + "_" + ${question.iterationNumber},
+		var displayControl = getControlId(${control.listIdQuestion[0]}, ${question.iterationNumber}),
 		input${control.id}_${question.iterationNumber} = getInputElement(displayControl);
 		/* Set aria-controls and initial aria-expanded on controlling inputs */
 		input${control.id}_${question.iterationNumber}.forEach(function(el) {
@@ -91,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
 					var nValidControlsCount = 0;
 					var nNotValidControlsCount = 0;
 					<#list list_control as itemControl>
-						var displayItemControl = ${itemControl.listIdQuestion[0]} + "_" + ${question.iterationNumber},
+						var displayItemControl = getControlId(${itemControl.listIdQuestion[0]}, ${question.iterationNumber}),
 						input${itemControl.id}_${question.iterationNumber} = getInputElement(displayItemControl);
 						stepGroup = displayFieldEl ? getParentsUntil(displayFieldEl, '.step-content') : [];
 						stepGroup.forEach(function(el){
@@ -102,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
 						});
 						inputValue = getFieldValue(input${itemControl.id}_${question.iterationNumber});
 						// AND condition : if at least 1 control value isn't present, do not display question
-						var controlDiv = document.querySelector("div[displayControl='${itemControl.listIdQuestion[0]}_${question.iterationNumber}']");
+						var controlDiv = document.querySelector("div[displayControl='" + displayItemControl + "']");
 						if((controlDiv && controlDiv.classList.contains("control_invalid"))	|| !validator_${itemControl.validatorName?replace('.','_')}( inputValue, '${itemControl.value}')){
 							nNotValidControlsCount++;
 						} else {
@@ -111,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
 					</#list>
 					var bIsQuestionDisplayed;
 					<#if logical_operator_label == 'or'>
-						bIsQuestionDisplayed = (nValidControlsCount > 0) || bOtherStepValidated;
+						bIsQuestionDisplayed = (nValidControlsCount > 0) || ( bHasOtherStepControl && bOtherStepValidated );
 					<#else>
 						bIsQuestionDisplayed = (nNotValidControlsCount == 0) && bOtherStepValidated;
 					</#if>

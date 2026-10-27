@@ -88,6 +88,37 @@ public final class FormResponseHome
     }
 
     /**
+     * Update a form response only if it is still a draft in the database: a draft can be submitted or removed meanwhile from another session
+     * 
+     * @param formResponse
+     *            The instance of the formResponse which contains the data to store
+     * @return true if the form response was a draft and has been updated, false otherwise
+     */
+    public static boolean updateIfDraft( FormResponse formResponse )
+    {
+        return _dao.storeIfDraft( formResponse, _plugin );
+    }
+
+    /**
+     * Remove a form response only if it is still a draft in the database: a draft can be submitted meanwhile from another session
+     * 
+     * @param nKey
+     *            The formResponse Id
+     * @return true if the form response was a draft and has been removed, false otherwise
+     */
+    public static boolean removeIfDraft( int nKey )
+    {
+        FormResponse formResponse = _dao.load( nKey, _plugin );
+        boolean bRemoved = _dao.deleteIfDraft( nKey, _plugin );
+        if ( bRemoved && formResponse != null )
+        {
+            ExtendableResourceRemovalListenerService.doRemoveResourceExtentions( FormResponse.RESOURCE_TYPE + "_" + formResponse.getFormId( ),
+                    Integer.toString( formResponse.getId( ) ) );
+        }
+        return bRemoved;
+    }
+
+    /**
      * Remove the formResponse whose identifier is specified in parameter
      * 
      * @param nKey

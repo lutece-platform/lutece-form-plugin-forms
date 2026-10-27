@@ -65,6 +65,8 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.SortedNumericSortField;
+import org.apache.lucene.search.SortedSetSelector;
+import org.apache.lucene.search.SortedSetSortField;
 import org.apache.lucene.search.TopDocs;
 
 @ApplicationScoped
@@ -269,14 +271,16 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
             {
                 if ( strAttributeName.endsWith( FormResponseSearchItem.FIELD_DATE_SUFFIX ) )
                 {
-                    return new Sort( new SortedNumericSortField( sortConfig.getSortAttributeName( ), SortField.Type.LONG, sortConfig.isAscSort( ) ) );
+                    return new Sort( new SortedNumericSortField( strAttributeName, SortField.Type.LONG, !sortConfig.isAscSort( ) ) );
                 }
                 if ( strAttributeName.endsWith( FormResponseSearchItem.FIELD_INT_SUFFIX ) )
                 {
-                    return new Sort( new SortedNumericSortField( sortConfig.getSortAttributeName( ), SortField.Type.LONG, sortConfig.isAscSort( ) ) );
-
+                    return new Sort( new SortedNumericSortField( strAttributeName, SortField.Type.INT, !sortConfig.isAscSort( ) ) );
                 }
-                return new Sort( new SortField( sortConfig.getSortAttributeName( ), SortField.Type.STRING, sortConfig.isAscSort( ) ) );
+
+                return new Sort(
+                        new SortedSetSortField( strAttributeName, !sortConfig.isAscSort( ), SortedSetSelector.Type.MIN ),
+                        new SortField( FormResponseSearchItem.FIELD_ID_FORM_RESPONSE, SortField.Type.INT ) );
             }
         }
 

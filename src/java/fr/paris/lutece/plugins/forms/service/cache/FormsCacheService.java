@@ -33,21 +33,34 @@
  */
 package fr.paris.lutece.plugins.forms.service.cache;
 
-import javax.cache.CacheException;
-
 import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.genericattributes.business.EntryEvent;
 import fr.paris.lutece.portal.service.cache.AbstractCacheableService;
+import fr.paris.lutece.portal.service.cache.CacheConfigUtil;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
+import jakarta.transaction.Status;
+import jakarta.transaction.Synchronization;
+import jakarta.transaction.TransactionSynchronizationRegistry;
+
+import java.io.Serializable;
+
+import org.apache.commons.lang3.SerializationUtils;
 
 @ApplicationScoped
 public class FormsCacheService extends AbstractCacheableService<String, Object>
 {
     private static final String CACHE_NAME = "formsCacheService";
+    private static final String KEY_RESET_PENDING = FormsCacheService.class.getName( ) + ".resetPending";
+    // The caching provider never changes: whether the cache is shared is read once, not on each get
+    private volatile Boolean _bDistributed;
+
+    @Resource
+    private TransactionSynchronizationRegistry _registry;
 
     @PostConstruct
     public void initCache( )
@@ -149,6 +162,10 @@ public class FormsCacheService extends AbstractCacheableService<String, Object>
         return new StringBuilder( "FormMessage-by-Form:" ).append( nIdForm ).toString( );
     }
 
+    /**
+     * Puts a value in the cache. A failure of the cache (a value the provider cannot serialize, a closed cache, a provider
+     * error) is logged and never reaches the caller: the value is then read from the database again.
+     */
     @Override
     public void put( String key, Object value ) 
     {
@@ -157,15 +174,23 @@ public class FormsCacheService extends AbstractCacheableService<String, Object>
         	return;
         }
 
+        if ( value == null )
+        {
+            // JCache refuses a null value: the key no longer has a value
+            remove( key );
+            return;
+        }
+
         try
         {
             if ( isCacheAvailable( ) ) 
             {
             	_cache.put( key, value );
             }
-        } catch ( CacheException | IllegalStateException e ) 
+        } catch ( RuntimeException e )
         {
-            AppLogService.error( e.getMessage( ), e );
+            AppLogService.error( "Forms cache: cannot put the key {} (value {}): {}", key,
+                    ( value != null ) ? value.getClass( ).getName( ) : null, e.getMessage( ), e );
         }
     }
 
@@ -181,9 +206,17 @@ public class FormsCacheService extends AbstractCacheableService<String, Object>
         {
             if ( isCacheAvailable( ) ) 
             {
-            	return _cache.get( key );
+                Object value = _cache.get( key );
+                // The objects of the forms are modified by their readers (back office screens, conditional displays).
+                // Ehcache gives a copy on each read; a shared provider may give its own instance (Hazelcast near cache in
+                // OBJECT format, the same instance for every request of a node): each reader then gets its own copy.
+                if ( value instanceof Serializable && isDistributed( ) )
+                {
+                    return SerializationUtils.clone( (Serializable) value );
+                }
+                return value;
             }
-        } catch ( CacheException | IllegalStateException e ) 
+        } catch ( RuntimeException e ) 
         {
             AppLogService.error( e.getMessage( ), e );
         }
@@ -194,25 +227,78 @@ public class FormsCacheService extends AbstractCacheableService<String, Object>
     @Override
     public boolean remove( String key ) 
     {
-    	if ( !isCacheEnable( ) )
+        // No test of the status: a cache disabled on this instance still forwards the removal to the cache shared
+        // with the other instances (the core keeps it open for that)
+        try
         {
-        	return false;
+            return super.remove( key );
         }
-    	
-    	try
+        catch ( RuntimeException e ) 
         {
-            if ( isCacheAvailable() ) 
-            {
-            	return _cache.remove( key );
-            }
-        } catch ( CacheException | IllegalStateException e ) 
-        {
-            AppLogService.error( e.getMessage( ), e) ;
+            AppLogService.error( e.getMessage( ), e );
         }
-    	
-    	return false;
+        return false;
     }
     
+    /**
+     * Resets the cache. Within a transaction (form import or copy, which write hundreds of objects), the reset is done
+     * once, after the transaction completes: the other requests cannot cache again the data read before the commit,
+     * and the cache (shared by every instance under Hazelcast) is not emptied for each written object.
+     */
+    @Override
+    public void resetCache( )
+    {
+        TransactionSynchronizationRegistry registry = _registry;
+        if ( registry != null && registry.getTransactionStatus( ) == Status.STATUS_ACTIVE )
+        {
+            if ( registry.getResource( KEY_RESET_PENDING ) == null )
+            {
+                registry.putResource( KEY_RESET_PENDING, Boolean.TRUE );
+                registry.registerInterposedSynchronization( new Synchronization( )
+                {
+                    @Override
+                    public void beforeCompletion( )
+                    {
+                        // The reset is done once the transaction is completed
+                    }
+
+                    @Override
+                    public void afterCompletion( int nStatus )
+                    {
+                        // Committed or rolled back: the cache may hold values read during the transaction
+                        resetNow( );
+                    }
+                } );
+            }
+            return;
+        }
+        resetNow( );
+    }
+
+    /**
+     * Resets the cache at once
+     */
+    private void resetNow( )
+    {
+        super.resetCache( );
+    }
+
+    /**
+     * Tells whether the cache is shared with other instances (any provider but Ehcache), read once
+     *
+     * @return true if the cache is shared
+     */
+    private boolean isDistributed( )
+    {
+        Boolean bDistributed = _bDistributed;
+        if ( bDistributed == null )
+        {
+            bDistributed = CacheConfigUtil.isDistributed( _cache );
+            _bDistributed = bDistributed;
+        }
+        return bDistributed;
+    }
+
     /**
      * Checks whether the cache instance is initialized and currently open.
      *
@@ -231,7 +317,9 @@ public class FormsCacheService extends AbstractCacheableService<String, Object>
      */
     public void processEntryEvent( @Observes EntryEvent event )
     {
-        if ( isCacheEnable( ) && Form.RESOURCE_TYPE.equals( event.getResourceType( ) ) )
+        // No test of the status: the reset reaches the cache shared with the other instances when this one has it
+        // disabled
+        if ( Form.RESOURCE_TYPE.equals( event.getResourceType( ) ) )
         {
             resetCache( );
         }

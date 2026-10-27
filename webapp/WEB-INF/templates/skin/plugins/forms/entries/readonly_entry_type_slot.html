@@ -6,19 +6,21 @@
     <#if list_responses?has_content>
         <#assign beginHourCode = "begin_hour">
         <#assign endHourCode = "end_hour">
+        <#assign beginHour = ''>
+        <#assign endHour = ''>
         <#-- Filtrer et trouver les objets Response correspondants -->
         <#list list_responses as response>
             <#if response.field.code == beginHourCode>
-                <#assign beginHour = response.toStringValueResponse>
+                <#assign beginHour = response.toStringValueResponse!''>
             </#if>
             <#if response.field.code == endHourCode>
-                <#assign endHour = response.toStringValueResponse>
+                <#assign endHour = response.toStringValueResponse!''>
             </#if>
         </#list>
         <#if beginHour !='' && endHour !=''>
             <@cInline>#i18n{forms.message.slot.preposition.from} ${beginHour} #i18n{forms.message.slot.preposition.to} ${endHour}</@cInline>
         <#else>
-            <@cInline type='em'>#i18n{theme.labelNoDataProvided}</@cInline>
+            <@cInline type='em'>#i18n{portal.theme.labelNoDataProvided}</@cInline>
         </#if>
     </#if>
 </@chItem>

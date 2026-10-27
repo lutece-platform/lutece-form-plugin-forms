@@ -35,10 +35,13 @@ package fr.paris.lutece.plugins.forms.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Event;
+import jakarta.enterprise.event.NotificationOptions;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
@@ -66,7 +69,9 @@ import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.business.export.FormExportConfigHome;
 import fr.paris.lutece.plugins.forms.exception.LockException;
+import fr.paris.lutece.plugins.forms.exception.FormResponseAlreadySubmittedException;
 import fr.paris.lutece.plugins.forms.exception.MaxFormResponseException;
+import fr.paris.lutece.plugins.forms.exception.QuotaLockTimeoutException;
 import fr.paris.lutece.plugins.forms.service.event.FormResponseEvent;
 import fr.paris.lutece.plugins.forms.service.lock.FormsDistributedLockManager;
 import fr.paris.lutece.plugins.forms.service.lock.LockResult;
@@ -112,8 +117,11 @@ public class FormService
 
     private static final String QUOTA_LOCK_PREFIX = "forms.quota.form.";
     private static final long QUOTA_LOCK_TIMEOUT_MS = 30_000L;
-    private static final int QUOTA_LOCK_MAX_RETRIES = 5;
-    private static final long QUOTA_LOCK_BACKOFF_MS = 100L;
+    // A submission holds the lock for the count, the insert and the commit: concurrent submissions wait their turn
+    // (bounded wait, growing backoff with jitter so that instances do not retry in step)
+    private static final long QUOTA_LOCK_MAX_WAIT_MS = 10_000L;
+    private static final long QUOTA_LOCK_MIN_BACKOFF_MS = 50L;
+    private static final long QUOTA_LOCK_MAX_BACKOFF_MS = 500L;
 
     @Inject
     private IFormWorkflowService _formWorkflowService;
@@ -144,8 +152,9 @@ public class FormService
      */
     public void saveForm( Form form, FormResponse formResponse )
     {
-        boolean quotaGuarded = ( form.getMaxNumberResponse( ) != 0 || form.isOneResponseByUser( ) )
-                && ( formResponse.getId( ) == 0 || !formResponse.isFromSave( ) );
+        // A new response, or a draft submitted now, counts in the quotas; the update of a submitted response does not
+        boolean bNewFinalResponse = ( formResponse.getId( ) <= 0 ) || formResponse.isFromSave( );
+        boolean quotaGuarded = ( form.getMaxNumberResponse( ) != 0 || form.isOneResponseByUser( ) ) && bNewFinalResponse;
 
         if ( quotaGuarded )
         {
@@ -215,15 +224,17 @@ public class FormService
     }
 
     /**
-     * Acquire the quota lock for this form. Retries briefly on contention so two simultaneous
-     * submissions serialise cleanly; gives up after a short window and treats sustained
-     * contention as if the quota were reached (safer than accepting an unguarded insert).
+     * Acquire the quota lock for this form. Waits on contention so that simultaneous submissions serialise cleanly; gives up after
+     * a bounded wait and treats sustained contention as if the quota were reached (safer than accepting an unguarded insert).
+     * The lock is acquired outside any transaction (autocommit), so that the lock row is visible to the other instances.
      */
     private LockResult acquireQuotaLock( Form form )
     {
         String lockName = QUOTA_LOCK_PREFIX + form.getId( );
         LockException lastFailure = null;
-        for ( int attempt = 0; attempt < QUOTA_LOCK_MAX_RETRIES; attempt++ )
+        long lDeadline = System.currentTimeMillis( ) + QUOTA_LOCK_MAX_WAIT_MS;
+        long lBackoff = QUOTA_LOCK_MIN_BACKOFF_MS;
+        while ( true )
         {
             try
             {
@@ -232,9 +243,14 @@ public class FormService
             catch ( LockException e )
             {
                 lastFailure = e;
+                if ( System.currentTimeMillis( ) + lBackoff > lDeadline )
+                {
+                    break;
+                }
                 try
                 {
-                    Thread.sleep( QUOTA_LOCK_BACKOFF_MS );
+                    Thread.sleep( lBackoff / 2 + ThreadLocalRandom.current( ).nextLong( lBackoff / 2 + 1 ) );
+                    lBackoff = Math.min( lBackoff * 2, QUOTA_LOCK_MAX_BACKOFF_MS );
                 }
                 catch ( InterruptedException ie )
                 {
@@ -244,7 +260,7 @@ public class FormService
                 }
             }
         }
-        throw new MaxFormResponseException(
+        throw new QuotaLockTimeoutException(
                 "Could not acquire quota lock for form " + form.getId( ) + " (contention timeout)", lastFailure );
     }
 
@@ -307,6 +323,16 @@ public class FormService
      */
     private void saveForm(FormResponse formResponse) 
     {
+        // A draft becomes final only if it is still a draft in the database: it may have been submitted or reset from another session
+        if ( formResponse.getId( ) > 0 && formResponse.isFromSave( ) )
+        {
+            formResponse.setFromSave( Boolean.FALSE );
+            if ( !FormResponseHome.updateIfDraft( formResponse ) )
+            {
+                formResponse.setFromSave( Boolean.TRUE );
+                throw new FormResponseAlreadySubmittedException( "The draft " + formResponse.getId( ) + " has been submitted or removed meanwhile" );
+            }
+        }
     	formResponse.setFromSave( Boolean.FALSE );	
         filterFinalSteps( formResponse );
         save( formResponse );
@@ -399,6 +425,12 @@ public class FormService
     {
         formResponse.setFromSave( Boolean.TRUE );
 
+        // An existing draft is saved only if it is still a draft in the database
+        if ( formResponse.getId( ) > 0 && !FormResponseHome.updateIfDraft( formResponse ) )
+        {
+            throw new FormResponseAlreadySubmittedException( "The draft " + formResponse.getId( ) + " has been submitted or removed meanwhile" );
+        }
+
         save( formResponse );
         saveFormResponseSteps( formResponse );
     }
@@ -412,10 +444,9 @@ public class FormService
     @Transactional
     public void removeFormBackup( FormResponse formResponse )
     {
-        if ( formResponse.isFromSave( ) )
+        // The flag of the response in memory may be stale: only a response that is still a draft in the database is removed
+        if ( formResponse.getId( ) > 0 && FormResponseHome.removeIfDraft( formResponse.getId( ) ) )
         {
-            FormResponseHome.remove( formResponse.getId( ) );
-
             for ( FormQuestionResponse formQuestionResponse : FormQuestionResponseHome.getFormQuestionResponseListByFormResponse( formResponse.getId( ) ) )
             {
                 FormQuestionResponseHome.remove( formQuestionResponse );
@@ -496,7 +527,8 @@ public class FormService
 
     /**
      * Remove a given Form, all its steps and composites, workflow resources. Also remove all the related formResponses, QuestionsResposes, EntryResponses and
-     * entries.
+     * entries. A deletion event is fired for each removed form response, as for a response removed alone, so that the indexes (elasticdata, search) drop
+     * them.
      * 
      * @param nIdForm
      *            The identifier of the form to be deleted
@@ -507,6 +539,7 @@ public class FormService
     public void removeForm( int nIdForm, AdminUser adminUser )
     {
         List<Step> listStep = StepHome.getStepsListByForm( nIdForm );
+        List<FormResponse> listFormResponse = FormResponseHome.selectAllFormResponsesUncompleteByIdForm( nIdForm );
 
         for ( Step step : listStep )
         {
@@ -527,6 +560,11 @@ public class FormService
         FormHome.remove( nIdForm );
 
         _formWorkflowService.removeResources( nIdWorkflow, nIdForm, adminUser );
+
+        for ( FormResponse formResponse : listFormResponse )
+        {
+            fireFormResponseEventDelete( formResponse );
+        }
     }
 
     /**
@@ -620,6 +658,29 @@ public class FormService
         return formResponseManager;
     }
 
+    /**
+     * Fires a form response event to the asynchronous observers. While the server stops, its executor refuses new tasks:
+     * the observers are then notified in the current thread, so that a response saved during the shutdown is still
+     * indexed and the request does not fail
+     *
+     * @param event
+     *            the event
+     * @param formResponseEvent
+     *            the form response event
+     */
+    static void fireAsync( Event<FormResponseEvent> event, FormResponseEvent formResponseEvent )
+    {
+        try
+        {
+            event.fireAsync( formResponseEvent );
+        }
+        catch( RejectedExecutionException e )
+        {
+            AppLogService.info( "Executor unavailable (server stopping): form response event {} notified in the current thread", formResponseEvent.getFormResponseId( ) );
+            event.fireAsync( formResponseEvent, NotificationOptions.ofExecutor( Runnable::run ) );
+        }
+    }
+
     // FORM RESPONSE CREATION
     /**
      * Fire the create event on given form Response
@@ -631,7 +692,7 @@ public class FormService
     {
     	FormResponseEvent formResponseEvent = new FormResponseEvent( formResponse.getId( ) );
         
-    	_formResponseEvent.select( FormResponseEvent.class, new TypeQualifier( EventAction.CREATE ) ).fireAsync( formResponseEvent );
+    	fireAsync( _formResponseEvent.select( FormResponseEvent.class, new TypeQualifier( EventAction.CREATE ) ), formResponseEvent );
     }
 
     /**
@@ -674,7 +735,7 @@ public class FormService
     {
         FormResponseEvent formResponseEvent = new FormResponseEvent( formResponse.getId( ), updateDateFormResponse );
 
-        _formResponseEvent.select( FormResponseEvent.class, new TypeQualifier( EventAction.UPDATE ) ).fireAsync( formResponseEvent );
+        fireAsync( _formResponseEvent.select( FormResponseEvent.class, new TypeQualifier( EventAction.UPDATE ) ), formResponseEvent );
     }
 
     /**
@@ -705,7 +766,7 @@ public class FormService
     {
         FormResponseEvent formResponseEvent = new FormResponseEvent( formResponse.getId( ) );
         
-    	_formResponseEvent.select( FormResponseEvent.class, new TypeQualifier( EventAction.REMOVE ) ).fireAsync( formResponseEvent );
+    	fireAsync( _formResponseEvent.select( FormResponseEvent.class, new TypeQualifier( EventAction.REMOVE ) ), formResponseEvent );
     }
 
     /**

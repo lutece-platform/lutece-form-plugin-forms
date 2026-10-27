@@ -42,6 +42,7 @@ import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import fr.paris.lutece.portal.service.util.AppPathService;
 import org.apache.commons.collections.CollectionUtils;
@@ -61,6 +62,7 @@ import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.service.FormDatabaseService;
 import fr.paris.lutece.plugins.forms.service.FormDisplayService;
 import fr.paris.lutece.plugins.forms.service.FormService;
+import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
 import fr.paris.lutece.plugins.forms.service.IFormDatabaseService;
 import fr.paris.lutece.plugins.forms.service.IFormDisplayService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
@@ -73,9 +75,7 @@ import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
-import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
-import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.file.FileServiceException;
 import fr.paris.lutece.portal.service.image.ImageResourceManager;
 import fr.paris.lutece.portal.service.message.AdminMessage;
@@ -127,7 +127,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     // Warning messages
     private static final String WARNING_CONFIRM_REMOVE_QUESTION_FORM_ACTIVE = "forms.warning.deleteComposite.confirmRemoveQuestion.formActive";
     private static final String WARNING_CONFIRM_REMOVE_GROUP_ANY_QUESTIONS_FORM_ACTIVE = "forms.warning.deleteComposite.confirmRemoveGroup.formActive";
-    private static final String WARNING_INSUFFICIENT_RIGHTS_LEVEL_TO_DELETE_COMPOSITE = "forms.warning.deleteComposite.insufficientRightsLevel";
+    private static final String WARNING_INSUFFICIENT_MODIFY_PERMISSION_TO_DELETE_COMPOSITE = "forms.warning.deleteComposite.insufficientModifyPermission";
 
     // Markers
     private static final String MARK_FIELDS_LIST_BY_ID_ENTRIES = "fields_list_by_id_entries";
@@ -135,7 +135,6 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     // Constants
     private static final String PUBLIC_IMAGE_RESOURCE = "public_image_resource";
     private static final String ILLUSTRATION_IMAGE = "illustration_image";
-    private static final int TECHNICAL_ADMIN_RIGHT_LEVEL = 0;
     
     // Other
     @Inject
@@ -149,6 +148,17 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     private Form _form;
 
     /**
+     * {@inheritDoc} The user must be allowed to modify every form referenced by the request, whatever the view or action
+     */
+    @Override
+    public String processController( HttpServletRequest request, HttpServletResponse response ) throws AccessDeniedException
+    {
+        checkUserPermissionOnReferencedForms( request );
+
+        return super.processController( request, response );
+    }
+
+    /**
      * Build the Manage View
      * 
      * @param request
@@ -160,9 +170,13 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     {
         Locale locale = getLocale( );
 
-        int nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
+        int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), INTEGER_MINUS_ONE );
 
         _step = StepHome.findByPrimaryKey( nIdStep );
+        if ( _step == null )
+        {
+            return redirectToViewManageForm( request );
+        }
         _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
 
         String strInfoKey = request.getParameter( FormsConstants.PARAMETER_INFO_KEY );
@@ -181,6 +195,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         model.put( FormsConstants.MARK_ENTRY_TYPE_REF_LIST, FormsEntryUtils.initListEntryType( ) );
         model.put( FormsConstants.MARK_ID_PARENT, _nIdParentSelected );
         model.put( FormsConstants.MARK_PROD_URL, AppPathService.getProdUrl( request ) );
+        putLinkTokens( request, model, ACTION_DUPLICATE_QUESTION );
 
         setPageTitleProperty( StringUtils.EMPTY );
         HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_MANAGE_QUESTIONS, locale, model );
@@ -331,8 +346,8 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     private String getErrorReturnUrlOnCreation( HttpServletRequest request )
     {
     	UrlItem errorReturnUrl = new UrlItem( JSP_MANAGE_QUESTIONS );
-    	errorReturnUrl.addParameter( FormsConstants.PARAMETER_ID_STEP, Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) ) );
-    	errorReturnUrl.addParameter( FormsConstants.PARAMETER_BUTTON_TYPE_ENTRY, Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_ENTRY_TYPE ) ) );
+    	errorReturnUrl.addParameter( FormsConstants.PARAMETER_ID_STEP, NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), INTEGER_MINUS_ONE ) );
+    	errorReturnUrl.addParameter( FormsConstants.PARAMETER_BUTTON_TYPE_ENTRY, NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_ENTRY_TYPE ), INTEGER_MINUS_ONE ) );
     	errorReturnUrl.addParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT, request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ) );
     	
     	return errorReturnUrl.getUrl( );
@@ -382,6 +397,10 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     public String getModifyQuestion( HttpServletRequest request )
     {
         Map<String, Object> model = initModifyQuestionModel( request );
+        if ( model == null )
+        {
+            return redirectToViewManageForm( request );
+        }
         Map<Integer, String> fieldsList = new HashMap<>( );
 
         if ( ( _form == null ) || ( _form.getId( ) != _entry.getIdResource( ) ) )
@@ -392,6 +411,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         model.put( MARK_ADD_FILE_COMMENT, true );
         model.put( MARK_ACTION, JSP_MANAGE_QUESTIONS );
         model.put( FormsConstants.MARK_BREADCRUMBS, AppTemplateService.getTemplate( TEMPLATE_BREADCRUMBS, request.getLocale( ), model ).getHtml( ) );
+        putLinkTokens( request, model, ACTION_REMOVE_FILE );
         
         for( Field field : FieldHome.getFieldListByIdEntry( _question.getEntry().getIdEntry( ) ) )
         {
@@ -449,8 +469,8 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     {
     	UrlItem errorReturnUrl = new UrlItem( JSP_MANAGE_QUESTIONS );
     	errorReturnUrl.addParameter( FormsConstants.PARAMETER_TARGET_VIEW, VIEW_MODIFY_QUESTION );
-    	errorReturnUrl.addParameter( FormsConstants.PARAMETER_ID_STEP, Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) ) );
-    	errorReturnUrl.addParameter( FormsConstants.PARAMETER_ID_QUESTION, Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_QUESTION ) ) );
+    	errorReturnUrl.addParameter( FormsConstants.PARAMETER_ID_STEP, NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), INTEGER_MINUS_ONE ) );
+    	errorReturnUrl.addParameter( FormsConstants.PARAMETER_ID_QUESTION, NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_QUESTION ), INTEGER_MINUS_ONE ) );
     			
     	return errorReturnUrl.getUrl( );
     }
@@ -485,7 +505,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
             AppLogService.error( ERROR_CODE_EXISTS, e );
             addError( ERROR_QUESTION_CODE_ALREADY_EXISTS, getLocale( ) );
         }
-        return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _step.getId( ), FormsConstants.PARAMETER_ID_QUESTION,
+        return redirect( request, VIEW_MODIFY_QUESTION, FormsConstants.PARAMETER_ID_STEP, _step.getId( ), FormsConstants.PARAMETER_ID_QUESTION,
                 _question.getId( ) );
     }
 
@@ -515,10 +535,13 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     @Action( value = ACTION_REMOVE_FILE )
     public String doRemoveFileComment( HttpServletRequest request )
     {
-        String idEntry = request.getParameter( FormsConstants.PARAMETER_ID_ENTRY );
-        int id = Integer.parseInt( idEntry );
+        int id = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_ENTRY ), INTEGER_MINUS_ONE );
 
         Entry entry = EntryHome.findByPrimaryKey( id );
+        if ( entry == null || _step == null || _question == null )
+        {
+            return redirectToViewManageForm( request );
+        }
         Field oldFile = entry.getFieldByCode( IEntryTypeService.FIELD_DOWNLOADABLE_FILE );
         if ( oldFile != null )
         {
@@ -576,12 +599,17 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
             _formDisplay = FormDisplayHome.findByPrimaryKey( nIdDisplay );
         }
 
-        AdminUser adminUser = AdminUserService.getAdminUser( request );
-        if ( adminUser != null && adminUser.getUserLevel( ) != TECHNICAL_ADMIN_RIGHT_LEVEL )
+        try
         {
-        	return redirect( request, AdminMessageService.getMessageUrl( request, WARNING_INSUFFICIENT_RIGHTS_LEVEL_TO_DELETE_COMPOSITE, AdminMessage.TYPE_STOP ) );
+            checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( _form.getId( ) ), FormsResourceIdService.PERMISSION_MODIFY, request, null );
         }
-        else if ( _formService.existCompositeResponses( _formDisplay ) )
+        catch ( AccessDeniedException e )
+        {
+            return redirect( request,
+                    AdminMessageService.getMessageUrl( request, WARNING_INSUFFICIENT_MODIFY_PERMISSION_TO_DELETE_COMPOSITE, AdminMessage.TYPE_STOP ) );
+        }
+
+        if ( _formService.existCompositeResponses( _formDisplay ) )
         {
             boolean bIsQuestion = CompositeDisplayType.QUESTION.getLabel( ).equalsIgnoreCase( _formDisplay.getCompositeType( ) );
             String strMessage = bIsQuestion ? MESSAGE_CANT_REMOVE_ENTRY_RESOURCES_ATTACHED : MESSAGE_CANT_REMOVE_GROUP_RESOURCES_ATTACHED;
@@ -662,7 +690,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
      * @return The URL to go after performing the action
      */
     @Action( ACTION_REMOVE_COMPOSITE )
-    public String doRemoveComposite( HttpServletRequest request )
+    public String doRemoveComposite( HttpServletRequest request ) throws AccessDeniedException
     {
         int nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), -1 );
         if ( _formDisplay == null || _formDisplay.getId( ) != nIdDisplay )
@@ -672,8 +700,11 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
 
         if ( _formDisplay == null )
         {
-            redirectToViewManageForm( request );
+            return redirectToViewManageForm( request );
         }
+
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( _formDisplay.getFormId( ) ), FormsResourceIdService.PERMISSION_MODIFY,
+                request, null );
 
         getFormDisplayService( ).deleteDisplayAndDescendants( nIdDisplay );
 

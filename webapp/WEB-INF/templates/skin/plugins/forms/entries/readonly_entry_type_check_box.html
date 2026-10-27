@@ -8,7 +8,7 @@
 <#if list_responses?size = 1>
 	<#assign responseContent><#list list_responses as response><#if entryTypeService.getResponseValueForRecap(null, null, response, null)??>${entryTypeService.getResponseValueForRecap(null, null, response, null)}<#else>${response.toStringValueResponse!''}</#if></#list></#assign>
 	<#if responseContent?trim = ''>
-		<@cInline type='em'>#i18n{theme.labelNoDataProvided}</@cInline>
+		<@cInline type='em'>#i18n{portal.theme.labelNoDataProvided}</@cInline>
 	<#else>
 		<#list list_responses as response><@cInline><#if entryTypeService.getResponseValueForRecap(null, null, response, null)??>${entryTypeService.getResponseValueForRecap(null, null, response, null)}<#else>${response.toStringValueResponse!''}</#if></@cInline><#sep>,</#sep></#list>
 	</#if>

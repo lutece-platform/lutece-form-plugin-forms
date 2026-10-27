@@ -48,11 +48,14 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.forms.business.*;
 import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.portal.service.util.AppException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.forms.exception.FormNotFoundException;
+import fr.paris.lutece.plugins.forms.exception.FormResponseAlreadySubmittedException;
 import fr.paris.lutece.plugins.forms.exception.MaxFormResponseException;
+import fr.paris.lutece.plugins.forms.exception.QuotaLockTimeoutException;
 import fr.paris.lutece.plugins.forms.exception.QuestionValidationException;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeAutomaticFileReading;
@@ -117,6 +120,8 @@ public class FormXPage extends MVCApplication
     private static final String MESSAGE_WARNING_INACTIVE_STATE_BYPASSED = "forms.warning.inactive.state.bypassed";
     private static final String MESSAGE_ERROR_TOKEN = "Invalid security token";
     private static final String MESSAGE_WARNING_INVALID_FORM_SESSION = "forms.warning.invalid.form.session";
+    private static final String MESSAGE_WARNING_INVALID_TOKEN = "forms.warning.invalid.token";
+    private static final String MESSAGE_ERROR_BACKUP_NEEDS_AUTHENTICATION = "forms.error.form.backupNeedsAuthentication";
 
     // Views
     private static final String VIEW_LIST_FORM = "listForm";
@@ -171,7 +176,8 @@ public class FormXPage extends MVCApplication
     private Step _currentStep;
     private StepDisplayTree _stepDisplayTree;
     private IBreadcrumb _breadcrumb;
-    private boolean _bInactiveStateBypassed;
+    // The form whose inactive state has been bypassed (link of the back office): the bypass applies to this form only
+    private int _nIdFormInactiveStateBypassed = FormsConstants.INCORRECT_ID;
     private boolean IsRequestComingFromAction = false;
 
     /**
@@ -188,15 +194,7 @@ public class FormXPage extends MVCApplication
         List<Form> listFormsAll = FormHome.getFormList( );
         for ( Form form : listFormsAll )
         {
-            if ( form.isCountResponses( ) )
-            {
-                form.setCurrentNumberResponse( FormHome.getNumberOfResponseForms( form.getId( ) ) );
-            }
-            if ( form.getLogo( ) != null )
-            {
-                form.setLogo( FileHome.findByPrimaryKey( form.getLogo( ).getIdFile( ) ) );
-                form.getLogo( ).setPhysicalFile( PhysicalFileHome.findByPrimaryKey( form.getLogo( ).getPhysicalFile( ).getIdPhysicalFile( ) ) );
-            }
+            FormsResponseUtils.populateFormWithLogoAndNumberResponse( form );
         }
 
         Map<String, Object> model = getModel( );
@@ -324,6 +322,10 @@ public class FormXPage extends MVCApplication
         }, getLocale( request ) );
         String strPathForm = form.getTitle( );
 
+        if ( !form.isActive( ) && bypassInactiveState( form, request ) )
+        {
+            addWarning( MESSAGE_WARNING_INACTIVE_STATE_BYPASSED, getLocale( request ) );
+        }
         Map<String, Object> model = getModel( );
         if ( form.isActive( ) || bypassInactiveState( form, request ) )
         {
@@ -419,7 +421,7 @@ public class FormXPage extends MVCApplication
      */
     private boolean bypassInactiveState( Form form, HttpServletRequest request )
     {
-        if ( _bInactiveStateBypassed )
+        if ( _nIdFormInactiveStateBypassed == form.getId( ) )
         {
             return true;
         }
@@ -446,7 +448,7 @@ public class FormXPage extends MVCApplication
         // milliseconds
         if ( timestampAge <= lBypassDuration )
         {
-            _bInactiveStateBypassed = true;
+            _nIdFormInactiveStateBypassed = form.getId( );
             return true;
         }
         return false;
@@ -473,10 +475,6 @@ public class FormXPage extends MVCApplication
                 _stepDisplayTree.getCompositeHtml( request, _formResponseManager.findAllResponses( ), getLocale( request ), DisplayType.EDITION_FRONTOFFICE ) );
         model.put( FormsConstants.MARK_FORM_TOP_BREADCRUMB, _breadcrumb.getTopHtml( request, _formResponseManager ) );
         model.put( FormsConstants.MARK_FORM_BOTTOM_BREADCRUMB, _breadcrumb.getBottomHtml( request, _formResponseManager ) );
-        if ( bypassInactiveState( form, request ) )
-        {
-            addWarning( MESSAGE_WARNING_INACTIVE_STATE_BYPASSED, getLocale( request ) );
-        }
     }
 
     /**
@@ -705,7 +703,7 @@ public class FormXPage extends MVCApplication
         IsRequestComingFromAction = true;
         if ( !_securityTokenService.validate( request, ACTION_SAVE_FORM_RESPONSE ) )
         {
-            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
+            return getStepViewOnInvalidToken( request );
         }
         Form form = null;
         try
@@ -757,7 +755,7 @@ public class FormXPage extends MVCApplication
         // CSRF Token control
         if ( !_securityTokenService.validate( request, ACTION_SAVE_FORM_RESPONSE ) )
         {
-            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
+            return getStepViewOnInvalidToken( request );
         }
         Form form = null;
         try
@@ -780,6 +778,11 @@ public class FormXPage extends MVCApplication
                 addWarning( MESSAGE_WARNING_CAPTCHA, getLocale( request ) );
                 return getFormResponseSummaryPage( request, form );
             }
+            if ( !_formResponseManager.hasResponsesForMandatoryQuestions( _formResponseManager.getCurrentStep( ), _stepDisplayTree.getQuestions( ) ) )
+            {
+                // Posted without going through the summary: the responses of the current step have never been collected nor validated
+                return getStepView( request );
+            }
         }
         catch( FormNotFoundException exception )
         {
@@ -787,6 +790,26 @@ public class FormXPage extends MVCApplication
         }
 
         return doSaveResponse( request, form );
+    }
+
+    /**
+     * Redisplays the current step when the security token of the posted page is invalid or expired (back button, page posted twice, form opened in two
+     * tabs): the user posts the step again with a new token, instead of getting an error page
+     *
+     * @param request
+     *            The request
+     * @return the step view with a warning
+     * @throws SiteMessageException
+     *             if there is an error during the page generation
+     * @throws UserNotSignedException
+     *             if the user is not signed in
+     */
+    private XPage getStepViewOnInvalidToken( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
+    {
+        AppLogService.info( "FormXPage: " + MESSAGE_ERROR_TOKEN );
+        addWarning( MESSAGE_WARNING_INVALID_TOKEN, getLocale( request ) );
+
+        return getStepView( request );
     }
 
     private XPage doSaveResponse( HttpServletRequest request, Form form ) throws SiteMessageException, UserNotSignedException
@@ -806,17 +829,17 @@ public class FormXPage extends MVCApplication
         }
 
         saveFormResponse( form, request );
-        Map<String, Object> model = getModel( );
-
-        model.put( FormsConstants.PARAMETER_ID_FORM, form.getId( ) );
         if ( bypassInactiveState( form, request ) )
         {
             addWarning( MESSAGE_WARNING_INACTIVE_STATE_BYPASSED, getLocale( request ) );
         }
+        Map<String, Object> model = getModel( );
+
+        model.put( FormsConstants.PARAMETER_ID_FORM, form.getId( ) );
 
         FormMessage formMessage = FormMessageHome.findByForm( form.getId( ) );
         boolean bIsEndMessageDisplayed = formMessage.getEndMessageDisplay( );
-        String strBackUrl = getBackUrl( form, bIsEndMessageDisplayed, _formResponseManager.getFormResponse( ).getId( ) );
+        String strBackUrl = getBackUrl( form, bIsEndMessageDisplayed );
         initAfterSave( request );
 
         if ( formMessage.getEndMessageDisplay( ) )
@@ -904,7 +927,7 @@ public class FormXPage extends MVCApplication
      *            {@code true} if the end message is displayed, {@code false} otherwise
      * @return the back URL
      */
-    private String getBackUrl( Form form, boolean bIsEndMessageDisplayed, int nIdFormResponse )
+    private String getBackUrl( Form form, boolean bIsEndMessageDisplayed )
     {
         if ( StringUtils.isNotEmpty( form.getReturnUrl( ) ) )
         {
@@ -914,17 +937,7 @@ public class FormXPage extends MVCApplication
         {
             UrlItem url = null;
 
-            if ( form.isAuthentificationNeeded( ) )
-            {
-                url= bIsEndMessageDisplayed? new UrlItem( AppPathService.getPortalUrl( ) ):new UrlItem( "Portal.jsp" );
-                url.addParameter( MVCUtils.PARAMETER_PAGE, FormResponseXPage.XPAGE_NAME );
-                url.addParameter( MVCUtils.PARAMETER_VIEW, FormResponseXPage.VIEW_FORM_RESPONSE );
-                url.addParameter( FormsConstants.PARAMETER_ID_RESPONSE, nIdFormResponse );
-                url.addParameter( FormsConstants.PARAMETER_ACTION_SUCCESS, "true" );
-
-            }
-            else
-            if ( bIsEndMessageDisplayed )
+            if ( form.isAuthentificationNeeded( ) || bIsEndMessageDisplayed)
             {
                 url = new UrlItem( getViewFullUrl( VIEW_STEP ) );
             }
@@ -1035,7 +1048,7 @@ public class FormXPage extends MVCApplication
         IsRequestComingFromAction = true;
         if ( !_securityTokenService.validate( request, ACTION_SAVE_FORM_RESPONSE ) )
         {
-            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
+            return getStepViewOnInvalidToken( request );
         }
 
         Form form = null;
@@ -1077,15 +1090,39 @@ public class FormXPage extends MVCApplication
             return getStepView(  request );
         }
 
-        LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
+        LuteceUser user = SecurityService.isAuthenticationEnable( ) ? SecurityService.getInstance( ).getRegisteredUser( request ) : null;
+        if ( user == null )
+        {
+            // A draft belongs to a signed in user: an anonymous user is asked to sign in (the answers stay in the session)
+            if ( SecurityService.isAuthenticationEnable( ) )
+            {
+                throw new UserNotSignedException( );
+            }
+            addError( MESSAGE_ERROR_BACKUP_NEEDS_AUTHENTICATION, getLocale( request ) );
+            return getStepView( request );
+        }
         FormResponse formResponse = _formResponseManager.getFormResponse( );
         formResponse.setGuid( user.getName( ) );
         formResponse.setUpdateStatus(Timestamp.valueOf(LocalDateTime.now()));
 
-        _formService.saveFormForBackup( formResponse );
+        try
+        {
+            _formService.saveFormForBackup( formResponse );
+        }
+        catch( FormResponseAlreadySubmittedException e )
+        {
+            // The draft has been submitted or reset from another window or device
+            SiteMessageService.setMessage( request, FormsConstants.MESSAGE_ERROR_ALREADY_SUBMITTED, SiteMessage.TYPE_ERROR );
+        }
+        catch( AppException e )
+        {
+            // The backup has been rolled back : tell the user rather than let them believe it was saved
+            AppLogService.error( "Unable to save the backup of the form {}. The backup has been rolled back.", form.getId( ), e );
+            SiteMessageService.setMessage( request, FormsConstants.MESSAGE_ERROR_SAVING_FORM_RESPONSE, SiteMessage.TYPE_ERROR );
+        }
+
         _formResponseManager.setFormResponseUpdateDate( formResponse.getUpdateStatus( ) );
         _formResponseManager.setIsResponseLoadedFromBackup(false);
-        _formService.saveFormForBackup(formResponse);
         }
         return getStepView(  request );
     }
@@ -1228,12 +1265,16 @@ public class FormXPage extends MVCApplication
 
         String strIterationInfo = request.getParameter( FormsConstants.PARAMETER_ACTION_PREFIX + ACTION_REMOVE_ITERATION );
 
-        String [ ] arrayIterationInfo = strIterationInfo.split( FormsConstants.SEPARATOR_UNDERSCORE );
+        // <id of the group>_<index of the iteration>: a malformed value removes nothing, the group checks the index
+        String [ ] arrayIterationInfo = StringUtils.split( strIterationInfo, FormsConstants.SEPARATOR_UNDERSCORE );
 
-        int nIdGroupParent = Integer.parseInt( arrayIterationInfo [0] );
-        int nIndexIteration = Integer.parseInt( arrayIterationInfo [1] );
+        if ( arrayIterationInfo != null && arrayIterationInfo.length == 2 )
+        {
+            int nIdGroupParent = NumberUtils.toInt( arrayIterationInfo [0], FormsConstants.INCORRECT_ID );
+            int nIndexIteration = NumberUtils.toInt( arrayIterationInfo [1], FormsConstants.INCORRECT_ID );
 
-        _stepDisplayTree.removeIteration( request, nIdGroupParent, nIndexIteration );
+            _stepDisplayTree.removeIteration( request, nIdGroupParent, nIndexIteration );
+        }
 
         return getStepView(  request );
     }
@@ -1375,7 +1416,7 @@ public class FormXPage extends MVCApplication
      */
     private void saveFormResponse( Form form, HttpServletRequest request ) throws SiteMessageException
     {
-        if ( _bInactiveStateBypassed )
+        if ( _nIdFormInactiveStateBypassed == form.getId( ) )
         {
             return; // form was in testing mode; do not save response
         }
@@ -1390,9 +1431,25 @@ public class FormXPage extends MVCApplication
         {
             _formService.saveForm( form, formResponse );
         }
+        catch( QuotaLockTimeoutException e )
+        {
+            // Too many simultaneous submissions: the quota is not necessarily reached, the user can try again
+            SiteMessageService.setMessage( request, FormsConstants.MESSAGE_ERROR_QUOTA_BUSY, SiteMessage.TYPE_ERROR );
+        }
         catch( MaxFormResponseException e)
         {
             SiteMessageService.setMessage( request, FormsConstants.MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM, SiteMessage.TYPE_ERROR );
+        }
+        catch( FormResponseAlreadySubmittedException e )
+        {
+            // The draft has been submitted or reset from another window or device
+            SiteMessageService.setMessage( request, FormsConstants.MESSAGE_ERROR_ALREADY_SUBMITTED, SiteMessage.TYPE_ERROR );
+        }
+        catch( AppException e )
+        {
+            // The response has been rolled back : tell the user rather than let them believe it was saved
+            AppLogService.error( "Unable to save the response of the form {}. The response has been rolled back.", form.getId( ), e );
+            SiteMessageService.setMessage( request, FormsConstants.MESSAGE_ERROR_SAVING_FORM_RESPONSE, SiteMessage.TYPE_ERROR );
         }
 
         _accessControlService.cleanSessionData( request, form.getId( ), Form.RESOURCE_TYPE );
@@ -1409,7 +1466,7 @@ public class FormXPage extends MVCApplication
         _currentStep = null;
         _stepDisplayTree = null;
         _breadcrumb = null;
-        _bInactiveStateBypassed = false;
+        _nIdFormInactiveStateBypassed = FormsConstants.INCORRECT_ID;
         IsRequestComingFromAction = false;
         _formsAsynchronousUploadHandler.removeSessionFiles( request.getSession( ) );
     }

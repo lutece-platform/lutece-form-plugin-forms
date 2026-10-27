@@ -112,6 +112,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
     protected static final String MARK_LOCALE = "locale";
     private static final String MARK_LIST = "list";
     private static final String MARK_ENTRY_TYPE_SERVICE = "entryTypeService";
+    private static final String MARK_FIELD_TOKEN = "field_token";
     private static final String MARK_LIST_PARAM_DEFAULT_VALUES = "list_param_default_values";
     private static final String MARK_GROUP_VALIDATED = "groupValidated";
     private static final String MARK_STEP_VALIDATED = "stepValidated";
@@ -187,13 +188,20 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
      */
     protected String processQuestionCreation( HttpServletRequest request, String viewManageQuestions, String errorReturnUrl ) throws CodeAlreadyExistsException
     {
-        int nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
+        int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), INTEGER_MINUS_ONE );
         int nParentGroup = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ), 0 );
-        int nIdType = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_ENTRY_TYPE ) );
+        int nIdType = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_ENTRY_TYPE ), INTEGER_MINUS_ONE );
 
         if ( ( _step == null ) || nIdStep != _step.getId( ) )
         {
             _step = getFormDatabaseService( ).findStepByPrimaryKey( nIdStep );
+        }
+
+        // A missing or invalid parameter: back to the list of forms
+        if ( _step == null || nIdType == INTEGER_MINUS_ONE )
+        {
+            addError( ERROR_QUESTION_NOT_CREATED, getLocale( ) );
+            return getJspManageForm( request );
         }
 
         _entry = FormsEntryUtils.createEntryByType( nIdType );
@@ -213,6 +221,13 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
 
         _entry.setIdResource( _step.getIdForm( ) );
         _entry.setResourceType( Form.RESOURCE_TYPE );
+
+        // Check the code before creating the entry: an entry created with a duplicate code would be left without question
+        if ( StringUtils.isNotEmpty( _entry.getCode( ) ) && checkCodeAlreadyExists( _entry.getCode( ), _step.getIdForm( ), INTEGER_MINUS_ONE ) )
+        {
+            throw new CodeAlreadyExistsException( _entry.getCode( ) );
+        }
+
         getFormDatabaseService( ).createEntry( _entry );
 
         // If the entry code is empty, provide a new one
@@ -273,7 +288,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
      *            The URL to go to after displaying an error message
      * @return The URL to go after performing the action
      */
-    protected String processQuestionUpdate( HttpServletRequest request, String errorRetrunUrl ) throws CodeAlreadyExistsException
+    protected String processQuestionUpdate( HttpServletRequest request, String errorReturnUrl ) throws CodeAlreadyExistsException
     {
         String strIdStep = request.getParameter( FormsConstants.PARAMETER_ID_STEP );
         int nIdStep = NumberUtils.toInt( strIdStep, INTEGER_MINUS_ONE );
@@ -290,10 +305,16 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
             _question = getFormDatabaseService( ).findQuestionByPrimaryKey( nIdQuestion );
         }
 
+        // A missing, invalid or unknown step or question: back to the list of forms
+        if ( _step == null || _question == null )
+        {
+            return getJspManageForm( request );
+        }
+
         int nIdEntry = _question.getIdEntry( );
         _entry = getFormDatabaseService( ).findEntryByPrimaryKey( nIdEntry );
 
-        String strError = EntryTypeServiceManager.getEntryTypeService( _entry ).getRequestData( _entry, request, getLocale( ), errorRetrunUrl );
+        String strError = EntryTypeServiceManager.getEntryTypeService( _entry ).getRequestData( _entry, request, getLocale( ), errorReturnUrl );
 
         if ( strError != null )
         {
@@ -405,15 +426,23 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
 
     protected String modifyGroup( HttpServletRequest request, String viewReturnOk )
     {
-        int nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
+        int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), INTEGER_MINUS_ONE );
 
         if ( _step == null || nIdStep != _step.getId( ) )
         {
             _step = getFormDatabaseService( ).findStepByPrimaryKey( nIdStep );
         }
 
+        if ( _step == null )
+        {
+            return redirectToViewManageForm( request );
+        }
+
         _group = _group != null ? _group : new Group( );
+        // The group to update is the one of the view, whose form has been checked: the posted data cannot change it
+        int nIdGroup = _group.getId( );
         populate( _group, request );
+        _group.setId( nIdGroup );
 
         if ( !validateGroup( ) )
         {
@@ -490,9 +519,15 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
 
     protected Map<String, Object> initCreateQuestionModel( HttpServletRequest request )
     {
-        int nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
-        int nIdTypeEntry = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_BUTTON_TYPE_ENTRY ) );
+        int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), INTEGER_MINUS_ONE );
+        int nIdTypeEntry = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_BUTTON_TYPE_ENTRY ), INTEGER_MINUS_ONE );
         _nIdParentSelected = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ), 0 );
+
+        // A missing or invalid parameter: the caller redirects to the list of forms
+        if ( nIdStep == INTEGER_MINUS_ONE || nIdTypeEntry == INTEGER_MINUS_ONE )
+        {
+            return null;
+        }
 
         _step = getFormDatabaseService( ).findStepByPrimaryKey( nIdStep );
         if ( _step == null )
@@ -547,7 +582,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
 
         if ( StringUtils.isNotEmpty( strIdStep ) )
         {
-            int nIdStep = Integer.parseInt( strIdStep );
+            int nIdStep = NumberUtils.toInt( strIdStep, INTEGER_MINUS_ONE );
 
             if ( ( _step == null ) || ( _step.getId( ) != nIdStep ) )
             {
@@ -555,15 +590,15 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
             }
         }
 
-        String strIdQuestion = request.getParameter( FormsConstants.PARAMETER_ID_QUESTION );
-        int nIdQuestion = INTEGER_MINUS_ONE;
-
-        if ( StringUtils.isNotEmpty( strIdQuestion ) )
-        {
-            nIdQuestion = Integer.parseInt( strIdQuestion );
-        }
+        int nIdQuestion = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_QUESTION ), INTEGER_MINUS_ONE );
 
         _question = getFormDatabaseService( ).findQuestionByPrimaryKey( nIdQuestion );
+
+        // A missing, invalid or unknown question: the caller redirects to the list of forms
+        if ( _question == null || _step == null )
+        {
+            return null;
+        }
 
         _entry = getFormDatabaseService( ).findEntryByPrimaryKey( _question.getIdEntry( ) );
 
@@ -588,6 +623,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
         model.put( MARK_LOCALE, AdminUserService.getLocale( request ).getLanguage( ) );
         model.put( MARK_ENTRY_TYPE_SERVICE, EntryTypeServiceManager.getEntryTypeService( _entry ) );
+        model.put( MARK_FIELD_TOKEN, getSecurityToken( request, ModifyEntryJspBean.TOKEN_ACTION_MOVE_FIELD ) );
 
         if ( Boolean.TRUE.equals( _entry.getEntryType( ).getComment( ) ) )
         {
@@ -828,7 +864,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         int nIdQuestion = INTEGER_MINUS_ONE;
 
         String strIdQuestion = request.getParameter( FormsConstants.PARAMETER_ID_TARGET );
-        int nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
+        int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), INTEGER_MINUS_ONE );
         Question questionToCopy = null;
 
         if ( ( _step == null ) || nIdStep != _step.getId( ) )
@@ -838,13 +874,20 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
 
         if ( StringUtils.isNotEmpty( strIdQuestion ) )
         {
-            nIdQuestion = Integer.parseInt( strIdQuestion );
+            nIdQuestion = NumberUtils.toInt( strIdQuestion, INTEGER_MINUS_ONE );
+        }
+
+        _question = getFormDatabaseService( ).findQuestionByPrimaryKey( nIdQuestion );
+
+        // A missing, invalid or unknown step or question: back to the list of forms
+        if ( _step == null || _question == null )
+        {
+            return getJspManageForm( request );
         }
 
         // Get the question to copy and clone it
         try
         {
-            _question = getFormDatabaseService( ).findQuestionByPrimaryKey( nIdQuestion );
             questionToCopy = _question.clone( );
             questionToCopy.setEntry( _question.getEntry( ) );
         }

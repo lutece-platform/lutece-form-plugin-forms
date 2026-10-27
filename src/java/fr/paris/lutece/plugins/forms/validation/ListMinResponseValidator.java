@@ -81,7 +81,9 @@ public class ListMinResponseValidator extends AbstractValidator
     @Override
     public boolean validate( FormQuestionResponse questionResponse, Control control )
     {
-    	return questionResponse.getEntryResponse( ).size( ) >= Integer.parseInt( control.getValue( ) );       
+        int nMinResponse = getControlValueAsInt( control );
+
+        return ( nMinResponse >= 0 ) && questionResponse.getEntryResponse( ).size( ) >= nMinResponse;
     }
 
     @Override

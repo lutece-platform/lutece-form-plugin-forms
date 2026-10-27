@@ -260,10 +260,10 @@ ${breadcrumb_template}
 									<@offcanvas targetUrl="jsp/admin/plugins/forms/ModifyEntry.jsp?view=modifyField&id_question=${question.id}&id_field=${field.idField}&option_no_display_title=true" useIframe=true targetElement="#manageEntry" id="q_${question.id}_f_${field.idField}" title="#i18n{forms.modifyField.title}" hideTtitle=['all'] btnTitle="#i18n{portal.util.labelModify}" btnIcon="pencil" position="end" size="half" />
 									<@btnGroup class='mx-1'>
 										<#if cpt!=1>
-											<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?action=moveFieldUp&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.create_entry.manageField.titleMoveUp}' buttonIcon='chevron-up' hideTitle=['all']  />
+											<@button type='submit' formId='move-field-up-${field.idField}' title='#i18n{forms.create_entry.manageField.titleMoveUp}' buttonIcon='chevron-up' hideTitle=['all'] />
 										</#if> 
 										<#if field_has_next>
-											<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?action=moveFieldDown&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.create_entry.manageField.titleMoveDown}' buttonIcon='chevron-down' hideTitle=['all']  />
+											<@button type='submit' formId='move-field-down-${field.idField}' title='#i18n{forms.create_entry.manageField.titleMoveDown}' buttonIcon='chevron-down' hideTitle=['all'] />
 										</#if>
 									</@btnGroup>
 									<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?view=confirmRemoveField&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.create_entry.manageField.titleDelete}' buttonIcon='trash' hideTitle=['all']  color='danger' />
@@ -279,6 +279,18 @@ ${breadcrumb_template}
 	</#if>
 </@row>
 </@tform>
+<#if options && list??>
+<#list list?filter( f -> f.code == 'answer_choice' ) as field>
+<#list ['moveFieldUp', 'moveFieldDown'] as moveAction>
+<@tform id='${moveAction?replace("moveField", "move-field-")?lower_case}-${field.idField}' action='jsp/admin/plugins/forms/ModifyEntry.jsp#list' method='post' class='d-none'>
+	<@input type='hidden' name='action' value=moveAction />
+	<@input type='hidden' name='id_question' value='${question.id}' />
+	<@input type='hidden' name='id_field' value='${field.idField}' />
+	<@input type='hidden' name='token' value='${field_token!}' />
+</@tform>
+</#list>
+</#list>
+</#if>
 <#if editor>
 <@initEditor />
 </#if>

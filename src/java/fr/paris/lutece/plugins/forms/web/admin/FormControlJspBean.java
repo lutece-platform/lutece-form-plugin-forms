@@ -45,7 +45,9 @@ import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
+import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
 import org.apache.commons.collections.CollectionUtils;
@@ -164,6 +166,17 @@ public class FormControlJspBean extends AbstractJspBean
     @Inject
     private EntryServiceManager _entryServiceManager;
     
+    /**
+     * {@inheritDoc} The user must be allowed to modify every form referenced by the request, whatever the view or action
+     */
+    @Override
+    public String processController( HttpServletRequest request, HttpServletResponse response ) throws AccessDeniedException
+    {
+        checkUserPermissionOnReferencedForms( request );
+
+        return super.processController( request, response );
+    }
+
     /**
      * Build the Manage View
      *
@@ -553,7 +566,7 @@ public class FormControlJspBean extends AbstractJspBean
             }
             model.put( FormsConstants.MARK_AVAILABLE_VALIDATORS, refListAvailableValidator );
 
-            if ( CollectionUtils.isNotEmpty( refListAvailableValidator ) && StringUtils.EMPTY.equals( _control.getValidatorName( ) ) )
+            if ( CollectionUtils.isNotEmpty( refListAvailableValidator ) && StringUtils.isEmpty( _control.getValidatorName( ) ) )
             {
                 _control.setValidatorName( refListAvailableValidator.get( 0 ).getCode( ) );
             }
@@ -760,7 +773,19 @@ public class FormControlJspBean extends AbstractJspBean
             return false;
         }
 
+        // The posted data set the value of the control, not what it applies to: that was set by the views, whose forms have been checked
+        int nIdControl = _control.getId( );
+        String strControlType = _control.getControlType( );
+        int nIdControlTarget = _control.getIdControlTarget( );
+        int nIdControlGroup = _control.getIdControlGroup( );
+        Set<Integer> listIdQuestion = _control.getListIdQuestion( );
         populate( _control, request, getLocale( ) );
+        _control.setId( nIdControl );
+        _control.setControlType( strControlType );
+        _control.setIdControlTarget( nIdControlTarget );
+        _control.setIdControlGroup( nIdControlGroup );
+        _control.setListIdQuestion( listIdQuestion );
+
         return validateBean( _control, CONTROL_VALIDATION_ATTRIBUTES_PREFIX );
     }
 

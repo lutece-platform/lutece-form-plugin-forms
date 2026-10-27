@@ -53,8 +53,21 @@ import java.util.UUID;
 public class LuceneLockManagerDB implements LuceneLockManager
 {
     private static final Plugin _plugin = PluginService.getPlugin( "forms" );
+    // Set when the instance stops: a daemon run still going on (indexing) must not take a lock after the locks of the
+    // instance were released, it would stay held until its TTL expires
+    private volatile boolean _bStopping;
 
     private final ILockDAO _lockDao;
+
+    /**
+     * Constructor required by CDI: Weld checks that a normal-scoped bean is proxyable when it re-creates the client proxy of a session read on
+     * another cluster member, otherwise WELD-001435 and the session bean of the user is lost. Only used by the proxy, which delegates to the
+     * contextual instance.
+     */
+    protected LuceneLockManagerDB( )
+    {
+        _lockDao = null;
+    }
 
     @Inject
     LuceneLockManagerDB( ILockDAO lockDao )
@@ -65,11 +78,22 @@ public class LuceneLockManagerDB implements LuceneLockManager
     @Override
     public LockResult acquireLock( String indexName, long timeoutMs ) throws LockException
     {
+        if ( _bStopping )
+        {
+            throw new LockException( );
+        }
         String uuid = UUID.randomUUID( ).toString( );
         long ttlSeconds = toCeilSeconds( timeoutMs );
 
         if ( _lockDao.acquire( indexName, FormsInstanceId.VALUE, uuid, ttlSeconds, _plugin ) )
         {
+            if ( _bStopping )
+            {
+                // The instance stopped while the lock was being taken: the shutdown may have released the locks of the
+                // instance before this one was written
+                _lockDao.release( uuid, _plugin );
+                throw new LockException( );
+            }
             // The real expired_date lives DB-side now; expose a best-effort local estimate so
             // callers keep a roughly-correct handle (not used for any safety-critical decision).
             Timestamp estimatedExpiry = Timestamp.from( Instant.now( ).plusSeconds( ttlSeconds ) );
@@ -122,6 +146,7 @@ public class LuceneLockManagerDB implements LuceneLockManager
     @PreDestroy
     void releaseOwnLocksOnShutdown( )
     {
+        _bStopping = true;
         try
         {
             int released = releaseOwnInstanceLocks( );

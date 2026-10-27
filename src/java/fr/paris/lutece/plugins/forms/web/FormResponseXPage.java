@@ -66,6 +66,7 @@ import fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandl
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.util.FormsResponseUtils;
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
+import fr.paris.lutece.plugins.workflowcore.exception.ResourceWorkflowLockedException;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.SiteMessage;
@@ -107,6 +108,7 @@ public class FormResponseXPage extends MVCApplication
     protected static final String MESSAGE_FORM_RESPONSE_PAGETITLE = "forms.xpage.response.pagetitle";
     protected static final String MESSAGE_FORM_RESPONSE_PATHLABEL = "forms.xpage.response.pathlabel";
     private static final String MESSAGE_ACTION_ERROR = "forms.xpage.response.action.error";
+    private static final String MESSAGE_ACTION_LOCKED = "forms.xpage.response.action.locked";
     private static final String MESSAGE_ERROR_TOKEN = "Invalid security token";
     private static final String MESSAGE_ACTION_SUCCESS = "forms.xpage.response.action.success";
 
@@ -257,7 +259,15 @@ public class FormResponseXPage extends MVCApplication
         }
         catch( AppException e )
         {
-            AppLogService.error( "Error processing action for id response '" + nIdFormResponse + "' - cause : " + e.getMessage( ), e );
+            if ( e.getCause( ) instanceof ResourceWorkflowLockedException )
+            {
+                // Another action is in progress on this response (double click, other instance) or its state has changed
+                addError( MESSAGE_ACTION_LOCKED, locale );
+            }
+            else
+            {
+                AppLogService.error( "Error processing action for id response '" + nIdFormResponse + "' - cause : " + e.getMessage( ), e );
+            }
         }
         // Redirect to the correct view
         return redirect( request, VIEW_FORM_RESPONSE, FormsConstants.PARAMETER_ID_RESPONSE, nIdFormResponse );
@@ -306,7 +316,14 @@ public class FormResponseXPage extends MVCApplication
             }
             catch( AppException e )
             {
-                AppLogService.error( "Error processing action for record " + nIdFormResponse, e );
+                if ( e.getCause( ) instanceof ResourceWorkflowLockedException )
+                {
+                    addError( MESSAGE_ACTION_LOCKED, locale );
+                }
+                else
+                {
+                    AppLogService.error( "Error processing action for record " + nIdFormResponse, e );
+                }
             }
         }
         else

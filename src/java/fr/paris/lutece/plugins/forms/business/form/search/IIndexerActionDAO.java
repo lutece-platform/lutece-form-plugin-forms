@@ -76,6 +76,16 @@ public interface IIndexerActionDAO
     void delete( int nId, Plugin plugin );
 
     /**
+     * Delete a record from the table
+     *
+     * @param nIdFormResponse
+     *            The identifier of the form response
+     * @param plugin
+     *            the plugin
+     */
+    void deleteByFormResponse( int nIdFormResponse, Plugin plugin );
+
+    /**
      * Delete records form the table
      *
      * @param idList The identifier list of action

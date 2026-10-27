@@ -24,9 +24,16 @@
                         <@cList class='ps-0'>
                         <#list workflow_action_list as action>
                         <@cListItem>
-                            <@link class='btn btn-block btn-default' href='jsp/site/Portal.jsp?page=formsResponse&action=doProcessAction&id_action=${action.id!}&id_response=${formResponse.id!}&token=${token!}' >
-                                <@img class='img-circle img-action' url='image?resource_type=workflow_icon_img&id=${action.icon.id!}' title=action.name! alt=action.name! /> ${action.name!}  
-                            </@link>
+                            <@cForm action='jsp/site/Portal.jsp' class='d-grid'>
+                                <@cInput type='hidden' name='page' value='formsResponse' />
+                                <@cInput type='hidden' name='action' value='doProcessAction' />
+                                <@cInput type='hidden' name='id_action' value='${action.id!}' />
+                                <@cInput type='hidden' name='id_response' value='${formResponse.id!}' />
+                                <@cInput type='hidden' name='token' value='${token!}' />
+                                <@cBtn label=action.name! class='default btn-block'>
+                                    <@img class='img-circle img-action' url='image?resource_type=workflow_icon_img&id=${action.icon.id!}' title=action.name! alt=action.name! />
+                                </@cBtn>
+                            </@cForm>
                         </@cListItem>
                         </#list>
                         </@cList>

@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.web.admin;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,6 +46,7 @@ import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
+import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
@@ -80,6 +82,11 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
     // Markers
     private static final String MARK_PAGINATOR = "paginator";
     private static final String MARK_NB_ITEMS_PER_PAGE = "nb_items_per_page";
+
+    /**
+     * Mark of the security tokens of the actions called by a link (GET), by action: the core checks them as the parameter _csrftoken
+     */
+    protected static final String MARK_LINK_TOKENS = "link_tokens";
 
     // Variables
     protected String _strCurrentPageIndex;
@@ -248,6 +255,59 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
         }
     }
     
+    /**
+     * Check that the user can modify every form referenced by the parameters of the request (form, step, question, group, display, entry, transition,
+     * control), whatever the parameter the controller reads
+     * 
+     * @param request
+     *            the request
+     * @throws AccessDeniedException
+     *             if the user is not authorized on one of the forms
+     */
+    protected void checkUserPermissionOnReferencedForms( HttpServletRequest request ) throws AccessDeniedException
+    {
+        for ( int nIdForm : ReferencedFormsResolver.getReferencedFormIds( request ) )
+        {
+            checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nIdForm ), FormsResourceIdService.PERMISSION_MODIFY, request, null );
+            checkWorkgroupPermission( nIdForm, request );
+        }
+    }
+
+    /**
+     * Put in the model a security token for each action called by a link of the page (GET). The core checks the token of an action whatever the HTTP
+     * method: the link carries it as the parameter _csrftoken. Call it after getModel( ), which copies the token of the page.
+     * 
+     * @param request
+     *            the request
+     * @param model
+     *            the model of the page
+     * @param actions
+     *            the actions called by a link of the page (the securityTokenAction of the action when it declares one)
+     */
+    protected void putLinkTokens( HttpServletRequest request, Map<String, Object> model, String... actions )
+    {
+        Map<String, String> mapLinkTokens = new HashMap<>( );
+        for ( String strAction : actions )
+        {
+            mapLinkTokens.put( strAction, _securityTokenService.getToken( request, strAction ) );
+        }
+        model.put( MARK_LINK_TOKENS, mapLinkTokens );
+    }
+
+    /**
+     * Get a security token for the given action
+     * 
+     * @param request
+     *            the request
+     * @param strAction
+     *            the action
+     * @return the token
+     */
+    protected String getSecurityToken( HttpServletRequest request, String strAction )
+    {
+        return _securityTokenService.getToken( request, strAction );
+    }
+
     protected void checkWorkgroupPermission(int nIdForm, HttpServletRequest request) throws AccessDeniedException
     {
     	Form form = FormHome.findByPrimaryKey(nIdForm);

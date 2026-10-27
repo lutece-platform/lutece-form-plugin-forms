@@ -14,10 +14,10 @@
 <@formGroup labelFor='is_iterable' labelKey='#i18n{forms.create_entry.labelIteration}' rows=2>
 	<@checkBox orientation='switch' id='checkbox_is_iterable' name='is_iterable' value='true' checked=checked params='onclick="javascript:displayHideIteration();"' />
 </@formGroup>
-<@formGroup labelFor='nb_iterations' labelKey='#i18n{forms.create_entry.labelNbIteration}' helpKey='#i18n{forms.create_entry.labelHelpNbIteration' id='iterationNumber' mandatory=true params=style rows=2>
+<@formGroup labelFor='nb_iterations' labelKey='#i18n{forms.create_entry.labelNbIteration}' helpKey='#i18n{forms.create_entry.labelHelpNbIteration}' id='iterationNumber' mandatory=true params=style rows=2>
 	<@input type='text' name='nb_iterations' value='${nbIteration}' maxlength=5 />
 </@formGroup>
-<@formGroup labelFor='nb_iterations' labelKey='#i18n{forms.create_entry.labelNbMinimumIteration}' helpKey='#i18n{forms.create_entry.labelHelpNbMinimumIteration' id='iterationNumberMinimum' mandatory=true params=style rows=2>
+<@formGroup labelFor='nb_iterations' labelKey='#i18n{forms.create_entry.labelNbMinimumIteration}' helpKey='#i18n{forms.create_entry.labelHelpNbMinimumIteration}' id='iterationNumberMinimum' mandatory=true params=style rows=2>
 	<@input type='text' name='nb_iterations_minimum' value='${nbIteration_minimum}' maxlength=5 />
 </@formGroup>
 <@formGroup id='iterationAddingLabel' labelFor='iteration_adding_label' labelKey='#i18n{forms.create_entry.labelIterationAddingLabel}' helpKey='#i18n{forms.create_entry.labelHelpIterationAddingLabel}' params=style  rows=2>

@@ -14,11 +14,11 @@
 			<#assign hasFile=true>
 			<@cImg src='' alt="${entry.title!''}" id='img${entry.idEntry}' title="${entry.title!''}" class="img-fluid img-responsive img-thumbnail" params=' style="width:${width};"' />
 		<#else>
-			<@cInline type='em'>#i18n{theme.labelNoDataProvided}</@cInline>
+			<@cInline type='em'>#i18n{portal.theme.labelNoDataProvided}</@cInline>
 		</#if>
 	</#list>
 <#else>
-	<@cInline type='em'>#i18n{theme.labelNoDataProvided}</@cInline>		
+	<@cInline type='em'>#i18n{portal.theme.labelNoDataProvided}</@cInline>		
 </#if>
 </@chItem>
 </#compress>

@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import fr.paris.lutece.plugins.forms.service.cache.FormsCacheService;
@@ -165,7 +166,8 @@ public final class FormDisplayHome
         {
             initConditionalDisplayForFormDisplay( formDisplay );
         }
-        return result;
+        // A copy: the cached list is shared by every reader when the cache returns its own instance (Hazelcast near cache)
+        return new ArrayList<>( result );
     }
     
     /**

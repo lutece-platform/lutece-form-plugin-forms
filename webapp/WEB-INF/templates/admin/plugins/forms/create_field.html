@@ -5,6 +5,7 @@
 			<@input type='hidden' name='id_step' value='${question.idStep}' />
 			<@input type='hidden' name='id_question' value='${question.id}' />
 			<@input type='hidden' name='id_entry' value='${id_entry}' />
+			<@input type='hidden' name='token' value='${token}' />
 			<@formGroup labelFor='title' labelKey='#i18n{forms.createField.labelTitle}' mandatory=true>
 				<@input type='text' name='title' id='title' value='' maxlength=255 />
 			</@formGroup>

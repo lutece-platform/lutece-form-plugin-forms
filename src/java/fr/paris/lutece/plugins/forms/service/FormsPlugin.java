@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.service;
 
+import java.io.File;
 import java.io.Serializable;
 
 import fr.paris.lutece.plugins.forms.web.file.FormsFileImageService;
@@ -83,38 +84,85 @@ public final class FormsPlugin extends PluginDefaultImplementation implements Se
     }
 
     /**
-     * Emit a startup warning when the Lucene index is likely to be JVM-local,
-     * which breaks search consistency in a multi-instance deployment.
+     * Emit a startup warning when the Lucene index is likely to be JVM-local:
+     * not persistent, and not shared in a multi-instance deployment.
      *
      * Two red flags trigger the warning:
      * - {@code forms.internalIndexer.lucene.indexInWebapp=true} (path resolved
      *   under the exploded webapp, which is local to each node);
-     * - or the configured path contains/starts with {@code java.io.tmpdir}
-     *   (default value in {@code forms.properties}, still JVM-local).
+     * - or the configured path is relative (the default value of
+     *   {@code forms.properties}, java.io.tmpdir/..., is not resolved and lands in
+     *   the working directory) or under the {@code java.io.tmpdir} directory.
      *
-     * Operators running a single-instance deployment can safely ignore the
-     * message; the warning is meant to flag the misconfiguration explicitly
-     * before it surfaces as inconsistent search results in production.
+     * The message stays on a single instance: such a directory is not
+     * persistent, so the index is lost on a redeployment or a restart of the
+     * container; in a cluster it also makes search results inconsistent.
      */
     private void warnIfIndexPathIsNodeLocal( )
     {
-        boolean indexInWebapp = AppPropertiesService.getPropertyBoolean( PROPERTY_INDEX_IN_WEBAPP, true );
-        String configuredPath = AppPropertiesService.getProperty( PROPERTY_INDEX_PATH, "" );
-        String systemTmpDir = System.getProperty( SYSTEM_PROPERTY_TMPDIR, "" );
+        String strMessage = getNodeLocalIndexMessage( AppPropertiesService.getPropertyBoolean( PROPERTY_INDEX_IN_WEBAPP, true ),
+                AppPropertiesService.getProperty( PROPERTY_INDEX_PATH, "" ), System.getProperty( SYSTEM_PROPERTY_TMPDIR, "" ) );
 
-        boolean underSystemTmpdir = !systemTmpDir.isEmpty( ) && configuredPath.startsWith( systemTmpDir );
-        boolean referencesTmpdirLiteral = configuredPath.contains( SYSTEM_PROPERTY_TMPDIR );
-
-        if ( indexInWebapp || underSystemTmpdir || referencesTmpdirLiteral )
+        if ( strMessage != null )
         {
-            AppLogService.error(
-                    "[forms] Lucene index path appears to be JVM-local (indexInWebapp=" + indexInWebapp
-                            + ", configuredPath=" + configuredPath + "). "
-                            + "In a multi-instance deployment, set forms.internalIndexer.lucene.indexInWebapp=false "
-                            + "and point forms.internalIndexer.lucene.indexPath at a shared volume (NFS, PV, etc.) "
-                            + "shared by every instance; otherwise each node will maintain a separate index and "
-                            + "search results will differ depending on which instance serves the request." );
+            AppLogService.error( strMessage );
         }
+    }
+
+    /**
+     * Build the message that tells why the Lucene index is JVM-local and which setting to change
+     *
+     * @param bIndexInWebapp
+     *            the value of forms.internalIndexer.lucene.indexInWebapp
+     * @param strConfiguredPath
+     *            the value of forms.internalIndexer.lucene.indexPath
+     * @param strSystemTmpDir
+     *            the value of the java.io.tmpdir system property
+     * @return the message, or null when the index path is not JVM-local
+     */
+    static String getNodeLocalIndexMessage( boolean bIndexInWebapp, String strConfiguredPath, String strSystemTmpDir )
+    {
+        String strCause;
+        String strAction;
+
+        if ( bIndexInWebapp )
+        {
+            strCause = PROPERTY_INDEX_IN_WEBAPP + "=true resolves " + PROPERTY_INDEX_PATH + " (" + strConfiguredPath
+                    + ") under the exploded webapp of each instance";
+            strAction = "Set " + PROPERTY_INDEX_IN_WEBAPP + "=false and point " + PROPERTY_INDEX_PATH;
+        }
+        else
+            if ( !new File( strConfiguredPath ).isAbsolute( ) )
+            {
+                // java.io.tmpdir is not replaced by the temporary directory: the path is relative to the working directory
+                strCause = PROPERTY_INDEX_PATH + " (" + strConfiguredPath
+                        + ") is a relative path, resolved against the working directory of each instance";
+
+                if ( strConfiguredPath.contains( SYSTEM_PROPERTY_TMPDIR ) )
+                {
+                    strCause += " (" + SYSTEM_PROPERTY_TMPDIR + " is not replaced by the temporary directory)";
+                }
+
+                strAction = "Point " + PROPERTY_INDEX_PATH;
+            }
+            else
+                if ( !strSystemTmpDir.isEmpty( ) && strConfiguredPath.startsWith( strSystemTmpDir ) )
+                {
+                    strCause = PROPERTY_INDEX_PATH + " (" + strConfiguredPath + ") is under the " + SYSTEM_PROPERTY_TMPDIR
+                            + " directory of each instance";
+                    strAction = "Point " + PROPERTY_INDEX_PATH;
+                }
+                else
+                {
+                    return null;
+                }
+
+        return "[forms] The Lucene index is JVM-local: " + strCause + ". This directory is not persistent, even on a "
+                + "single instance: the index is lost on a redeployment, a restart of the container or a reboot, and "
+                + "searches miss the responses until it is rebuilt. " + strAction
+                + " at an absolute path on a persistent volume; in a multi-instance deployment this volume must be "
+                + "shared by every instance (NFS, PV, etc.), otherwise each instance keeps its own index and search results differ depending on "
+                + "which instance serves the request.";
     }
 
     /**

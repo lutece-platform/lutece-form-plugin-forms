@@ -53,6 +53,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.asynchronousupload.service.IAsyncUploadHandler;
@@ -60,11 +61,16 @@ import fr.paris.lutece.plugins.filegenerator.service.TemporaryFileGeneratorServi
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.MultiviewConfig;
+import fr.paris.lutece.plugins.forms.business.Question;
+import fr.paris.lutece.plugins.forms.business.QuestionHome;
+import fr.paris.lutece.plugins.forms.business.Step;
+import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.business.action.GlobalFormsAction;
 import fr.paris.lutece.plugins.forms.business.action.GlobalFormsActionHome;
 import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnFactory;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
+import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnFormResponseDateUpdate;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterForms;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
@@ -72,12 +78,14 @@ import fr.paris.lutece.plugins.forms.business.form.panel.FormPanelFactory;
 import fr.paris.lutece.plugins.forms.export.ExportServiceManager;
 import fr.paris.lutece.plugins.forms.export.IFormatExport;
 import fr.paris.lutece.plugins.forms.service.FormPanelConfigIdService;
+import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
 import fr.paris.lutece.plugins.forms.service.FormsPlugin;
 import fr.paris.lutece.plugins.forms.service.MultiviewFormService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.form.FormDisplayFactory;
 import fr.paris.lutece.plugins.forms.web.form.column.display.IFormColumnDisplay;
 import fr.paris.lutece.plugins.forms.web.form.filter.display.IFormFilterDisplay;
+import fr.paris.lutece.plugins.forms.web.form.filter.display.impl.FormFilterDisplayEntry;
 import fr.paris.lutece.plugins.forms.web.form.filter.display.impl.FormFilterDisplayForms;
 import fr.paris.lutece.plugins.forms.web.form.multiview.util.FormListPositionComparator;
 import fr.paris.lutece.plugins.forms.web.form.multiview.util.FormListTemplateBuilder;
@@ -97,10 +105,14 @@ import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.upload.MultipartItem;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
+import fr.paris.lutece.portal.util.mvc.commons.annotations.ResponseBody;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.util.filesystem.FileSystemUtil;
 import fr.paris.lutece.util.html.AbstractPaginator;
+import fr.paris.lutece.util.json.JsonResponse;
+import fr.paris.lutece.util.json.JsonUtil;
 import fr.paris.lutece.util.url.UrlItem;
+import org.apache.commons.lang3.math.NumberUtils;
 
 /**
  * Controller which manage the multiview of responses of all Forms
@@ -116,6 +128,11 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     // Actions
     private static final String ACTION_EXPORT_RESPONSES = "doExportResponses";
     private static final String ACTION_SAVE_MULTIVIEW_CONFIG = "doSaveMultiviewConfig";
+    private static final String ACTION_REORDER_COLUMNS = "doReorderMultiviewColumns";
+
+    // Json responses
+    private static final String RESPONSE_SUCCESS = "SUCCESS";
+    private static final String RESPONSE_ERROR = "ERROR";
 
     // Templates
     private static final String TEMPLATE_FORMS_MULTIVIEW = "admin/plugins/forms/multiview/forms_multiview.html";
@@ -156,7 +173,8 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     private static final String MARK_LIST_FORMAT_EXPORT = "format_export_list";
     private static final String MARK_LIST_UNIQUE_FILE = "listUniqueFile";
     private static final String MARK_EXPORT_SUCCESS = "export_success";
-    // Session variables
+    // Session variables: shared by the concurrent requests of a session (several tabs, parallel loads), the views and
+    // actions that read or rebuild them are synchronized
     private String _strSelectedPanelTechnicalCode = StringUtils.EMPTY;
     private transient List<IFormColumn> _listFormColumn;
     private transient List<IFormFilterDisplay> _listFormFilterDisplay;
@@ -182,16 +200,13 @@ public class MultiviewFormsJspBean extends AbstractJspBean
      * @return the view associated to the responses value of all forms
      */
     @View( value = VIEW_MULTIVIEW_FORMS, defaultView = true )
-    public String getMultiviewFormsView( HttpServletRequest request )
+    public synchronized String getMultiviewFormsView( HttpServletRequest request )
     {
         boolean bIsSessionLost = isSessionLost( );
         boolean bHasFilterParameters = hasFilterParameters( request );
         boolean bIsChangePanel = Boolean.parseBoolean( request.getParameter( PARAMETER_CHANGE_PANEL ) );
+        boolean bFormSelectionChanged = hasFormSelectionChanged( request );
 
-        if ( formSelectedAsChanged( request ) )
-        {
-            resetCurrentPaginatorPageIndex( );
-        }
         if ( bIsSessionLost ||  bIsChangePanel )
         {
             initFormRelatedLists( request );
@@ -200,7 +215,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         {
             for ( IFormFilterDisplay formFilterDisplay : _listFormFilterDisplay )
             {
-                if ( hasFilterParameter( request, formFilterDisplay ) )
+                if ( shouldRefreshFilter( request, formFilterDisplay ) )
                 {
                     formFilterDisplay.createFormParameters( request );
                 }
@@ -218,11 +233,15 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
         // Build the Column for the Panel and save their values for the active panel
         initiatePaginatorProperties( request );
+        if ( bFormSelectionChanged )
+        {
+            resetCurrentPaginatorPageIndex( );
+        }
         buildFormItemSortConfiguration( request );
         buildFormPanelDisplayWithData( request, getIndexStart( ), _nItemsPerPage, _formItemSortConfig );
 
         // Build the template of each form filter display
-        if ( bIsSessionLost )
+        if ( bIsSessionLost || bFormSelectionChanged )
         {
             for ( IFormFilterDisplay formFilterDisplay : _listFormFilterDisplay )
             {
@@ -234,7 +253,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         {
             for ( IFormFilterDisplay formFilterDisplay : _listFormFilterDisplay )
             {
-                if ( hasFilterParameter( request, formFilterDisplay ) )
+                if ( shouldRefreshFilter( request, formFilterDisplay ) )
                 {
                     formFilterDisplay.buildTemplate( request, getLocale( ) );
                 }
@@ -310,7 +329,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
      * @throws AccessDeniedException
      */
     @Action( ACTION_EXPORT_RESPONSES )
-    public String doExportResponses( HttpServletRequest request ) throws AccessDeniedException
+    public synchronized String doExportResponses( HttpServletRequest request ) throws AccessDeniedException
     {
         GlobalFormsAction multiviewExportAction = GlobalFormsActionHome.selectGlobalFormActionByCode( FormsConstants.ACTION_FORMS_EXPORT_RESPONSES,
                 FormsPlugin.getPlugin( ), request.getLocale( ) );
@@ -340,8 +359,12 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
         if ( formatExport != null )
         {
-            int idForm = Integer.parseInt( strIdForm );
-            Form form = FormHome.findByPrimaryKey( idForm );
+            Form form = FormHome.findByPrimaryKey( NumberUtils.toInt( strIdForm, NumberUtils.INTEGER_MINUS_ONE ) );
+            if ( form == null )
+            {
+                addError( "forms.export.error.filter", getLocale( ) );
+                return getMultiviewFormsView( request );
+            }
             List<FormFilter> listFormFilter = _listFormFilterDisplay.stream( ).map( IFormFilterDisplay::getFormFilter ).collect( Collectors.toList( ) );
 
             _temporaryFileGeneratorService.generateFile( formatExport.createFileGenerator( form.getTitle( ),
@@ -504,6 +527,21 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     }
 
     /**
+     * Check whether a filter must be refreshed.
+     * The first condition checks whether the request contains a value for the filter.
+     * The second condition ensures that entry filters are refreshed when all their
+     * values have been cleared, because browsers do not send unchecked fields.
+     *
+     * @param request the current request
+     * @param formFilterDisplay the filter to refresh
+     * @return true if the filter values and template must be refreshed
+     */
+    private boolean shouldRefreshFilter( HttpServletRequest request, IFormFilterDisplay formFilterDisplay )
+    {
+        return hasFilterParameter( request, formFilterDisplay ) || formFilterDisplay instanceof FormFilterDisplayEntry;
+    }
+
+    /**
      * Build the list of all columns, filters and forms panels and all of their display equivalents
      * 
      * @param request
@@ -543,19 +581,23 @@ public class MultiviewFormsJspBean extends AbstractJspBean
             }
         }
 
-        IFormFilterDisplay defaultFormFilterDisplay = _listFormFilterDisplay.stream().filter(fd ->
-                fd.getFormFilter() != null
-                        && fd.getFormFilter().getFormFilterConfiguration() != null
-                        && FormResponseSearchItem.FIELD_DATE_CREATION.equals(fd.getFormFilter().getFormFilterConfiguration().getFormFilterName())).findFirst().orElse(null);
+        _formItemSortConfig = buildDefaultFormItemSortConfig( );
+    }
 
-        if (defaultFormFilterDisplay !=null )
-        {
-            _formItemSortConfig = new FormItemSortConfig( defaultFormFilterDisplay.getPosition(), defaultFormFilterDisplay.getFormFilter().getFormFilterConfiguration().getFormFilterName(), true );
-        }
-        else
-        {
-            _formItemSortConfig = new FormItemSortConfig( -1, null, true );
-        }
+    /**
+     * Build the default sort configuration of the form response list: most recently updated responses first
+     * 
+     * @return the default sort configuration
+     */
+    private FormItemSortConfig buildDefaultFormItemSortConfig( )
+    {
+        int nColumnPosition = _listFormColumnDisplay.stream( )
+                .filter( columnDisplay -> columnDisplay.getFormColumn( ) instanceof FormColumnFormResponseDateUpdate )
+                .map( IFormColumnDisplay::getPosition )
+                .findFirst( )
+                .orElse( -1 );
+
+        return new FormItemSortConfig( nColumnPosition, FormResponseSearchItem.FIELD_DATE_UPDATE, false );
     }
 
     /**
@@ -584,14 +626,15 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         // Retrieve the list of all FormFilter
         List<FormFilter> listFormFilter = _listFormFilterDisplay.stream( ).map( IFormFilterDisplay::getFormFilter ).collect( Collectors.toList( ) );
 
-        User user = (User) AdminUserService.getAdminUser( request );
+        User user = AdminUserService.getAdminUser( request );
 
         // Check in filters if the columns list has to be fetch again
-        reloadFormColumnList( listFormFilter, request.getLocale( ), (User) AdminUserService.getAdminUser( request ) );
+        reloadFormColumnList( listFormFilter, request.getLocale( ), AdminUserService.getAdminUser( request ) );
         if ( formSelectedAsChanged( request ) )
         {
             _strFormSelectedValue = request.getParameter( FormsConstants.PARAMETER_ID_FORM );
             reloadFormFilterList( listFormFilter, request );
+            listFormFilter = _listFormFilterDisplay.stream( ).map( IFormFilterDisplay::getFormFilter ).collect( Collectors.toList( ) );
         }
 
         for ( IFormPanelDisplay formPanelDisplay : _listAuthorizedFormPanelDisplay )
@@ -694,8 +737,106 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     }
 
     /**
+     * Persists the multiview column order sent by the drag and drop reordering of the response table columns. Called through AJAX : the request holds one
+     * {@code multiview_column_order_<idQuestion>} parameter per question backing a reordered column, whose value is the new order of the column. After
+     * persisting, the cached column list is rebuilt so the new order is reflected on the next reload of the page.
+     *
+     * @param request
+     *         The Http request
+     * @return a JSON response ( SUCCESS or ERROR )
+     */
+    @Action( value = ACTION_REORDER_COLUMNS, securityTokenDisabled = true )
+    @ResponseBody
+    public String doReorderMultiviewColumns( HttpServletRequest request )
+    {
+        User user = (User) AdminUserService.getAdminUser( request );
+        Map<Integer, Boolean> mapCheckedForms = new HashMap<>( );
+
+        try
+        {
+            for ( Map.Entry<String, String [ ]> parameter : request.getParameterMap( ).entrySet( ) )
+            {
+                String strParameterName = parameter.getKey( );
+                String strPrefix = FormsConstants.PARAMETER_MULTIVIEW_ORDER + "_";
+                if ( !strParameterName.startsWith( strPrefix ) )
+                {
+                    continue;
+                }
+
+                int nIdQuestion = NumberUtils.toInt( strParameterName.substring( strPrefix.length( ) ), FormsConstants.DEFAULT_ID_VALUE );
+                int nOrder = NumberUtils.toInt( request.getParameter( strParameterName ), FormsConstants.DEFAULT_ID_VALUE );
+
+                if ( nIdQuestion == FormsConstants.DEFAULT_ID_VALUE || nOrder == FormsConstants.DEFAULT_ID_VALUE )
+                {
+                    continue;
+                }
+
+                Question question = QuestionHome.findByPrimaryKey( nIdQuestion );
+                if ( question == null )
+                {
+                    continue;
+                }
+
+                if ( !isAuthorizedToReorder( question, request, mapCheckedForms ) )
+                {
+                    throw new AccessDeniedException( StringUtils.EMPTY );
+                }
+
+                question.setMultiviewColumnOrder( nOrder );
+                QuestionHome.update( question );
+            }
+        }
+        catch( AccessDeniedException e )
+        {
+            return JsonUtil.buildJsonResponse( new JsonResponse( RESPONSE_ERROR ) );
+        }
+
+        // Rebuild the cached column list so the new order is reflected on the next reload of the page, without resetting the active filters. The bean is
+        // session scoped and only rebuilds its column list on session loss / panel change, so we force the rebuild here using the currently selected form.
+        int nSelectedIdForm = NumberUtils.toInt( _strFormSelectedValue, FormsConstants.DEFAULT_ID_VALUE );
+        Integer nIdForm = nSelectedIdForm != FormsConstants.DEFAULT_ID_VALUE ? nSelectedIdForm : null;
+        _listFormColumn = _formColumnFactory.buildFormColumnList( nIdForm, getLocale( ), user );
+        _listFormColumnDisplay = FormDisplayFactory.createFormColumnDisplayList( _listFormColumn );
+
+        return JsonUtil.buildJsonResponse( new JsonResponse( RESPONSE_SUCCESS ) );
+    }
+
+    /**
+     * Checks that the current admin user is allowed to modify the params of the form owning the given question. The result is cached per form id for the
+     * duration of the request to avoid redundant RBAC checks.
+     *
+     * @param question
+     *         The question whose owning form permission is checked
+     * @param request
+     *         The Http request
+     * @param mapCheckedForms
+     *         A cache of already checked form ids
+     * @return {@code true} if the user is authorized, {@code false} otherwise
+     */
+    private boolean isAuthorizedToReorder( Question question, HttpServletRequest request, Map<Integer, Boolean> mapCheckedForms )
+    {
+        Step step = StepHome.findByPrimaryKey( question.getIdStep( ) );
+        if ( step == null )
+        {
+            return false;
+        }
+
+        return mapCheckedForms.computeIfAbsent( step.getIdForm( ), id -> {
+            try
+            {
+                checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( id ), FormsResourceIdService.PERMISSION_MODIFY_PARAMS, request, null );
+                return true;
+            }
+            catch( AccessDeniedException e )
+            {
+                return false;
+            }
+        } );
+    }
+
+    /**
      * Reload the form column list form the form filter list
-     * 
+     *
      * @param listFormFilter
      *            the form filter list
      */
@@ -745,13 +886,18 @@ public class MultiviewFormsJspBean extends AbstractJspBean
      * @param request
      * @return true if the form selection has changed, false otherwise
      */
+    private boolean hasFormSelectionChanged( HttpServletRequest request )
+    {
+        String strFormSelectedNewValue = request.getParameter( FormsConstants.PARAMETER_ID_FORM );
+        return strFormSelectedNewValue != null && !strFormSelectedNewValue.equals( _strFormSelectedValue );
+    }
+
     private boolean formSelectedAsChanged( HttpServletRequest request )
     {
         String strFormSelectedNewValue = request.getParameter( FormsConstants.PARAMETER_ID_FORM );
-        boolean bIdFormHasChanged = false;
+        boolean bIdFormHasChanged = hasFormSelectionChanged( request );
         if ( strFormSelectedNewValue != null )
         {
-            bIdFormHasChanged = !strFormSelectedNewValue.equals( _strFormSelectedValue );
             _strFormSelectedValue = strFormSelectedNewValue;
         }
 

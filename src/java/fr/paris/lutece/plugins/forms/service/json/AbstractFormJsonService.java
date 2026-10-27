@@ -67,6 +67,7 @@ import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.Group;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.Step;
+import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.business.Transition;
 import fr.paris.lutece.plugins.forms.business.export.FormExportConfig;
 import fr.paris.lutece.plugins.forms.service.IFormDatabaseService;
@@ -80,9 +81,20 @@ import jakarta.transaction.Transactional;
 public abstract class AbstractFormJsonService
 {
     private static final String PROPERTY_COPY_STEP_TITLE = "forms.copyStep.title";
+    private static final String QUESTION_CODE_PREFIX = "question_";
 
     protected final IFormDatabaseService _formDatabaseService;
     protected ObjectMapper _objectMapper;
+
+    /**
+     * Constructor required by CDI: Weld checks that every type of a normal-scoped bean is proxyable when it re-creates the client proxy of a
+     * session read on another cluster member (the forms back office bean keeps this service), otherwise WELD-001435 and the bean of the user is
+     * lost. Only used by the proxy, which delegates to the contextual instance.
+     */
+    protected AbstractFormJsonService( )
+    {
+        this( null );
+    }
 
     protected AbstractFormJsonService( IFormDatabaseService formDatabaseService )
     {
@@ -189,6 +201,10 @@ public abstract class AbstractFormJsonService
         {
             step.setTitle( strTitleCopyStep );
         }
+        if ( step.isInitial( ) && StepHome.getInitialStep( idForm ) != null )
+        {
+            step.setInitial( false );
+        }
 
         importSteps( idForm, Collections.singletonList( step ), groupList, null, questionList, formDisplayList );
         importQuestions( idForm, questionList, controlList, controlMappingList, formDisplayList, null );
@@ -228,6 +244,8 @@ public abstract class AbstractFormJsonService
         Map<Integer, Integer> mapIdFields = new HashMap<>( );
 
         Map<Integer, Integer> mapIdQuestions = new HashMap<>( );
+        Set<String> setQuestionCodes = _formDatabaseService.getListQuestionByForm( newIdForm ).stream( ).map( Question::getCode )
+                .collect( Collectors.toSet( ) );
         for ( Question question : questionList )
         {
             int oldIdQuestion = question.getId( );
@@ -237,6 +255,7 @@ public abstract class AbstractFormJsonService
             entry.setResourceType( Form.RESOURCE_TYPE );
             _formDatabaseService.createEntry( entry );
             question.setIdEntry( entry.getIdEntry( ) );
+            synchronizeQuestionCode( question, entry, setQuestionCodes );
 
             List<Field> fieldList = entry.getFields( );
             for ( Field field : fieldList )
@@ -260,6 +279,46 @@ public abstract class AbstractFormJsonService
         {
             updateExportConfigWithNewQuestion( formExportConfigList, mapIdQuestions );
         }
+    }
+
+    /**
+     * Check if the question has a unique code, if not, generate an available one.
+     *
+     * @param question the imported question
+     * @param entry the imported question entry
+     * @param setQuestionCodes the codes already used in the target form
+     */
+    private void synchronizeQuestionCode( Question question, Entry entry, Set<String> setQuestionCodes )
+    {
+        String strCode = entry.getCode( );
+        if ( StringUtils.isEmpty( strCode ) || !setQuestionCodes.add( strCode ) )
+        {
+            strCode = generateAvailableQuestionCode( entry.getIdEntry( ), setQuestionCodes );
+            entry.setCode( strCode );
+            _formDatabaseService.updateEntry( entry );
+        }
+
+        question.setCode( strCode );
+    }
+
+    /**
+     * Generates a technical code that is available in the target form.
+     *
+     * @param nIdEntry the imported entry identifier
+     * @param setQuestionCodes the codes already used in the target form
+     * @return an available question code
+     */
+    private String generateAvailableQuestionCode( int nIdEntry, Set<String> setQuestionCodes )
+    {
+        String strBaseCode = QUESTION_CODE_PREFIX + nIdEntry;
+        String strCode = strBaseCode;
+        int nSuffix = 1;
+
+        while ( !setQuestionCodes.add( strCode ) )
+        {
+            strCode = strBaseCode + "_" + nSuffix++;
+        }
+        return strCode;
     }
 
     protected void importGroups( List<Group> groupList, List<FormDisplay> formDisplayList )

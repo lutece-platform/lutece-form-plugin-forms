@@ -100,8 +100,9 @@ public class ListMaxResponseValidator extends AbstractValidator
     @Override
     public boolean validate( FormQuestionResponse questionResponse, Control control )
     {
-    	return questionResponse.getEntryResponse( ).size() <= Integer.parseInt(control.getValue( ));
-       
+        int nMaxResponse = getControlValueAsInt( control );
+
+        return ( nMaxResponse >= 0 ) && questionResponse.getEntryResponse( ).size( ) <= nMaxResponse;
     }
 
     @Override

@@ -79,9 +79,13 @@ public class FormFilterDisplayFormResponseDate extends AbstractFormFilterDisplay
     @Override
     public Map<String, Object> getFilterDisplayMapValues( HttpServletRequest request )
     {
-        String strPeriodDate = request.getParameter( getFormFilter( ).getFormFilterConfiguration( ).getFormFilterName( ) );
-        String strPeriodFrom = request.getParameter( getFormFilter( ).getFormFilterConfiguration( ).getFormFilterName( ) + FROM );
-        String strPeriodTo = request.getParameter( getFormFilter( ).getFormFilterConfiguration( ).getFormFilterName( ) + TO );
+        boolean bFormSelectionChanged = hasFormSelectionChanged( request );
+        String strPeriodDate = bFormSelectionChanged ? null
+                : request.getParameter( getFormFilter( ).getFormFilterConfiguration( ).getFormFilterName( ) );
+        String strPeriodFrom = bFormSelectionChanged ? null
+                : request.getParameter( getFormFilter( ).getFormFilterConfiguration( ).getFormFilterName( ) + FROM );
+        String strPeriodTo = bFormSelectionChanged ? null
+                : request.getParameter( getFormFilter( ).getFormFilterConfiguration( ).getFormFilterName( ) + TO );
         setValue( strPeriodDate );
 
         if( !StringUtils.isEmpty( strPeriodDate ) && StringUtils.isEmpty( strPeriodFrom ) && StringUtils.isEmpty( strPeriodTo ) )

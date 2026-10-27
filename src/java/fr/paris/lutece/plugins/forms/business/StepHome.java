@@ -39,6 +39,7 @@ import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.util.ReferenceList;
 import jakarta.enterprise.inject.spi.CDI;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -219,7 +220,8 @@ public final class StepHome
             listIdStep = _dao.selectIdStepsListByForm( nIdForm, _plugin );
             _cache.put( stepCacheKey, listIdStep );
         }
-        return listIdStep;
+        // A copy: the cached list is shared by every reader when the cache returns its own instance (Hazelcast near cache)
+        return new ArrayList<>( listIdStep );
     }
 
     /**

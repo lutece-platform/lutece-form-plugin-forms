@@ -23,7 +23,7 @@
                     <@input type='hidden' name='id_form' value='${step.idForm}' />
                     <@input type='hidden' name='id_step' value='${step.id}' />
                     <@input type='hidden' name='title' value='${stepTitle}' />
-                    <@button type='submit' name='action_modifyStep' buttonIcon='cog' title='#i18n{forms.manage_questions.action.step}' hideTitle=['all'] />
+                    <@button type='submit' name='view_manageTransitions' buttonIcon='cog' title='#i18n{forms.manage_questions.action.step}' hideTitle=['all'] />
                 </@tform> 
             </#if>  
 			</@pageHeader>
@@ -180,6 +180,14 @@
                         </@columns>
                     </@row>
                     </@tform>
+                    <#list composite_list as composite>
+                    <@tform id='duplicate-question-${composite.formDisplay.compositeId}' action='jsp/admin/plugins/forms/ManageQuestions.jsp' method='post' class='d-none'>
+                        <@input type='hidden' name='action' value='duplicateQuestion' />
+                        <@input type='hidden' name='id_step' value='${step.id}' />
+                        <@input type='hidden' name='id_target' value='${composite.formDisplay.compositeId}' />
+                        <@input type='hidden' name='_csrftoken' value='${(link_tokens.duplicateQuestion)!}' />
+                    </@tform>
+                    </#list>
                 </@div>
             </@tabContent>
         </@formTabs>

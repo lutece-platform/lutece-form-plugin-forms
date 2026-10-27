@@ -71,6 +71,28 @@ public interface IFormResponseDAO
      */
     void delete( int nKey, Plugin plugin );
 
+    /**
+     * Update the record of a form response only if it is still a draft (from_save = 1) in the table
+     * 
+     * @param formResponse
+     *            the FormResponse to update
+     * @param plugin
+     *            the Plugin
+     * @return true if the record was a draft and has been updated, false otherwise
+     */
+    boolean storeIfDraft( FormResponse formResponse, Plugin plugin );
+
+    /**
+     * Delete the record of a form response only if it is still a draft (from_save = 1) in the table
+     * 
+     * @param nKey
+     *            The identifier of the FormResponse to delete
+     * @param plugin
+     *            the Plugin
+     * @return true if the record was a draft and has been deleted, false otherwise
+     */
+    boolean deleteIfDraft( int nKey, Plugin plugin );
+
     // /////////////////////////////////////////////////////////////////////////
     // Finders
 

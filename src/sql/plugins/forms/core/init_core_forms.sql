@@ -57,3 +57,17 @@ INSERT INTO core_dashboard(dashboard_name, dashboard_column, dashboard_order) VA
 --
 DELETE FROM core_portlet_type where id_portlet_type = 'FORMS_LIST_PORTLET';
 INSERT INTO core_portlet_type (id_portlet_type,name,url_creation,url_update,home_class,plugin_name,url_docreate,create_script,create_specific,create_specific_form,url_domodify,modify_script,modify_specific,modify_specific_form,icon_name) VALUES ('FORMS_LIST_PORTLET','forms.portlet.formsList.name','plugins/forms/CreateFormsListPortlet.jsp','plugins/forms/ModifyFormsListPortlet.jsp','fr.paris.lutece.plugins.forms.business.portlet.FormsListPortletHome','forms','plugins/forms/DoCreateFormsListPortlet.jsp','/admin/portlet/script_create_portlet.html','/admin/plugins/forms/portlet/create_portlet_formslist.html','','plugins/forms/DoModifyFormsListPortlet.jsp','/admin/portlet/script_modify_portlet.html','/admin/plugins/forms/portlet/modify_portlet_formslist.html','','list-details');
+
+-- changeset forms:init_core_forms.sql-rev2
+-- preconditions onFail:MARK_RAN onError:WARN
+-- The admin user of the core (id 1) gets the forms features, and the super_admin role of the core (held by admin)
+-- every permission on every forms resource type
+DELETE FROM core_user_right WHERE id_user = 1 AND id_right IN ('FORMS_MANAGEMENT','FORMS_MULTIVIEW','FORMS_CATEGORIES','FORMS_SEARCH_INDEXATION');
+INSERT INTO core_user_right (id_right,id_user) VALUES ('FORMS_MANAGEMENT',1);
+INSERT INTO core_user_right (id_right,id_user) VALUES ('FORMS_MULTIVIEW',1);
+INSERT INTO core_user_right (id_right,id_user) VALUES ('FORMS_CATEGORIES',1);
+INSERT INTO core_user_right (id_right,id_user) VALUES ('FORMS_SEARCH_INDEXATION',1);
+DELETE FROM core_admin_role_resource WHERE role_key = 'super_admin' AND resource_type IN ('FORMS_FORM','FORM_PANEL_CONF','GLOBAL_FORMS_ACTION');
+INSERT INTO core_admin_role_resource (role_key,resource_type,resource_id,permission) VALUES ('super_admin','FORMS_FORM','*','*');
+INSERT INTO core_admin_role_resource (role_key,resource_type,resource_id,permission) VALUES ('super_admin','FORM_PANEL_CONF','*','*');
+INSERT INTO core_admin_role_resource (role_key,resource_type,resource_id,permission) VALUES ('super_admin','GLOBAL_FORMS_ACTION','*','*');

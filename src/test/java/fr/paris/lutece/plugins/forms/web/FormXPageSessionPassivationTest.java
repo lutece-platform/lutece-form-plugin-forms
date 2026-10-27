@@ -40,12 +40,15 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serial;
 import java.io.Serializable;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
@@ -53,10 +56,14 @@ import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseStep;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.Step;
+import fr.paris.lutece.plugins.forms.web.breadcrumb.HorizontalBreadcrumb;
+import fr.paris.lutece.plugins.forms.web.breadcrumb.IBreadcrumb;
+import fr.paris.lutece.plugins.forms.web.breadcrumb.VerticalBreadcrumb;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.EntryType;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.test.LuteceTestCase;
+import jakarta.enterprise.context.ApplicationScoped;
 
 /**
  * Regression guard for cluster session passivation.
@@ -80,10 +87,10 @@ import fr.paris.lutece.test.LuteceTestCase;
  *   <li>a compound holder combining both so we also catch cross-field regressions.</li>
  * </ul>
  *
- * {@code IBreadcrumb}-typed and service fields are not exercised here: in
- * production they hold CDI client proxies, so their serializability is the
- * responsibility of the CDI container (Weld in OpenLiberty) and would fail at
- * deployment-time passivation validation, not at runtime.
+ * The {@code IBreadcrumb} field holds a CDI client proxy: Weld re-creates it when the
+ * session is read on another node, which fails at runtime (not at deployment) if the
+ * bean class is not proxyable. {@link #testBreadcrumbBeansAreProxyable()}
+ * covers it. Injected service fields are not exercised here.
  */
 public class FormXPageSessionPassivationTest extends LuteceTestCase
 {
@@ -160,6 +167,25 @@ public class FormXPageSessionPassivationTest extends LuteceTestCase
         assertEquals( 7, restored._currentStep.getId( ) );
         assertEquals( "current", restored._currentStep.getTitle( ) );
         assertEquals( 2, restored._formResponseManager.getValidatedSteps( ).size( ) );
+    }
+
+    /**
+     * FormXPage keeps the breadcrumb of the current form as a CDI client proxy. When another cluster member
+     * reads the session, Weld re-creates the proxy and checks that the bean class is proxyable: a normal-scoped
+     * bean needs a non-private no-args constructor (CDI spec), otherwise WELD-001435 and the whole FormXPage
+     * state is lost ("session expired"). The Weld used by unit tests does not enforce this check on
+     * deserialization, so the requirement is asserted directly.
+     */
+    @Test
+    public void testBreadcrumbBeansAreProxyable( )
+    {
+        for ( Class<? extends IBreadcrumb> breadcrumbClass : List.of( VerticalBreadcrumb.class, HorizontalBreadcrumb.class ) )
+        {
+            Assertions.assertTrue( breadcrumbClass.isAnnotationPresent( ApplicationScoped.class ), breadcrumbClass.getName( ) );
+            Constructor<?> constructor = Assertions.assertDoesNotThrow( ( ) -> breadcrumbClass.getDeclaredConstructor( ),
+                    breadcrumbClass.getName( ) + " must declare a no-args constructor" );
+            Assertions.assertFalse( Modifier.isPrivate( constructor.getModifiers( ) ), breadcrumbClass.getName( ) + " no-args constructor must not be private" );
+        }
     }
 
     @SuppressWarnings( "unchecked" )

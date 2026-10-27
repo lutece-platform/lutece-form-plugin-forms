@@ -196,7 +196,8 @@ public final class QuestionHome
             _cache.put( cacheKey, listQuestion );
         }
 
-        return listQuestion;
+        // A copy: the cached list is shared by every reader when the cache returns its own instance (Hazelcast near cache)
+        return new ArrayList<>( listQuestion );
     }
 
     /**
@@ -242,7 +243,8 @@ public final class QuestionHome
             _cache.put( cacheKey, listQuestion );
         }
 
-        return listQuestion;
+        // A copy: the cached list is shared by every reader when the cache returns its own instance (Hazelcast near cache)
+        return new ArrayList<>( listQuestion );
     }
 
     /**

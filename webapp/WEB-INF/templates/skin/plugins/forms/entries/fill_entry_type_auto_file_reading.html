@@ -5,7 +5,7 @@
 <#assign helpMsg = '' />
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
 <#assign fieldName=idName >
-<#if list_responses?? && list_responses?has_content><#assign response_error = list_responses[0]><#if response_error.entry.idEntry == entry.idEntry && response_error.entry.error?? && response_error.entry.error.isDisplayableError><#assign error = response_error.entry.error><#assign errorMsg><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#assign></#if></#if>
+<#if list_responses?? && list_responses?has_content><#assign response_error = list_responses[0]><#if response_error.entry.idEntry == entry.idEntry && response_error.entry.error?? && response_error.entry.error.isDisplayableError><#assign error = response_error.entry.error><#assign errorMsg><#if error.mandatoryError><#if entry.errorMessage?has_content>${entry.errorMessage}<#else>#i18n{forms.message.mandatory.entry}</#if><#else>${error.errorMessage}</#if></#assign></#if></#if>
 <#assign entryCSSClass><#list entry.CSSClass?split(' ') as ecc><#if !ecc?contains('col')> ${ecc} </#if></#list></#assign>
 <#if entry.helpMessage?exists&&entry.helpMessage!=''><#assign helpMsg>${entry.helpMessage}</#assign></#if>
 <@cField class=entryCSSClass!?trim label=entry.title! for=idName! required=entry.mandatory! >
