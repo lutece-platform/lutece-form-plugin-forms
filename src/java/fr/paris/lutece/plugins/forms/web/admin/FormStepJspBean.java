@@ -68,6 +68,7 @@ import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -489,9 +490,12 @@ public class FormStepJspBean extends AbstractJspBean
                     FormJsonService.getInstance( ).jsonImportStep( nIdForm, json, getLocale( ) );
                     addInfo( INFO_STEP_COPIED, getLocale( ) );
                 }
-                catch( JsonProcessingException e )
+                catch( JsonProcessingException | AppException e )
                 {
-                    AppLogService.error( "Error while copying step", e );
+                    // a failed copy said nothing at all : the list of steps came back without the copy and without a word. The message
+                    // this reports has existed in both bundles since the beginning, and the export action below already uses it
+                    AppLogService.error( "Forms : the step {} could not be copied", nIdStep, e );
+                    addError( ERROR_STEP_NOT_COPIED, getLocale( ) );
                 }
             }
         }
