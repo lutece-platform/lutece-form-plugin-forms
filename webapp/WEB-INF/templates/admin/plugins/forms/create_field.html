@@ -23,11 +23,11 @@
 							<@input type='file' id='illustration_image'  name='illustration_image' />
 						</@formGroup>
 						<@formGroup>
-							<@checkBox labelFor='default_value' labelKey='#i18n{forms.createField.labelDefaultValue}' name='default_value' id='default_value' value='1' />
+							<@checkBox labelKey='#i18n{forms.createField.labelDefaultValue}' name='default_value' id='default_value' value='1' />
 						</@formGroup>
 						<#if option_no_display_title>
 							<@formGroup>
-								<@checkBox labelFor='no_display_title' labelKey='#i18n{forms.createField.labelNoDisplayTitle}' name='no_display_title' id='no_display_title' value='1' checked=field.noDisplayTitle />
+								<@checkBox labelKey='#i18n{forms.createField.labelNoDisplayTitle}' name='no_display_title' id='no_display_title' value='1' checked=field.noDisplayTitle />
 							</@formGroup>
 						</#if>
 						<@formGroup>

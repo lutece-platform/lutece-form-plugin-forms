@@ -20,10 +20,10 @@
 						<@input type='textarea' name='description'>${step.description!}</@input>
 					</@formGroup>
 					<@formGroup labelKey='#i18n{forms.modify_step.labelInitial}' helpKey='#i18n{forms.modify_step.labelInitial.help}'>
-						<@checkBox orientation='switch' labelFor='initial' name='initial' id='initial' value='1' checked=(step?has_content && step.initial) />
+						<@checkBox orientation='switch' name='initial' id='initial' value='1' checked=(step?has_content && step.initial) />
 					</@formGroup>
 					<@formGroup labelKey='#i18n{forms.modify_step.labelFinal}' helpKey='#i18n{forms.modify_step.labelFinal.help}'>
-						<@checkBox labelFor='final' name='final' id='final' value='1' checked=(step?has_content && step.final) />
+						<@checkBox name='final' id='final' value='1' checked=(step?has_content && step.final) />
 					</@formGroup>
 					<@formsButton okAction='modifyStep' viewAction='manageSteps' />
 				</@tform>
