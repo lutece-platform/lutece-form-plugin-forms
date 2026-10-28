@@ -124,7 +124,7 @@ public class FormJsonService extends AbstractFormJsonService
                     field.setLinkedItem( ReferenceItemHome.findByPrimaryKey( idItem ) );
                 }
             }
-            controlList.addAll( ControlHome.getControlByQuestion( question.getId( ) ) );
+            addControlsOnce( controlList, ControlHome.getControlByQuestion( question.getId( ) ) );
         }
         List<ControlMapping> controlMappingList = new ArrayList<>( );
         for ( Control control : controlList )
@@ -243,6 +243,9 @@ public class FormJsonService extends AbstractFormJsonService
 
     private void updateControlWithNewTransition( List<Control> controlList, Map<Integer, Integer> mapIdTransitions )
     {
+        controlList.removeIf( control -> ControlType.TRANSITION.getLabel( ).equals( control.getControlType( ) )
+                && isUnresolvedReference( mapIdTransitions, control.getIdControlTarget( ), "control " + control.getId( ), "target transition" ) );
+
         for ( Control control : controlList )
         {
             if ( ControlType.TRANSITION.getLabel( ).equals( control.getControlType( ) ) )
