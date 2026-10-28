@@ -42,6 +42,8 @@ import fr.paris.lutece.portal.service.event.ResourceEventManager;
 
 public class FormsCacheService extends AbstractCacheableService implements EventRessourceListener
 {
+    public static final String BEAN_NAME = "forms.cacheService";
+
 
     private static final String CACHE_NAME = "formsCacheService";
 
