@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.web.admin;
 
+import java.util.Set;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -457,7 +458,10 @@ public class FormTransitionJspBean extends AbstractJspBean
         {
             TransitionHome.remove( _transition.getId( ) );
 
+            Set<Integer> setIdControlGroup = ControlHome.getControlGroupsByControlTargetAndType( _transition.getId( ), ControlType.TRANSITION );
+
             ControlHome.removeByControlTarget( _transition.getId( ), ControlType.TRANSITION );
+            ControlHome.removeEmptyControlGroups( setIdControlGroup );
 
             TransitionHome.rebuildPrioritySequence( _transition.getFromStep( ) );
 
