@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
@@ -115,9 +114,6 @@ public class FormResponseService
 
             IndexerActionHome.removeByFormResponse( formResponse.getId( ) , FormsPlugin.getPlugin( ) );
 
-            List<Integer> listIdResource = new ArrayList<>( );
-            listIdResource.add( formResponse.getId( ) );
-
             WorkflowService.getInstance( ).doRemoveWorkFlowResource( formResponse.getId( ), FormResponse.RESOURCE_TYPE );
 
             TransactionManager.commitTransaction( FormsPlugin.getPlugin( ) );
@@ -125,7 +121,7 @@ public class FormResponseService
         catch( Exception e )
         {
             TransactionManager.rollBack( FormsPlugin.getPlugin( ) );
-            throw new AppException( e.getMessage( ), e );
+            throw new AppException( "Forms : the removal of the form response " + formResponse.getId( ) + " failed", e );
         }
 
         _formService.fireFormResponseEventDelete( formResponse );

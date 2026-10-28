@@ -40,6 +40,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -49,11 +51,14 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
 import fr.paris.lutece.plugins.forms.business.Control;
+import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.Group;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.Step;
+import fr.paris.lutece.plugins.forms.service.FormsPlugin;
+import fr.paris.lutece.plugins.forms.service.cache.FormsCacheService;
 import fr.paris.lutece.plugins.forms.service.IFormDatabaseService;
 import fr.paris.lutece.plugins.forms.service.IFormDisplayService;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeCheckBox;
@@ -74,10 +79,15 @@ import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.file.FileService;
 import fr.paris.lutece.portal.service.file.IFileStoreServiceProvider;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.message.AdminMessage;
+import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.image.ImageResourceManager;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.util.ReferenceList;
+import fr.paris.lutece.util.sql.TransactionManager;
 
 public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
 {
@@ -151,7 +161,9 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
     private static final String PROPERTY_MODIFY_QUESTION_TITLE = "forms.modifyEntry.titleQuestion";
     private static final String PROPERTY_MOVE_GROUP_TITLE = "forms.moveComposite.group.title";
     private static final String PROPERTY_MOVE_QUESTION_TITLE = "forms.moveComposite.question.title";
+    private static final String PROPERTY_COPY_QUESTION_TITLE = "forms.copyQuestion.title";
 
+    private static final String QUESTION_CODE_PREFIX = "question_";
     private static final String GROUP_VALIDATION_ATTRIBUTES_PREFIX = "forms.model.entity.group.attribute.";
     private static final String ENTRY_COMMENT_TITLE = "forms.manage_questions.type.comment.title";
 
@@ -781,7 +793,9 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         int nIdOriginParent = _formDisplay.getParentId( );
         int nOriginDisplayOrder = _formDisplay.getDisplayOrder( );
 
-        List<FormDisplay> listDisplayInTargetGroup = getFormDatabaseService( ).getFormDisplayListByParent( nIdStepTarget, nIdParentTarget );
+        // copied because getFormDisplayListByParent hands out the cached instance
+        List<FormDisplay> listDisplayInTargetGroup = new ArrayList<>(
+                getFormDatabaseService( ).getFormDisplayListByParent( nIdStepTarget, nIdParentTarget ) );
 
         formDisplayToMove.setParentId( nIdParentTarget );
 
@@ -797,9 +811,15 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
             // before adding it at the right index
             if ( ( nIdOriginStep == nIdStepTarget && nIdOriginParent == nIdParentTarget ) )
             {
-                listDisplayInTargetGroup.remove( nOriginDisplayOrder - 1 );
+                // located by identifier rather than by display_order, which may hold gaps or duplicates
+                int nIndexOrigin = indexOfDisplay( listDisplayInTargetGroup, formDisplayToMove.getId( ) );
+
+                if ( nIndexOrigin != INTEGER_MINUS_ONE )
+                {
+                    listDisplayInTargetGroup.remove( nIndexOrigin );
+                }
             }
-            listDisplayInTargetGroup.add( nDisplayOrderTarget - 1, formDisplayToMove );
+            listDisplayInTargetGroup.add( Math.min( Math.max( nDisplayOrderTarget - 1, 0 ), listDisplayInTargetGroup.size( ) ), formDisplayToMove );
 
             getFormDisplayService( ).rebuildDisplayPositionSequence( listDisplayInTargetGroup );
         }
@@ -822,10 +842,8 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
      */
     protected String processQuestionDuplication( HttpServletRequest request )
     {
-        int nIdQuestion = INTEGER_MINUS_ONE;
-
-        String strIdQuestion = request.getParameter( FormsConstants.PARAMETER_ID_TARGET );
-        int nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
+        int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
+        int nIdQuestion = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_TARGET ), FormsConstants.DEFAULT_ID_VALUE );
         Question questionToCopy = null;
 
         if ( ( _step == null ) || nIdStep != _step.getId( ) )
@@ -833,69 +851,179 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
             _step = getFormDatabaseService( ).findStepByPrimaryKey( nIdStep );
         }
 
-        if ( StringUtils.isNotEmpty( strIdQuestion ) )
+        _question = getFormDatabaseService( ).findQuestionByPrimaryKey( nIdQuestion );
+
+        FormDisplay formDisplayToCopy = ( _step == null || _question == null ) ? null
+                : getFormDatabaseService( ).getFormDisplayByFormStepAndComposite( _step.getIdForm( ), _step.getId( ), _question.getId( ) );
+
+        if ( formDisplayToCopy == null )
         {
-            nIdQuestion = Integer.parseInt( strIdQuestion );
+            AppLogService.error( "Forms duplication : no display found for the question {} of the step {}", nIdQuestion, nIdStep );
+
+            return AdminMessageService.getMessageUrl( request, ERROR_QUESTION_NOT_CREATED, AdminMessage.TYPE_ERROR );
         }
 
         // Get the question to copy and clone it
         try
         {
-            _question = getFormDatabaseService( ).findQuestionByPrimaryKey( nIdQuestion );
             questionToCopy = _question.clone( );
             questionToCopy.setEntry( _question.getEntry( ) );
         }
         catch( CloneNotSupportedException e )
         {
-            AppLogService.error( "Unable to clone question with id " + nIdQuestion, e );
-            return null;
+            AppLogService.error( "Unable to clone the question {}", nIdQuestion, e );
+
+            return AdminMessageService.getMessageUrl( request, ERROR_QUESTION_NOT_CREATED, AdminMessage.TYPE_ERROR );
         }
 
-        // Create a duplicated entry
-        Entry duplicatedEntry = getFormDatabaseService( ).copyEntry( _question.getEntry( ) );
-        duplicatedEntry.setTitle( "Copie de " + duplicatedEntry.getTitle( ) );
-        duplicatedEntry.setCode( "question_" + duplicatedEntry.getIdEntry( ) );
+        TransactionManager.beginTransaction( FormsPlugin.getPlugin( ) );
 
-        getFormDatabaseService( ).updateEntry( duplicatedEntry );
-
-        // Get the question controls
-        List<Control> listControlsToDuplicate = getFormDatabaseService( ).getControlByQuestion( _question.getId( ) );
-
-        FormDisplay formDisplayToCopy = getFormDatabaseService( ).getFormDisplayByFormStepAndComposite( _step.getIdForm( ), _step.getId( ),
-                _question.getId( ) );
-
-        questionToCopy.setEntry( duplicatedEntry );
-        questionToCopy.setIdEntry( duplicatedEntry.getIdEntry( ) );
-        questionToCopy.setTitle( "Copie de " + questionToCopy.getTitle( ) );
-        questionToCopy.setCode( duplicatedEntry.getCode( ) );
-
-        getFormDatabaseService( ).createQuestion( questionToCopy );
-
-        // Duplicates the controls of the question
-        for ( Control control : listControlsToDuplicate )
+        try
         {
+            // EntryHome.copy writes the generated key on the entry it is given, so the source identifier has to be read before the call
+            int nIdEntrySource = _question.getEntry( ).getIdEntry( );
 
-            Set<Integer> listQuestion = new HashSet<>( );
-            listQuestion.add( questionToCopy.getId( ) );
-            control.setListIdQuestion( listQuestion );
-            control.setIdControlTarget( questionToCopy.getId( ) );
-            getFormDatabaseService( ).createControl( control );
+            // Create a duplicated entry
+            Entry duplicatedEntry = getFormDatabaseService( ).copyEntry( _question.getEntry( ) );
+            duplicatedEntry.setTitle( getCopyTitle( duplicatedEntry.getTitle( ) ) );
+            duplicatedEntry.setCode( generateAvailableQuestionCode( duplicatedEntry.getIdEntry( ) ) );
+
+            getFormDatabaseService( ).updateEntry( duplicatedEntry );
+
+            // Only the validation controls belong to the question itself. A conditional control targets a display and a transition control targets a
+            // transition : duplicating the question must not add a second condition on them, and their target is not a question identifier.
+            List<Control> listControlsToDuplicate = getFormDatabaseService( ).getControlByQuestion( _question.getId( ) ).stream( )
+                    .filter( control -> ControlType.VALIDATION.getLabel( ).equals( control.getControlType( ) ) ).collect( Collectors.toList( ) );
+
+            questionToCopy.setEntry( duplicatedEntry );
+            questionToCopy.setIdEntry( duplicatedEntry.getIdEntry( ) );
+            questionToCopy.setTitle( getCopyTitle( questionToCopy.getTitle( ) ) );
+            questionToCopy.setCode( duplicatedEntry.getCode( ) );
+
+            getFormDatabaseService( ).createQuestion( questionToCopy );
+
+            // Duplicates the controls of the question
+            for ( Control control : listControlsToDuplicate )
+            {
+
+                Set<Integer> listQuestion = new HashSet<>( );
+                listQuestion.add( questionToCopy.getId( ) );
+                control.setListIdQuestion( listQuestion );
+                control.setIdControlTarget( questionToCopy.getId( ) );
+                getFormDatabaseService( ).createControl( control );
+            }
+
+            if ( questionToCopy.getId( ) != INTEGER_MINUS_ONE )
+            {
+                FormDisplay formDisplay = new FormDisplay( );
+                formDisplay.setFormId( _step.getIdForm( ) );
+                formDisplay.setStepId( questionToCopy.getIdStep( ) );
+                formDisplay.setParentId( formDisplayToCopy.getParentId( ) );
+                formDisplay.setCompositeId( questionToCopy.getId( ) );
+                formDisplay.setCompositeType( CompositeDisplayType.QUESTION.getLabel( ) );
+                formDisplay.setDepth( formDisplayToCopy.getDepth( ) );
+                getFormDatabaseService( ).createFormDisplay( formDisplay );
+
+                // The insert always gives the copy the last position of its group : move it right after the duplicated question.
+                // The list is copied because getFormDisplayListByParent hands out the cached instance, and the source is located by
+                // its identifier rather than by its display_order, which may hold gaps or duplicates.
+                List<FormDisplay> listDisplayInGroup = new ArrayList<>(
+                        getFormDatabaseService( ).getFormDisplayListByParent( formDisplay.getStepId( ), formDisplay.getParentId( ) ) );
+                listDisplayInGroup.removeIf( display -> display.getId( ) == formDisplay.getId( ) );
+
+                int nIndexSource = indexOfDisplay( listDisplayInGroup, formDisplayToCopy.getId( ) );
+
+                if ( nIndexSource == INTEGER_MINUS_ONE )
+                {
+                    listDisplayInGroup.add( formDisplay );
+                }
+                else
+                {
+                    listDisplayInGroup.add( nIndexSource + 1, formDisplay );
+                }
+                getFormDisplayService( ).rebuildDisplayPositionSequence( listDisplayInGroup );
+            }
+            else
+            {
+                // committing here would leave a question with no display : absent from the screen that lists them, therefore impossible to remove
+                throw new AppException( "Forms duplication : the copy of the question " + nIdQuestion + " received no identifier" );
+            }
+
+            TransactionManager.commitTransaction( FormsPlugin.getPlugin( ) );
         }
-
-        if ( questionToCopy.getId( ) != INTEGER_MINUS_ONE )
+        catch( Exception e )
         {
-            FormDisplay formDisplay = new FormDisplay( );
-            formDisplay.setDisplayOrder( formDisplayToCopy.getDisplayOrder( ) + 1 );
-            formDisplay.setFormId( _step.getIdForm( ) );
-            formDisplay.setStepId( questionToCopy.getIdStep( ) );
-            formDisplay.setParentId( formDisplayToCopy.getParentId( ) );
-            formDisplay.setCompositeId( questionToCopy.getId( ) );
-            formDisplay.setCompositeType( CompositeDisplayType.QUESTION.getLabel( ) );
-            formDisplay.setDepth( formDisplayToCopy.getDepth( ) );
-            getFormDatabaseService( ).createFormDisplay( formDisplay );
+            TransactionManager.rollBack( FormsPlugin.getPlugin( ) );
+            // the caches were repopulated while the transaction was running : they now describe rows the rollback has undone
+            SpringContextService.<FormsCacheService> getBean( FormsCacheService.BEAN_NAME ).resetCache( );
+
+            throw new AppException( "Forms : the duplication of the question " + nIdQuestion + " failed", e );
         }
 
         return null;
+    }
+
+    /**
+     * Builds the title of a copy.
+     *
+     * @param strTitle
+     *            the title of the duplicated element
+     * @return the localized title of the copy, or the title itself when no bundle answers the key
+     */
+    private String getCopyTitle( String strTitle )
+    {
+        Object [ ] tabTitle = {
+                strTitle,
+        };
+        String strCopyTitle = I18nService.getLocalizedString( PROPERTY_COPY_QUESTION_TITLE, tabTitle, getLocale( ) );
+
+        return StringUtils.isNotEmpty( strCopyTitle ) ? strCopyTitle : strTitle;
+    }
+
+    /**
+     * Generates a technical code that no other question of the form already uses.
+     *
+     * @param nIdEntry
+     *            the identifier of the duplicated entry
+     * @return an available question code
+     */
+    private String generateAvailableQuestionCode( int nIdEntry )
+    {
+        Set<String> setUsedCode = getFormDatabaseService( ).getListQuestionByForm( _step.getIdForm( ) ).stream( )
+                .filter( question -> question.getIdEntry( ) != nIdEntry ).map( Question::getCode ).collect( Collectors.toSet( ) );
+
+        String strBaseCode = QUESTION_CODE_PREFIX + nIdEntry;
+        String strCode = strBaseCode;
+        int nSuffix = 1;
+
+        while ( setUsedCode.contains( strCode ) )
+        {
+            strCode = strBaseCode + "_" + nSuffix;
+            nSuffix++;
+        }
+        return strCode;
+    }
+
+    /**
+     * Gives the rank of a display in a list, by identifier.
+     *
+     * @param listDisplay
+     *            the list to search
+     * @param nIdDisplay
+     *            the identifier to look for
+     * @return the rank of the display, or -1 when the list does not hold it
+     */
+    private static int indexOfDisplay( List<FormDisplay> listDisplay, int nIdDisplay )
+    {
+        for ( int nIndex = 0; nIndex < listDisplay.size( ); nIndex++ )
+        {
+            if ( listDisplay.get( nIndex ).getId( ) == nIdDisplay )
+            {
+                return nIndex;
+            }
+        }
+
+        return INTEGER_MINUS_ONE;
     }
 
     /**
