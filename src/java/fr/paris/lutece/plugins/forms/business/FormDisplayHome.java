@@ -141,6 +141,21 @@ public final class FormDisplayHome
     }
 
     /**
+     * The displays of a group read from the database rather than from the cache, for whatever reorders the group : the cache may not hold yet
+     * what another transaction just committed, and a sequence written from it leaves that display out.
+     *
+     * @param nIdStep
+     *            the step of the group
+     * @param nIdParent
+     *            the parent of the group
+     * @return the displays of the group, ordered by position
+     */
+    public static List<FormDisplay> readGroupFromDatabase( int nIdStep, int nIdParent )
+    {
+        return _dao.selectFormDisplayListByParent( nIdStep, nIdParent, _plugin );
+    }
+
+    /**
      * Load the data of all the formDisplay that are direct children of a given parent and returns them as a list
      * 
      * @param nIdStep
