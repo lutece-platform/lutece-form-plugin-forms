@@ -335,7 +335,7 @@ $( function() {
         $('main').css( 'margin', '0' );
 		$('#breadforms').remove();
 		$('header').remove();
-		$('#footer').remove();
+		$('footer').remove();
 		<#if title !=''>
 		var modalTitle = '${title}';
 		window.parent.$('#${modalId}').find('.modal-title').text(modalTitle);
@@ -346,12 +346,10 @@ $( function() {
 		
 		<#if formId !=''>
 		var formAction = $('#${formId}'), btnAction = $('#${actionId}');
-		btnAction.click( function(e){ 
-			formAction.submit( function(){
-				e.preventDefault();
-				formAction.attr( 'target', '_top' );
-				_this.unbind('submit').submit();
-			});
+		// the target is set on the click, before the browser starts the submission : the submit stays native, so the name of the button, on which
+		// Lutece dispatches the action, is still sent. Preventing the click and submitting from script would drop it.
+		btnAction.click( function( ){
+			formAction.attr( 'target', '_top' );
 		});
 		</#if>
     }  else {
@@ -444,18 +442,18 @@ $( function() {
 					</@columns>     
 					<@columns xs=12 sm=4>       
 						<@formGroup labelKey='#i18n{forms.create_form.labelAuthentificationNeeded}' helpKey='#i18n{forms.create_form.labelAuthentificationNeeded.help}' hideLabel=['all'] rows=2>
-							<@checkBox labelFor='authentificationNeeded' labelKey='#i18n{forms.create_form.labelAuthentificationNeeded}' name='authentificationNeeded' id='authentificationNeeded' value='1' checked=(form?has_content && form.authentificationNeeded) />
+							<@checkBox labelKey='#i18n{forms.create_form.labelAuthentificationNeeded}' name='authentificationNeeded' id='authentificationNeeded' value='1' checked=(form?has_content && form.authentificationNeeded) />
 						</@formGroup>
 						<@formGroup labelKey='#i18n{forms.create_form.labelAccessToResponsesByRole}' helpKey='#i18n{forms.create_form.labelAccessToResponsesByRole.help}' hideLabel=['all'] rows=2>
-							<@checkBox labelFor='accessToResponsesByRole' labelKey='#i18n{forms.create_form.labelAccessToResponsesByRole}' name='accessToResponsesByRole' id='accessToResponsesByRole' value='1' checked=(form?has_content && form.accessToResponsesByRole) />
+							<@checkBox labelKey='#i18n{forms.create_form.labelAccessToResponsesByRole}' name='accessToResponsesByRole' id='accessToResponsesByRole' value='1' checked=(form?has_content && form.accessToResponsesByRole) />
 						</@formGroup>	
 					</@columns>       
 					<@columns xs=12 sm=4>           
 						<@formGroup labelKey='#i18n{forms.create_form.labelLimitNumberResponse}' helpKey='#i18n{forms.create_form.labelLimitNumberResponse.help}' hideLabel=['all'] rows=2>
-							<@checkBox labelFor='oneResponseByUser' labelKey='#i18n{forms.create_form.labelLimitNumberResponse}' name='oneResponseByUser' id='oneResponseByUser' value='1' checked=(form?has_content && form.oneResponseByUser) />
+							<@checkBox labelKey='#i18n{forms.create_form.labelLimitNumberResponse}' name='oneResponseByUser' id='oneResponseByUser' value='1' checked=(form?has_content && form.oneResponseByUser) />
 						</@formGroup>
 						<@formGroup labelKey='#i18n{forms.create_form.labelBackupEnabled}' helpKey='#i18n{forms.create_form.labelBackupEnabled.help}' hideLabel=['all'] rows=2>
-							<@checkBox labelFor='backupEnabled' labelKey='#i18n{forms.create_form.labelBackupEnabled}' name='backupEnabled' id='backupEnabled' value='1' checked=(form?has_content && form.backupEnabled) />
+							<@checkBox labelKey='#i18n{forms.create_form.labelBackupEnabled}' name='backupEnabled' id='backupEnabled' value='1' checked=(form?has_content && form.backupEnabled) />
 						</@formGroup>
 					</@columns> 
 				</@row>
@@ -478,7 +476,7 @@ $( function() {
 				<@row>
 					<@columns xs=12 sm=6>
 						<@formGroup labelKey='#i18n{forms.create_form.labelCountResponses}' helpKey='#i18n{forms.create_form.labelCountResponses.help}' hideLabel=['all'] rows=2>
-							<@checkBox labelFor='countResponses' labelKey='#i18n{forms.create_form.labelCountResponses}' name='countResponses' value='1' checked=(form?has_content && form.countResponses) />
+							<@checkBox labelKey='#i18n{forms.create_form.labelCountResponses}' name='countResponses' value='1' checked=(form?has_content && form.countResponses) />
 						</@formGroup>
 					</@columns>
 				</@row>
@@ -494,10 +492,10 @@ $( function() {
 				</@formGroup>
 				<@formGroup labelKey='#i18n{forms.create_form.labelDisplaySummary}' hideLabel=['all'] helpKey='#i18n{forms.create_form.labelDisplaySummary.help}' rows=2>
 					<#local isSummary = isCreate?then(true, (form?has_content && form.displaySummary)) >
-					<@checkBox orientation='switch' labelKey='#i18n{forms.create_form.labelDisplaySummary}' labelFor='displaySummary' name='displaySummary' id='displaySummary' value='1' checked=isSummary />
+					<@checkBox orientation='switch' labelKey='#i18n{forms.create_form.labelDisplaySummary}' name='displaySummary' id='displaySummary' value='1' checked=isSummary />
 				</@formGroup>
 				<@formGroup labelKey='#i18n{forms.create_form.labelEndMessageDisplay}' hideLabel=['all'] id='labelEndMessage' helpKey='#i18n{forms.create_form.labelEndMessageDisplay.help}'  rows=2>
-					<@checkBox orientation='switch' labelKey='#i18n{forms.create_form.labelEndMessageDisplay}' labelFor='endMessageDisplay' name='endMessageDisplay' id='endMessageDisplay' value='1' checked=(formMessage?has_content && formMessage.endMessageDisplay) />
+					<@checkBox orientation='switch' labelKey='#i18n{forms.create_form.labelEndMessageDisplay}' name='endMessageDisplay' id='endMessageDisplay' value='1' checked=(formMessage?has_content && formMessage.endMessageDisplay) />
 				</@formGroup>
 				<@formGroup labelKey='#i18n{forms.create_form.labelEndMessage}' id='endMessage' helpKey='#i18n{forms.create_form.labelEndMessage.help}' rows=2>
 					<@input type='textarea' name='endMessage' richtext=true>${formMessage.endMessage!}</@input>
@@ -529,13 +527,13 @@ $( function() {
 			<#if is_active_captcha>
 				<@fieldSet legend='#i18n{forms.modify_form.captcha.label}'>
 					<@formGroup labelKey='#i18n{forms.modify_form.labelCaptchaStepInitial}' hideLabel=['all'] id='labelCaptchaStepInitial' helpKey='#i18n{forms.modify_form.labelCaptchaStepInitial.help}'  rows=2>
-						<@checkBox orientation='switch' labelKey='#i18n{forms.modify_form.labelCaptchaStepInitial}' labelFor='captchaStepInitial' name='captchaStepInitial' value='1' checked=(form?has_content && form.captchaStepInitial) />
+						<@checkBox orientation='switch' labelKey='#i18n{forms.modify_form.labelCaptchaStepInitial}' name='captchaStepInitial' value='1' checked=(form?has_content && form.captchaStepInitial) />
 					</@formGroup>
 					<@formGroup labelKey='#i18n{forms.modify_form.labelCaptchaStepFinal}' hideLabel=['all'] id='labelCaptchaStepFinal' helpKey='#i18n{forms.modify_form.labelCaptchaStepFinal.help}'  rows=2>
-						<@checkBox orientation='switch' labelKey='#i18n{forms.modify_form.labelCaptchaStepFinal}' labelFor='captchaStepFinal' name='captchaStepFinal' value='1' checked=(form?has_content && form.captchaStepFinal) />
+						<@checkBox orientation='switch' labelKey='#i18n{forms.modify_form.labelCaptchaStepFinal}' name='captchaStepFinal' value='1' checked=(form?has_content && form.captchaStepFinal) />
 					</@formGroup>
 					<@formGroup labelKey='#i18n{forms.modify_form.labelCaptchaRecap}' hideLabel=['all'] id='labelCaptchaRecap' helpKey='#i18n{forms.modify_form.labelCaptchaRecap.help}'  rows=2>
-						<@checkBox orientation='switch' labelKey='#i18n{forms.modify_form.labelCaptchaRecap}' labelFor='captchaRecap' name='captchaRecap' value='1' checked=(form?has_content && form.captchaRecap) />
+						<@checkBox orientation='switch' labelKey='#i18n{forms.modify_form.labelCaptchaRecap}' name='captchaRecap' value='1' checked=(form?has_content && form.captchaRecap) />
 					</@formGroup>
 				</@fieldSet> 
 			</#if>

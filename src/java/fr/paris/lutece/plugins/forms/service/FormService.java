@@ -118,6 +118,9 @@ public class FormService
      */
     public void saveForm( Form form, FormResponse formResponse )
     {
+    	// the count of responses is held in memory, not in the database : a rollback does not undo it, so it has to be taken back by hand
+    	boolean bNumberResponseCounted = false;
+
     	TransactionManager.beginTransaction( FormsPlugin.getPlugin( ) );
 	    try
 	    {
@@ -138,6 +141,7 @@ public class FormService
 	                if (form.getMaxNumberResponse( ) != 0) 
 	                {
 	                	FormsResponseUtils.increaseNumberResponse( form );
+	                	bNumberResponseCounted = true;
 	                }
 	            }	        
 	        }
@@ -152,6 +156,12 @@ public class FormService
 	     catch( Exception e )
 	     {
 	    	 TransactionManager.rollBack( FormsPlugin.getPlugin( ) );
+
+	    	 if ( bNumberResponseCounted )
+	    	 {
+	    	     FormsResponseUtils.decreaseNumberResponse( form );
+	    	 }
+
 	         throw e ;
 	     }         
         
