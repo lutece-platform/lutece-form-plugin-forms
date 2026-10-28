@@ -53,6 +53,8 @@ import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
 import fr.paris.lutece.plugins.forms.business.FormHome;
+import fr.paris.lutece.plugins.forms.business.Question;
+import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.service.FormDatabaseService;
@@ -101,6 +103,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     private static final String TEMPLATE_CREATE_GROUP = "/admin/plugins/forms/create_group.html";
     private static final String TEMPLATE_MODIFY_GROUP = "/admin/plugins/forms/modify_group.html";
     private static final String TEMPLATE_MOVE_COMPOSITE = "/admin/plugins/forms/move_composite.html";
+    private static final String TEMPLATE_DUPLICATE_QUESTION = "/admin/plugins/forms/duplicate_question.html";
     private static final String TEMPLATE_CREATE_QUESTION = "/admin/plugins/forms/create_question.html";
     private static final String TEMPLATE_MODIFY_QUESTION = "/admin/plugins/forms/modify_question.html";
     private static final String TEMPLATE_BREADCRUMBS = "/admin/plugins/forms/entries/all_entry_breadcrumbs.html";
@@ -524,7 +527,19 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         {
             throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
         }
-        String strReturnUrl = processQuestionDuplication( request );
+
+        int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
+        Step stepTarget = StepHome.findByPrimaryKey( nIdStep );
+
+        if ( stepTarget == null )
+        {
+            return redirectToViewManageForm( request );
+        }
+
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( stepTarget.getIdForm( ) ), FormsResourceIdService.PERMISSION_MODIFY, request, null );
+        checkWorkgroupPermission( stepTarget.getIdForm( ), request );
+
+        String strReturnUrl = processQuestionDuplication( request, QuestionDuplicationOptions.fromRequest( request ) );
 
         if ( strReturnUrl != null )
         {
@@ -746,6 +761,42 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         model.put( FormsConstants.MARK_LIST_STEPS, listFormSteps );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MOVE_COMPOSITE, getLocale( ), model );
+        return getAdminPage( template.getHtml( ) );
+    }
+
+    /**
+     * Returns the form asking what the copy of a question has to inherit from it
+     *
+     * @param request
+     *            The Http request
+     * @return The html code of the duplication form
+     * @throws AccessDeniedException
+     *             if the user may not modify the form the question belongs to
+     */
+    @View( value = VIEW_DUPLICATE_QUESTION )
+    public String getDuplicateQuestion( HttpServletRequest request ) throws AccessDeniedException
+    {
+        int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
+        int nIdQuestion = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_TARGET ), FormsConstants.DEFAULT_ID_VALUE );
+
+        Step step = StepHome.findByPrimaryKey( nIdStep );
+        Question question = QuestionHome.findByPrimaryKey( nIdQuestion );
+
+        if ( step == null || question == null )
+        {
+            return redirectToViewManageForm( request );
+        }
+
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( step.getIdForm( ) ), FormsResourceIdService.PERMISSION_MODIFY, request, null );
+        checkWorkgroupPermission( step.getIdForm( ), request );
+
+        Map<String, Object> model = getModel( );
+        model.put( FormsConstants.MARK_STEP, step );
+        model.put( FormsConstants.MARK_QUESTION, question );
+        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_SAVE_QUESTION ) );
+
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DUPLICATE_QUESTION, getLocale( ), model );
+
         return getAdminPage( template.getHtml( ) );
     }
 

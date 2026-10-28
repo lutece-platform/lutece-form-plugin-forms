@@ -36,10 +36,8 @@ package fr.paris.lutece.plugins.forms.util;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -49,6 +47,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -104,7 +103,9 @@ import fr.paris.lutece.util.url.UrlItem;
 public class FormsResponseUtils 
 {
     private static ConcurrentMap<Integer, Object> _lockFormId = new ConcurrentHashMap<>( );
-    private static Map<Integer, Integer> _responsePerFormMap = new HashMap<>( );
+    // the lock taken around this map is the one of a form : two requests on two different forms hold two different locks and reach it at the same time,
+    // so the map has to carry its own safety. The lock remains needed for the check then increment, which spans two methods.
+    private static ConcurrentMap<Integer, Integer> _responsePerFormMap = new ConcurrentHashMap<>( );
 
 	private FormsResponseUtils( )
 	{
@@ -287,8 +288,19 @@ public class FormsResponseUtils
 
             for ( Control transitionControl : listTransitionControl )
             {
-                Question targetQuestion = QuestionHome.findByPrimaryKey( transitionControl.getListIdQuestion( ).iterator( ).next( ) );
-                Step stepTarget = StepHome.findByPrimaryKey( targetQuestion.getIdStep( ) );
+                Question targetQuestion = QuestionHome.findByPrimaryKey( transitionControl.getIdFirstQuestion( ) );
+                Step stepTarget = ( targetQuestion == null ) ? null : StepHome.findByPrimaryKey( targetQuestion.getIdStep( ) );
+
+                if ( stepTarget == null )
+                {
+                    // a control that cannot be evaluated is left out, the way a control naming an unknown validator already is a few lines below :
+                    // treating it as unsatisfied would make the step impassable for every user of the form
+                    AppLogService.error( "Forms : the transition control {} is driven by no existing question, it is left out of the transition decision",
+                            transitionControl.getId( ) );
+
+                    continue;
+                }
+
                 List<FormQuestionResponse> listQuestionResponse = formResponseManager.findResponsesFor( stepTarget ).stream( )
                         .filter( q -> transitionControl.getListIdQuestion( ).stream( ).anyMatch( t -> t.equals( q.getQuestion( ).getId( ) ) ) )
                         .collect( Collectors.toList( ) );
@@ -350,7 +362,8 @@ public class FormsResponseUtils
         List<FormQuestionResponse> listResponsesTemp = new ArrayList<>( );
 
         int nIdStep = listQuestionStep.isEmpty( ) ? 0 : listQuestionStep.get( 0 ).getIdStep( );
-        int nIdForm = listQuestionStep.isEmpty( ) ? 0 : StepHome.findByPrimaryKey( nIdStep ).getIdForm( );
+        Step stepCurrent = ( nIdStep == 0 ) ? null : StepHome.findByPrimaryKey( nIdStep );
+        int nIdForm = ( stepCurrent == null ) ? 0 : stepCurrent.getIdForm( );
 
         // Conditions may reference questions of the other steps : their responses are part of the evaluation context,
         // as for the display of the step (CompositeQuestionDisplay)
@@ -593,11 +606,38 @@ public class FormsResponseUtils
        {
         	synchronized( FormsResponseUtils.getLockOnForm( form ) )
              {
-        		int nNumberReponseForm = _responsePerFormMap.get( form.getId( ) );
+        		// read the same way checkNumberMaxResponseForm does : get( ) alone returns null for a form this instance has not counted yet,
+        		// and unboxing that null threw
+        		int nNumberReponseForm = _responsePerFormMap.computeIfAbsent( form.getId( ), FormHome::getNumberOfResponseForms );
         		_responsePerFormMap.put( form.getId( ), nNumberReponseForm + 1 );
               }
         }
         
+    }
+
+    /**
+     * Take back a response that was counted for a form but never recorded.
+     * 
+     * The count is held in memory, not in the database, so a rollback does not undo it : whoever increased it has to put it back by hand, or the form
+     * ends up refusing responses over a maximum it has not reached.
+     * 
+     * @param form
+     *            the form the response was counted for
+     */
+    public static void decreaseNumberResponse( Form form )
+    {
+        if ( form.getMaxNumberResponse( ) != 0 )
+        {
+            synchronized( FormsResponseUtils.getLockOnForm( form ) )
+            {
+                Integer nNumberReponseForm = _responsePerFormMap.get( form.getId( ) );
+
+                if ( nNumberReponseForm != null && nNumberReponseForm > 0 )
+                {
+                    _responsePerFormMap.put( form.getId( ), nNumberReponseForm - 1 );
+                }
+            }
+        }
     }
     
     /**
