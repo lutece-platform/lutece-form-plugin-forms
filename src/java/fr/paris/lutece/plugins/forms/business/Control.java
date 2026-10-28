@@ -194,6 +194,24 @@ public class Control implements Cloneable
 	}
 
 	/**
+     * Gives the first of the questions driving this control, the one every reader that needs a single question relies on.
+     * 
+     * The set is empty when the questions have been removed without the control : asking its iterator for an element then throws, which is why no caller
+     * should read it directly.
+     * 
+     * @return the identifier of the first driving question, -1 when no question drives this control any more
+     */
+    public int getIdFirstQuestion( )
+    {
+        if ( _listIdQuestion == null || _listIdQuestion.isEmpty( ) )
+        {
+            return -1;
+        }
+
+        return _listIdQuestion.iterator( ).next( );
+    }
+
+    /**
      * {@inheritDoc}
      * 
      * @throws CloneNotSupportedException
