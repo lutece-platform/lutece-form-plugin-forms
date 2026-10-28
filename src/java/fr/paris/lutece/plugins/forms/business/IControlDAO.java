@@ -238,4 +238,15 @@ public interface IControlDAO
      * @return The referenceList which contains the data of all the control mapping object
      */
     List<ControlMapping> selectMappingControlList( int nIdControl, Plugin plugin );
+
+    /**
+     * Count the controls still attached to a control group
+     * 
+     * @param nIdControlGroup
+     *            the control group identifier
+     * @param plugin
+     *            the Plugin
+     * @return the number of controls referencing the control group
+     */
+    int selectControlCountByControlGroup( int nIdControlGroup, Plugin plugin );
 }

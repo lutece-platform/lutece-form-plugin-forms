@@ -1,0 +1,29 @@
+<@formBreadCrumb>
+    <li><@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${step.idForm}' title='#i18n{forms.create_form.button.backForm}'>...</@link></li>
+    <li><@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='#i18n{forms.create_form.button.backStep}'>${step.title}</@link></li>
+    <li class="active">${i18n('forms.duplicate_question.title',question.title!)?html}</li>
+</@formBreadCrumb>
+
+<@tform method='post' id='duplicate_question' name='duplicate_question' action='jsp/admin/plugins/forms/ManageQuestions.jsp'>
+	<@modalBody>
+		<@messages errors=errors />
+		<@input type='hidden' id='token' name='token' value='${token}' />
+		<@input type='hidden' id='id_step' name='id_step' value='${step.id}' />
+		<@input type='hidden' id='id_target' name='id_target' value='${question.id}' />
+		<@input type='hidden' id='duplication_form' name='duplication_form' value='1' />
+		<@formGroup helpKey='#i18n{forms.duplicate_question.inheritDisplayCondition.help}'>
+			<@checkBox orientation='switch' labelKey='#i18n{forms.duplicate_question.inheritDisplayCondition}' name='inherit_display_condition' id='inherit_display_condition' value='1' checked=true />
+		</@formGroup>
+		<@formGroup helpKey='#i18n{forms.duplicate_question.carryConditionalControls.help}'>
+			<@checkBox orientation='switch' labelKey='#i18n{forms.duplicate_question.carryConditionalControls}' name='carry_conditional_controls' id='carry_conditional_controls' value='1' checked=false />
+		</@formGroup>
+		<@formGroup helpKey='#i18n{forms.duplicate_question.carryTransitionControls.help}'>
+			<@checkBox orientation='switch' labelKey='#i18n{forms.duplicate_question.carryTransitionControls}' name='carry_transition_controls' id='carry_transition_controls' value='1' checked=false />
+		</@formGroup>
+		<@formGroup>
+			<@button type='submit' id='action_duplicateQuestion' name='action_duplicateQuestion' buttonIcon='copy' title='#i18n{forms.duplicate_question.button.duplicate}' />
+		</@formGroup>
+	</@modalBody>
+</@tform>
+
+<@modalFrameScript formId='duplicate_question' actionId='action_duplicateQuestion' title="${i18n('forms.duplicate_question.title',question.title!)?js_string}" />
