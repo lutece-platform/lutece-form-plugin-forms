@@ -486,8 +486,9 @@ public class FormStepJspBean extends AbstractJspBean
                 try
                 {
                     String json = FormJsonService.getInstance( ).jsonExportStep( nIdForm, nIdStep );
-                    FormJsonService.getInstance( ).jsonImportStep( nIdForm, json, getLocale( ) );
+                    List<String> listReport = FormJsonService.getInstance( ).jsonImportStep( nIdForm, json, getLocale( ) );
                     addInfo( INFO_STEP_COPIED, getLocale( ) );
+                    listReport.forEach( this::addWarning );
                 }
                 catch( JsonProcessingException | AppException e )
                 {
@@ -744,8 +745,10 @@ public class FormStepJspBean extends AbstractJspBean
             nIdForm = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ) );
             checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nIdForm ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_CREATE_STEP );
             checkWorkgroupPermission(nIdForm, multipartRequest);
-            FormJsonService.getInstance( ).jsonImportStep( nIdForm, new String( fileItem.get( ), StandardCharsets.UTF_8 ), getLocale( ) );
+            List<String> listReport = FormJsonService.getInstance( ).jsonImportStep( nIdForm,
+                    new String( fileItem.get( ), StandardCharsets.UTF_8 ), getLocale( ) );
             addInfo( INFO_STEP_CREATED, getLocale( ) );
+            listReport.forEach( this::addWarning );
         }
         catch( JsonProcessingException e )
         {
@@ -766,8 +769,9 @@ public class FormStepJspBean extends AbstractJspBean
         StepJsonData template = _stepService.getStepTemplateData( nIdTemplate );
         if ( template != null )
         {
-            FormJsonService.getInstance( ).jsonImportStep( nIdForm, template, getLocale( ) );
+            List<String> listReport = FormJsonService.getInstance( ).jsonImportStep( nIdForm, template, getLocale( ) );
             addInfo( INFO_STEP_CREATED, getLocale( ) );
+            listReport.forEach( this::addWarning );
         }
         return redirect( request, VIEW_MANAGE_STEPS, FormsConstants.PARAMETER_ID_FORM, nIdForm );
     }

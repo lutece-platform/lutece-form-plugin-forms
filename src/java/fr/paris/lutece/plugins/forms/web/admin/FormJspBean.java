@@ -472,8 +472,9 @@ public class FormJspBean extends AbstractJspBean
             try
             {
                 String json = FormJsonService.getInstance( ).jsonExportForm( nId );
-                FormJsonService.getInstance( ).jsonImportForm( json, getLocale( ) );
+                List<String> listReport = FormJsonService.getInstance( ).jsonImportForm( json, getLocale( ) );
                 addInfo( INFO_FORM_COPIED, getLocale( ) );
+                listReport.forEach( this::addWarning );
             }
             catch( JsonProcessingException | AppException e )
             {
@@ -915,8 +916,11 @@ public class FormJspBean extends AbstractJspBean
         FileItem fileItem = multipartRequest.getFile( PARAMETER_JSON_FILE );
         try
         {
-            FormJsonService.getInstance( ).jsonImportForm( new String( fileItem.get( ), StandardCharsets.UTF_8 ), getLocale( ) );
+            List<String> listReport = FormJsonService.getInstance( ).jsonImportForm( new String( fileItem.get( ), StandardCharsets.UTF_8 ),
+                    getLocale( ) );
             addInfo( INFO_FORM_CREATED, getLocale( ) );
+            // what the import could not carry : said here rather than only in the log, so whoever imported the form knows what is left to set
+            listReport.forEach( this::addWarning );
         }
         catch( JsonProcessingException e )
         {

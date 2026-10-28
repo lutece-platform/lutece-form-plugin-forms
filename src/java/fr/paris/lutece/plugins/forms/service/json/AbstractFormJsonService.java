@@ -74,6 +74,7 @@ import fr.paris.lutece.plugins.forms.service.cache.FormsCacheService;
 import fr.paris.lutece.plugins.forms.service.IFormDatabaseService;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
+import fr.paris.lutece.plugins.referencelist.business.ReferenceItem;
 import fr.paris.lutece.plugins.referencelist.business.ReferenceItemHome;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -83,6 +84,9 @@ import fr.paris.lutece.util.sql.TransactionManager;
 
 public abstract class AbstractFormJsonService
 {
+    /** {0} the title of the question, {1} how many of its answers lost their link */
+    protected static final String MESSAGE_IMPORT_REFERENCE_LIST_LOST = "forms.import.report.referenceListLost";
+
     private static final String PROPERTY_COPY_STEP_TITLE = "forms.copyStep.title";
     private static final String QUESTION_CODE_PREFIX = "question_";
 
@@ -163,15 +167,17 @@ public abstract class AbstractFormJsonService
      * 
      * @return
      */
-    public void jsonImportStep( int idForm, String json, Locale locale ) throws JsonProcessingException
+    public List<String> jsonImportStep( int idForm, String json, Locale locale ) throws JsonProcessingException
     {
         StepJsonData jsonData = _objectMapper.readValue( json, StepJsonData.class );
 
-        jsonImportStep( idForm, jsonData, locale );
+        return jsonImportStep( idForm, jsonData, locale );
     }
 
-    public void jsonImportStep( int idForm, StepJsonData jsonData, Locale locale )
+    public List<String> jsonImportStep( int idForm, StepJsonData jsonData, Locale locale )
     {
+        // what the import cannot carry, gathered as it runs and shown to whoever asked for it
+        List<String> listReport = new ArrayList<>( );
         Step step = jsonData.getStep( );
         List<Group> groupList = jsonData.getGroupList( );
         List<Question> questionList = jsonData.getQuestionList( );
@@ -197,12 +203,14 @@ public abstract class AbstractFormJsonService
         try
         {
             importSteps( idForm, Collections.singletonList( step ), groupList, null, questionList, formDisplayList );
-            importQuestions( idForm, questionList, controlList, controlMappingList, formDisplayList, null );
+            importQuestions( idForm, questionList, controlList, controlMappingList, formDisplayList, null, locale, listReport );
             importGroups( groupList, formDisplayList );
             importFormDisplay( idForm, formDisplayList, controlList );
             importControls( controlList, controlMappingList, controlGroupList );
 
             TransactionManager.commitTransaction( FormsPlugin.getPlugin( ) );
+
+            return listReport;
         }
         catch( Exception e )
         {
@@ -281,8 +289,25 @@ public abstract class AbstractFormJsonService
         updateFormDisplayWithNewStep( formDisplayList, mapIdSteps );
     }
 
+    /**
+     * Notes, in the administrator's language, one thing the import could not carry.
+     *
+     * @param listReport
+     *            what the import gathers as it runs, shown once it is over
+     * @param strKey
+     *            the message key
+     * @param locale
+     *            the administrator's locale
+     * @param args
+     *            what the message names
+     */
+    protected void report( List<String> listReport, String strKey, Locale locale, Object... args )
+    {
+        listReport.add( I18nService.getLocalizedString( strKey, args, locale ) );
+    }
+
     protected void importQuestions( int newIdForm, List<Question> questionList, List<Control> controlList, List<ControlMapping> controlMappingList,
-            List<FormDisplay> formDisplayList, List<FormExportConfig> formExportConfigList )
+            List<FormDisplay> formDisplayList, List<FormExportConfig> formExportConfigList, Locale locale, List<String> listReport )
     {
 
         Map<Integer, Integer> mapIdFields = new HashMap<>( );
@@ -302,13 +327,30 @@ public abstract class AbstractFormJsonService
             synchronizeQuestionCode( question, entry, setQuestionCodes );
 
             List<Field> fieldList = entry.getFields( );
+            int nLinkDropped = 0;
+
             for ( Field field : fieldList )
             {
                 int oldIdField = field.getIdField();
 
                 field.setParentEntry( entry );
+
+                if ( field.getLinkedItem( ) != null && !isLinkedItemOfThisInstance( field.getLinkedItem( ) ) )
+                {
+                    field.setLinkedItem( null );
+                    nLinkDropped++;
+                }
+
                 _formDatabaseService.createField( field );
                 mapIdFields.put( oldIdField, field.getIdField() );
+            }
+
+            if ( nLinkDropped > 0 )
+            {
+                // one line for the question, not one per answer : a list of twenty choices would otherwise bury what it says
+                AppLogService.error( "Forms import : the question {} loses the link of {} of its answers to a reference list, this instance holds "
+                        + "no such items. The list has to be bound again for them.", question.getCode( ), nLinkDropped );
+                report( listReport, MESSAGE_IMPORT_REFERENCE_LIST_LOST, locale, question.getTitle( ), nLinkDropped );
             }
 
             _formDatabaseService.createQuestion( question );
@@ -323,6 +365,27 @@ public abstract class AbstractFormJsonService
         {
             updateExportConfigWithNewQuestion( formExportConfigList, mapIdQuestions );
         }
+    }
+
+
+    /**
+     * Whether a reference item carried by an imported form is the one this instance holds under that identifier.
+     *
+     * The link travels as the identifier the item had where the form was exported from, and nothing in genatt_referenceitem_field refuses an
+     * identifier designating nothing : importing a form into another instance used to bind its choices to whichever items happened to carry those
+     * numbers there, or to none, and the question then offered answers nobody chose, with nothing said. Importing a form into the instance it came
+     * from, which is what duplicating one does, finds the very item it exported, so the link is kept.
+     *
+     * @param itemExported
+     *            the item as the exported form carries it
+     * @return true when this instance holds that same item
+     */
+    private boolean isLinkedItemOfThisInstance( ReferenceItem itemExported )
+    {
+        ReferenceItem itemHere = ReferenceItemHome.findByPrimaryKey( itemExported.getId( ) );
+
+        return itemHere != null && StringUtils.equals( itemHere.getCode( ), itemExported.getCode( ) )
+                && StringUtils.equals( itemHere.getName( ), itemExported.getName( ) );
     }
 
     /**

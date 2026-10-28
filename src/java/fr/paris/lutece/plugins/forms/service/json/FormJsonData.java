@@ -40,6 +40,7 @@ import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.ControlGroup;
 import fr.paris.lutece.plugins.forms.business.ControlMapping;
 import fr.paris.lutece.plugins.forms.business.Form;
+import fr.paris.lutece.plugins.forms.business.FormCategory;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormMessage;
 import fr.paris.lutece.plugins.forms.business.Group;
@@ -64,8 +65,24 @@ public class FormJsonData
     private List<FormExportConfig> _formExportConfigList;
 
     /**
+     * The category of the form, carried whole rather than by its identifier : a number designates another category, or none, in the instance the
+     * form is imported into, whereas the code of a category is the same wherever that category was declared.
+     */
+    private FormCategory _category;
+
+    /**
      * @return the form
      */
+    public FormCategory getCategory( )
+    {
+        return _category;
+    }
+
+    public void setCategory( FormCategory category )
+    {
+        _category = category;
+    }
+
     public Form getForm( )
     {
         return _form;
