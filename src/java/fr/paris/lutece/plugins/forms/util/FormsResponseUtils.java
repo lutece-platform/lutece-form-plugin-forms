@@ -49,6 +49,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -287,8 +288,19 @@ public class FormsResponseUtils
 
             for ( Control transitionControl : listTransitionControl )
             {
-                Question targetQuestion = QuestionHome.findByPrimaryKey( transitionControl.getListIdQuestion( ).iterator( ).next( ) );
-                Step stepTarget = StepHome.findByPrimaryKey( targetQuestion.getIdStep( ) );
+                Question targetQuestion = QuestionHome.findByPrimaryKey( transitionControl.getIdFirstQuestion( ) );
+                Step stepTarget = ( targetQuestion == null ) ? null : StepHome.findByPrimaryKey( targetQuestion.getIdStep( ) );
+
+                if ( stepTarget == null )
+                {
+                    // a control that cannot be evaluated is left out, the way a control naming an unknown validator already is a few lines below :
+                    // treating it as unsatisfied would make the step impassable for every user of the form
+                    AppLogService.error( "Forms : the transition control {} is driven by no existing question, it is left out of the transition decision",
+                            transitionControl.getId( ) );
+
+                    continue;
+                }
+
                 List<FormQuestionResponse> listQuestionResponse = formResponseManager.findResponsesFor( stepTarget ).stream( )
                         .filter( q -> transitionControl.getListIdQuestion( ).stream( ).anyMatch( t -> t.equals( q.getQuestion( ).getId( ) ) ) )
                         .collect( Collectors.toList( ) );
@@ -350,7 +362,8 @@ public class FormsResponseUtils
         List<FormQuestionResponse> listResponsesTemp = new ArrayList<>( );
 
         int nIdStep = listQuestionStep.isEmpty( ) ? 0 : listQuestionStep.get( 0 ).getIdStep( );
-        int nIdForm = listQuestionStep.isEmpty( ) ? 0 : StepHome.findByPrimaryKey( nIdStep ).getIdForm( );
+        Step stepCurrent = ( nIdStep == 0 ) ? null : StepHome.findByPrimaryKey( nIdStep );
+        int nIdForm = ( stepCurrent == null ) ? 0 : stepCurrent.getIdForm( );
 
         // Conditions may reference questions of the other steps : their responses are part of the evaluation context,
         // as for the display of the step (CompositeQuestionDisplay)
