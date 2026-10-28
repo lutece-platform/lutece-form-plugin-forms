@@ -109,6 +109,7 @@ public interface IFormDisplayDAO
      */
     List<FormDisplay> selectFormDisplayListByParent( int nIdStep, int nIdParent, Plugin plugin );
 
+
     /**
      * Load the data of all the FormDisplay objects of type "Group" linked to a given FormStep and returns them as a referenceList
      * 
