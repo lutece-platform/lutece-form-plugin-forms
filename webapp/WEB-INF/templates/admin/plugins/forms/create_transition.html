@@ -36,11 +36,10 @@ $( function() {
 		
 		var formAction = $('#create_transition'), btnAction = $('#action_createTransition');
 
-		btnAction.click( function(e){ 
-			formAction.submit( function(e){
-				formAction.attr('target','_top');
-				_this.unbind('submit').submit();
-			});
+		// the target is set on the click, before the browser starts the submission : the submit stays native, so the name of the button, on which
+		// Lutece dispatches the action, is still sent. Preventing the click and submitting from script would drop it.
+		btnAction.click( function( ){
+			formAction.attr( 'target', '_top' );
 		});
     } else {
         $('#transitionModal .content-header').hide();

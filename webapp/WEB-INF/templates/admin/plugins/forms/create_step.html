@@ -9,7 +9,7 @@
                  <@input type='text' name='title' id='step-title' value='${step.title!}' />
             </@formGroup>
             <@formGroup helpKey='#i18n{forms.modify_step.labelTitleDisplayed.help}' rows=2>
-                <@checkBox orientation='switch' labelKey='#i18n{forms.modify_step.labelTitleDisplayed}' labelFor='titleDisplayed' name='titleDisplayed' id='titleDisplayed' value='1' checked=true />
+                <@checkBox orientation='switch' labelKey='#i18n{forms.modify_step.labelTitleDisplayed}' name='titleDisplayed' id='titleDisplayed' value='1' checked=true />
             </@formGroup>
             <@formGroup labelFor='description' labelKey='#i18n{forms.create_step.labelDescription}' helpKey='#i18n{forms.create_step.labelDescription.help}'  rows=2 >
                  <@input type='textarea' name='description'>${step.description!}</@input>
@@ -18,18 +18,18 @@
                 <@row>
                     <@columns>
                         <@formGroup labelFor='initial' labelKey='#i18n{forms.create_step.labelInitial}' helpKey='#i18n{forms.create_step.labelInitial.help}' hideLabel=['all'] rows=2>
-                            <@checkBox orientation='switch' labelFor='initial' labelKey='#i18n{forms.create_step.labelInitial}' name='initial' id='initial' value='1' checked=(step?has_content && step.initial) />
+                            <@checkBox orientation='switch' labelKey='#i18n{forms.create_step.labelInitial}' name='initial' id='initial' value='1' checked=(step?has_content && step.initial) />
                         </@formGroup>
                     </@columns>
                     <@columns>
                         <@formGroup labelFor='final' labelKey='#i18n{forms.create_step.labelFinal}' helpKey='#i18n{forms.create_step.labelFinal.help}' hideLabel=['all'] rows=2>
-                            <@checkBox orientation='switch' labelFor='final' labelKey='#i18n{forms.create_step.labelFinal}' name='final' id='final' value='1' checked=(step?has_content && step.final) />
+                            <@checkBox orientation='switch' labelKey='#i18n{forms.create_step.labelFinal}' name='final' id='final' value='1' checked=(step?has_content && step.final) />
                         </@formGroup>
                     </@columns>
                 </@row>
             <#else>
                 <@formGroup labelFor='multi_step' labelKey='#i18n{forms.create_step.labelMultiStep}' helpKey='#i18n{forms.create_step.labelMultiStep.help}' hideLabel=['all'] rows=2>
-                    <@checkBox orientation='switch' labelFor='multiStep' labelKey='#i18n{forms.create_step.labelMultiStep}' name='multiStep' id='multiStep' value='1' checked=true />
+                    <@checkBox orientation='switch' labelKey='#i18n{forms.create_step.labelMultiStep}' name='multiStep' id='multiStep' value='1' checked=true />
                 </@formGroup>
             </#if>
             <@formGroup labelFor='previousStep' labelKey='#i18n{forms.create_step.labelPreviousStep}' helpKey='#i18n{forms.create_step.labelPreviousStep.help}' hideLabel=['all'] >
@@ -69,18 +69,10 @@ document.addEventListener('DOMContentLoaded', function(e) {
        
         var formAction = $('#create_step'), btnAction = $('#action_createStep');
 
-        btnAction.click( function(e){ 
-            formAction.submit( function(e){
-                formAction.attr('target','_top');
-                _this.unbind('submit').submit();
-            });
-        });
-       
-        btnAction.click( function(e){ 
-            formAction.submit( function(e){
-                formAction.attr('target','_top');
-                _this.unbind('submit').submit();
-            });
+        // the target is set on the click, before the browser starts the submission : the submit stays native, so the name of the button, on which
+        // Lutece dispatches the action, is still sent. Preventing the click and submitting from script would drop it.
+        btnAction.click( function( ){
+        	formAction.attr( 'target', '_top' );
         });
     }
 });
