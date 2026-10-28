@@ -52,7 +52,6 @@ import fr.paris.lutece.plugins.forms.validation.ICustomImportableControl;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -70,15 +69,24 @@ import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.Transition;
 import fr.paris.lutece.plugins.forms.business.export.FormExportConfig;
+import fr.paris.lutece.plugins.forms.service.FormsPlugin;
+import fr.paris.lutece.plugins.forms.service.cache.FormsCacheService;
 import fr.paris.lutece.plugins.forms.service.IFormDatabaseService;
-import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
+import fr.paris.lutece.plugins.referencelist.business.ReferenceItem;
 import fr.paris.lutece.plugins.referencelist.business.ReferenceItemHome;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.util.AppException;
+import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.util.sql.TransactionManager;
 
 public abstract class AbstractFormJsonService
 {
+    /** {0} the title of the question, {1} how many of its answers lost their link */
+    protected static final String MESSAGE_IMPORT_REFERENCE_LIST_LOST = "forms.import.report.referenceListLost";
+
     private static final String PROPERTY_COPY_STEP_TITLE = "forms.copyStep.title";
     private static final String QUESTION_CODE_PREFIX = "question_";
 
@@ -132,7 +140,7 @@ public abstract class AbstractFormJsonService
                     field.setLinkedItem( ReferenceItemHome.findByPrimaryKey( idItem ) );
                 }
             }
-            controlList.addAll( _formDatabaseService.getControlByQuestion( question.getId( ) ) );
+            addControlsOnce( controlList, _formDatabaseService.getControlByQuestion( question.getId( ) ) );
         }
         List<ControlMapping> controlMappingList = new ArrayList<>( );
         for ( Control control : controlList )
@@ -159,17 +167,17 @@ public abstract class AbstractFormJsonService
      * 
      * @return
      */
-    @Transactional( FormsConstants.BEAN_TRANSACTION_MANAGER )
-    public void jsonImportStep( int idForm, String json, Locale locale ) throws JsonProcessingException
+    public List<String> jsonImportStep( int idForm, String json, Locale locale ) throws JsonProcessingException
     {
         StepJsonData jsonData = _objectMapper.readValue( json, StepJsonData.class );
 
-        jsonImportStep( idForm, jsonData, locale );
+        return jsonImportStep( idForm, jsonData, locale );
     }
 
-    @Transactional( FormsConstants.BEAN_TRANSACTION_MANAGER )
-    public void jsonImportStep( int idForm, StepJsonData jsonData, Locale locale )
+    public List<String> jsonImportStep( int idForm, StepJsonData jsonData, Locale locale )
     {
+        // what the import cannot carry, gathered as it runs and shown to whoever asked for it
+        List<String> listReport = new ArrayList<>( );
         Step step = jsonData.getStep( );
         List<Group> groupList = jsonData.getGroupList( );
         List<Question> questionList = jsonData.getQuestionList( );
@@ -177,6 +185,8 @@ public abstract class AbstractFormJsonService
         List<ControlMapping> controlMappingList = jsonData.getControlMappingList( );
         List<ControlGroup> controlGroupList = jsonData.getControlGroupList( );
         List<FormDisplay> formDisplayList = jsonData.getFormDisplayList( );
+
+        dropTransitionControls( controlList );
 
         Object [ ] tabSTepTitleCopy = {
                 step.getTitle( ),
@@ -188,11 +198,71 @@ public abstract class AbstractFormJsonService
             step.setTitle( strTitleCopyStep );
         }
 
-        importSteps( idForm, Collections.singletonList( step ), groupList, null, questionList, formDisplayList );
-        importQuestions( idForm, questionList, controlList, controlMappingList, formDisplayList, null );
-        importGroups( groupList, formDisplayList );
-        importFormDisplay( idForm, formDisplayList, controlList );
-        importControls( controlList, controlMappingList, controlGroupList );
+        TransactionManager.beginTransaction( FormsPlugin.getPlugin( ) );
+
+        try
+        {
+            importSteps( idForm, Collections.singletonList( step ), groupList, null, questionList, formDisplayList );
+            importQuestions( idForm, questionList, controlList, controlMappingList, formDisplayList, null, locale, listReport );
+            importGroups( groupList, formDisplayList );
+            importFormDisplay( idForm, formDisplayList, controlList );
+            importControls( controlList, controlMappingList, controlGroupList );
+
+            TransactionManager.commitTransaction( FormsPlugin.getPlugin( ) );
+
+            return listReport;
+        }
+        catch( Exception e )
+        {
+            TransactionManager.rollBack( FormsPlugin.getPlugin( ) );
+            // the caches were repopulated while the transaction was running : they now describe rows the rollback has undone
+            SpringContextService.<FormsCacheService> getBean( FormsCacheService.BEAN_NAME ).resetCache( );
+            throw new AppException( "Forms : the import of a step into the form " + idForm + " failed", e );
+        }
+    }
+
+    /**
+     * Drops the transition controls of an imported step.
+     * 
+     * A transition control targets a transition, and a step payload carries none : keeping it would create a brand new condition on the transition of the
+     * SOURCE form, which the import is not supposed to touch, or point at a transition belonging to another form.
+     * 
+     * @param controlList
+     *            the imported controls
+     */
+    /**
+     * Adds controls to the export, skipping those already collected.
+     * 
+     * A control attached to several questions is returned once per question : exporting it twice makes the import create it twice, and the mappings of both
+     * copies end up on the second row only.
+     * 
+     * @param controlList
+     *            the controls collected so far
+     * @param listToAdd
+     *            the controls of one more question
+     */
+    protected static void addControlsOnce( List<Control> controlList, List<Control> listToAdd )
+    {
+        for ( Control control : listToAdd )
+        {
+            if ( controlList.stream( ).noneMatch( collected -> collected.getId( ) == control.getId( ) ) )
+            {
+                controlList.add( control );
+            }
+        }
+    }
+
+    private void dropTransitionControls( List<Control> controlList )
+    {
+        for ( Control control : controlList )
+        {
+            if ( ControlType.TRANSITION.getLabel( ).equals( control.getControlType( ) ) )
+            {
+                AppLogService.error( "Forms import : control {} targets a transition, which a step import cannot remap, it is ignored", control.getId( ) );
+            }
+        }
+
+        controlList.removeIf( control -> ControlType.TRANSITION.getLabel( ).equals( control.getControlType( ) ) );
     }
 
     protected void importSteps( int newIdForm, List<Step> stepList, List<Group> groupList, List<Transition> transitionList, List<Question> questionList,
@@ -219,8 +289,25 @@ public abstract class AbstractFormJsonService
         updateFormDisplayWithNewStep( formDisplayList, mapIdSteps );
     }
 
+    /**
+     * Notes, in the administrator's language, one thing the import could not carry.
+     *
+     * @param listReport
+     *            what the import gathers as it runs, shown once it is over
+     * @param strKey
+     *            the message key
+     * @param locale
+     *            the administrator's locale
+     * @param args
+     *            what the message names
+     */
+    protected void report( List<String> listReport, String strKey, Locale locale, Object... args )
+    {
+        listReport.add( I18nService.getLocalizedString( strKey, args, locale ) );
+    }
+
     protected void importQuestions( int newIdForm, List<Question> questionList, List<Control> controlList, List<ControlMapping> controlMappingList,
-            List<FormDisplay> formDisplayList, List<FormExportConfig> formExportConfigList )
+            List<FormDisplay> formDisplayList, List<FormExportConfig> formExportConfigList, Locale locale, List<String> listReport )
     {
 
         Map<Integer, Integer> mapIdFields = new HashMap<>( );
@@ -240,13 +327,30 @@ public abstract class AbstractFormJsonService
             synchronizeQuestionCode( question, entry, setQuestionCodes );
 
             List<Field> fieldList = entry.getFields( );
+            int nLinkDropped = 0;
+
             for ( Field field : fieldList )
             {
                 int oldIdField = field.getIdField();
 
                 field.setParentEntry( entry );
+
+                if ( field.getLinkedItem( ) != null && !isLinkedItemOfThisInstance( field.getLinkedItem( ) ) )
+                {
+                    field.setLinkedItem( null );
+                    nLinkDropped++;
+                }
+
                 _formDatabaseService.createField( field );
                 mapIdFields.put( oldIdField, field.getIdField() );
+            }
+
+            if ( nLinkDropped > 0 )
+            {
+                // one line for the question, not one per answer : a list of twenty choices would otherwise bury what it says
+                AppLogService.error( "Forms import : the question {} loses the link of {} of its answers to a reference list, this instance holds "
+                        + "no such items. The list has to be bound again for them.", question.getCode( ), nLinkDropped );
+                report( listReport, MESSAGE_IMPORT_REFERENCE_LIST_LOST, locale, question.getTitle( ), nLinkDropped );
             }
 
             _formDatabaseService.createQuestion( question );
@@ -261,6 +365,27 @@ public abstract class AbstractFormJsonService
         {
             updateExportConfigWithNewQuestion( formExportConfigList, mapIdQuestions );
         }
+    }
+
+
+    /**
+     * Whether a reference item carried by an imported form is the one this instance holds under that identifier.
+     *
+     * The link travels as the identifier the item had where the form was exported from, and nothing in genatt_referenceitem_field refuses an
+     * identifier designating nothing : importing a form into another instance used to bind its choices to whichever items happened to carry those
+     * numbers there, or to none, and the question then offered answers nobody chose, with nothing said. Importing a form into the instance it came
+     * from, which is what duplicating one does, finds the very item it exported, so the link is kept.
+     *
+     * @param itemExported
+     *            the item as the exported form carries it
+     * @return true when this instance holds that same item
+     */
+    private boolean isLinkedItemOfThisInstance( ReferenceItem itemExported )
+    {
+        ReferenceItem itemHere = ReferenceItemHome.findByPrimaryKey( itemExported.getId( ) );
+
+        return itemHere != null && StringUtils.equals( itemHere.getCode( ), itemExported.getCode( ) )
+                && StringUtils.equals( itemHere.getName( ), itemExported.getName( ) );
     }
 
     /**
@@ -336,7 +461,16 @@ public abstract class AbstractFormJsonService
         {
             if ( formDisplay.getParentId( ) > 0 )
             {
-                formDisplay.setParentId( mapIdFormDisplay.get( formDisplay.getParentId( ) ) );
+                // The display is already created : a missing parent moves it to the root of its step,
+                // rather than leaving it pointing at a display of the source form
+                if ( isUnresolvedReference( mapIdFormDisplay, formDisplay.getParentId( ), "display " + formDisplay.getId( ), "parent display" ) )
+                {
+                    formDisplay.setParentId( 0 );
+                }
+                else
+                {
+                    formDisplay.setParentId( mapIdFormDisplay.get( formDisplay.getParentId( ) ) );
+                }
             }
             // Update id parent and display order
             _formDatabaseService.updateFormDisplay( formDisplay );
@@ -347,9 +481,17 @@ public abstract class AbstractFormJsonService
     protected void importControls( List<Control> controlList, List<ControlMapping> controlMappingList, List<ControlGroup> controlGroupList )
     {
 
+        // a group whose every control has been dropped would never be referenced nor reclaimed
+        Set<Integer> setReferencedGroup = controlList.stream( ).map( Control::getIdControlGroup ).collect( Collectors.toSet( ) );
+
         Map<Integer, Integer> mapIdControlGroup = new HashMap<>( );
         for (ControlGroup controlGroup : controlGroupList)
         {
+            if ( !setReferencedGroup.contains( controlGroup.getId( ) ) )
+            {
+                continue;
+            }
+
             int oldId = controlGroup.getId( );
             _formDatabaseService.createControlGroup( controlGroup );
             int newId = controlGroup.getId( );
@@ -360,10 +502,19 @@ public abstract class AbstractFormJsonService
         Map<Integer, Integer> mapIdControls = new HashMap<>( );
         for ( Control control : controlList )
         {
-            if ( mapIdControlGroup.containsKey( control.getIdControlGroup() ) )
+            if ( control.getIdControlGroup( ) > 0 && !mapIdControlGroup.containsKey( control.getIdControlGroup( ) ) )
             {
-                control.setIdControlGroup( mapIdControlGroup.get( control.getIdControlGroup() ) );
+                // A missing control group detaches the control rather than leaving it pointing at a group of the source form, but the
+                // display then evaluates its conditions with AND where the lost group may have said OR
+                AppLogService.error( "Forms import : control {} refers to the control group {} which is not part of the import, it is detached and its "
+                        + "conditions are now combined with AND", control.getId( ), control.getIdControlGroup( ) );
+                control.setIdControlGroup( 0 );
             }
+            else
+                if ( control.getIdControlGroup( ) > 0 )
+                {
+                    control.setIdControlGroup( mapIdControlGroup.get( control.getIdControlGroup( ) ) );
+                }
 
             int oldId = control.getId( );
             _formDatabaseService.createControl( control );
@@ -374,13 +525,45 @@ public abstract class AbstractFormJsonService
 
         for ( ControlMapping controlMapping : controlMappingList )
         {
-            _formDatabaseService.createMappingControl( mapIdControls.get( controlMapping.getIdControl( ) ), controlMapping.getIdQuestion( ),
-                    controlMapping.getValue( ) );
+            if ( !isUnresolvedReference( mapIdControls, controlMapping.getIdControl( ), "control mapping", "control" ) )
+            {
+                _formDatabaseService.createMappingControl( mapIdControls.get( controlMapping.getIdControl( ) ), controlMapping.getIdQuestion( ),
+                        controlMapping.getValue( ) );
+            }
         }
+    }
+
+    /**
+     * Checks whether a reference carried by an imported element can be remapped to the newly created element.
+     *
+     * An element whose reference cannot be remapped does not belong to the imported form: it is dropped rather than created pointing at the source form.
+     *
+     * @param mapIds
+     *            the old identifier to new identifier map
+     * @param nOldId
+     *            the identifier to remap
+     * @param strElement
+     *            the imported element, for the log
+     * @param strReference
+     *            the name of the reference, for the log
+     * @return true when the reference cannot be remapped
+     */
+    protected boolean isUnresolvedReference( Map<Integer, Integer> mapIds, int nOldId, String strElement, String strReference )
+    {
+        if ( mapIds.containsKey( nOldId ) )
+        {
+            return false;
+        }
+
+        AppLogService.error( "Forms import : {} refers to the {} {} which is not part of the import, it is ignored", strElement, strReference, nOldId );
+
+        return true;
     }
 
     private void updateGroupWithNewStep( List<Group> groupList, Map<Integer, Integer> mapIdSteps )
     {
+        groupList.removeIf( group -> isUnresolvedReference( mapIdSteps, group.getIdStep( ), "group " + group.getId( ), "step" ) );
+
         for ( Group group : groupList )
         {
             group.setIdStep( mapIdSteps.get( group.getIdStep( ) ) );
@@ -389,6 +572,8 @@ public abstract class AbstractFormJsonService
 
     private void updateQuestionWithNewStep( List<Question> questionList, Map<Integer, Integer> mapIdSteps )
     {
+        questionList.removeIf( question -> isUnresolvedReference( mapIdSteps, question.getIdStep( ), "question " + question.getId( ), "step" ) );
+
         for ( Question question : questionList )
         {
             question.setIdStep( mapIdSteps.get( question.getIdStep( ) ) );
@@ -397,6 +582,8 @@ public abstract class AbstractFormJsonService
 
     private void updateFormDisplayWithNewStep( List<FormDisplay> formDisplayList, Map<Integer, Integer> mapIdSteps )
     {
+        formDisplayList.removeIf( formDisplay -> isUnresolvedReference( mapIdSteps, formDisplay.getStepId( ), "display " + formDisplay.getId( ), "step" ) );
+
         for ( FormDisplay formDisplay : formDisplayList )
         {
             formDisplay.setStepId( mapIdSteps.get( formDisplay.getStepId( ) ) );
@@ -405,6 +592,11 @@ public abstract class AbstractFormJsonService
 
     private void updateExportConfigWithNewQuestion( List<FormExportConfig> formExportConfigList, Map<Integer, Integer> mapIdQuestions )
     {
+        formExportConfigList.removeIf( config -> {
+            int idQuestion = NumberUtils.toInt( config.getField( ), -1 );
+            return idQuestion != -1 && isUnresolvedReference( mapIdQuestions, idQuestion, "export config " + config.getId( ), "question" );
+        } );
+
         for ( FormExportConfig config : formExportConfigList )
         {
             int idQuestion = NumberUtils.toInt( config.getField( ), -1 );
@@ -418,14 +610,22 @@ public abstract class AbstractFormJsonService
     private void updateControlWithNewQuestion( List<ControlMapping> controlMappingList, List<Control> controlList, Map<Integer, Integer> mapIdQuestions,
                                                Map<Integer, Integer> mapIdFields)
     {
+        controlList.removeIf( control -> isControlUnresolved( control, mapIdQuestions ) );
+
         for ( Control control : controlList )
         {
             Set<Integer> newSetId = new HashSet<>( );
             Set<Integer> oldSetId = control.getListIdQuestion( );
 
-            for ( Integer oldId : oldSetId )
+            if ( oldSetId != null )
             {
-                newSetId.add( mapIdQuestions.get( oldId ) );
+                for ( Integer oldId : oldSetId )
+                {
+                    if ( !isUnresolvedReference( mapIdQuestions, oldId, "control " + control.getId( ), "question" ) )
+                    {
+                        newSetId.add( mapIdQuestions.get( oldId ) );
+                    }
+                }
             }
             control.setListIdQuestion( newSetId );
 
@@ -443,14 +643,51 @@ public abstract class AbstractFormJsonService
             }
 
         }
+        controlMappingList.removeIf( controlMapping -> isUnresolvedReference( mapIdQuestions, controlMapping.getIdQuestion( ),
+                "mapping of control " + controlMapping.getIdControl( ), "question" ) );
+
         for ( ControlMapping controlMapping : controlMappingList )
         {
             controlMapping.setIdQuestion( mapIdQuestions.get( controlMapping.getIdQuestion( ) ) );
         }
     }
 
+    /**
+     * Checks whether a control keeps a meaning once imported.
+     *
+     * A control is dropped when its target question is missing, when every question it is attached to is missing, and when it is attached to no question at
+     * all : the engine reads the first controlling question of a control without guarding against an empty list, so such a control would be persisted only to
+     * break the screens that read it.
+     *
+     * @param control
+     *            the imported control
+     * @param mapIdQuestions
+     *            the old question identifier to new question identifier map
+     * @return true when the control has to be dropped
+     */
+    private boolean isControlUnresolved( Control control, Map<Integer, Integer> mapIdQuestions )
+    {
+        if ( ControlType.VALIDATION.getLabel( ).equals( control.getControlType( ) )
+                && isUnresolvedReference( mapIdQuestions, control.getIdControlTarget( ), "control " + control.getId( ), "target question" ) )
+        {
+            return true;
+        }
+
+        if ( CollectionUtils.isEmpty( control.getListIdQuestion( ) ) )
+        {
+            AppLogService.error( "Forms import : control {} is attached to no question, it is ignored", control.getId( ) );
+
+            return true;
+        }
+
+        return control.getListIdQuestion( ).stream( ).noneMatch( mapIdQuestions::containsKey );
+    }
+
     private void updateFormDisplayWithNewQuestion( List<FormDisplay> formDisplayList, Map<Integer, Integer> mapIdQuestions )
     {
+        formDisplayList.removeIf( formDisplay -> CompositeDisplayType.QUESTION.getLabel( ).equals( formDisplay.getCompositeType( ) )
+                && isUnresolvedReference( mapIdQuestions, formDisplay.getCompositeId( ), "display " + formDisplay.getId( ), "question" ) );
+
         for ( FormDisplay formDisplay : formDisplayList )
         {
             if ( CompositeDisplayType.QUESTION.getLabel( ).equals( formDisplay.getCompositeType( ) ) )
@@ -462,6 +699,9 @@ public abstract class AbstractFormJsonService
 
     private void updateFormDisplayWithNewGroup( List<FormDisplay> formDisplayList, Map<Integer, Integer> mapIdGroup )
     {
+        formDisplayList.removeIf( formDisplay -> CompositeDisplayType.GROUP.getLabel( ).equals( formDisplay.getCompositeType( ) )
+                && isUnresolvedReference( mapIdGroup, formDisplay.getCompositeId( ), "display " + formDisplay.getId( ), "group" ) );
+
         for ( FormDisplay formDisplay : formDisplayList )
         {
             if ( CompositeDisplayType.GROUP.getLabel( ).equals( formDisplay.getCompositeType( ) ) )
@@ -473,9 +713,12 @@ public abstract class AbstractFormJsonService
 
     private void updateControlWithFormDisplay( List<Control> controlList, Map<Integer, Integer> mapIdFormDisplay )
     {
+        controlList.removeIf( control -> ControlType.CONDITIONAL.getLabel( ).equals( control.getControlType( ) )
+                && isUnresolvedReference( mapIdFormDisplay, control.getIdControlTarget( ), "control " + control.getId( ), "target display" ) );
+
         for ( Control control : controlList )
         {
-            if ( ControlType.CONDITIONAL.getLabel( ).equals( control.getControlType( ) ) && mapIdFormDisplay.containsKey( control.getIdControlTarget( ) ) )
+            if ( ControlType.CONDITIONAL.getLabel( ).equals( control.getControlType( ) ) )
             {
                 control.setIdControlTarget( mapIdFormDisplay.get( control.getIdControlTarget( ) ) );
             }
@@ -484,6 +727,9 @@ public abstract class AbstractFormJsonService
 
     private void updateTransitionWithNewStep( List<Transition> transitionList, Map<Integer, Integer> mapIdSteps )
     {
+        transitionList.removeIf( transition -> isUnresolvedReference( mapIdSteps, transition.getFromStep( ), "transition " + transition.getId( ), "from step" )
+                || isUnresolvedReference( mapIdSteps, transition.getNextStep( ), "transition " + transition.getId( ), "next step" ) );
+
         for ( Transition transition : transitionList )
         {
             transition.setFromStep( mapIdSteps.get( transition.getFromStep( ) ) );

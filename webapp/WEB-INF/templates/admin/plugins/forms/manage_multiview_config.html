@@ -47,22 +47,22 @@
 													<@td>
 														<#if isQuestionTypeFileOrImg(question, nonDisplayableQuestionList)>
 										  					<@formGroup helpKey='#i18n{forms.modify_question.nonDisplayable.question.help}'>
-														    	<@checkBox disabled=true orientation='switch' labelFor='is_visible_multiview_global_${question.id}' name='is_visible_multiview_global_${question.id}' value='0' checked=false/>
+														    	<@checkBox disabled=true orientation='switch' name='is_visible_multiview_global_${question.id}' value='0' checked=false/>
 															</@formGroup>
 										  				<#else>
 										  					<@formGroup>
-														    	<@checkBox orientation='switch' labelFor='is_visible_multiview_global_${question.id}' name='is_visible_multiview_global_${question.id}' value='1' checked=question.isVisibleMultiviewGlobal()/>
+														    	<@checkBox orientation='switch' name='is_visible_multiview_global_${question.id}' value='1' checked=question.isVisibleMultiviewGlobal()/>
 															</@formGroup>
 										  				</#if>
 													</@td>
 													<@td>
 														<#if isQuestionTypeFileOrImg(question, nonDisplayableQuestionList)>
 															<@formGroup helpKey='#i18n{forms.modify_question.nonDisplayable.question.help}'>
-														    	<@checkBox disabled=true orientation='switch' labelFor='is_visible_multiview_form_selected_${question.id}' name='is_visible_multiview_form_selected_${question.id}' value='0' checked=false />
+														    	<@checkBox disabled=true orientation='switch' name='is_visible_multiview_form_selected_${question.id}' value='0' checked=false />
 															</@formGroup>
 														<#else>
 															<@formGroup>
-														    	<@checkBox orientation='switch' labelFor='is_visible_multiview_form_selected_${question.id}' name='is_visible_multiview_form_selected_${question.id}' value='1' checked=question.isVisibleMultiviewFormSelected() />
+														    	<@checkBox orientation='switch' name='is_visible_multiview_form_selected_${question.id}' value='1' checked=question.isVisibleMultiviewFormSelected() />
 															</@formGroup>
 														</#if>
 													</@td>

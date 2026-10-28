@@ -35,7 +35,7 @@
 				<#assign params = '' />
 			</#if>
 
-			<@checkBox orientation=style labelFor='${idName}_${field.idField}' labelKey=labelKey title=title name='${idName}' id='${idName}_${field.idField}' value='${field.idField}' checked=isChecked params=params />
+			<@checkBox orientation=style labelKey=labelKey title=title name='${idName}' id='${idName}_${field.idField}' value='${field.idField}' checked=isChecked params=params />
 
 			<#if field.conditionalQuestions?exists&&field.conditionalQuestions?size!=0 && !inLine>
 				<#if list_entry_children??>

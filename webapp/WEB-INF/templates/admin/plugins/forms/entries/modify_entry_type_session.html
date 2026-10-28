@@ -25,7 +25,7 @@ ${breadcrumb_template}
 							<@input type='text' name='entry_code' id='entry_code' value='${entry.code}' maxlength=100 />
 						</@formGroup>
 						<@formGroup labelKey='#i18n{forms.createEntry.labelMandatory}' helpKey='#i18n{forms.createEntry.labelMandatoryCommentForEntryTypeSession}'>
-							<@checkBox labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}' name='mandatory' id='mandatory' value='1' checked=entry.checked />
+							<@checkBox labelKey='#i18n{forms.createEntry.labelMandatory}' name='mandatory' id='mandatory' value='1' checked=entry.checked />
 						</@formGroup>
 						<@formGroup labelKey='#i18n{forms.createEntry.labelAttributeName}' helpKey='#i18n{forms.createEntry.labelAttributeNameComment}' mandatory=true>
 							<#assign field=getFieldByCode( entry, "attribute_name")>

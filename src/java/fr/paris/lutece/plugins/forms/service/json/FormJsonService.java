@@ -43,7 +43,6 @@ import java.util.stream.Collectors;
 
 import fr.paris.lutece.plugins.forms.business.ControlGroup;
 import fr.paris.lutece.plugins.forms.business.ControlGroupHome;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -51,7 +50,11 @@ import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.ControlHome;
 import fr.paris.lutece.plugins.forms.business.ControlMapping;
 import fr.paris.lutece.plugins.forms.business.ControlType;
+import org.apache.commons.lang3.StringUtils;
+
 import fr.paris.lutece.plugins.forms.business.Form;
+import fr.paris.lutece.plugins.forms.business.FormCategory;
+import fr.paris.lutece.plugins.forms.business.FormCategoryHome;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
 import fr.paris.lutece.plugins.forms.business.FormHome;
@@ -68,12 +71,15 @@ import fr.paris.lutece.plugins.forms.business.TransitionHome;
 import fr.paris.lutece.plugins.forms.business.export.FormExportConfig;
 import fr.paris.lutece.plugins.forms.business.export.FormExportConfigHome;
 import fr.paris.lutece.plugins.forms.service.FormDatabaseService;
-import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.plugins.forms.service.FormsPlugin;
+import fr.paris.lutece.plugins.forms.service.cache.FormsCacheService;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.ReferenceItemFieldHome;
 import fr.paris.lutece.plugins.referencelist.business.ReferenceItemHome;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.util.AppException;
+import fr.paris.lutece.util.sql.TransactionManager;
 
 /**
  * Json service to handle import/export
@@ -81,6 +87,11 @@ import fr.paris.lutece.portal.service.spring.SpringContextService;
 public class FormJsonService extends AbstractFormJsonService
 {
     private static final String PROPERTY_COPY_FORM_TITLE = "forms.copyForm.title";
+    private static final String MESSAGE_IMPORT_WORKFLOW_LOST = "forms.import.report.workflowLost";
+    private static final String MESSAGE_IMPORT_AVAILABILITY_LOST = "forms.import.report.availabilityLost";
+    private static final String MESSAGE_IMPORT_LOGO_LOST = "forms.import.report.logoLost";
+    /** {0} the name of the category the form was in */
+    private static final String MESSAGE_IMPORT_CATEGORY_LOST = "forms.import.report.categoryLost";
 
     public static final FormJsonService INSTANCE = new FormJsonService( );
 
@@ -103,7 +114,9 @@ public class FormJsonService extends AbstractFormJsonService
     public String jsonExportForm( int idForm ) throws JsonProcessingException
     {
         FormJsonData jsonData = new FormJsonData( );
-        jsonData.setForm( FormHome.findByPrimaryKey( idForm ) );
+        Form form = FormHome.findByPrimaryKey( idForm );
+        jsonData.setForm( form );
+        jsonData.setCategory( form.getIdCategory( ) > 0 ? FormCategoryHome.findByPrimaryKey( form.getIdCategory( ) ) : null );
         jsonData.getForm( ).setLogo( null );
 
         List<Step> stepList = StepHome.getStepsListByForm( idForm );
@@ -122,7 +135,7 @@ public class FormJsonService extends AbstractFormJsonService
                     field.setLinkedItem( ReferenceItemHome.findByPrimaryKey( idItem ) );
                 }
             }
-            controlList.addAll( ControlHome.getControlByQuestion( question.getId( ) ) );
+            addControlsOnce( controlList, ControlHome.getControlByQuestion( question.getId( ) ) );
         }
         List<ControlMapping> controlMappingList = new ArrayList<>( );
         for ( Control control : controlList )
@@ -152,12 +165,9 @@ public class FormJsonService extends AbstractFormJsonService
      * 
      * @return
      */
-    @Transactional( FormsConstants.BEAN_TRANSACTION_MANAGER )
-    public void jsonImportForm( String json, Locale locale ) throws JsonProcessingException
+    public List<String> jsonImportForm( String json, Locale locale ) throws JsonProcessingException
     {
         FormJsonData jsonData = _objectMapper.readValue( json, FormJsonData.class );
-
-        int newIdForm = importForm( jsonData.getForm( ), jsonData.getFormMessage( ), locale );
 
         List<FormExportConfig> formExportConfigList = jsonData.getFormExportConfigList( );
         List<Step> stepList = jsonData.getStepList( );
@@ -169,16 +179,37 @@ public class FormJsonService extends AbstractFormJsonService
         List<ControlMapping> controlMappingList = jsonData.getControlMappingList( );
         List<ControlGroup> controlGroupList = jsonData.getControlGroupList();
 
-        importSteps( newIdForm, stepList, groupList, transitionList, questionList, formDisplayList );
-        importQuestions( newIdForm, questionList, controlList, controlMappingList, formDisplayList, formExportConfigList );
-        importGroups( groupList, formDisplayList );
-        importFormDisplay( newIdForm, formDisplayList, controlList );
-        importTransitions( transitionList, controlList );
-        importControls( controlList, controlMappingList, controlGroupList );
-        importFormExportConfig( newIdForm, formExportConfigList );
+        // what the import cannot carry, gathered as it runs and shown to whoever asked for it
+        List<String> listReport = new ArrayList<>( );
+
+        TransactionManager.beginTransaction( FormsPlugin.getPlugin( ) );
+
+        try
+        {
+            int newIdForm = importForm( jsonData.getForm( ), jsonData.getFormMessage( ), jsonData.getCategory( ), locale, listReport );
+
+            importSteps( newIdForm, stepList, groupList, transitionList, questionList, formDisplayList );
+            importQuestions( newIdForm, questionList, controlList, controlMappingList, formDisplayList, formExportConfigList, locale, listReport );
+            importGroups( groupList, formDisplayList );
+            importFormDisplay( newIdForm, formDisplayList, controlList );
+            importTransitions( transitionList, controlList );
+            importControls( controlList, controlMappingList, controlGroupList );
+            importFormExportConfig( newIdForm, formExportConfigList );
+
+            TransactionManager.commitTransaction( FormsPlugin.getPlugin( ) );
+
+            return listReport;
+        }
+        catch( Exception e )
+        {
+            TransactionManager.rollBack( FormsPlugin.getPlugin( ) );
+            // the caches were repopulated while the transaction was running : they now describe rows the rollback has undone
+            SpringContextService.<FormsCacheService> getBean( FormsCacheService.BEAN_NAME ).resetCache( );
+            throw new AppException( "Forms : the import of the form failed", e );
+        }
     }
 
-    private int importForm( Form form, FormMessage formMessage, Locale locale )
+    private int importForm( Form form, FormMessage formMessage, FormCategory category, Locale locale, List<String> listReport )
     {
         Object [ ] tabFormTitleCopy = {
                 form.getTitle( ),
@@ -188,10 +219,26 @@ public class FormJsonService extends AbstractFormJsonService
         {
             form.setTitle( strTitleCopyForm );
         }
+        // these have always been emptied, the import holding nothing that would let it find them again here. What was missing was saying so :
+        // whoever imports a form had no way of knowing what was left for them to set
+        if ( form.getIdWorkflow( ) > 0 )
+        {
+            report( listReport, MESSAGE_IMPORT_WORKFLOW_LOST, locale );
+        }
+        if ( form.getAvailabilityStartDate( ) != null || form.getAvailabilityEndDate( ) != null )
+        {
+            report( listReport, MESSAGE_IMPORT_AVAILABILITY_LOST, locale );
+        }
+        if ( form.getLogo( ) != null )
+        {
+            report( listReport, MESSAGE_IMPORT_LOGO_LOST, locale );
+        }
+
         form.setIdWorkflow( 0 );
         form.setAvailabilityStartDate( null );
         form.setAvailabilityEndDate( null );
         form.setLogo( null );
+        form.setIdCategory( categoryOfThisInstance( category, locale, listReport ) );
         FormHome.create( form );
 
         int newIdForm = form.getId( );
@@ -200,6 +247,41 @@ public class FormJsonService extends AbstractFormJsonService
         FormMessageHome.create( formMessage );
 
         return newIdForm;
+    }
+
+    /**
+     * The identifier, in this instance, of the category the imported form was in.
+     *
+     * A category is carried whole rather than by its identifier, because a number designates another category, or none, in the instance the form
+     * is imported into. Its code is the same wherever that category was declared, so the category of this instance bearing that code is the one
+     * meant. None bears it, and the form is imported without a category rather than into one chosen by accident.
+     *
+     * @param category
+     *            the category the exported form was in, null when it was in none
+     * @param locale
+     *            the administrator's locale
+     * @param listReport
+     *            what the import gathers as it runs
+     * @return the identifier of the category here, 0 for none
+     */
+    private int categoryOfThisInstance( FormCategory category, Locale locale, List<String> listReport )
+    {
+        if ( category == null )
+        {
+            return 0;
+        }
+
+        for ( FormCategory categoryHere : FormCategoryHome.getFormCategoryList( ) )
+        {
+            if ( StringUtils.equals( categoryHere.getCode( ), category.getCode( ) ) )
+            {
+                return categoryHere.getId( );
+            }
+        }
+
+        report( listReport, MESSAGE_IMPORT_CATEGORY_LOST, locale, category.getName( ) );
+
+        return 0;
     }
 
     private void importFormExportConfig( int newIdForm, List<FormExportConfig> formExportConfigList )
@@ -228,6 +310,9 @@ public class FormJsonService extends AbstractFormJsonService
 
     private void updateControlWithNewTransition( List<Control> controlList, Map<Integer, Integer> mapIdTransitions )
     {
+        controlList.removeIf( control -> ControlType.TRANSITION.getLabel( ).equals( control.getControlType( ) )
+                && isUnresolvedReference( mapIdTransitions, control.getIdControlTarget( ), "control " + control.getId( ), "target transition" ) );
+
         for ( Control control : controlList )
         {
             if ( ControlType.TRANSITION.getLabel( ).equals( control.getControlType( ) ) )

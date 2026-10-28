@@ -94,6 +94,7 @@ import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -471,12 +472,16 @@ public class FormJspBean extends AbstractJspBean
             try
             {
                 String json = FormJsonService.getInstance( ).jsonExportForm( nId );
-                FormJsonService.getInstance( ).jsonImportForm( json, getLocale( ) );
+                List<String> listReport = FormJsonService.getInstance( ).jsonImportForm( json, getLocale( ) );
                 addInfo( INFO_FORM_COPIED, getLocale( ) );
+                listReport.forEach( this::addWarning );
             }
-            catch( JsonProcessingException e )
+            catch( JsonProcessingException | AppException e )
             {
-                AppLogService.debug( e.getMessage( ) );
+                // the import rolls its transaction back and rethrows as an AppException : caught here, a failure of the copy itself
+                // tells the administrator it did not happen, where it used to hand them an error page. The message alone was logged
+                // at debug level, so the one thing that explains the failure was absent from the log the administrator is told to read
+                AppLogService.error( "Forms : the form {} could not be copied", nId, e );
                 addError( ERROR_FORM_NOT_COPIED, getLocale( ) );
             }
         }
@@ -911,8 +916,11 @@ public class FormJspBean extends AbstractJspBean
         FileItem fileItem = multipartRequest.getFile( PARAMETER_JSON_FILE );
         try
         {
-            FormJsonService.getInstance( ).jsonImportForm( new String( fileItem.get( ), StandardCharsets.UTF_8 ), getLocale( ) );
+            List<String> listReport = FormJsonService.getInstance( ).jsonImportForm( new String( fileItem.get( ), StandardCharsets.UTF_8 ),
+                    getLocale( ) );
             addInfo( INFO_FORM_CREATED, getLocale( ) );
+            // what the import could not carry : said here rather than only in the log, so whoever imported the form knows what is left to set
+            listReport.forEach( this::addWarning );
         }
         catch( JsonProcessingException e )
         {

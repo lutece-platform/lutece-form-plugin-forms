@@ -189,4 +189,14 @@ public interface IStepDAO
      * @return number of other final steps
      */
     int countOtherFinalSteps( int idForm, int idStepToExclude, Plugin plugin );
+
+    /**
+     * Locks the row of a step until the running transaction ends.
+     *
+     * @param nIdStep
+     *            the step
+     * @param plugin
+     *            the plugin
+     */
+    void lockForUpdate( int nIdStep, Plugin plugin );
 }
