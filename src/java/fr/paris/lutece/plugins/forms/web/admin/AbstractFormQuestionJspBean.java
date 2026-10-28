@@ -58,10 +58,12 @@ import fr.paris.lutece.plugins.forms.business.ControlMapping;
 import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
+import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
 import fr.paris.lutece.plugins.forms.business.Group;
 import fr.paris.lutece.plugins.forms.business.LogicalOperator;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.Step;
+import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
 import fr.paris.lutece.plugins.forms.service.FormsPlugin;
 import fr.paris.lutece.plugins.forms.service.cache.FormsCacheService;
@@ -860,15 +862,17 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         int nIdQuestion = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_TARGET ), FormsConstants.DEFAULT_ID_VALUE );
         Question questionToCopy = null;
 
-        if ( ( _step == null ) || nIdStep != _step.getId( ) )
-        {
-            _step = getFormDatabaseService( ).findStepByPrimaryKey( nIdStep );
-        }
+        // the bean lives in the session, so _step and _question are shared by every request of the same administrator : two submits sent
+        // at once, which one button double clicked is enough to produce, would each read the other's question halfway through. What is
+        // copied is read once into locals, and the fields are only refreshed for the screen that follows
+        Step step = getFormDatabaseService( ).findStepByPrimaryKey( nIdStep );
+        Question question = getFormDatabaseService( ).findQuestionByPrimaryKey( nIdQuestion );
 
-        _question = getFormDatabaseService( ).findQuestionByPrimaryKey( nIdQuestion );
+        _step = step;
+        _question = question;
 
-        FormDisplay formDisplayToCopy = ( _step == null || _question == null ) ? null
-                : getFormDatabaseService( ).getFormDisplayByFormStepAndComposite( _step.getIdForm( ), _step.getId( ), _question.getId( ) );
+        FormDisplay formDisplayToCopy = ( step == null || question == null ) ? null
+                : getFormDatabaseService( ).getFormDisplayByFormStepAndComposite( step.getIdForm( ), step.getId( ), question.getId( ) );
 
         if ( formDisplayToCopy == null )
         {
@@ -880,8 +884,8 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         // Get the question to copy and clone it
         try
         {
-            questionToCopy = _question.clone( );
-            questionToCopy.setEntry( _question.getEntry( ) );
+            questionToCopy = question.clone( );
+            questionToCopy.setEntry( question.getEntry( ) );
         }
         catch( CloneNotSupportedException e )
         {
@@ -894,17 +898,21 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
 
         try
         {
+            // taken first, before anything is written : two duplications into one step then run one after the other, each reordering a group the
+            // other has finished with. A single row by its primary key, so that two transactions never hold locks the other is waiting for
+            StepHome.lockForUpdate( formDisplayToCopy.getStepId( ) );
+
             // EntryHome.copy writes the generated key on the entry it is given, so the source identifier has to be read before the call
-            int nIdEntrySource = _question.getEntry( ).getIdEntry( );
+            int nIdEntrySource = question.getEntry( ).getIdEntry( );
 
             // Create a duplicated entry
-            Entry duplicatedEntry = getFormDatabaseService( ).copyEntry( _question.getEntry( ) );
+            Entry duplicatedEntry = getFormDatabaseService( ).copyEntry( question.getEntry( ) );
             duplicatedEntry.setTitle( getCopyTitle( duplicatedEntry.getTitle( ) ) );
             duplicatedEntry.setCode( generateAvailableQuestionCode( duplicatedEntry.getIdEntry( ) ) );
 
             getFormDatabaseService( ).updateEntry( duplicatedEntry );
 
-            List<Control> listQuestionControl = getFormDatabaseService( ).getControlByQuestion( _question.getId( ) );
+            List<Control> listQuestionControl = getFormDatabaseService( ).getControlByQuestion( question.getId( ) );
 
             questionToCopy.setEntry( duplicatedEntry );
             questionToCopy.setIdEntry( duplicatedEntry.getIdEntry( ) );
@@ -920,7 +928,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
             setIdCopy.add( questionToCopy.getId( ) );
 
             Map<Integer, Integer> mapIdQuestions = new HashMap<>( );
-            mapIdQuestions.put( _question.getId( ), questionToCopy.getId( ) );
+            mapIdQuestions.put( question.getId( ), questionToCopy.getId( ) );
 
             Map<Integer, Integer> mapIdControlGroup = new HashMap<>( );
 
@@ -930,7 +938,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
                 {
                     // Only a rule that validates THIS question becomes a rule of the copy : the same query also returns the rules
                     // of another question that this one merely drives, and those belong to that other question
-                    if ( control.getIdControlTarget( ) == _question.getId( ) )
+                    if ( control.getIdControlTarget( ) == question.getId( ) )
                     {
                         duplicateControl( control, questionToCopy.getId( ), copyControlGroup( control.getIdControlGroup( ), mapIdControlGroup ), setIdCopy,
                                 mapIdQuestions, mapIdFields );
@@ -947,7 +955,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
             if ( questionToCopy.getId( ) != INTEGER_MINUS_ONE )
             {
                 FormDisplay formDisplay = new FormDisplay( );
-                formDisplay.setFormId( _step.getIdForm( ) );
+                formDisplay.setFormId( step.getIdForm( ) );
                 formDisplay.setStepId( questionToCopy.getIdStep( ) );
                 formDisplay.setParentId( formDisplayToCopy.getParentId( ) );
                 formDisplay.setCompositeId( questionToCopy.getId( ) );
@@ -956,10 +964,10 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
                 getFormDatabaseService( ).createFormDisplay( formDisplay );
 
                 // The insert always gives the copy the last position of its group : move it right after the duplicated question.
-                // The list is copied because getFormDisplayListByParent hands out the cached instance, and the source is located by
-                // its identifier rather than by its display_order, which may hold gaps or duplicates.
+                // The group is read from the database, under the lock taken above : the cache may not hold yet what another duplication
+                // just committed. The source is located by its identifier rather than by its display_order, which may hold gaps or duplicates.
                 List<FormDisplay> listDisplayInGroup = new ArrayList<>(
-                        getFormDatabaseService( ).getFormDisplayListByParent( formDisplay.getStepId( ), formDisplay.getParentId( ) ) );
+                        FormDisplayHome.readGroupFromDatabase( formDisplay.getStepId( ), formDisplay.getParentId( ) ) );
                 listDisplayInGroup.removeIf( display -> display.getId( ) == formDisplay.getId( ) );
 
                 int nIndexSource = indexOfDisplay( listDisplayInGroup, formDisplayToCopy.getId( ) );

@@ -149,6 +149,21 @@ public final class FormDisplayHome
      *            The parent primary key
      * @return the list which contains the data of all the formDisplay objects by parent
      */
+    /**
+     * The displays of a group read from the database rather than from the cache, for whatever reorders the group : the cache may not hold yet
+     * what another transaction just committed, and a sequence written from it leaves that display out.
+     *
+     * @param nIdStep
+     *            the step of the group
+     * @param nIdParent
+     *            the parent of the group
+     * @return the displays of the group, ordered by position
+     */
+    public static List<FormDisplay> readGroupFromDatabase( int nIdStep, int nIdParent )
+    {
+        return _dao.selectFormDisplayListByParent( nIdStep, nIdParent, _plugin );
+    }
+
     public static List<FormDisplay> getFormDisplayListByParent( int nIdStep, int nIdParent )
     {
         String cacheKey = _cache.getFormDisplayListByParentCacheKey( nIdStep, nIdParent );
