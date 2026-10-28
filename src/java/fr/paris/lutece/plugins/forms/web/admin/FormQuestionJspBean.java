@@ -524,6 +524,18 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         {
             throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
         }
+
+        int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
+        Step stepTarget = StepHome.findByPrimaryKey( nIdStep );
+
+        if ( stepTarget == null )
+        {
+            return redirectToViewManageForm( request );
+        }
+
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( stepTarget.getIdForm( ) ), FormsResourceIdService.PERMISSION_MODIFY, request, null );
+        checkWorkgroupPermission( stepTarget.getIdForm( ), request );
+
         String strReturnUrl = processQuestionDuplication( request );
 
         if ( strReturnUrl != null )
