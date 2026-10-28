@@ -55,6 +55,7 @@ public final class StepDAO implements IStepDAO
     // Constants
     private static final String SQL_QUERY_SELECTALL = "SELECT id_step, title, description, id_form, is_initial, is_final, is_title_displayed FROM forms_step";
     private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE id_step = ?";
+    private static final String SQL_QUERY_LOCK = "SELECT id_step FROM forms_step WHERE id_step = ? FOR UPDATE";
     private static final String SQL_QUERY_SELECT_INITIAL_STEP = SQL_QUERY_SELECTALL + " WHERE id_form = ? AND is_initial = 1";
     private static final String SQL_QUERY_SELECT_FINAL_STEP = SQL_QUERY_SELECTALL + " WHERE id_form = ? AND is_final = 1";
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_step ( title, description, id_form, is_initial, is_final, is_title_displayed ) VALUES ( ?, ?, ?, ?, ?, ? ) ";
@@ -365,6 +366,20 @@ public final class StepDAO implements IStepDAO
             dao.setInt( 2, idStepToExclude );
             dao.executeQuery( );
             return dao.next( ) ? dao.getInt( 1 ) : 0;
+        }
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void lockForUpdate( int nIdStep, Plugin plugin )
+    {
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_LOCK, plugin ) )
+        {
+            daoUtil.setInt( 1, nIdStep );
+            daoUtil.executeQuery( );
+            daoUtil.next( );
         }
     }
 }

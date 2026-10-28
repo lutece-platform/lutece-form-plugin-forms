@@ -39,9 +39,11 @@ import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.ControlGroup;
 import fr.paris.lutece.plugins.forms.business.ControlMapping;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
+import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
 import fr.paris.lutece.plugins.forms.business.Group;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.Step;
+import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
 
@@ -212,6 +214,31 @@ public interface IFormDatabaseService
      * @return the list which contains the data of all the formDisplay objects by parent
      */
     List<FormDisplay> getFormDisplayListByParent( int nIdStep, int nIdParent );
+
+    /**
+     * Load the formDisplay that are direct children of a given parent from the database, bypassing the cache
+     * 
+     * @param nIdStep
+     *            The step primary key
+     * @param nIdParent
+     *            The parent primary key
+     * @return the formDisplay objects of the group, ordered by position
+     */
+    default List<FormDisplay> readFormDisplayListByParentFromDatabase( int nIdStep, int nIdParent )
+    {
+        return FormDisplayHome.readGroupFromDatabase( nIdStep, nIdParent );
+    }
+
+    /**
+     * Locks the row of a step until the running transaction ends, to serialize whatever rewrites the display positions of this step
+     * 
+     * @param nIdStep
+     *            The step primary key
+     */
+    default void lockStepForUpdate( int nIdStep )
+    {
+        StepHome.lockForUpdate( nIdStep );
+    }
 
     /**
      * Loads control list based on its attached question and control type
