@@ -37,6 +37,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.paris.lutece.plugins.forms.service.cache.FormsCacheService;
+import java.util.Set;
+import java.util.stream.Collectors;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -115,6 +117,7 @@ public final class ControlHome
     public static void remove( int nKey )
     {
         _dao.deleteControlQuestion( nKey, _plugin );
+        _dao.deleteControlQuestionValue( nKey, _plugin );
         _dao.delete( nKey, _plugin );
         _cache.resetCache( );
     }
@@ -145,6 +148,7 @@ public final class ControlHome
         for ( Control ctrl : listControl )
         {
             _dao.deleteControlQuestion( ctrl.getId( ), _plugin );
+            _dao.deleteControlQuestionValue( ctrl.getId( ), _plugin );
         }
         _dao.deleteByControlTarget( nIdControlTarget, controlType, _plugin );
         _cache.resetCache( );
@@ -264,8 +268,55 @@ public final class ControlHome
     }
 
     /**
+     * Remove the control groups no control references any more.
+     *
+     * A control group may gather the rules of several controls : it goes only once every one of them is gone. Every path that removes a control has to
+     * call this, otherwise the group row survives its last control and nothing will ever reclaim it.
+     *
+     * @param setIdControlGroup
+     *            the control groups the removed controls belonged to, 0 meaning they belonged to none
+     */
+    public static void removeEmptyControlGroups( Set<Integer> setIdControlGroup )
+    {
+        for ( int nIdControlGroup : setIdControlGroup )
+        {
+            if ( nIdControlGroup > 0 && getControlCountByControlGroup( nIdControlGroup ) == 0 )
+            {
+                ControlGroupHome.remove( nIdControlGroup );
+            }
+        }
+    }
+
+    /**
+     * Gives the control groups the controls of a target belong to, to be reclaimed once those controls are removed.
+     *
+     * @param nIdControlTarget
+     *            the target whose controls are about to go
+     * @param controlType
+     *            the control type
+     * @return the control group identifiers, which may hold 0
+     */
+    public static Set<Integer> getControlGroupsByControlTargetAndType( int nIdControlTarget, ControlType controlType )
+    {
+        return getControlByControlTargetAndType( nIdControlTarget, controlType ).stream( ).map( Control::getIdControlGroup )
+                .collect( Collectors.toSet( ) );
+    }
+
+    /**
+     * Return the number of controls still attached to a control group
+     *
+     * @param nIdControlGroup
+     *            the control group identifier
+     * @return the number of controls referencing the control group
+     */
+    public static int getControlCountByControlGroup( int nIdControlGroup )
+    {
+        return _dao.selectControlCountByControlGroup( nIdControlGroup, _plugin );
+    }
+
+    /**
      * Loads control list based on its attached question and control type
-     * 
+     *
      * @param nIdQuestion
      *            the question id
      * @param strControlType
