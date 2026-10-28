@@ -40,6 +40,7 @@ import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.ControlGroup;
 import fr.paris.lutece.plugins.forms.business.ControlMapping;
 import fr.paris.lutece.plugins.forms.business.Form;
+import fr.paris.lutece.plugins.forms.business.FormCategory;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormMessage;
 import fr.paris.lutece.plugins.forms.business.Group;
@@ -62,6 +63,51 @@ public class FormJsonData
     private List<ControlGroup> _controlGroupList;
     private List<ControlMapping> _controlMappingList;
     private List<FormExportConfig> _formExportConfigList;
+
+    /**
+     * The category of the form, carried whole rather than by its identifier : a number designates another category, or none, in the instance the
+     * form is imported into, whereas the code of a category is the same wherever that category was declared.
+     */
+    private FormCategory _category;
+
+    /**
+     * Whether the exported form had a logo : the logo itself is not exported, so the import can only say it was left behind.
+     */
+    private boolean _bLogoDropped;
+
+    /**
+     * @return the category of the form, null when it was in none or when the export predates this field
+     */
+    public FormCategory getCategory( )
+    {
+        return _category;
+    }
+
+    /**
+     * @param category
+     *            the category of the form
+     */
+    public void setCategory( FormCategory category )
+    {
+        _category = category;
+    }
+
+    /**
+     * @return true when the exported form had a logo, which the export does not carry
+     */
+    public boolean isLogoDropped( )
+    {
+        return _bLogoDropped;
+    }
+
+    /**
+     * @param bLogoDropped
+     *            true when the exported form had a logo
+     */
+    public void setLogoDropped( boolean bLogoDropped )
+    {
+        _bLogoDropped = bLogoDropped;
+    }
 
     /**
      * @return the form

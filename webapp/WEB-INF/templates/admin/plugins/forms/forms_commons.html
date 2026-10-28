@@ -236,33 +236,33 @@
 $( function(){
 <#if clickUrl !=''>
 	toastr.options.onclick = function () {
-		window.location.replace('${clickUrl}')
+		window.location.replace('${clickUrl?js_string}')
 	};
 </#if>
 <#if warnings?has_content>
 	<#list warnings as warning >
-		toastr.warning("${warning.message}");
+		toastr.warning("${warning.message?js_string}");
 	</#list>	
 </#if>
 <#if errors?has_content>
 	<#list errors as error >
-		toastr.error("${error.message}");
+		toastr.error("${error.message?js_string}");
 	</#list>	
 </#if>
 <#if infos?has_content>
 	<#list infos as info >
-		toastr.info("${info.message}");
+		toastr.info("${info.message?js_string}");
 	</#list>	
 </#if>
 <#if msg !=''>
 	<#if msgType='info'>
-		toastr.info("${msg}");
+		toastr.info("${msg?js_string}");
 	</#if>
 	<#if msgType='warning'>
-		toastr.warning("${msg}");
+		toastr.warning("${msg?js_string}");
 	</#if>
 	<#if msgType='danger'>
-		toastr.warning("${msg}");
+		toastr.warning("${msg?js_string}");
 	</#if>
 </#if>
 });

@@ -50,7 +50,11 @@ import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.ControlHome;
 import fr.paris.lutece.plugins.forms.business.ControlMapping;
 import fr.paris.lutece.plugins.forms.business.ControlType;
+import org.apache.commons.lang3.StringUtils;
+
 import fr.paris.lutece.plugins.forms.business.Form;
+import fr.paris.lutece.plugins.forms.business.FormCategory;
+import fr.paris.lutece.plugins.forms.business.FormCategoryHome;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
 import fr.paris.lutece.plugins.forms.business.FormHome;
@@ -83,6 +87,12 @@ import fr.paris.lutece.util.sql.TransactionManager;
 public class FormJsonService extends AbstractFormJsonService
 {
     private static final String PROPERTY_COPY_FORM_TITLE = "forms.copyForm.title";
+    private static final String MESSAGE_IMPORT_WORKFLOW_LOST = "forms.import.report.workflowLost";
+    private static final String MESSAGE_IMPORT_AVAILABILITY_LOST = "forms.import.report.availabilityLost";
+    private static final String MESSAGE_IMPORT_LOGO_LOST = "forms.import.report.logoLost";
+    /** {0} the name of the category the form was in */
+    private static final String MESSAGE_IMPORT_CATEGORY_LOST = "forms.import.report.categoryLost";
+    private static final String MESSAGE_IMPORT_CATEGORY_UNKNOWN = "forms.import.report.categoryUnknown";
 
     public static final FormJsonService INSTANCE = new FormJsonService( );
 
@@ -105,7 +115,11 @@ public class FormJsonService extends AbstractFormJsonService
     public String jsonExportForm( int idForm ) throws JsonProcessingException
     {
         FormJsonData jsonData = new FormJsonData( );
-        jsonData.setForm( FormHome.findByPrimaryKey( idForm ) );
+        Form form = FormHome.findByPrimaryKey( idForm );
+        jsonData.setForm( form );
+        jsonData.setCategory( form.getIdCategory( ) > 0 ? FormCategoryHome.findByPrimaryKey( form.getIdCategory( ) ) : null );
+        // the logo is a file of this instance and is not exported : the flag lets the import say it was left behind
+        jsonData.setLogoDropped( form.getLogo( ) != null );
         jsonData.getForm( ).setLogo( null );
 
         List<Step> stepList = StepHome.getStepsListByForm( idForm );
@@ -154,7 +168,7 @@ public class FormJsonService extends AbstractFormJsonService
      * 
      * @return
      */
-    public void jsonImportForm( String json, Locale locale ) throws JsonProcessingException
+    public List<String> jsonImportForm( String json, Locale locale ) throws JsonProcessingException
     {
         FormJsonData jsonData = _objectMapper.readValue( json, FormJsonData.class );
 
@@ -168,14 +182,17 @@ public class FormJsonService extends AbstractFormJsonService
         List<ControlMapping> controlMappingList = jsonData.getControlMappingList( );
         List<ControlGroup> controlGroupList = jsonData.getControlGroupList();
 
+        // what the import cannot carry, gathered as it runs and shown to whoever asked for it
+        List<String> listReport = new ArrayList<>( );
+
         TransactionManager.beginTransaction( FormsPlugin.getPlugin( ) );
 
         try
         {
-            int newIdForm = importForm( jsonData.getForm( ), jsonData.getFormMessage( ), locale );
+            int newIdForm = importForm( jsonData, locale, listReport );
 
             importSteps( newIdForm, stepList, groupList, transitionList, questionList, formDisplayList );
-            importQuestions( newIdForm, questionList, controlList, controlMappingList, formDisplayList, formExportConfigList );
+            importQuestions( newIdForm, questionList, controlList, controlMappingList, formDisplayList, formExportConfigList, locale, listReport );
             importGroups( groupList, formDisplayList );
             importFormDisplay( newIdForm, formDisplayList, controlList );
             importTransitions( transitionList, controlList );
@@ -183,6 +200,8 @@ public class FormJsonService extends AbstractFormJsonService
             importFormExportConfig( newIdForm, formExportConfigList );
 
             TransactionManager.commitTransaction( FormsPlugin.getPlugin( ) );
+
+            return listReport;
         }
         catch( Exception e )
         {
@@ -193,8 +212,11 @@ public class FormJsonService extends AbstractFormJsonService
         }
     }
 
-    private int importForm( Form form, FormMessage formMessage, Locale locale )
+    private int importForm( FormJsonData jsonData, Locale locale, List<String> listReport )
     {
+        Form form = jsonData.getForm( );
+        FormMessage formMessage = jsonData.getFormMessage( );
+
         Object [ ] tabFormTitleCopy = {
                 form.getTitle( ),
         };
@@ -203,10 +225,27 @@ public class FormJsonService extends AbstractFormJsonService
         {
             form.setTitle( strTitleCopyForm );
         }
+        // these have always been emptied, the import holding nothing that would let it find them again here. What was missing was saying so :
+        // whoever imports a form had no way of knowing what was left for them to set
+        if ( form.getIdWorkflow( ) > 0 )
+        {
+            report( listReport, MESSAGE_IMPORT_WORKFLOW_LOST, locale );
+        }
+        if ( form.getAvailabilityStartDate( ) != null || form.getAvailabilityEndDate( ) != null )
+        {
+            report( listReport, MESSAGE_IMPORT_AVAILABILITY_LOST, locale );
+        }
+        // the export never carries the logo, it only records that the form had one
+        if ( jsonData.isLogoDropped( ) || form.getLogo( ) != null )
+        {
+            report( listReport, MESSAGE_IMPORT_LOGO_LOST, locale );
+        }
+
         form.setIdWorkflow( 0 );
         form.setAvailabilityStartDate( null );
         form.setAvailabilityEndDate( null );
         form.setLogo( null );
+        form.setIdCategory( categoryOfThisInstance( jsonData.getCategory( ), form.getIdCategory( ), locale, listReport ) );
         FormHome.create( form );
 
         int newIdForm = form.getId( );
@@ -215,6 +254,49 @@ public class FormJsonService extends AbstractFormJsonService
         FormMessageHome.create( formMessage );
 
         return newIdForm;
+    }
+
+    /**
+     * The identifier, in this instance, of the category the imported form was in.
+     *
+     * A category is carried whole rather than by its identifier, because a number designates another category, or none, in the instance the form
+     * is imported into. Its code is the same wherever that category was declared, so the category of this instance bearing that code is the one
+     * meant. None bears it, and the form is imported without a category rather than into one chosen by accident.
+     *
+     * @param category
+     *            the category the exported form was in, null when it was in none or when the export predates the category field
+     * @param nIdCategoryExported
+     *            the category identifier the exported form carries, meaningless here but telling whether it was in a category at all
+     * @param locale
+     *            the administrator's locale
+     * @param listReport
+     *            what the import gathers as it runs
+     * @return the identifier of the category here, 0 for none
+     */
+    private int categoryOfThisInstance( FormCategory category, int nIdCategoryExported, Locale locale, List<String> listReport )
+    {
+        if ( category == null )
+        {
+            // an export made before the category was carried names it by its identifier only, which designates nothing reliable here
+            if ( nIdCategoryExported > 0 )
+            {
+                report( listReport, MESSAGE_IMPORT_CATEGORY_UNKNOWN, locale );
+            }
+
+            return 0;
+        }
+
+        for ( FormCategory categoryHere : FormCategoryHome.getFormCategoryList( ) )
+        {
+            if ( StringUtils.equals( categoryHere.getCode( ), category.getCode( ) ) )
+            {
+                return categoryHere.getId( );
+            }
+        }
+
+        report( listReport, MESSAGE_IMPORT_CATEGORY_LOST, locale, category.getName( ) );
+
+        return 0;
     }
 
     private void importFormExportConfig( int newIdForm, List<FormExportConfig> formExportConfigList )
