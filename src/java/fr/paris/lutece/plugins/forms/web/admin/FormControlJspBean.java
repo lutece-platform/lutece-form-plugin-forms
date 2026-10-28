@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.forms.web.admin;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -80,6 +81,10 @@ import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.web.util.LocalizedPaginator;
 import fr.paris.lutece.util.ReferenceItem;
 import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.plugins.forms.service.FormsPlugin;
+import fr.paris.lutece.plugins.forms.service.cache.FormsCacheService;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.util.sql.TransactionManager;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.AbstractPaginator;
 import fr.paris.lutece.util.html.HtmlTemplate;
@@ -706,11 +711,28 @@ public class FormControlJspBean extends AbstractJspBean
 
         if ( _control != null )
         {
-            ControlHome.remove( _control.getId( ) );
-            if (ControlType.CONDITIONAL.getLabel().equals(_control.getControlType())
-                    && ControlHome.getControlCountByControlTargetAndType(_control.getIdControlTarget(), ControlType.CONDITIONAL) == 0) {
-                ControlGroupHome.remove(_control.getIdControlGroup());
+            TransactionManager.beginTransaction( FormsPlugin.getPlugin( ) );
+
+            try
+            {
+                ControlHome.remove( _control.getId( ) );
+                // the group goes when its last control does, whatever the type : the previous test only covered conditions, and counted the controls of
+                // the target rather than those of the group, so a group gathering rules of two questions was removed while one of them still used it
+                ControlHome.removeEmptyControlGroups( Collections.singleton( _control.getIdControlGroup( ) ) );
+
+                TransactionManager.commitTransaction( FormsPlugin.getPlugin( ) );
             }
+            catch( Exception e )
+            {
+                TransactionManager.rollBack( FormsPlugin.getPlugin( ) );
+                // the caches were repopulated while the transaction was running : they now describe rows the rollback has undone
+                SpringContextService.<FormsCacheService> getBean( FormsCacheService.BEAN_NAME ).resetCache( );
+                AppLogService.error( "Forms : the removal of the control {} failed", _control.getId( ), e );
+                addError( ERROR_CONTROL_REMOVED, getLocale( ) );
+
+                return redirectToViewManageForm( request );
+            }
+
             ControlListenerManager.notifyListenersControlRemoval( _control, request );
             request.setAttribute( FormsConstants.PARAMETER_INFO_KEY, INFO_CONTROL_REMOVED );
         }

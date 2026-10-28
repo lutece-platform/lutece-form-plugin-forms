@@ -51,7 +51,6 @@ import fr.paris.lutece.plugins.forms.business.ControlHome;
 import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
-import fr.paris.lutece.plugins.forms.business.FormResponseStepHome;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.business.Transition;
@@ -551,7 +550,6 @@ public class FormStepJspBean extends AbstractJspBean
         }
 
         _stepService.removeStep( nIdStep );
-        FormResponseStepHome.removeByStep( nIdStep );
 
         addInfo( INFO_STEP_REMOVED, getLocale( ) );
 

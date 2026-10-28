@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.web.admin;
 
+import java.util.Set;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -66,6 +67,11 @@ import fr.paris.lutece.util.ReferenceItem;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.url.UrlItem;
+import fr.paris.lutece.plugins.forms.service.FormsPlugin;
+import fr.paris.lutece.plugins.forms.service.cache.FormsCacheService;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.util.sql.TransactionManager;
 
 /**
  * This class provides the user interface to manage Form features ( manage, create, modify, remove )
@@ -455,11 +461,31 @@ public class FormTransitionJspBean extends AbstractJspBean
 
         if ( _transition != null )
         {
-            TransitionHome.remove( _transition.getId( ) );
+            TransactionManager.beginTransaction( FormsPlugin.getPlugin( ) );
 
-            ControlHome.removeByControlTarget( _transition.getId( ), ControlType.TRANSITION );
+            try
+            {
+                TransitionHome.remove( _transition.getId( ) );
 
-            TransitionHome.rebuildPrioritySequence( _transition.getFromStep( ) );
+                Set<Integer> setIdControlGroup = ControlHome.getControlGroupsByControlTargetAndType( _transition.getId( ), ControlType.TRANSITION );
+
+                ControlHome.removeByControlTarget( _transition.getId( ), ControlType.TRANSITION );
+                ControlHome.removeEmptyControlGroups( setIdControlGroup );
+
+                TransitionHome.rebuildPrioritySequence( _transition.getFromStep( ) );
+
+                TransactionManager.commitTransaction( FormsPlugin.getPlugin( ) );
+            }
+            catch( Exception e )
+            {
+                TransactionManager.rollBack( FormsPlugin.getPlugin( ) );
+                // the caches were repopulated while the transaction was running : they now describe rows the rollback has undone
+                SpringContextService.<FormsCacheService> getBean( FormsCacheService.BEAN_NAME ).resetCache( );
+                AppLogService.error( "Forms : the removal of the transition {} failed", _transition.getId( ), e );
+                addError( ERROR_TRANSITION_REMOVED, getLocale( ) );
+
+                return redirectToViewManageForm( request );
+            }
 
             addInfo( INFO_TRANSITION_REMOVED, getLocale( ) );
         }
