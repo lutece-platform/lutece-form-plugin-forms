@@ -66,6 +66,8 @@ public class AbstractFormJsonServiceTest extends TestCase
     private static final int ID_STEP = 1;
     private static final int ID_QUESTION = 20;
     private static final int ID_UNKNOWN = 999;
+    /** every identifier the import hands out is at least this one, every identifier of the source is below it */
+    private static final int FIRST_NEW_ID = 1000;
 
     private FormDatabaseServiceStub _databaseService;
     private AbstractFormJsonService _service;
@@ -263,6 +265,100 @@ public class AbstractFormJsonServiceTest extends TestCase
         assertTrue( _databaseService.getCreatedMappingList( ).isEmpty( ) );
     }
 
+    /**
+     * Nothing of the copy points back at the form it was imported from.
+     * 
+     * This is the invariant the whole remapping exists for, and the one a reader of this class should be able to check at a glance : once the chain is
+     * over, every identifier an imported element carries was handed out by a create call of this import, never read from the source. 0 means "no
+     * reference" and is the only other value allowed.
+     */
+    public void testTheImportedFormReferencesNothingOfTheSource( )
+    {
+        Step step = newStep( ID_STEP );
+        Group group = newGroup( 10, ID_STEP );
+        Question questionDriving = newQuestion( ID_QUESTION, ID_STEP );
+        Question questionDriven = newQuestion( 21, ID_STEP );
+
+        FormDisplay displayGroup = newGroupDisplay( 32, ID_STEP, 10 );
+        FormDisplay displayDriving = newQuestionDisplay( 30, ID_STEP, ID_QUESTION );
+        FormDisplay displayDriven = newQuestionDisplay( 31, ID_STEP, 21 );
+        displayDriven.setParentId( 32 );
+
+        ControlGroup controlGroup = newControlGroup( 50 );
+
+        // a rule validating the first question, and a condition through which that same question shows the second one
+        Control validation = newControl( 60, ControlType.VALIDATION, ID_QUESTION, ID_QUESTION );
+        validation.setIdControlGroup( 50 );
+        Control conditional = newControl( 61, ControlType.CONDITIONAL, 31, ID_QUESTION );
+        conditional.setIdControlGroup( 50 );
+
+        List<Group> groupList = newList( group );
+        List<Question> questionList = newList( questionDriving, questionDriven );
+        List<FormDisplay> formDisplayList = newList( displayGroup, displayDriving, displayDriven );
+        List<Control> controlList = newList( validation, conditional );
+        List<ControlGroup> controlGroupList = newList( controlGroup );
+        List<ControlMapping> controlMappingList = newList( newControlMapping( 61, ID_QUESTION ) );
+
+        _service.importSteps( NEW_ID_FORM, Collections.singletonList( step ), groupList, new ArrayList<Transition>( ), questionList, formDisplayList );
+        _service.importQuestions( NEW_ID_FORM, questionList, controlList, controlMappingList, formDisplayList, null );
+        _service.importGroups( groupList, formDisplayList );
+        _service.importFormDisplay( NEW_ID_FORM, formDisplayList, controlList );
+        _service.importControls( controlList, controlMappingList, controlGroupList );
+
+        // an import that dropped everything would satisfy the invariant without meaning anything
+        assertEquals( 1, groupList.size( ) );
+        assertEquals( 2, questionList.size( ) );
+        assertEquals( 3, formDisplayList.size( ) );
+        assertEquals( 2, controlList.size( ) );
+        assertEquals( 1, _databaseService.getCreatedMappingList( ).size( ) );
+
+        assertNoSourceIdentifier( "the step", step.getId( ) );
+
+        for ( Group groupImported : groupList )
+        {
+            assertNoSourceIdentifier( "a group", groupImported.getId( ) );
+            assertNoSourceIdentifier( "the step of a group", groupImported.getIdStep( ) );
+        }
+
+        for ( Question questionImported : questionList )
+        {
+            assertNoSourceIdentifier( "a question", questionImported.getId( ) );
+            assertNoSourceIdentifier( "the step of a question", questionImported.getIdStep( ) );
+            assertNoSourceIdentifier( "the entry of a question", questionImported.getIdEntry( ) );
+        }
+
+        for ( FormDisplay formDisplayImported : formDisplayList )
+        {
+            assertNoSourceIdentifier( "a display", formDisplayImported.getId( ) );
+            assertNoSourceIdentifier( "the step of a display", formDisplayImported.getStepId( ) );
+            assertNoSourceIdentifier( "the parent of a display", formDisplayImported.getParentId( ) );
+            assertNoSourceIdentifier( "the composite of a display", formDisplayImported.getCompositeId( ) );
+        }
+
+        for ( Control controlImported : controlList )
+        {
+            assertNoSourceIdentifier( "a control", controlImported.getId( ) );
+            assertNoSourceIdentifier( "the target of a control", controlImported.getIdControlTarget( ) );
+            assertNoSourceIdentifier( "the group of a control", controlImported.getIdControlGroup( ) );
+
+            for ( Integer nIdQuestion : controlImported.getListIdQuestion( ) )
+            {
+                assertNoSourceIdentifier( "a question driving a control", nIdQuestion.intValue( ) );
+            }
+        }
+
+        for ( ControlMapping controlMappingCreated : _databaseService.getCreatedMappingList( ) )
+        {
+            assertNoSourceIdentifier( "the control of a mapping", controlMappingCreated.getIdControl( ) );
+            assertNoSourceIdentifier( "the question of a mapping", controlMappingCreated.getIdQuestion( ) );
+        }
+    }
+
+    private static void assertNoSourceIdentifier( String strElement, int nId )
+    {
+        assertTrue( strElement + " still carries " + nId + ", which belongs to the source form", nId == 0 || nId >= FIRST_NEW_ID );
+    }
+
     @SafeVarargs
     private static <T> List<T> newList( T... items )
     {
@@ -307,6 +403,17 @@ public class AbstractFormJsonServiceTest extends TestCase
         formDisplay.setStepId( nIdStep );
         formDisplay.setCompositeId( nIdQuestion );
         formDisplay.setCompositeType( CompositeDisplayType.QUESTION.getLabel( ) );
+
+        return formDisplay;
+    }
+
+    private static FormDisplay newGroupDisplay( int nId, int nIdStep, int nIdGroup )
+    {
+        FormDisplay formDisplay = new FormDisplay( );
+        formDisplay.setId( nId );
+        formDisplay.setStepId( nIdStep );
+        formDisplay.setCompositeId( nIdGroup );
+        formDisplay.setCompositeType( CompositeDisplayType.GROUP.getLabel( ) );
 
         return formDisplay;
     }
@@ -360,7 +467,7 @@ public class AbstractFormJsonServiceTest extends TestCase
      */
     private static final class FormDatabaseServiceStub implements IFormDatabaseService
     {
-        private int _nNextId = 1000;
+        private int _nNextId = FIRST_NEW_ID;
         private final List<ControlMapping> _listCreatedMapping = new ArrayList<>( );
 
         List<ControlMapping> getCreatedMappingList( )
