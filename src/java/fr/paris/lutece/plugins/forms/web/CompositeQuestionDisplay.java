@@ -258,8 +258,11 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                     final IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
                     if ( validator != null )
                     {
-                        mapControlValidator.put( control, validator );
-                        control.setValue( validator.getJavascriptControlValue( control ) );
+                        // the rendering value is written on a copy : getControlByControlTargetAndType hands out the cached instances,
+                        // and persisting that value later would store the javascript form of the control instead of its own
+                        final Control controlForDisplay = control.clone( );
+                        controlForDisplay.setValue( validator.getJavascriptControlValue( control ) );
+                        mapControlValidator.put( controlForDisplay, validator );
                     }
                     else
                     {
