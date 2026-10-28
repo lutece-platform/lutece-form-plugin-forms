@@ -36,10 +36,8 @@ package fr.paris.lutece.plugins.forms.util;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -105,7 +103,9 @@ import fr.paris.lutece.util.url.UrlItem;
 public class FormsResponseUtils 
 {
     private static ConcurrentMap<Integer, Object> _lockFormId = new ConcurrentHashMap<>( );
-    private static Map<Integer, Integer> _responsePerFormMap = new HashMap<>( );
+    // the lock taken around this map is the one of a form : two requests on two different forms hold two different locks and reach it at the same time,
+    // so the map has to carry its own safety. The lock remains needed for the check then increment, which spans two methods.
+    private static ConcurrentMap<Integer, Integer> _responsePerFormMap = new ConcurrentHashMap<>( );
 
 	private FormsResponseUtils( )
 	{
@@ -606,11 +606,38 @@ public class FormsResponseUtils
        {
         	synchronized( FormsResponseUtils.getLockOnForm( form ) )
              {
-        		int nNumberReponseForm = _responsePerFormMap.get( form.getId( ) );
+        		// read the same way checkNumberMaxResponseForm does : get( ) alone returns null for a form this instance has not counted yet,
+        		// and unboxing that null threw
+        		int nNumberReponseForm = _responsePerFormMap.computeIfAbsent( form.getId( ), FormHome::getNumberOfResponseForms );
         		_responsePerFormMap.put( form.getId( ), nNumberReponseForm + 1 );
               }
         }
         
+    }
+
+    /**
+     * Take back a response that was counted for a form but never recorded.
+     * 
+     * The count is held in memory, not in the database, so a rollback does not undo it : whoever increased it has to put it back by hand, or the form
+     * ends up refusing responses over a maximum it has not reached.
+     * 
+     * @param form
+     *            the form the response was counted for
+     */
+    public static void decreaseNumberResponse( Form form )
+    {
+        if ( form.getMaxNumberResponse( ) != 0 )
+        {
+            synchronized( FormsResponseUtils.getLockOnForm( form ) )
+            {
+                Integer nNumberReponseForm = _responsePerFormMap.get( form.getId( ) );
+
+                if ( nNumberReponseForm != null && nNumberReponseForm > 0 )
+                {
+                    _responsePerFormMap.put( form.getId( ), nNumberReponseForm - 1 );
+                }
+            }
+        }
     }
     
     /**
