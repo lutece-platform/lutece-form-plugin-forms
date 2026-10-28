@@ -68,5 +68,13 @@
         $('header').remove();
         $('#breadforms').remove();
         $('#footer').remove();
+
+        // saving returns to the step configuration : it has to load in the window holding the modal, not in the modal itself.
+        // The other submit buttons of the form refresh this screen and stay in the modal.
+        if ( window.self !== window.top ) {
+            btnAction.click( function( ){
+                formAction.attr( 'target', '_top' );
+            });
+        }
     });
 </script>
