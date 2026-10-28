@@ -42,7 +42,7 @@ ${breadcrumb_template}
 						</@formGroup>
 						<@formGroup>
 							<#if entry.mandatory><#assign checked = true /></#if>
-							<@checkBox orientation='switch' labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}' name='mandatory' id='mandatory' value='1' checked=checked />
+							<@checkBox orientation='switch' labelKey='#i18n{forms.createEntry.labelMandatory}' name='mandatory' id='mandatory' value='1' checked=checked />
 						</@formGroup>
 						<@formGroup labelFor='errorMessage' labelKey='#i18n{forms.createEntry.labelMandatoryErrorMessage}' helpKey='#i18n{forms.createEntry.labelMandatoryErrorMessageHelp}'>
 							<@input type='textarea' name='errorMessage' id='errorMessage' rows=2>${entry.errorMessage!}</@input>
@@ -64,13 +64,13 @@ ${breadcrumb_template}
 								<#assign checkedValue = false />
 								<#assign confirmFieldTitle ="" />
 							</#if>
-							<@checkBox orientation='switch' labelFor='confirm_field' labelKey='#i18n{forms.createEntry.labelConfirmField}' name='confirm_field' id='confirm_field' value='1' params='onchange="javascript:changeVisilityConfirmFieldTitle();"' checked=checkedValue />
+							<@checkBox orientation='switch' labelKey='#i18n{forms.createEntry.labelConfirmField}' name='confirm_field' id='confirm_field' value='1' params='onchange="javascript:changeVisilityConfirmFieldTitle();"' checked=checkedValue />
 						</@formGroup>
 						<@formGroup labelFor='confirm_field_title' id="confirm_field_title_group" labelKey='#i18n{forms.createEntry.labelConfirmFieldTitle}'>
 							<@input type='text' name='confirm_field_title' id='confirm_field_title' value='${confirmFieldTitle!}'  maxlength=255 />
 						</@formGroup>
 						<@formGroup>
-							<@checkBox orientation='switch' labelFor='only_display_in_back' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}' name='only_display_in_back' id='only_display_in_back' value='1' checked=entry.onlyDisplayInBack />
+							<@checkBox orientation='switch' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}' name='only_display_in_back' id='only_display_in_back' value='1' checked=entry.onlyDisplayInBack />
 						</@formGroup>
 						<#if entry.exportable>
 							<@input type='hidden' name='exportable' value='1' />
@@ -99,7 +99,7 @@ ${breadcrumb_template}
 						</#if>
 						</@formGroup>
 						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
-							<@checkBox orientation='switch' labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' name='is_indexed' id='is_indexed' value='1' checked=entry.indexed />
+							<@checkBox orientation='switch' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' name='is_indexed' id='is_indexed' value='1' checked=entry.indexed />
 						</@formGroup>
 						<@formGroup>
 							<#assign anonymizable=getFieldByCode( entry, "anonymizable")>
@@ -110,7 +110,7 @@ ${breadcrumb_template}
 								<#assign checkedValue = false />
 								<#assign anonPattern ="" />
 							</#if>
-							<@checkBox orientation='switch' labelFor='anonymizable' labelKey='#i18n{forms.createEntry.labelAnonymizable}' name='anonymizable' id='anonymizable' value='1' params='onchange="javascript:changeVisilityAnonymizePattern();"' checked=checkedValue />
+							<@checkBox orientation='switch' labelKey='#i18n{forms.createEntry.labelAnonymizable}' name='anonymizable' id='anonymizable' value='1' params='onchange="javascript:changeVisilityAnonymizePattern();"' checked=checkedValue />
 						</@formGroup>
 						<@formGroup labelFor='anonymize_pattern' id="anonymize_pattern_group" labelKey='#i18n{forms.createEntry.labelAnonymizePattern}' helpKey='${anonymization_help_message}' >
 							<@input type='text' name='anonymize_pattern' id='anonymize_pattern' value='${anonPattern!}' maxlength=255 />

@@ -12,11 +12,11 @@
 						<@input type='text' name='csv_separator' id='csv_separator' value=multiview_config.csvSeparator />
 					</@formGroup>
 					<@formGroup labelFor='display_forms_title_column' helpKey='#i18n{forms.multiview_config.labelDisplayColumnFormTitle.help}' >
-						<@checkBox labelFor='display_forms_title_column' labelKey='#i18n{forms.multiview_config.labelDisplayColumnFormTitle}' name='display_forms_title_column' id='display_forms_title_column' value='1' checked=multiview_config.displayFormsTitleColumn />
+						<@checkBox labelKey='#i18n{forms.multiview_config.labelDisplayColumnFormTitle}' name='display_forms_title_column' id='display_forms_title_column' value='1' checked=multiview_config.displayFormsTitleColumn />
 					</@formGroup>
 					<#if userassignment_enabled>
 						<@formGroup helpKey='#i18n{forms.multiview_config.labelDisplayColumnAssignee.help}' >
-							<@checkBox labelFor='display_assignee_column' labelKey='#i18n{forms.multiview_config.labelDisplayColumnAssignee}' name='display_assignee_column' id='display_assignee_column' value='1' checked=multiview_config.displayFormsAssigneeColumn />
+							<@checkBox labelKey='#i18n{forms.multiview_config.labelDisplayColumnAssignee}' name='display_assignee_column' id='display_assignee_column' value='1' checked=multiview_config.displayFormsAssigneeColumn />
 						</@formGroup>
 					</#if>
 					<@formGroup labelFor='pdf_number_of_response_per_file' labelKey='#i18n{forms.multiview_config.labelDisplayColumnPdfNumberOfResponsesPerFile}' helpKey='#i18n{forms.multiview_config.labelDisplayColumnPdfNumberOfResponsesPerFile.help}'>
