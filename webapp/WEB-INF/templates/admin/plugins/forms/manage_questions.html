@@ -111,9 +111,9 @@
                                 <#list entry_type_list as item>
                                 	<@li>
 	                                	<#if item.group>
-	                                		<@button type='submit' class='btn-add-entry' style='btn-block' color='primary' name='view_createGroup' value='' title='#i18n{forms.manage_questions.buttonAdd} ${item.title}' buttonNested=true buttonIcon='${item.iconName}'>${item.title}</@button>
+	                                		<@button type='submit' class='btn-add-entry' style='btn-block' color='primary' name='view_createGroup' value='' title='#i18n{forms.manage_questions.buttonAdd} ${item.title}' buttonIcon='${item.iconName}'>${item.title}</@button>
 	                                	<#else>
-	                                        <@button type='submit' class='btn-add-entry' style='btn-block' color='primary' name='view_createQuestion' value='${item.idType}' title='#i18n{forms.manage_questions.buttonAdd} ${item.title}' buttonNested=true buttonIcon='${item.iconName}'>${item.title}</@button>
+	                                        <@button type='submit' class='btn-add-entry' style='btn-block' color='primary' name='view_createQuestion' value='${item.idType}' title='#i18n{forms.manage_questions.buttonAdd} ${item.title}' buttonIcon='${item.iconName}'>${item.title}</@button>
 	                                    </#if>
                                     </@li>
                                 </#list>
