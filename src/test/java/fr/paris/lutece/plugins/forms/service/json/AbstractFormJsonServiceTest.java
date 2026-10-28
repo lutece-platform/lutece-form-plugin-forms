@@ -38,6 +38,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
@@ -140,7 +141,7 @@ public class AbstractFormJsonServiceTest extends TestCase
         List<Question> questionList = newList( newQuestion( ID_QUESTION, ID_STEP ) );
         List<Control> controlList = newList( newControl( 50, ControlType.VALIDATION, ID_UNKNOWN, ID_QUESTION ) );
 
-        _service.importQuestions( NEW_ID_FORM, questionList, controlList, new ArrayList<>( ), new ArrayList<>( ), null );
+        _service.importQuestions( NEW_ID_FORM, questionList, controlList, new ArrayList<>( ), new ArrayList<>( ), null, Locale.FRANCE, new ArrayList<>( ) );
 
         assertTrue( controlList.isEmpty( ) );
     }
@@ -156,7 +157,7 @@ public class AbstractFormJsonServiceTest extends TestCase
         List<Question> questionList = newList( question );
         List<Control> controlList = newList( control );
 
-        _service.importQuestions( NEW_ID_FORM, questionList, controlList, new ArrayList<>( ), new ArrayList<>( ), null );
+        _service.importQuestions( NEW_ID_FORM, questionList, controlList, new ArrayList<>( ), new ArrayList<>( ), null, Locale.FRANCE, new ArrayList<>( ) );
 
         assertEquals( 1, controlList.size( ) );
         assertEquals( 1, control.getListIdQuestion( ).size( ) );
@@ -178,7 +179,7 @@ public class AbstractFormJsonServiceTest extends TestCase
         List<Question> questionList = newList( newQuestion( ID_QUESTION, ID_STEP ) );
         List<Control> controlList = newList( controlWithNullList, controlWithEmptyList );
 
-        _service.importQuestions( NEW_ID_FORM, questionList, controlList, new ArrayList<>( ), new ArrayList<>( ), null );
+        _service.importQuestions( NEW_ID_FORM, questionList, controlList, new ArrayList<>( ), new ArrayList<>( ), null, Locale.FRANCE, new ArrayList<>( ) );
 
         assertTrue( controlList.isEmpty( ) );
     }
@@ -191,7 +192,7 @@ public class AbstractFormJsonServiceTest extends TestCase
         List<Question> questionList = newList( newQuestion( ID_QUESTION, ID_STEP ) );
         List<ControlMapping> controlMappingList = newList( newControlMapping( 50, ID_UNKNOWN ) );
 
-        _service.importQuestions( NEW_ID_FORM, questionList, new ArrayList<>( ), controlMappingList, new ArrayList<>( ), null );
+        _service.importQuestions( NEW_ID_FORM, questionList, new ArrayList<>( ), controlMappingList, new ArrayList<>( ), null, Locale.FRANCE, new ArrayList<>( ) );
 
         assertTrue( controlMappingList.isEmpty( ) );
     }
@@ -300,7 +301,7 @@ public class AbstractFormJsonServiceTest extends TestCase
         List<ControlMapping> controlMappingList = newList( newControlMapping( 61, ID_QUESTION ) );
 
         _service.importSteps( NEW_ID_FORM, Collections.singletonList( step ), groupList, new ArrayList<Transition>( ), questionList, formDisplayList );
-        _service.importQuestions( NEW_ID_FORM, questionList, controlList, controlMappingList, formDisplayList, null );
+        _service.importQuestions( NEW_ID_FORM, questionList, controlList, controlMappingList, formDisplayList, null, Locale.FRANCE, new ArrayList<>( ) );
         _service.importGroups( groupList, formDisplayList );
         _service.importFormDisplay( NEW_ID_FORM, formDisplayList, controlList );
         _service.importControls( controlList, controlMappingList, controlGroupList );
