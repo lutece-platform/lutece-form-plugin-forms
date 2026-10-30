@@ -173,4 +173,31 @@ public class StepJsonData
     {
         _controlMappingList = new ArrayList<>( controlMappingList );
     }
+
+    /**
+     * Finds the keys the JSON data of a step lacks to be imported
+     *
+     * @return the missing keys, empty when the data is complete
+     */
+    public List<String> findMissingKeys( )
+    {
+        List<String> listMissingKeys = new ArrayList<>( );
+        addIfMissing( listMissingKeys, "step", _step );
+        addIfMissing( listMissingKeys, "groupList", _groupList );
+        addIfMissing( listMissingKeys, "questionList", _questionList );
+        addIfMissing( listMissingKeys, "formDisplayList", _formDisplayList );
+        addIfMissing( listMissingKeys, "controlList", _controlList );
+        addIfMissing( listMissingKeys, "controlGroupList", _controlGroupList );
+        addIfMissing( listMissingKeys, "controlMappingList", _controlMappingList );
+
+        return listMissingKeys;
+    }
+
+    private static void addIfMissing( List<String> listMissingKeys, String strKey, Object value )
+    {
+        if ( value == null )
+        {
+            listMissingKeys.add( strKey );
+        }
+    }
 }
