@@ -71,6 +71,7 @@ import fr.paris.lutece.plugins.forms.business.FormMessageHome;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
+import fr.paris.lutece.plugins.forms.exception.FormJsonImportException;
 import fr.paris.lutece.plugins.forms.service.FormCategoryService;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
@@ -494,9 +495,9 @@ public class FormJspBean extends AbstractJspBean
                 _formJsonService.jsonImportForm( json, getLocale( ) );
                 addInfo( INFO_FORM_COPIED, getLocale( ) );
             }
-            catch( JsonProcessingException e )
+            catch( JsonProcessingException | FormJsonImportException e )
             {
-                AppLogService.debug( e.getMessage( ) );
+                AppLogService.error( "Forms : the form {} could not be copied", nId, e );
                 addError( ERROR_FORM_NOT_COPIED, getLocale( ) );
             }
         }
@@ -978,9 +979,9 @@ public class FormJspBean extends AbstractJspBean
             _formJsonService.jsonImportForm( new String( fileItem.get( ), StandardCharsets.UTF_8 ), getLocale( ) );
             addInfo( INFO_FORM_CREATED, getLocale( ) );
         }
-        catch( JsonProcessingException e )
+        catch( JsonProcessingException | FormJsonImportException e )
         {
-            AppLogService.error( e.getMessage( ) );
+            AppLogService.error( "Forms : the form could not be imported", e );
             addError( ERROR_FORM_NOT_IMPORTED, getLocale( ) );
         }
         return redirectView( request, VIEW_MANAGE_FORMS );

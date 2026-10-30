@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.forms.service.json;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,6 +43,7 @@ import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
+import fr.paris.lutece.plugins.forms.exception.FormJsonImportException;
 import fr.paris.lutece.test.LuteceTestCase;
 import jakarta.inject.Inject;
 import java.util.Locale;
@@ -97,5 +100,15 @@ public class FormJsonServiceStepImportTest extends LuteceTestCase
 
         assertEquals( 2, StepHome.getStepsListByForm( _form.getId( ) ).size( ) );
         assertEquals( 1, StepHome.getStepsListByForm( _form.getId( ) ).stream( ).filter( Step::isInitial ).count( ) );
+    }
+
+    /**
+     * JSON data without the key "step" is refused and creates no step
+     */
+    @Test
+    public void testImportWithoutStepIsRefused( )
+    {
+        assertThrows( FormJsonImportException.class, ( ) -> _formJsonService.jsonImportStep( _form.getId( ), "{}", Locale.FRENCH ) );
+        assertEquals( 0, StepHome.getStepsListByForm( _form.getId( ) ).size( ) );
     }
 }

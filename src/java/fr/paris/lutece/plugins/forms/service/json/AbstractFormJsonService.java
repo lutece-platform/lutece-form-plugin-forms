@@ -70,6 +70,7 @@ import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.business.Transition;
 import fr.paris.lutece.plugins.forms.business.export.FormExportConfig;
+import fr.paris.lutece.plugins.forms.exception.FormJsonImportException;
 import fr.paris.lutece.plugins.forms.service.IFormDatabaseService;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
@@ -181,9 +182,21 @@ public abstract class AbstractFormJsonService
         jsonImportStep( idForm, jsonData, locale );
     }
 
+    /**
+     * Import the step from its JSON data.
+     *
+     * @throws FormJsonImportException
+     *             if the JSON data lacks a key
+     */
     @Transactional
     public void jsonImportStep( int idForm, StepJsonData jsonData, Locale locale )
     {
+        List<String> listMissingKeys = jsonData.findMissingKeys( );
+        if ( !listMissingKeys.isEmpty( ) )
+        {
+            throw new FormJsonImportException( "Forms : the JSON data of the step lacks the keys " + listMissingKeys );
+        }
+
         Step step = jsonData.getStep( );
         List<Group> groupList = jsonData.getGroupList( );
         List<Question> questionList = jsonData.getQuestionList( );

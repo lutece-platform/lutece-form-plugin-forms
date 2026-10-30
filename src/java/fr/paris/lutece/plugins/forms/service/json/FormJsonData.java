@@ -250,4 +250,34 @@ public class FormJsonData
         _formExportConfigList = new ArrayList<>( formExportConfigList );
     }
 
+    /**
+     * Finds the keys the JSON data of a form lacks to be imported
+     *
+     * @return the missing keys, empty when the data is complete
+     */
+    public List<String> findMissingKeys( )
+    {
+        List<String> listMissingKeys = new ArrayList<>( );
+        addIfMissing( listMissingKeys, "form", _form );
+        addIfMissing( listMissingKeys, "formMessage", _formMessage );
+        addIfMissing( listMissingKeys, "stepList", _stepList );
+        addIfMissing( listMissingKeys, "groupList", _groupList );
+        addIfMissing( listMissingKeys, "questionList", _questionList );
+        addIfMissing( listMissingKeys, "transitionList", _transitionList );
+        addIfMissing( listMissingKeys, "formDisplayList", _formDisplayList );
+        addIfMissing( listMissingKeys, "controlList", _controlList );
+        addIfMissing( listMissingKeys, "controlGroupList", _controlGroupList );
+        addIfMissing( listMissingKeys, "controlMappingList", _controlMappingList );
+        addIfMissing( listMissingKeys, "formExportConfigList", _formExportConfigList );
+
+        return listMissingKeys;
+    }
+
+    private static void addIfMissing( List<String> listMissingKeys, String strKey, Object value )
+    {
+        if ( value == null )
+        {
+            listMissingKeys.add( strKey );
+        }
+    }
 }
