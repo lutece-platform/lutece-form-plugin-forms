@@ -71,11 +71,14 @@ import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.business.Transition;
 import fr.paris.lutece.plugins.forms.business.export.FormExportConfig;
 import fr.paris.lutece.plugins.forms.service.IFormDatabaseService;
+import fr.paris.lutece.plugins.forms.service.cache.FormsCacheService;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.IMapProvider;
 import fr.paris.lutece.plugins.referencelist.business.ReferenceItemHome;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.util.AppException;
+import jakarta.enterprise.inject.spi.CDI;
 import jakarta.transaction.Transactional;
 
 public abstract class AbstractFormJsonService
@@ -184,33 +187,56 @@ public abstract class AbstractFormJsonService
     @Transactional
     public void jsonImportStep( int idForm, StepJsonData jsonData, Locale locale )
     {
-        Step step = jsonData.getStep( );
-        List<Group> groupList = jsonData.getGroupList( );
-        List<Question> questionList = jsonData.getQuestionList( );
-        List<Control> controlList = jsonData.getControlList( );
-        List<ControlMapping> controlMappingList = jsonData.getControlMappingList( );
-        List<ControlGroup> controlGroupList = jsonData.getControlGroupList( );
-        List<FormDisplay> formDisplayList = jsonData.getFormDisplayList( );
-
-        Object [ ] tabSTepTitleCopy = {
-                step.getTitle( ),
-        };
-        String strTitleCopyStep = I18nService.getLocalizedString( PROPERTY_COPY_STEP_TITLE, tabSTepTitleCopy, locale );
-
-        if ( strTitleCopyStep != null )
+        try
         {
-            step.setTitle( strTitleCopyStep );
-        }
-        if ( step.isInitial( ) && StepHome.getInitialStep( idForm ) != null )
-        {
-            step.setInitial( false );
-        }
+            Step step = jsonData.getStep( );
+            List<Group> groupList = jsonData.getGroupList( );
+            List<Question> questionList = jsonData.getQuestionList( );
+            List<Control> controlList = jsonData.getControlList( );
+            List<ControlMapping> controlMappingList = jsonData.getControlMappingList( );
+            List<ControlGroup> controlGroupList = jsonData.getControlGroupList( );
+            List<FormDisplay> formDisplayList = jsonData.getFormDisplayList( );
 
-        importSteps( idForm, Collections.singletonList( step ), groupList, null, questionList, formDisplayList );
-        importQuestions( idForm, questionList, controlList, controlMappingList, formDisplayList, null );
-        importGroups( groupList, formDisplayList );
-        importFormDisplay( idForm, formDisplayList, controlList );
-        importControls( controlList, controlMappingList, controlGroupList );
+            Object [ ] tabSTepTitleCopy = {
+                    step.getTitle( ),
+            };
+            String strTitleCopyStep = I18nService.getLocalizedString( PROPERTY_COPY_STEP_TITLE, tabSTepTitleCopy, locale );
+
+            if ( strTitleCopyStep != null )
+            {
+                step.setTitle( strTitleCopyStep );
+            }
+            if ( step.isInitial( ) && StepHome.getInitialStep( idForm ) != null )
+            {
+                step.setInitial( false );
+            }
+
+            importSteps( idForm, Collections.singletonList( step ), groupList, null, questionList, formDisplayList );
+            importQuestions( idForm, questionList, controlList, controlMappingList, formDisplayList, null );
+            importGroups( groupList, formDisplayList );
+            importFormDisplay( idForm, formDisplayList, controlList );
+            importControls( controlList, controlMappingList, controlGroupList );
+        }
+        catch( RuntimeException e )
+        {
+            throw importFailure( "Forms : the import of a step into the form " + idForm + " failed", e );
+        }
+    }
+
+    /**
+     * Ends a failed import. The exception returned is unchecked, so the container rolls the transaction back; the cache,
+     * which may hold objects read or written during the transaction, is reset once the rollback is done.
+     *
+     * @param strMessage
+     *            the message of the exception
+     * @param e
+     *            the cause of the failure
+     * @return the exception to throw
+     */
+    protected AppException importFailure( String strMessage, RuntimeException e )
+    {
+        CDI.current( ).select( FormsCacheService.class ).get( ).resetCache( );
+        return new AppException( strMessage, e );
     }
 
     protected void importSteps( int newIdForm, List<Step> stepList, List<Group> groupList, List<Transition> transitionList, List<Question> questionList,

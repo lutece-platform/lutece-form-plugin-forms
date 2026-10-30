@@ -99,6 +99,7 @@ import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.upload.MultipartItem;
+import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -494,9 +495,9 @@ public class FormJspBean extends AbstractJspBean
                 _formJsonService.jsonImportForm( json, getLocale( ) );
                 addInfo( INFO_FORM_COPIED, getLocale( ) );
             }
-            catch( JsonProcessingException e )
+            catch( JsonProcessingException | AppException e )
             {
-                AppLogService.debug( e.getMessage( ) );
+                AppLogService.error( "Forms : the form {} could not be copied", nId, e );
                 addError( ERROR_FORM_NOT_COPIED, getLocale( ) );
             }
         }
@@ -978,9 +979,9 @@ public class FormJspBean extends AbstractJspBean
             _formJsonService.jsonImportForm( new String( fileItem.get( ), StandardCharsets.UTF_8 ), getLocale( ) );
             addInfo( INFO_FORM_CREATED, getLocale( ) );
         }
-        catch( JsonProcessingException e )
+        catch( JsonProcessingException | AppException e )
         {
-            AppLogService.error( e.getMessage( ) );
+            AppLogService.error( "Forms : the form could not be imported", e );
             addError( ERROR_FORM_NOT_IMPORTED, getLocale( ) );
         }
         return redirectView( request, VIEW_MANAGE_FORMS );
