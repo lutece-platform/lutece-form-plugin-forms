@@ -184,25 +184,32 @@ public class FormJsonService extends AbstractFormJsonService
     {
         FormJsonData jsonData = _objectMapper.readValue( json, FormJsonData.class );
 
-        int newIdForm = importForm( jsonData.getForm( ), jsonData.getFormMessage( ), locale );
+        try
+        {
+            int newIdForm = importForm( jsonData.getForm( ), jsonData.getFormMessage( ), locale );
 
-        List<FormExportConfig> formExportConfigList = jsonData.getFormExportConfigList( );
-        List<Step> stepList = jsonData.getStepList( );
-        List<Group> groupList = jsonData.getGroupList( );
-        List<Transition> transitionList = jsonData.getTransitionList( );
-        List<Question> questionList = jsonData.getQuestionList( );
-        List<FormDisplay> formDisplayList = jsonData.getFormDisplayList( );
-        List<Control> controlList = jsonData.getControlList( );
-        List<ControlMapping> controlMappingList = jsonData.getControlMappingList( );
-        List<ControlGroup> controlGroupList = jsonData.getControlGroupList();
+            List<FormExportConfig> formExportConfigList = jsonData.getFormExportConfigList( );
+            List<Step> stepList = jsonData.getStepList( );
+            List<Group> groupList = jsonData.getGroupList( );
+            List<Transition> transitionList = jsonData.getTransitionList( );
+            List<Question> questionList = jsonData.getQuestionList( );
+            List<FormDisplay> formDisplayList = jsonData.getFormDisplayList( );
+            List<Control> controlList = jsonData.getControlList( );
+            List<ControlMapping> controlMappingList = jsonData.getControlMappingList( );
+            List<ControlGroup> controlGroupList = jsonData.getControlGroupList();
 
-        importSteps( newIdForm, stepList, groupList, transitionList, questionList, formDisplayList );
-        importQuestions( newIdForm, questionList, controlList, controlMappingList, formDisplayList, formExportConfigList );
-        importGroups( groupList, formDisplayList );
-        importFormDisplay( newIdForm, formDisplayList, controlList );
-        importTransitions( transitionList, controlList );
-        importControls( controlList, controlMappingList, controlGroupList );
-        importFormExportConfig( newIdForm, formExportConfigList );
+            importSteps( newIdForm, stepList, groupList, transitionList, questionList, formDisplayList );
+            importQuestions( newIdForm, questionList, controlList, controlMappingList, formDisplayList, formExportConfigList );
+            importGroups( groupList, formDisplayList );
+            importFormDisplay( newIdForm, formDisplayList, controlList );
+            importTransitions( transitionList, controlList );
+            importControls( controlList, controlMappingList, controlGroupList );
+            importFormExportConfig( newIdForm, formExportConfigList );
+        }
+        catch( RuntimeException e )
+        {
+            throw importFailure( "Forms : the import of the form failed", e );
+        }
     }
 
     private int importForm( Form form, FormMessage formMessage, Locale locale )
