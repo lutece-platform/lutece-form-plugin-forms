@@ -509,10 +509,12 @@ public class FormControlJspBean extends AbstractJspBean
 
         int nIdQuestion;
 
-        if ( bStepChanged && !referenceListQuestion.isEmpty( ) )
+        if ( bStepChanged )
         {
             _control.setListIdQuestion( null );
-            nIdQuestion = FormsConstants.DEFAULT_ID_VALUE;
+            _control.setValidatorName( StringUtils.EMPTY );
+            _control.setValue( StringUtils.EMPTY );
+            nIdQuestion = referenceListQuestion.isEmpty( ) ? FormsConstants.DEFAULT_ID_VALUE : NumberUtils.toInt( referenceListQuestion.get( 0 ).getCode( ) );
         } else if ( valSubmit != null && valSubmit.equals( FormsConstants.VALIDATE_QUESTION ) ) {
             nIdQuestion = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_QUESTION ), FormsConstants.DEFAULT_ID_VALUE );
         }
