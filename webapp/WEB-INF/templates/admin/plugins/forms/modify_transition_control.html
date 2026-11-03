@@ -41,3 +41,6 @@ ${control_template}
 </@formGroup>
 <@formsButton okAction='modifyControl' viewAction='' />
 </@tform>
+<script>
+document.querySelectorAll('#modify_transition_control button[value=validateValidator]').forEach(b => b.closest('.input-group').querySelector('select').addEventListener('change', () => b.form.requestSubmit(b)));
+</script>
