@@ -37,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -56,6 +57,7 @@ import org.junit.jupiter.api.Test;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.portal.business.rbac.RBACRole;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.test.LuteceTestCase;
 
@@ -65,6 +67,8 @@ import fr.paris.lutece.test.LuteceTestCase;
 public class FormPanelFormsInitializerQueryPartTest extends LuteceTestCase
 {
     private static final int UNKNOWN_FORM_ID = -42;
+    // Role granted every permission on the forms by the init script of the plugin
+    private static final String ROLE_FORMS_MANAGER = "forms_manager";
 
     private List<Form> _listForms;
 
@@ -104,8 +108,35 @@ public class FormPanelFormsInitializerQueryPartTest extends LuteceTestCase
     @Test
     public void testQueryOfMoreFormsThanTheClauseLimit( ) throws Exception
     {
-        Query query = new FormPanelFormsInitializerQueryPart( new AdminUser( ) ).getFormPanelInitializerSelectQuery( );
+        AdminUser user = new AdminUser( );
+        user.setRoles( Map.of( ROLE_FORMS_MANAGER, new RBACRole( ROLE_FORMS_MANAGER, ROLE_FORMS_MANAGER ) ) );
 
+        assertEquals( 2, countSelectedResponses( new FormPanelFormsInitializerQueryPart( user ).getFormPanelInitializerSelectQuery( ) ) );
+    }
+
+    /**
+     * A user who is not allowed to view the responses of the forms selects no response, whatever the number of forms of its workgroups.
+     *
+     * @throws Exception
+     *             if the index cannot be written or searched
+     */
+    @Test
+    public void testQueryWithoutPermissionToViewTheResponses( ) throws Exception
+    {
+        assertEquals( 0, countSelectedResponses( new FormPanelFormsInitializerQueryPart( new AdminUser( ) ).getFormPanelInitializerSelectQuery( ) ) );
+    }
+
+    /**
+     * Indexes a response of the first form, of the last form and of a form that does not exist, then counts the responses selected by the query.
+     *
+     * @param query
+     *            the query
+     * @return the number of selected responses
+     * @throws Exception
+     *             if the index cannot be written or searched
+     */
+    private int countSelectedResponses( Query query ) throws Exception
+    {
         try ( Directory directory = new ByteBuffersDirectory( ) )
         {
             try ( IndexWriter writer = new IndexWriter( directory, new IndexWriterConfig( new StandardAnalyzer( ) ) ) )
@@ -116,7 +147,7 @@ public class FormPanelFormsInitializerQueryPartTest extends LuteceTestCase
             }
             try ( DirectoryReader reader = DirectoryReader.open( directory ) )
             {
-                assertEquals( 2, new IndexSearcher( reader ).count( query ) );
+                return new IndexSearcher( reader ).count( query );
             }
         }
     }
