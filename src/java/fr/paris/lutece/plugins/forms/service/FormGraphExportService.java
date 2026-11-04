@@ -76,7 +76,13 @@ public class FormGraphExportService
     private static final String KEY_NEWLINE = "<br /> ";
     private static final String KEY_CLICK = "click ";
     private static final String KEY_AUTOMATIC_ACTION_SYMBOL = "  fa:fa-bolt";
-    private static final String KEY_STEP_END_SYMBOL = "((fa:fa-floppy-disk))";
+    private static final String KEY_STEP_END_SYMBOL = "((\" \"))";
+    private static final String KEY_STEP_START_SYMBOL = "((\" \"))";
+    private static final String NODE_START = "D";
+    private static final String NODE_END = "F";
+    // Colors of the start (green) and end (orange) virtual steps, those of the back office theme
+    private static final String STYLE_START = "style " + NODE_START + " fill:#2fb344,stroke:#2b8a3e,color:#fff";
+    private static final String STYLE_END = "style " + NODE_END + " fill:#f76707,stroke:#d9480f,color:#fff";
     private static final String STEP_URL_PART = "/jsp/admin/plugins/forms/ManageQuestions.jsp?id_step=";
     private static final String TRANSITION_URL_PART = "/jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=";
     private static final String NEWLINE = "\n";
@@ -129,8 +135,11 @@ public class FormGraphExportService
 
         listSteps = FormsUtils.sortStepsWithTransitions( listSteps, listTransitions );
 
-        // add final virtual step
-        sb.append ( "F").append ( KEY_STEP_END_SYMBOL).append ( NEWLINE);
+        // add initial and final virtual steps
+        sb.append( NODE_START ).append( KEY_STEP_START_SYMBOL ).append( NEWLINE );
+        sb.append( NODE_END ).append( KEY_STEP_END_SYMBOL ).append( NEWLINE );
+        sb.append( STYLE_START ).append( NEWLINE );
+        sb.append( STYLE_END ).append( NEWLINE );
         
         // list steps
         for ( Step step : listSteps )
@@ -149,13 +158,22 @@ public class FormGraphExportService
             
             sb.append( KEY_STEP_LABEL_END )
                     .append( NEWLINE );
+
+            // link from initial step if initial
+            if ( step.isInitial( ) )
+            {
+                sb.append( NODE_START )
+                    .append( KEY_ASSIGN_ACTIONS_START ).append( KEY_ASSIGN_ACTIONS_END )
+                    .append( "S" ).append( step.getId( ) )
+                    .append( NEWLINE );
+            }
             
             // link to final step if final
             if (step.isFinal ( ) )
             {
         	sb.append("S").append( step.getId( ) )
         		.append( KEY_ASSIGN_ACTIONS_START ).append( KEY_ASSIGN_ACTIONS_END )
-        		.append ( "F" )
+        		.append ( NODE_END )
         		.append( NEWLINE );
             }
             
