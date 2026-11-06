@@ -48,7 +48,6 @@ import fr.paris.lutece.plugins.forms.business.ControlGroup;
 import fr.paris.lutece.plugins.forms.business.ControlGroupHome;
 import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
 import fr.paris.lutece.plugins.forms.validation.IValidator;
-import fr.paris.lutece.plugins.forms.validation.ICustomImportableControl;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -454,9 +453,9 @@ public abstract class AbstractFormJsonService
 
             if ( StringUtils.isNotEmpty( control.getValidatorName( ) ) ) {
                 IValidator validator = EntryServiceManager.getInstance().getValidator( control.getValidatorName() );
-                if (validator instanceof ICustomImportableControl)
+                if ( validator != null )
                 {
-                    control.setValue( ((ICustomImportableControl) validator).getNewValidatorValue( control, mapIdFields ) );
+                    control.setValue( validator.getNewValidatorValue( control, mapIdFields ) );
                 }
             }
 
