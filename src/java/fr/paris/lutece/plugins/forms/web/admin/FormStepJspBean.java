@@ -62,6 +62,7 @@ import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.business.Transition;
 import fr.paris.lutece.plugins.forms.business.TransitionHome;
+import fr.paris.lutece.plugins.forms.exception.FormJsonImportException;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.service.FormGraphExportService;
 import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
@@ -536,9 +537,10 @@ public class FormStepJspBean extends AbstractJspBean
                     _formJsonService.jsonImportStep( nIdForm, json, getLocale( ) );
                     addInfo( INFO_STEP_COPIED, getLocale( ) );
                 }
-                catch( JsonProcessingException e )
+                catch( JsonProcessingException | FormJsonImportException e )
                 {
-                    AppLogService.error( "Error while copying step", e );
+                    AppLogService.error( "Forms : the step {} could not be copied", nIdStep, e );
+                    addError( ERROR_STEP_NOT_COPIED, getLocale( ) );
                 }
             }
         }
@@ -796,9 +798,9 @@ public class FormStepJspBean extends AbstractJspBean
             _formJsonService.jsonImportStep( nIdForm, new String( fileItem.get( ), StandardCharsets.UTF_8 ), getLocale( ) );
             addInfo( INFO_STEP_CREATED, getLocale( ) );
         }
-        catch( JsonProcessingException e )
+        catch( JsonProcessingException | FormJsonImportException e )
         {
-            AppLogService.error( e.getMessage( ) );
+            AppLogService.error( "Forms : the step could not be imported into the form {}", nIdForm, e );
             addError( ERROR_STEP_NOT_IMPORTED, getLocale( ) );
         }
         return redirect( request, VIEW_MANAGE_STEPS, FormsConstants.PARAMETER_ID_FORM, nIdForm );
@@ -815,8 +817,16 @@ public class FormStepJspBean extends AbstractJspBean
         StepJsonData template = _stepService.getStepTemplateData( nIdTemplate );
         if ( template != null )
         {
-            _formJsonService.jsonImportStep( nIdForm, template, getLocale( ) );
-            addInfo( INFO_STEP_CREATED, getLocale( ) );
+            try
+            {
+                _formJsonService.jsonImportStep( nIdForm, template, getLocale( ) );
+                addInfo( INFO_STEP_CREATED, getLocale( ) );
+            }
+            catch( FormJsonImportException e )
+            {
+                AppLogService.error( "Forms : the step template {} could not be imported into the form {}", nIdTemplate, nIdForm, e );
+                addError( ERROR_STEP_NOT_IMPORTED, getLocale( ) );
+            }
         }
         return redirect( request, VIEW_MANAGE_STEPS, FormsConstants.PARAMETER_ID_FORM, nIdForm );
     }

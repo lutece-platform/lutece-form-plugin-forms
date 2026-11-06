@@ -66,6 +66,7 @@ import fr.paris.lutece.plugins.forms.business.Transition;
 import fr.paris.lutece.plugins.forms.business.TransitionHome;
 import fr.paris.lutece.plugins.forms.business.export.FormExportConfig;
 import fr.paris.lutece.plugins.forms.business.export.FormExportConfigHome;
+import fr.paris.lutece.plugins.forms.exception.FormJsonImportException;
 import fr.paris.lutece.plugins.forms.service.IFormDatabaseService;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.ReferenceItemFieldHome;
@@ -177,12 +178,19 @@ public class FormJsonService extends AbstractFormJsonService
     /**
      * Import the form from a Json Object.
      * 
-     * @return
+     * @throws FormJsonImportException
+     *             if the JSON data lacks a key
      */
     @Transactional
     public void jsonImportForm( String json, Locale locale ) throws JsonProcessingException
     {
         FormJsonData jsonData = _objectMapper.readValue( json, FormJsonData.class );
+
+        List<String> listMissingKeys = jsonData.findMissingKeys( );
+        if ( !listMissingKeys.isEmpty( ) )
+        {
+            throw new FormJsonImportException( "Forms : the JSON data of the form lacks the keys " + listMissingKeys );
+        }
 
         int newIdForm = importForm( jsonData.getForm( ), jsonData.getFormMessage( ), locale );
 
