@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.forms.validation;
 
 import java.util.List;
+import java.util.Map;
 
 import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
@@ -102,5 +103,21 @@ public interface IValidator
      * @return the control value needed for javascript
      */
     String getJavascriptControlValue( Control control );
+
+    /**
+     * Gives the value of a control copied with its form or imported from a JSON file, the ids of the fields being
+     * renewed. Declared on this interface so that it is reached through the CDI proxy of the validator, which only
+     * implements IValidator.
+     *
+     * @param oldControl
+     *            the copied or imported control
+     * @param mapIdFields
+     *            the new id of each field, by its old id
+     * @return the value of the control for the new form; by default the value is kept unchanged
+     */
+    default String getNewValidatorValue( Control oldControl, Map<Integer, Integer> mapIdFields )
+    {
+        return oldControl.getValue( );
+    }
 
 }
