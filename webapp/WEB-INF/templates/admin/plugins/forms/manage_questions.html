@@ -257,13 +257,21 @@ document.addEventListener('DOMContentLoaded', function () {
                <i class="ti ti-list-details me-2"></i> #i18n{forms.multiviewForms.responseDetails.show.steps} 
             </button>
             <ul class="dropdown-menu" aria-labelledby="stepDropdown">`;
-        stepList.forEach(function(step) {
-            menuHtml += `<li><a class="dropdown-item" href="jsp/admin/plugins/forms/ManageQuestions.jsp?id_step=${step.id}">${step.title}</a></li>`;
-        });
         menuHtml += `</ul></div>`;
         </#noparse>
 
         actionButtons.insertAdjacentHTML( "beforebegin", menuHtml );
+        // The step titles are text: the menu items are built with textContent, never as HTML
+        const stepMenu = document.querySelector( '#stepDropdown + .dropdown-menu' );
+        stepList.forEach( function( step ) {
+            const link = document.createElement( 'a' );
+            link.className = 'dropdown-item';
+            link.href = 'jsp/admin/plugins/forms/ManageQuestions.jsp?id_step=' + encodeURIComponent( step.id );
+            link.textContent = step.title;
+            const item = document.createElement( 'li' );
+            item.appendChild( link );
+            stepMenu.appendChild( item );
+        });
     }
 
 });
