@@ -43,12 +43,10 @@ $( function() {
 		$('.content-header').hide();
 		$('#admin-wrapper').css( 'margin', '0' ).css( 'overflow-x', 'hidden' );
 		var formAction = $('#modify_control'), btnAction = $('#action_modifyControl');
-		btnAction.click( function(e){ 
-			formAction.submit( function(){
-				e.preventDefault();
-				formAction.attr('target','_top');
-				_this.unbind('submit').submit();
-			});
+		// the target is set on the click, before the browser starts the submission : the submit stays native, so the name of the button, on which
+		// Lutece dispatches the action, is still sent. Preventing the click and submitting from script would drop it.
+		btnAction.click( function( ){
+			formAction.attr( 'target', '_top' );
 		});
 
 		var modalTitle = "#i18n{forms.modify_question_control.title}";

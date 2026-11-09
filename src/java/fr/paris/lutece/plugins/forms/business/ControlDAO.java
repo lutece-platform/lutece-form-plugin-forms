@@ -69,6 +69,7 @@ public final class ControlDAO implements IControlDAO
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_control SET id_control = ?, value = ?, error_message = ?,  validator_name = ?, control_type = ?, id_control_target = ?, id_control_group = ? WHERE id_control = ?";
 
     private static final String SQL_QUERY_SELECTALL_ID = "SELECT id_control FROM forms_control";
+    private static final String SQL_QUERY_COUNT_BY_CONTROL_GROUP = "SELECT COUNT(*) FROM forms_control WHERE id_control_group = ?";
 
     private static final String SQL_QUERY_CONTROL_QUESTION_SELECTALL = "SELECT fcq.id_question FROM forms_control_question fcq where fcq.id_control= ? ";
     private static final String SQL_QUERY_CONTROL_MAPPING_BY_IDCONTROL = "SELECT id_question, value FROM forms_control_question_mapping  where id_control= ? ";
@@ -427,5 +428,26 @@ public final class ControlDAO implements IControlDAO
             }
         }
         return list;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int selectControlCountByControlGroup( int nIdControlGroup, Plugin plugin )
+    {
+        int nCount = 0;
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_COUNT_BY_CONTROL_GROUP, plugin ) )
+        {
+            daoUtil.setInt( 1, nIdControlGroup );
+            daoUtil.executeQuery( );
+
+            if ( daoUtil.next( ) )
+            {
+                nCount = daoUtil.getInt( 1 );
+            }
+        }
+
+        return nCount;
     }
 }

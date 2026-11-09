@@ -28,7 +28,7 @@
                                         <@input type='text' name='title' id='step-title' value='${step.title!}' />
                                     </@formGroup>
                                     <@formGroup helpKey='#i18n{forms.modify_step.labelTitleDisplayed.help}' rows=2>
-                                        <@checkBox orientation='switch' labelKey='#i18n{forms.modify_step.labelTitleDisplayed}' labelFor='titleDisplayed' name='titleDisplayed' id='titleDisplayed' value='1' checked=(step?has_content && step.titleDisplayed) />
+                                        <@checkBox orientation='switch' labelKey='#i18n{forms.modify_step.labelTitleDisplayed}' name='titleDisplayed' id='titleDisplayed' value='1' checked=(step?has_content && step.titleDisplayed) />
                                     </@formGroup>
                                     <@formGroup labelKey='#i18n{forms.modify_step.labelDescription}' helpKey='#i18n{forms.modify_step.labelDescription.help}' rows=2>
                                         <@input type='textarea' name='description'>${step.description!}</@input>
@@ -37,10 +37,10 @@
                                         <#if step.initial>
                                             <@input type='hidden' name='initial' value='1' />
                                         </#if>
-                                        <@checkBox orientation='switch' labelFor='initial' labelKey='#i18n{forms.modify_step.labelInitial}' name='initial' id='initial' value='1' checked=(step?has_content && step.initial) disabled=step.initial />
+                                        <@checkBox orientation='switch' labelKey='#i18n{forms.modify_step.labelInitial}' name='initial' id='initial' value='1' checked=(step?has_content && step.initial) disabled=step.initial />
                                     </@formGroup>
                                     <@formGroup helpKey='#i18n{forms.modify_step.labelFinal.help}' rows=2>
-                                        <@checkBox orientation='switch' labelFor='final' labelKey='#i18n{forms.modify_step.labelFinal}' name='final' id='final' value='1' checked=(step?has_content && step.final) />
+                                        <@checkBox orientation='switch' labelKey='#i18n{forms.modify_step.labelFinal}' name='final' id='final' value='1' checked=(step?has_content && step.final) />
                                     </@formGroup>
                                     <@formsButton okAction='modifyStep' viewAction='' rows=2 />
                                 </@tform>
