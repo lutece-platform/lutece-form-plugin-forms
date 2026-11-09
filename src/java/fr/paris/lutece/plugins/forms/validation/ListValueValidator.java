@@ -37,6 +37,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.math.NumberUtils;
+
 import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.Question;
@@ -96,9 +98,9 @@ public class ListValueValidator extends AbstractValidator implements ICustomImpo
 
         if ( control.getListIdQuestion( ) != null && !control.getListIdQuestion( ).isEmpty( ) )
         {
-            Question question = QuestionHome.findByPrimaryKey( control.getListIdQuestion( ).iterator( ).next( ) );
+            Question question = QuestionHome.findByPrimaryKey( control.getIdFirstQuestion( ) );
 
-            if ( question.getEntry( ) != null && question.getEntry( ).getFields( ) != null )
+            if ( question != null && question.getEntry( ) != null && question.getEntry( ).getFields( ) != null )
             {
                 for ( Field field : question.getEntry( ).getFields( ) )
                 {
@@ -156,7 +158,8 @@ public class ListValueValidator extends AbstractValidator implements ICustomImpo
     @Override
     public String getNewValidatorValue( Control oldControl, Map<Integer, Integer> mapIdFields) {
 
-        int idValue = Integer.parseInt( oldControl.getValue() );
+        int idValue = NumberUtils.toInt( oldControl.getValue( ), NumberUtils.INTEGER_MINUS_ONE );
+
         if ( mapIdFields.containsKey( idValue ) )
         {
             return mapIdFields.get( idValue ).toString();

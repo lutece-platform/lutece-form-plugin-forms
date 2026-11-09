@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.forms.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,13 +45,17 @@ import fr.paris.lutece.plugins.forms.business.ControlHome;
 import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
+import fr.paris.lutece.plugins.forms.business.FormResponseStepHome;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.business.Transition;
 import fr.paris.lutece.plugins.forms.business.TransitionHome;
 import fr.paris.lutece.plugins.forms.service.json.IStepTemplateProvider;
 import fr.paris.lutece.plugins.forms.service.json.StepJsonData;
+import fr.paris.lutece.plugins.forms.service.cache.FormsCacheService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.util.AppException;
+import fr.paris.lutece.util.sql.TransactionManager;
 
 /**
  * Service dedicated to management of formDisplay
@@ -72,6 +77,32 @@ public final class StepService
     }
 
     /**
+     * Lists the transitions a step takes part in, whether it is their origin or their destination.
+     * 
+     * @param nIdStep
+     *            The Step Id
+     * @return the transitions leaving the step and those arriving at it
+     */
+    private static List<Transition> getTransitionsAttachedToStep( int nIdStep )
+    {
+        List<Transition> listTransition = new ArrayList<>( TransitionHome.getTransitionsListFromStep( nIdStep ) );
+        Step step = StepHome.findByPrimaryKey( nIdStep );
+
+        if ( step != null )
+        {
+            for ( Transition transition : TransitionHome.getTransitionsListFromForm( step.getIdForm( ) ) )
+            {
+                if ( transition.getNextStep( ) == nIdStep )
+                {
+                    listTransition.add( transition );
+                }
+            }
+        }
+
+        return listTransition;
+    }
+
+    /**
      * Remove a given Step and the all its formDisplays. The responses, group/question associated to the displays will be deleted. All the descendants of the
      * displays will also be removed
      * 
@@ -82,22 +113,46 @@ public final class StepService
     {
         FormDisplayService displayService = SpringContextService.getBean( FormDisplayService.BEAN_NAME );
 
-        List<FormDisplay> listChildrenDisplay = FormDisplayHome.getFormDisplayListByParent( nIdStep, DISPLAY_ROOT_PARENT_ID );
+        TransactionManager.beginTransaction( FormsPlugin.getPlugin( ) );
 
-        for ( FormDisplay childDisplay : listChildrenDisplay )
+        try
         {
-            displayService.deleteDisplayAndDescendants( childDisplay.getId( ) );
-        }
+            // one accumulator for the whole removal : the groups of the displays and those of the transitions are reclaimed together, once
+            Set<Integer> setIdControlGroup = new HashSet<>( );
 
-        for ( Transition transition : TransitionHome.getTransitionsListFromStep( nIdStep ) )
+            List<FormDisplay> listChildrenDisplay = FormDisplayHome.getFormDisplayListByParent( nIdStep, DISPLAY_ROOT_PARENT_ID );
+
+            for ( FormDisplay childDisplay : listChildrenDisplay )
+            {
+                displayService.deleteDisplayAndDescendantsInTransaction( childDisplay.getId( ), setIdControlGroup );
+            }
+
+            // removeTransitionByStep deletes the transitions arriving at the step as well as those leaving it,
+            // so the controls of both have to go, not only those of the outgoing ones
+            for ( Transition transition : getTransitionsAttachedToStep( nIdStep ) )
+            {
+                setIdControlGroup.addAll( ControlHome.getControlGroupsByControlTargetAndType( transition.getId( ), ControlType.TRANSITION ) );
+
+                ControlHome.removeByControlTarget( transition.getId( ), ControlType.TRANSITION );
+            }
+
+            ControlHome.removeEmptyControlGroups( setIdControlGroup );
+
+            TransitionHome.removeTransitionByStep( nIdStep );
+
+            FormResponseStepHome.removeByStep( nIdStep );
+
+            StepHome.remove( nIdStep );
+
+            TransactionManager.commitTransaction( FormsPlugin.getPlugin( ) );
+        }
+        catch( Exception e )
         {
-            ControlHome.removeByControlTarget( transition.getId( ), ControlType.TRANSITION );
+            TransactionManager.rollBack( FormsPlugin.getPlugin( ) );
+            // the caches were repopulated while the transaction was running : they now describe rows the rollback has undone
+            SpringContextService.<FormsCacheService> getBean( FormsCacheService.BEAN_NAME ).resetCache( );
+            throw new AppException( "Forms : the removal of the step " + nIdStep + " failed", e );
         }
-
-        TransitionHome.removeTransitionByStep( nIdStep );
-
-        StepHome.remove( nIdStep );
-
     }
 
     /**
