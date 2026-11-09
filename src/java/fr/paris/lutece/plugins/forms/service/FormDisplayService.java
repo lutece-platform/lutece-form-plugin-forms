@@ -33,11 +33,12 @@
  */
 package fr.paris.lutece.plugins.forms.service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
 import fr.paris.lutece.plugins.forms.business.Control;
-import fr.paris.lutece.plugins.forms.business.ControlGroupHome;
 import fr.paris.lutece.plugins.forms.business.ControlHome;
 import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
@@ -45,8 +46,11 @@ import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
 import fr.paris.lutece.plugins.forms.business.GroupHome;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
+import fr.paris.lutece.plugins.forms.service.cache.FormsCacheService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.util.ReferenceList;
+import fr.paris.lutece.util.sql.TransactionManager;
 
 /**
  * Service dedicated to management of formDisplay
@@ -55,6 +59,11 @@ public class FormDisplayService extends AbstractFormDisplayService
 {
 
     public static final String BEAN_NAME = "forms.formDisplayService";
+
+    /** The control types a question drives : what they target is another element, which the question is only a condition of */
+    private static final ControlType [ ] CONTROL_TYPES_DRIVEN_BY_A_QUESTION = {
+            ControlType.CONDITIONAL, ControlType.TRANSITION
+    };
 
     /**
      * Remove the formDisplay whose identifier is specified in parameter. The responses, group/question associated to this display will be deleted. All the
@@ -65,6 +74,42 @@ public class FormDisplayService extends AbstractFormDisplayService
      */
     public void deleteDisplayAndDescendants( int nIdDIsplay )
     {
+        TransactionManager.beginTransaction( FormsPlugin.getPlugin( ) );
+
+        try
+        {
+            Set<Integer> setIdControlGroup = new HashSet<>( );
+
+            deleteDisplayAndDescendantsInTransaction( nIdDIsplay, setIdControlGroup );
+            ControlHome.removeEmptyControlGroups( setIdControlGroup );
+
+            TransactionManager.commitTransaction( FormsPlugin.getPlugin( ) );
+        }
+        catch( Exception e )
+        {
+            TransactionManager.rollBack( FormsPlugin.getPlugin( ) );
+            // the caches were repopulated while the transaction was running : they now describe rows the rollback has undone
+            SpringContextService.<FormsCacheService> getBean( FormsCacheService.BEAN_NAME ).resetCache( );
+            throw new AppException( "Forms : the removal of the display " + nIdDIsplay + " failed", e );
+        }
+    }
+
+    /**
+     * Remove the formDisplay and its descendants, within the transaction opened by the caller.
+     * 
+     * Reserved to the callers of this package that already own a transaction : the public twin opens one of its own.
+     * 
+     * The control groups left empty are collected rather than reclaimed here, and the caller reclaims them once the whole removal is over. Reclaiming at
+     * every display meant one count query per display, and it asked the question too early : a group gathering controls of two displays was still counted
+     * as used at the turn of the first one.
+     *
+     * @param nIdDIsplay
+     *            The formDisplay Id
+     * @param setIdControlGroup
+     *            collects the control groups the removed controls belonged to
+     */
+    void deleteDisplayAndDescendantsInTransaction( int nIdDIsplay, Set<Integer> setIdControlGroup )
+    {
         FormDisplay formDisplayToDelete = FormDisplayHome.findByPrimaryKey( nIdDIsplay );
         if ( formDisplayToDelete != null )
         {
@@ -72,6 +117,13 @@ public class FormDisplayService extends AbstractFormDisplayService
 
             List<FormDisplay> listChildrenDisplay = FormDisplayHome.getFormDisplayListByParent( formDisplayToDelete.getStepId( ),
                     formDisplayToDelete.getId( ) );
+
+            // The conditions shown on this display disappear with it, whatever it holds
+            for ( Control control : ControlHome.getControlByControlTargetAndType( formDisplayToDelete.getId( ), ControlType.CONDITIONAL ) )
+            {
+                setIdControlGroup.add( control.getIdControlGroup( ) );
+            }
+            ControlHome.removeByControlTarget( formDisplayToDelete.getId( ), ControlType.CONDITIONAL );
 
             if ( CompositeDisplayType.QUESTION.getLabel( ).equalsIgnoreCase( formDisplayToDelete.getCompositeType( ) ) )
             {
@@ -82,19 +134,18 @@ public class FormDisplayService extends AbstractFormDisplayService
 
                 for ( Control control : listControl )
                 {
+                    setIdControlGroup.add( control.getIdControlGroup( ) );
                     ControlHome.remove( control.getId( ) );
                 }
 
-                // The target of a conditional control is the display, not the question
-                listControl = ControlHome.getControlByControlTargetAndType( formDisplayToDelete.getId( ), ControlType.CONDITIONAL );
-                int nIdControlGroup = listControl.isEmpty( ) ? 0 : listControl.get( 0 ).getIdControlGroup( );
-
-                ControlHome.removeByControlTarget( formDisplayToDelete.getId( ), ControlType.CONDITIONAL );
-
-                // Delete control group
-                if ( nIdControlGroup != 0 )
+                // What other elements condition on this question can no longer be evaluated : the display of another composite, or a step transition
+                for ( ControlType controlType : CONTROL_TYPES_DRIVEN_BY_A_QUESTION )
                 {
-                    ControlGroupHome.remove( nIdControlGroup );
+                    for ( Control control : ControlHome.getControlByQuestionAndType( formDisplayCompositeId, controlType.getLabel( ) ) )
+                    {
+                        setIdControlGroup.add( control.getIdControlGroup( ) );
+                        ControlHome.remove( control.getId( ) );
+                    }
                 }
 
                 // Delete the Question and its Entry
@@ -110,7 +161,7 @@ public class FormDisplayService extends AbstractFormDisplayService
 
             for ( FormDisplay childDisplay : listChildrenDisplay )
             {
-                deleteDisplayAndDescendants( childDisplay.getId( ) );
+                deleteDisplayAndDescendantsInTransaction( childDisplay.getId( ), setIdControlGroup );
             }
         }
 

@@ -258,18 +258,28 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                     final IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
                     if ( validator != null )
                     {
-                        mapControlValidator.put( control, validator );
-                        control.setValue( validator.getJavascriptControlValue( control ) );
+                        // the rendering value is written on a copy : getControlByControlTargetAndType hands out the cached instances,
+                        // and persisting that value later would store the javascript form of the control instead of its own
+                        final Control controlForDisplay = control.clone( );
+                        controlForDisplay.setValue( validator.getJavascriptControlValue( control ) );
+                        mapControlValidator.put( controlForDisplay, validator );
                     }
                     else
                     {
                         AppLogService.error( "Forms: validator '" + control.getValidatorName( ) + "' not found for control " + control.getId( )
                                 + " (question " + _question.getId( ) + ") : conditional control ignored on client side" );
                     }
-                    if ( CollectionUtils.isNotEmpty( control.getListIdQuestion( ) ) && CollectionUtils.isNotEmpty( listFormQuestionResponse ) )
+                    final Question questionDriving = QuestionHome.findByPrimaryKey( control.getIdFirstQuestion( ) );
+
+                    if ( questionDriving == null )
                     {
-                        int questionControlStep = QuestionHome.findByPrimaryKey( control.getListIdQuestion( ).iterator( ).next( ) ).getIdStep( );
-                        if ( questionControlStep != _question.getIdStep( ) )
+                        AppLogService.error( "Forms : the control {} is driven by no existing question, it is left out of the display decision of the "
+                                + "question {}", control.getId( ), _question.getId( ) );
+                    }
+                    else
+                    if ( CollectionUtils.isNotEmpty( listFormQuestionResponse ) )
+                    {
+                        if ( questionDriving.getIdStep( ) != _question.getIdStep( ) )
                         {
                             List<FormQuestionResponse> listFormQuestionReponseToCheck = listFormQuestionResponse.stream( )
                                     .filter( questionReponse -> control.getListIdQuestion( ).contains( questionReponse.getQuestion( ).getId( ) ) )

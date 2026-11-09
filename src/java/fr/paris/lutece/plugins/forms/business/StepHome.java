@@ -107,6 +107,21 @@ public final class StepHome
      *            The step primary key
      * @return an instance of Step
      */
+    /**
+     * Serializes, inside the caller's transaction, whatever rewrites the display positions of this step.
+     *
+     * One row, locked by its primary key : the displays of a group cannot be locked as narrowly, forms_display carries no index on the step and
+     * the parent together, and locking them by step and parent made MariaDB lock every display of the step through an index merge, so that two
+     * duplications into two groups of one step locked each other in opposite orders.
+     *
+     * @param nIdStep
+     *            the step
+     */
+    public static void lockForUpdate( int nIdStep )
+    {
+        _dao.lockForUpdate( nIdStep, _plugin );
+    }
+
     public static Step findByPrimaryKey( int nKey )
     {
         String stepCacheKey = _cache.getStepCacheKey( nKey );
