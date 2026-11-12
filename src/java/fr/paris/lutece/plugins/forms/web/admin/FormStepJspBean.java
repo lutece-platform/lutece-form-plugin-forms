@@ -713,8 +713,7 @@ public class FormStepJspBean extends AbstractJspBean
         boolean hasOtherFinalStep = finalsStepsList != null && finalsStepsList.stream( ).anyMatch( s -> s.getId( ) != _step.getId( ) );
         if ( !_step.isFinal( ) && !hasOtherFinalStep )
         {
-            addError( ERROR_NO_FINAL_STEP, getLocale( ) );
-            return redirect( request, VIEW_MODIFY_STEP, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
+            addWarning( ERROR_NO_FINAL_STEP, getLocale( ) );
         }
 
         if ( !validateStep( _step ) )
