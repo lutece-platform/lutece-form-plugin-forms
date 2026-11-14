@@ -41,8 +41,10 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -58,9 +60,9 @@ import freemarker.template.TemplateException;
 
 /**
  * Renders the forms widget of the admin dashboard with HTML auto-escaping: the button of the actions menu of each form
- * has an accessible name holding the form title. The core macros the template calls are replaced by stand-ins that
- * write their arguments; the input stand-in writes the id as the core macro does, defaulting to the name: only the
- * FreeMarker engine is needed.
+ * has an accessible name holding the form title, and no id is written twice. The core macros the template calls are
+ * replaced by stand-ins that write their arguments; the input stand-in writes the id as the core macro does, either
+ * defaulting to the name or left out when empty: only the FreeMarker engine is needed.
  */
 public class FormDashboardTemplateRenderTest
 {
@@ -80,8 +82,11 @@ public class FormDashboardTemplateRenderTest
             + "<#if !dropdownMenu><#nested></#if></button><#if dropdownMenu><div class=\"dropdown-menu\"><#nested></div></#if></#macro>";
     private static final String INPUT_ID_DEFAULTS_TO_NAME = "<#macro input name id='' type='text' value='' rest...>"
             + "<input type=\"${type}\" id=\"${id?has_content?then( id, name )}\" name=\"${name}\" value=\"${value}\"></#macro>";
+    private static final String INPUT_ID_LEFT_OUT = "<#macro input name id='' type='text' value='' rest...>"
+            + "<input type=\"${type}\"<#if id?has_content> id=\"${id}\"</#if> name=\"${name}\" value=\"${value}\"></#macro>";
     private static final Pattern MENU_BUTTON = Pattern.compile( "<button([^>]*)data-bs-toggle=\"dropdown\"[^>]*>(.*?)</button>", Pattern.DOTALL );
     private static final Pattern TITLE = Pattern.compile( "title=\"([^\"]*)\"" );
+    private static final Pattern ID = Pattern.compile( "\\sid=\"([^\"]*)\"" );
     private static final String [ ] TITLES = {
             "Inscription <b>A</b>", "Survey \"B\""
     };
@@ -181,5 +186,30 @@ public class FormDashboardTemplateRenderTest
             nButtons++;
         }
         assertEquals( TITLES.length, nButtons, strHtml );
+    }
+
+    /**
+     * Each form of the list posts its actions with hidden inputs: none of them writes an id already written, whether
+     * the core input macro defaults the id to the name or leaves it out.
+     *
+     * @throws Exception
+     *             if the rendering fails
+     */
+    @Test
+    public void testNoIdIsWrittenTwice( ) throws Exception
+    {
+        for ( String strInputMacro : new String [ ] {
+                INPUT_ID_DEFAULTS_TO_NAME, INPUT_ID_LEFT_OUT
+        } )
+        {
+            String strHtml = render( strInputMacro );
+            assertTrue( strHtml.contains( "name=\"_csrftoken\" value=\"tok1\"" ), strHtml );
+            Set<String> setIds = new HashSet<>( );
+            Matcher id = ID.matcher( strHtml );
+            while ( id.find( ) )
+            {
+                assertTrue( setIds.add( id.group( 1 ) ), "the id " + id.group( 1 ) + " is written once: " + strHtml );
+            }
+        }
     }
 }
