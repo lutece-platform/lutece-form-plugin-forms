@@ -117,7 +117,7 @@ public class FormXPage extends MVCApplication
     protected static final String MESSAGE_LIST_FORMS_PAGETITLE = "forms.xpage.listForms.pagetitle";
     protected static final String MESSAGE_LIST_FORMS_PATHLABEL = "forms.xpage.listForms.pathlabel";
     private static final String MESSAGE_WARNING_LOST_SESSION = "forms.warning.lost.session";
-    private static final String MESSAGE_WARNING_CAPTCHA = "portal.admin.message.wrongCaptcha";
+    private static final String MESSAGE_WARNING_CAPTCHA = "forms.warning.wrong.captcha";
     private static final String MESSAGE_WARNING_INACTIVE_STATE_BYPASSED = "forms.warning.inactive.state.bypassed";
     private static final String MESSAGE_ERROR_TOKEN = "Invalid security token";
     private static final String MESSAGE_WARNING_INVALID_FORM_SESSION = "forms.warning.invalid.form.session";
