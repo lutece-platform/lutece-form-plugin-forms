@@ -28,7 +28,7 @@
 					</#if>
 				</@div>
 				<@div class='col-auto'>
-					<@button type='button' class='btn-action' buttonIcon='dots-vertical fs-2' dropdownMenu=true>
+					<@button type='button' class='btn-action' buttonIcon='dots-vertical fs-2' title='#i18n{forms.dashboard.labelFormActions} ${form.title}' hideTitle=['all'] dropdownMenu=true>
 						<#if form.actions?exists>
 							<#list form.actions as action>
 								<#assign actionUrl=action.url />
