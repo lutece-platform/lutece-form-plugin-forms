@@ -48,7 +48,6 @@ import fr.paris.lutece.portal.service.util.AppLogService;
 import java.io.IOException;
 import java.text.Normalizer;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -56,9 +55,10 @@ import jakarta.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
+import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
@@ -95,45 +95,28 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
                 return listResults;
             }
 
-            Collection<String> queries = new ArrayList<>( );
-            Collection<String> fields = new ArrayList<>( );
-            Collection<BooleanClause.Occur> flags = new ArrayList<>( );
-
             QueryParser qpContent = new QueryParser( SearchItem.FIELD_CONTENTS, IndexationService.getAnalyser( ) );
             QueryParser qpDateCreation = new QueryParser( FormResponseSearchItem.FIELD_DATE_CREATION, IndexationService.getAnalyser( ) );
             QueryParser qpDateUpdate = new QueryParser( FormResponseSearchItem.FIELD_DATE_UPDATE, IndexationService.getAnalyser( ) );
             QueryParser qpGuid = new QueryParser( FormResponseSearchItem.FIELD_GUID, IndexationService.getAnalyser( ) );
 
-            qpContent.setDefaultOperator( QueryParser.Operator.AND );
-            qpDateCreation.setDefaultOperator( QueryParser.Operator.AND );
-            qpDateUpdate.setDefaultOperator( QueryParser.Operator.AND );
-            qpGuid.setDefaultOperator( QueryParser.Operator.AND );
-
             String searchedText = normalizeSearchText( formSearchConfig.getSearchedText( ) );
 
-            Query queryContent = qpContent.parse( searchedText );
-            Query queryDateCreation = qpDateCreation.parse( searchedText );
-            Query queryDateUpdate = qpDateUpdate.parse( searchedText );
-            Query queryGuid = qpGuid.parse( searchedText );
-
-            queries.add( queryContent.toString( ) );
-            queries.add( queryDateCreation.toString( ) );
-            queries.add( queryDateUpdate.toString( ) );
-            queries.add( queryGuid.toString( ) );
-
-            fields.add( SearchItem.FIELD_CONTENTS );
-            fields.add( FormResponseSearchItem.FIELD_DATE_CREATION );
-            fields.add( FormResponseSearchItem.FIELD_DATE_UPDATE );
-            fields.add( FormResponseSearchItem.FIELD_GUID );
-
-            flags.add( BooleanClause.Occur.SHOULD );
-            flags.add( BooleanClause.Occur.SHOULD );
-            flags.add( BooleanClause.Occur.SHOULD );
-            flags.add( BooleanClause.Occur.SHOULD );
-
-            Query queryMulti = MultiFieldQueryParser.parse( queries.toArray( new String [ queries.size( )] ),
-                    fields.toArray( new String [ fields.size( )] ),
-                    flags.toArray( new BooleanClause.Occur [ flags.size( )] ), IndexationService.getAnalyser( ) );
+            BooleanQuery.Builder queryBuilder = new BooleanQuery.Builder( );
+            for ( QueryParser queryParser : List.of( qpContent, qpDateCreation, qpDateUpdate, qpGuid ) )
+            {
+                queryParser.setDefaultOperator( QueryParser.Operator.AND );
+                Query query = parseSearchedText( queryParser, searchedText );
+                if ( query != null )
+                {
+                    queryBuilder.add( query, BooleanClause.Occur.SHOULD );
+                }
+            }
+            BooleanQuery queryMulti = queryBuilder.build( );
+            if ( queryMulti.clauses( ).isEmpty( ) )
+            {
+                return listResults;
+            }
 
             TopDocs topDocs = searcher.search( queryMulti, LuceneSearchEngine.MAX_RESPONSES );
             ScoreDoc [ ] hits = topDocs.scoreDocs;
@@ -155,6 +138,37 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
         }
 
         return listResults;
+    }
+
+    /**
+     * Parse the searched text with the Lucene syntax. A text that is not a valid Lucene query (an unclosed quote or
+     * group, a special character...) is searched as literal text.
+     *
+     * @param queryParser
+     *            the parser of the searched field
+     * @param strSearchedText
+     *            the searched text
+     * @return the query, or null when the text gives no query
+     */
+    private Query parseSearchedText( QueryParser queryParser, String strSearchedText )
+    {
+        try
+        {
+            return queryParser.parse( strSearchedText );
+        }
+        catch( ParseException e )
+        {
+            AppLogService.debug( "Forms search: the searched text is not a valid Lucene query, it is searched as literal text" );
+        }
+        try
+        {
+            return queryParser.parse( QueryParser.escape( strSearchedText ) );
+        }
+        catch( ParseException e )
+        {
+            AppLogService.debug( "Forms search: the searched text cannot be searched on the field {}", queryParser.getField( ) );
+            return null;
+        }
     }
 
     private String normalizeSearchText( String text )

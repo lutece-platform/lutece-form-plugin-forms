@@ -40,9 +40,13 @@ import fr.paris.lutece.plugins.forms.business.form.filter.querypart.IFormFilterQ
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 
+import fr.paris.lutece.plugins.forms.service.search.FormSearchConfig;
 import fr.paris.lutece.plugins.forms.service.search.LuceneFormSearchEngine;
 import fr.paris.lutece.plugins.forms.service.search.LuceneFormSearchFactory;
 import fr.paris.lutece.plugins.forms.util.NaturalSortKeyBuilder;
+import fr.paris.lutece.portal.service.search.IndexationService;
+import fr.paris.lutece.portal.service.search.SearchItem;
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -50,6 +54,7 @@ import org.apache.lucene.document.NumericDocValuesField;
 import org.apache.lucene.document.SortedNumericDocValuesField;
 import org.apache.lucene.document.SortedSetDocValuesField;
 import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -60,6 +65,7 @@ import org.apache.lucene.store.ByteBuffersDirectory;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.util.BytesRef;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -69,6 +75,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -83,11 +90,93 @@ public class LuceneFormSearchEngineTest
 
     private LuceneFormSearchEngine _engine;
     private Directory _directory;
+    private Analyzer _previousAnalyzer;
+    private boolean _bAnalyzerChanged;
 
     @BeforeEach
     public void setUp( )
     {
         _engine = new LuceneFormSearchEngine( );
+    }
+
+    @AfterEach
+    public void tearDown( ) throws Exception
+    {
+        if ( _bAnalyzerChanged )
+        {
+            setIndexationAnalyzer( _previousAnalyzer );
+            _bAnalyzerChanged = false;
+        }
+    }
+
+    /**
+     * A searched text that is not a valid Lucene query (quotes, angle brackets, unclosed group) is searched as literal
+     * text instead of failing: the responses containing these words are found.
+     */
+    @Test
+    public void testGetSearchResults_searchedTextNotValidQuery_searchesLiteralText( ) throws Exception
+    {
+        buildContentsIndex( new String [ ] { "1", "2", "3", "4" },
+                new String [ ] { "e2e\"><img src=x>", "\"unclosed quote", "a AND (", "other response" } );
+        injectFactory( new StubLuceneFormSearchFactory( _directory ) );
+        useIndexationAnalyzer( new StandardAnalyzer( ) );
+
+        assertEquals( Collections.singletonList( 1 ), searchText( "e2e\"><img src=x>" ) );
+        assertEquals( Collections.singletonList( 2 ), searchText( "\"unclosed" ) );
+        assertEquals( Collections.singletonList( 3 ), searchText( "a AND (" ) );
+    }
+
+    /**
+     * A valid Lucene query (wildcard, quoted phrase) keeps its Lucene meaning.
+     */
+    @Test
+    public void testGetSearchResults_searchedTextValidQuery_keepsLuceneSyntax( ) throws Exception
+    {
+        buildContentsIndex( new String [ ] { "1", "2", "3" }, new String [ ] { "foobar response", "quick brown fox", "brown quick fox" } );
+        injectFactory( new StubLuceneFormSearchFactory( _directory ) );
+        useIndexationAnalyzer( new StandardAnalyzer( ) );
+
+        assertEquals( Collections.singletonList( 1 ), searchText( "foo*" ) );
+        assertEquals( Collections.singletonList( 2 ), searchText( "\"quick brown\"" ) );
+        assertEquals( Collections.emptyList( ), searchText( "nothing" ) );
+    }
+
+    private List<Integer> searchText( String strSearchedText )
+    {
+        FormSearchConfig config = new FormSearchConfig( );
+        config.setSearchedText( strSearchedText );
+        List<Integer> listResults = assertDoesNotThrow( ( ) -> _engine.getSearchResults( config ) );
+        Collections.sort( listResults );
+        return listResults;
+    }
+
+    private void buildContentsIndex( String [ ] arrIds, String [ ] arrContents ) throws Exception
+    {
+        _directory = new ByteBuffersDirectory( );
+        try ( IndexWriter writer = new IndexWriter( _directory, new IndexWriterConfig( new StandardAnalyzer( ) ) ) )
+        {
+            for ( int i = 0; i < arrIds.length; i++ )
+            {
+                Document doc = new Document( );
+                doc.add( new StringField( SearchItem.FIELD_UID, arrIds [i], Field.Store.YES ) );
+                doc.add( new TextField( SearchItem.FIELD_CONTENTS, arrContents [i], Field.Store.NO ) );
+                writer.addDocument( doc );
+            }
+        }
+    }
+
+    private void useIndexationAnalyzer( Analyzer analyzer ) throws Exception
+    {
+        _previousAnalyzer = IndexationService.getAnalyser( );
+        _bAnalyzerChanged = true;
+        setIndexationAnalyzer( analyzer );
+    }
+
+    private static void setIndexationAnalyzer( Analyzer analyzer ) throws Exception
+    {
+        java.lang.reflect.Field field = IndexationService.class.getDeclaredField( "_analyzer" );
+        field.setAccessible( true );
+        field.set( null, analyzer );
     }
 
     private List<IFormFilterQueryPart> matchAllFilter( )
