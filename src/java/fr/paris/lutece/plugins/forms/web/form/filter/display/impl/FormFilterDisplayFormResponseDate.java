@@ -44,6 +44,7 @@ import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
@@ -96,6 +97,11 @@ public class FormFilterDisplayFormResponseDate extends AbstractFormFilterDisplay
                 strPeriodFrom = dateRange[0];
                 strPeriodTo = dateRange[1];
             }
+            else
+            {
+                // The value is kept in session: a period that is not a date range is ignored
+                setValue( StringUtils.EMPTY );
+            }
         }
 
         Map<String, Object> mapFilterNameValues = new LinkedHashMap<>( );
@@ -103,8 +109,19 @@ public class FormFilterDisplayFormResponseDate extends AbstractFormFilterDisplay
         {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern( FILTER_DATE_FORMAT );
 
-            LocalDate dateFrom = LocalDate.parse( strPeriodFrom, formatter );
-            LocalDate dateTo = LocalDate.parse( strPeriodTo, formatter );
+            LocalDate dateFrom;
+            LocalDate dateTo;
+            try
+            {
+                dateFrom = LocalDate.parse( strPeriodFrom, formatter );
+                dateTo = LocalDate.parse( strPeriodTo, formatter );
+            }
+            catch( DateTimeParseException e )
+            {
+                // The value is kept in session: a malformed date is ignored (no date filter)
+                setValue( StringUtils.EMPTY );
+                return mapFilterNameValues;
+            }
             dateTo = dateTo.plusDays( 1 );
             DateTimeFormatter sqlFormatter = DateTimeFormatter.ofPattern( "yyyy-MM-dd" );
 
