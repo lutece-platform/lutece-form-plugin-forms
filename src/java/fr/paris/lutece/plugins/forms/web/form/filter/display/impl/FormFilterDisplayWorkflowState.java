@@ -74,6 +74,7 @@ public class FormFilterDisplayWorkflowState extends AbstractFormFilterDisplay
     private static final int DEFAULT_FORM_VALUE = NumberUtils.INTEGER_MINUS_ONE;
     private static final int DEFAULT_PREVIOUS_FORM_VALUE = NumberUtils.INTEGER_MINUS_ONE;
     private static final int ID_WORKFLOW_UNSET = NumberUtils.INTEGER_ZERO;
+    private static final int NOT_AN_INTEGER = Integer.MIN_VALUE;
 
     /**
      * {@inheritDoc}
@@ -100,6 +101,13 @@ public class FormFilterDisplayWorkflowState extends AbstractFormFilterDisplay
         if ( nIdForm != nIdPreviousForm )
         {
             idWorkflowStateArray = null;
+        }
+
+        if ( ArrayUtils.isNotEmpty( idWorkflowStateArray ) )
+        {
+            // The value is kept in session: the values that are not integers are ignored
+            idWorkflowStateArray = Arrays.stream( idWorkflowStateArray ).map( s -> NumberUtils.toInt( s, NOT_AN_INTEGER ) )
+                    .filter( i -> i != NOT_AN_INTEGER ).map( String::valueOf ).toArray( String [ ]::new );
         }
 
         if ( ArrayUtils.isNotEmpty( idWorkflowStateArray ) )

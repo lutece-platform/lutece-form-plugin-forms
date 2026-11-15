@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.lucene.document.IntPoint;
 import org.apache.lucene.search.Query;
 
@@ -50,6 +51,8 @@ import org.apache.lucene.search.Query;
  */
 public class FormFilterWorkflowStateLuceneQueryPart extends AbstractFormFilterLuceneQueryPart
 {
+    private static final int NOT_AN_INTEGER = Integer.MIN_VALUE;
+
     /**
      * {@inheritDoc}
      */
@@ -61,11 +64,17 @@ public class FormFilterWorkflowStateLuceneQueryPart extends AbstractFormFilterLu
         {
             Collection<Object> setFormParameters = formParameters.getFormParametersMap( ).values( );
             String params = String.valueOf( setFormParameters.toArray( ) [0] );
+            // The values that are not integers are ignored
             List<Integer> idList = Arrays.asList( params.split( ";" ) ).stream( )
                     .filter( StringUtils::isNotEmpty )
-                    .map( Integer::parseInt )
-                    .filter( i -> i != -1 )
+                    .map( s -> NumberUtils.toInt( s, NOT_AN_INTEGER ) )
+                    .filter( i -> i != NOT_AN_INTEGER )
                     .collect( Collectors.toList( ) );
+            if ( idList.isEmpty( ) )
+            {
+                return;
+            }
+            idList = idList.stream( ).filter( i -> i != -1 ).collect( Collectors.toList( ) );
 
             Query query = IntPoint.newSetQuery( FormResponseSearchItem.FIELD_ID_WORKFLOW_STATE, idList );
             setFormFilterQuery( query );

@@ -43,6 +43,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.forms.business.Form;
@@ -71,6 +72,7 @@ public class FormFilterDisplayForms extends AbstractFormFilterDisplay
     private static final String FORM_CODE_ATTRIBUTE = "id";
     private static final String FORM_NAME_ATTRIBUTE = "title";
     public static final String DEFAULT_ID_FORM = "-1";
+    private static final int NOT_AN_INTEGER = Integer.MIN_VALUE;
 
     /**
      * {@inheritDoc}
@@ -102,8 +104,13 @@ public class FormFilterDisplayForms extends AbstractFormFilterDisplay
         String strIdForm = request.getParameter( FormMultiviewFormsNameConstants.PARAMETER_ID_FORM );
         if ( StringUtils.isNotBlank( strIdForm ) )
         {
-            mapFilterNameValues.put( FormMultiviewFormsNameConstants.FILTER_ID_FORM, strIdForm );
-            strIdFormValue = strIdForm;
+            // The value is kept in session: a value that is not an integer is ignored (no filter on the form)
+            int nIdForm = NumberUtils.toInt( strIdForm, NOT_AN_INTEGER );
+            if ( nIdForm != NOT_AN_INTEGER )
+            {
+                strIdFormValue = String.valueOf( nIdForm );
+                mapFilterNameValues.put( FormMultiviewFormsNameConstants.FILTER_ID_FORM, strIdFormValue );
+            }
         }
         else
         {

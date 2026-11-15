@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl;
 
 import java.util.Collection;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.lucene.document.IntPoint;
 import org.apache.lucene.search.Query;
 
@@ -46,7 +47,7 @@ import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem
  */
 public class FormFilterFormsLuceneQueryPart extends AbstractFormFilterLuceneQueryPart
 {
-    private static final String INTEGER_MINUS_ONE = "-1";
+    private static final int ID_FORM_ALL = -1;
 
     /**
      * {@inheritDoc}
@@ -54,23 +55,21 @@ public class FormFilterFormsLuceneQueryPart extends AbstractFormFilterLuceneQuer
     @Override
     public void buildFormFilterQuery( FormParameters formParameters )
     {
+        setFormFilterQuery( null );
         if ( !formParameters.getFormParametersMap( ).isEmpty( ) )
         {
             Collection<Object> setFormParameters = formParameters.getFormParametersMap( ).values( );
 
             if ( setFormParameters.size( ) == 1 )
             {
-                String strIdForm = String.valueOf( setFormParameters.toArray( ) [0] );
-                if ( !strIdForm.equals( INTEGER_MINUS_ONE ) )
+                // A value that is not an integer is ignored: no filter on the form
+                int nIdForm = NumberUtils.toInt( String.valueOf( setFormParameters.toArray( ) [0] ), ID_FORM_ALL );
+                if ( nIdForm != ID_FORM_ALL )
                 {
-                    Query query = IntPoint.newExactQuery( FormResponseSearchItem.FIELD_ID_FORM, Integer.parseInt( strIdForm ) );
+                    Query query = IntPoint.newExactQuery( FormResponseSearchItem.FIELD_ID_FORM, nIdForm );
                     setFormFilterQuery( query );
                 }
             }
-        }
-        else
-        {
-            setFormFilterQuery( null );
         }
     }
 }
