@@ -28,8 +28,9 @@
 							<@button title='#i18n{forms.create_group.buttonManageIteration}' buttonIcon='hashtag' id='iterate' />
 						</#if>
 				   </@formGroup>
-				   <@row id='iteration_group'>
-						<@columns md=4 lg=4>
+				   <div id='iteration_group'>
+					<@row>
+						<@columns md=6 lg=4>
 							<@formGroup labelFor='iterationMin' labelKey='#i18n{forms.create_group.labelIterationMin}' helpKey='#i18n{forms.create_group.labelIterationMin.help}' rows=2>
 								<@row>
 									<@columns md=4 lg=4 xl=3>
@@ -37,11 +38,8 @@
 									</@columns>
 								</@row>
 							</@formGroup>
-							<@formGroup labelFor='iterationAddLabel' labelKey='#i18n{forms.create_group.labelIterationAddLabel}' helpKey='#i18n{forms.create_group.labelIterationAddLabel.help}'>
-								<@input type='text' name='iterationAddLabel' value='${group.iterationAddLabel!}' />
-							</@formGroup>
 						</@columns>
-						<@columns md=4 lg=4>
+						<@columns md=6 lg=4>
 							<@formGroup labelFor='iterationMax' labelKey='#i18n{forms.create_group.labelIterationMax}' helpKey='#i18n{forms.create_group.labelIterationMax.help}' rows=2>
 								<@row>
 									<@columns md=4 lg=4 xl=3>
@@ -49,11 +47,21 @@
 									</@columns>
 								</@row>
 							</@formGroup>
-							<@formGroup labelFor='iterationRemoveLabel' labelKey='#i18n{forms.create_group.labelIterationRemoveLabel}' helpKey='#i18n{forms.create_group.labelIterationRemoveLabel.help}'>
-								<@input type='text' name='iterationRemoveLabel' value='${group.iterationRemoveLabel!}' />
-							</@formGroup> 
 						</@columns>
 					</@row>
+					<@row>
+						<@columns md=6 lg=4>
+							<@formGroup labelFor='iterationAddLabel' labelKey='#i18n{forms.create_group.labelIterationAddLabel}' helpKey='#i18n{forms.create_group.labelIterationAddLabel.help}' rows=2>
+								<@input type='text' name='iterationAddLabel' value='${group.iterationAddLabel!}' />
+							</@formGroup>
+						</@columns>
+						<@columns md=6 lg=4>
+							<@formGroup labelFor='iterationRemoveLabel' labelKey='#i18n{forms.create_group.labelIterationRemoveLabel}' helpKey='#i18n{forms.create_group.labelIterationRemoveLabel.help}' rows=2>
+								<@input type='text' name='iterationRemoveLabel' value='${group.iterationRemoveLabel!}' />
+							</@formGroup>
+						</@columns>
+					</@row>
+				   </div>
 					<@formGroup>
 						<@formsButton okAction='createGroup' viewAction='manageQuestions' />
 					</@formGroup>
