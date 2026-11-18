@@ -41,6 +41,10 @@ import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
+import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
+import fr.paris.lutece.plugins.workflowcore.business.workflow.WorkflowFilter;
+import fr.paris.lutece.plugins.workflowcore.service.workflow.IWorkflowService;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
 
@@ -50,6 +54,8 @@ import fr.paris.lutece.portal.service.workflow.WorkflowService;
  */
 public class FormWorkflowServiceImpl implements IFormWorkflowService
 {
+    private static final int REMOVAL_CHUNK_SIZE = 1000;
+
     public static final String BEAN_NAME = "forms.formWorkflowService";
 
     /**
@@ -110,4 +116,31 @@ public class FormWorkflowServiceImpl implements IFormWorkflowService
         return listIdState;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void removeResourcesOfResponses( List<Integer> listIdFormResponse )
+    {
+        WorkflowService workflowService = WorkflowService.getInstance( );
+
+        if ( !workflowService.isAvailable( ) || listIdFormResponse.isEmpty( ) )
+        {
+            return;
+        }
+
+        // the workflows of the core service are the enabled ones only : the former workflow of a form may be disabled
+        IWorkflowService workflowCoreService = SpringContextService.getBean( fr.paris.lutece.plugins.workflowcore.service.workflow.WorkflowService.BEAN_SERVICE );
+
+        for ( Workflow workflow : workflowCoreService.getListWorkflowsByFilter( new WorkflowFilter( ) ) )
+        {
+            // by chunks : some databases limit the number of parameters of a query
+            for ( int nStart = 0; nStart < listIdFormResponse.size( ); nStart += REMOVAL_CHUNK_SIZE )
+            {
+                List<Integer> listChunk = new ArrayList<>(
+                        listIdFormResponse.subList( nStart, Math.min( nStart + REMOVAL_CHUNK_SIZE, listIdFormResponse.size( ) ) ) );
+                workflowService.doRemoveWorkFlowResourceByListId( listChunk, FormResponse.RESOURCE_TYPE, workflow.getId( ) );
+            }
+        }
+    }
 }
