@@ -51,6 +51,7 @@ import fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeFileDisplayService;
 import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDisplayService;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.portal.business.file.File;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.api.user.User;
@@ -72,11 +73,14 @@ import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
+import fr.paris.lutece.portal.util.mvc.utils.MVCUtils;
 import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
 import fr.paris.lutece.portal.util.mvc.xpage.annotations.Controller;
 import fr.paris.lutece.portal.web.xpages.XPage;
+import fr.paris.lutece.util.url.UrlItem;
 
 /**
  *
@@ -124,6 +128,9 @@ public class FormResponseXPage extends MVCApplication
     private static final String MARK_ID_ACTION = "id_action";
     private static final String MARK_TASK_FORM = "tasks_form";
     private static final String MARK_LIST_FILE = "listFiles";
+    private static final String MARK_LIST_STEP_DISPLAY = "list_step_display";
+    private static final String MARK_ACTION_SUCCESS = "is_action_success";
+    private static final String MARK_BACK_URL = "back_url";
 
     // Parameters
     private static final String PARAMETER_ID_ACTION = "id_action";
@@ -135,12 +142,12 @@ public class FormResponseXPage extends MVCApplication
         FormResponse formResponse = findFormResponseFrom( request );
 
         Collection<Action> actionsList = getActionsForUser( request, formResponse );
-        if("true".equals(request.getParameter(FormsConstants.PARAMETER_ACTION_SUCCESS)))
-        {
-            addInfo( MESSAGE_ACTION_SUCCESS,getLocale(request) );
-        }
         Map<String, Object> model = getModel( );
         model.put( FormsConstants.MARK_FORM_RESPONSE, formResponse );
+        model.put( MARK_LIST_STEP_DISPLAY, buildStepsHtml( request, formResponse ) );
+        boolean bActionSuccess = "true".equals( request.getParameter( FormsConstants.PARAMETER_ACTION_SUCCESS ) );
+        model.put( MARK_ACTION_SUCCESS, bActionSuccess );
+        model.put( MARK_BACK_URL, getBackUrl( request, formResponse, bActionSuccess ) );
         model.put( MARK_WORKFLOW_ACTION_LIST, actionsList );
         model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_PROCESS_ACTION ) );
 
@@ -358,6 +365,68 @@ public class FormResponseXPage extends MVCApplication
         }
 
         return formResponse;
+    }
+
+    /**
+     * Returns the URL of the back button
+     *
+     * @param request
+     * @param formResponse
+     * @param bActionSuccess
+     * @return the back URL, or null if there is none
+     */
+    private String getBackUrl( HttpServletRequest request, FormResponse formResponse, boolean bActionSuccess )
+    {
+        UrlItem url = new UrlItem( AppPathService.getPortalUrl( ) );
+
+        if ( bActionSuccess )
+        {
+            url.addParameter( MVCUtils.PARAMETER_PAGE, FormXPage.XPAGE_NAME );
+            url.addParameter( MVCUtils.PARAMETER_VIEW, FormXPage.VIEW_STEP );
+            url.addParameter( FormsConstants.PARAMETER_ID_FORM, formResponse.getFormId( ) );
+        }
+        else if ( SecurityService.getInstance( ).getRegisteredUser( request ) != null )
+        {
+            url.addParameter( MVCUtils.PARAMETER_PAGE, MyFormResponsesXPage.XPAGE_NAME );
+        }
+        else
+        {
+            return null;
+        }
+
+        return url.getUrl( );
+    }
+
+    /**
+     * Builds the read-only HTML of each step of the form response
+     *
+     * @param request
+     * @param formResponse
+     * @return the list of HTML
+     */
+    private List<String> buildStepsHtml( HttpServletRequest request, FormResponse formResponse )
+    {
+        for ( FormResponseStep formResponseStep : formResponse.getSteps( ) )
+        {
+            for ( FormQuestionResponse formQuestionResponse : formResponseStep.getQuestions( ) )
+            {
+                if ( CollectionUtils.isNotEmpty( formQuestionResponse.getEntryResponse( ) ) )
+                {
+                    formQuestionResponse.getQuestion( ).setIsVisible( true );
+                }
+            }
+        }
+
+        List<String> listStepHtml = new ArrayList<>( );
+        Locale locale = FormsResponseUtils.getLocaleFO( request );
+
+        for ( FormResponseStep formResponseStep : formResponse.getSteps( ) )
+        {
+            StepDisplayTree stepDisplayTree = new StepDisplayTree( formResponseStep.getStep( ).getId( ), formResponse );
+            listStepHtml.add( stepDisplayTree.getCompositeHtml( request, formResponseStep.getQuestions( ), locale, DisplayType.READONLY_FRONTOFFICE ) );
+        }
+
+        return listStepHtml;
     }
 
     private List<Response> findResponses(List<FormQuestionResponse> listFormQuestionResponse )
