@@ -14,12 +14,13 @@
 <#assign field_max_size_number = ( field_max_size?number!=-1 )?then( ( field_max_size?number )?string, '0' ) />
 <#assign helpMsg = ( entry.helpMessage?exists&&entry.helpMessage!='' )?then( ( entry.helpMessage!'' )?string, '' ) />
 <#assign field_content = '' >
+<#-- The choice "use a rich text editor" is stored in the field richtext (fieldInLine kept for the entries of older versions) -->
+<#assign richtext = ( getFieldValueByCode( entry, "richtext" )!'' ) == 'true' || entry.fieldInLine />
 <#if list_responses?has_content><#list list_responses as response><#if response.entry.idEntry == entry.idEntry && response.toStringValueResponse??>	<#assign field_content = response.toStringValueResponse! ></#if></#list><#else><#if field_default.value?exists><#assign field_content = ( field_default.value )?string /><#else><#assign field_content=''></#if></#if>
 <@cField label=entry.title! for=idName! required=entry.mandatory! class=entryCSSClass!?trim >
-<@cTextArea name=idName placeholder=placeholder! required=entry.mandatory! html5Required=false rows=fieldRows maxlength=field_max_size_number! helpMsg=helpMsg! errorMsg=errorMsg! params=fieldParams>${field_content!}</@cTextArea>
+<@cTextArea name=idName class=richtext?then('form-control richtext','form-control') placeholder=placeholder! required=entry.mandatory! html5Required=false rows=fieldRows maxlength=field_max_size_number! helpMsg=helpMsg! errorMsg=errorMsg! params=fieldParams>${field_content!}</@cTextArea>
 </@cField>
-<#-- fieldInLine means use rich text -->
-<#if entry.fieldInLine>
+<#if richtext>
 <#include "/util/editor/editor.html" />
 <@initEditor />
 </#if>
