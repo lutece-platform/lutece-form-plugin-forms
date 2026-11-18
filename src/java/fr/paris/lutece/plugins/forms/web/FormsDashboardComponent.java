@@ -103,7 +103,7 @@ public class FormsDashboardComponent extends DashboardComponent
         List<Form> displayList = listForms;
         if ( listForms.size( ) > 10 )
         {
-            displayList = listForms.subList( 0, 9 );
+            displayList = listForms.subList( 0, 10 );
         }
 
         List<FormAction> listFormActions = FormActionHome.selectAllFormActions( plugin, user.getLocale( ) );
