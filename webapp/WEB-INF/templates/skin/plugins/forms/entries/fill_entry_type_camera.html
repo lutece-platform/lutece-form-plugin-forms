@@ -26,18 +26,18 @@
 <@cInline class="is-invalid"></@cInline>
 <@cFormError id=idName label=errorMsg />
 </#if>
-<@cRow id='video-wrapper-${entry.idEntry}' >
+<@cRow id='video-wrapper-${idName}' >
 	<@cCol class='d-flex flex-column align-items-center justify-content-center'>
-		<video id="video-${entry.idEntry}" class="form-control-camera img-fluid"<#if width !=0> width="${width!}"</#if><#if height !=0> height="${height}"</#if> autoplay></video>
-		<@cBtn type='button' id='snap${entry.idEntry}' label='#i18n{forms.action.photo.snap}' class='primary mx-auto mt-s'>
+		<video id="video-${idName}" class="form-control-camera img-fluid"<#if width !=0> width="${width!}"</#if><#if height !=0> height="${height}"</#if> autoplay></video>
+		<@cBtn type='button' id='snap${idName}' label='#i18n{forms.action.photo.snap}' class='primary mx-auto mt-s'>
 			<@cIcon name='disk' /> 
 		</@cBtn>
 	</@cCol>
 </@cRow>
-<@cRow id='canvas-wrapper-${entry.idEntry}' >
+<@cRow id='canvas-wrapper-${idName}' >
 	<@cCol class='d-flex flex-column align-items-center justify-content-center'>
-		<canvas id="canvas-${entry.idEntry}" class="img-fluid"<#if width !=0> width="${width!}"</#if><#if height !=0> height="${height}"</#if>></canvas>
-		<@cBtn type='button' id='clear${entry.idEntry}' class='danger mx-auto mt-s' label='#i18n{portal.util.labelDelete}'>
+		<canvas id="canvas-${idName}" class="img-fluid"<#if width !=0> width="${width!}"</#if><#if height !=0> height="${height}"</#if>></canvas>
+		<@cBtn type='button' id='clear${idName}' class='danger mx-auto mt-s' label='#i18n{portal.util.labelDelete}'>
 			<@cIcon name='trash'  /> 
 		</@cBtn>							
 	</@cCol>
@@ -49,21 +49,21 @@
 // Put event listeners into place
 window.addEventListener("DOMContentLoaded", function() {
 	// Grab elements, create settings, etc.
-	let videoWrapper${entry.idEntry} = document.getElementById('video-wrapper-${entry.idEntry?js_string?no_esc}'),
-		canvasWrapper${entry.idEntry} = document.getElementById('canvas-wrapper-${entry.idEntry?js_string?no_esc}'),
-		canvas${entry.idEntry} = document.getElementById('canvas-${entry.idEntry?js_string?no_esc}'),
-		context${entry.idEntry} = canvas${entry.idEntry}.getContext('2d'),
-		video = document.getElementById('video-${entry.idEntry?js_string?no_esc}'),
-		photo${entry.idEntry} = document.querySelector('#attribute${entry.idEntry?js_string?no_esc}'),
+	let videoWrapper${idName} = document.getElementById('video-wrapper-${idName?js_string?no_esc}'),
+		canvasWrapper${idName} = document.getElementById('canvas-wrapper-${idName?js_string?no_esc}'),
+		canvas${idName} = document.getElementById('canvas-${idName?js_string?no_esc}'),
+		context${idName} = canvas${idName}.getContext('2d'),
+		video = document.getElementById('video-${idName?js_string?no_esc}'),
+		photo${idName} = document.getElementById('${idName?js_string?no_esc}'),
 		img = new Image(),
-		mediaConfig${entry.idEntry} = { video: true };
+		mediaConfig${idName} = { video: true };
 
-	canvasWrapper${entry.idEntry}.style.display = "none";
-	canvas${entry.idEntry}.style.display = "none";
-	img.src = photo${entry.idEntry}.value;
+	canvasWrapper${idName}.style.display = "none";
+	canvas${idName}.style.display = "none";
+	img.src = photo${idName}.value;
 
 	img.onload = function() {
-		context${entry.idEntry}.drawImage( img, 0, 0, ${width}, ${height} );
+		context${idName}.drawImage( img, 0, 0, ${width}, ${height} );
 	}	   
 
 	const errBack = function(e) {
@@ -72,52 +72,52 @@ window.addEventListener("DOMContentLoaded", function() {
 
 	// Put video listeners into place
 	if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-		navigator.mediaDevices.getUserMedia(mediaConfig${entry.idEntry}).then(function(stream) {
+		navigator.mediaDevices.getUserMedia(mediaConfig${idName}).then(function(stream) {
 			video.srcObject = stream;
 			video.play();
 		});
 	}
 	/* Legacy code below! */
 	else if(navigator.getUserMedia) { // Standard
-		navigator.getUserMedia(mediaConfig${entry.idEntry}, function(stream) {
+		navigator.getUserMedia(mediaConfig${idName}, function(stream) {
 			video.src = stream;
 			video.play();
 		}, errBack);
 	} else if(navigator.webkitGetUserMedia) { // WebKit-prefixed
-		navigator.webkitGetUserMedia(mediaConfig${entry.idEntry}, function(stream){
+		navigator.webkitGetUserMedia(mediaConfig${idName}, function(stream){
 			video.src = window.webkitURL.createObjectURL(stream);
 			video.play();
 		}, errBack);
 	} else if(navigator.mozGetUserMedia) { // Mozilla-prefixed
-		navigator.mozGetUserMedia(mediaConfig${entry.idEntry}, function(stream){
+		navigator.mozGetUserMedia(mediaConfig${idName}, function(stream){
 			video.src = window.URL.createObjectURL(stream);
 			video.play();
 		}, errBack);
 	}
 	
 	// Trigger photo take
-	document.getElementById('snap${entry.idEntry?js_string?no_esc}').addEventListener('click', function(ev) {
-		canvas${entry.idEntry}.style.display = "block";
-		canvasWrapper${entry.idEntry}.style.display = "flex";
-		context${entry.idEntry}.drawImage( video, 0, 0, ${width}, ${height});
+	document.getElementById('snap${idName?js_string?no_esc}').addEventListener('click', function(ev) {
+		canvas${idName}.style.display = "block";
+		canvasWrapper${idName}.style.display = "flex";
+		context${idName}.drawImage( video, 0, 0, ${width}, ${height});
 	
-		const data${entry.idEntry} = canvas${entry.idEntry}.toDataURL('image/${imageType?js_string?no_esc}',1);
+		const data${idName} = canvas${idName}.toDataURL('image/${imageType?js_string?no_esc}',1);
 		if(video.src != null && video.src !="" ){
-			photo${entry.idEntry}.setAttribute('value', data${entry.idEntry});
+			photo${idName}.setAttribute('value', data${idName});
 		}
 		if ( video.srcObject != null) {
-			photo${entry.idEntry}.setAttribute('value', data${entry.idEntry});
+			photo${idName}.setAttribute('value', data${idName});
 		}
-		sessionStorage.setItem('data${entry.idEntry?js_string?no_esc}', data${entry.idEntry}  );
+		sessionStorage.setItem('data${idName?js_string?no_esc}', data${idName}  );
 		ev.preventDefault();
 	});
 	
 	// Trigger photo remove
-	document.getElementById('clear${entry.idEntry?js_string?no_esc}').addEventListener('click', function(ev) {
-		context${entry.idEntry}.clearRect( 0, 0, ${width}, ${height});
-		photo${entry.idEntry}.setAttribute('value', "");
-		canvas${entry.idEntry}.style.display = "none";
-		canvasWrapper${entry.idEntry}.style.display = "none";
+	document.getElementById('clear${idName?js_string?no_esc}').addEventListener('click', function(ev) {
+		context${idName}.clearRect( 0, 0, ${width}, ${height});
+		photo${idName}.setAttribute('value', "");
+		canvas${idName}.style.display = "none";
+		canvasWrapper${idName}.style.display = "none";
 		ev.preventDefault();
 	});
 }, false );
