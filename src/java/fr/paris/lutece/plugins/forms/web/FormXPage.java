@@ -126,7 +126,7 @@ public class FormXPage extends MVCApplication
 
     // Views
     private static final String VIEW_LIST_FORM = "listForm";
-    private static final String VIEW_STEP = "stepView";
+    protected static final String VIEW_STEP = "stepView";
 
     // Actions
     private static final String ACTION_SAVE_FORM_RESPONSE = "doSaveResponse";
@@ -839,7 +839,7 @@ public class FormXPage extends MVCApplication
 
         FormMessage formMessage = FormMessageHome.findByForm( form.getId( ) );
         boolean bIsEndMessageDisplayed = formMessage.getEndMessageDisplay( );
-        String strBackUrl = getBackUrl( form, bIsEndMessageDisplayed );
+        String strBackUrl = getBackUrl( request, form, bIsEndMessageDisplayed, _formResponseManager.getFormResponse( ) );
         initAfterSave( request );
 
         if ( formMessage.getEndMessageDisplay( ) )
@@ -921,23 +921,37 @@ public class FormXPage extends MVCApplication
 
     /**
      *
+     * @param request
+     *            The Http request
      * @param form
      *            The Form
      * @param bIsEndMessageDisplayed
      *            {@code true} if the end message is displayed, {@code false} otherwise
+     * @param formResponse
+     *            The saved form response
      * @return the back URL
      */
-    private String getBackUrl( Form form, boolean bIsEndMessageDisplayed )
+    private String getBackUrl( HttpServletRequest request, Form form, boolean bIsEndMessageDisplayed, FormResponse formResponse )
     {
         if ( FormsUtils.isSafeReturnUrl( form.getReturnUrl( ) ) )
         {
             return form.getReturnUrl( );
         }
+        else if ( form.isAuthentificationNeeded( ) && !bIsEndMessageDisplayed && canSeeFormResponse( request, form, formResponse ) )
+        {
+            UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + AppPathService.getPortalUrl( ) );
+            url.addParameter( MVCUtils.PARAMETER_PAGE, FormResponseXPage.XPAGE_NAME );
+            url.addParameter( MVCUtils.PARAMETER_VIEW, FormResponseXPage.VIEW_FORM_RESPONSE );
+            url.addParameter( FormsConstants.PARAMETER_ID_RESPONSE, formResponse.getId( ) );
+            url.addParameter( FormsConstants.PARAMETER_ACTION_SUCCESS, "true" );
+
+            return url.getUrl( );
+        }
         else
         {
             UrlItem url = null;
 
-            if ( form.isAuthentificationNeeded( ) || bIsEndMessageDisplayed)
+            if ( bIsEndMessageDisplayed )
             {
                 url = new UrlItem( getViewFullUrl( VIEW_STEP ) );
             }
@@ -950,6 +964,29 @@ public class FormXPage extends MVCApplication
 
             return url.getUrl( );
         }
+    }
+
+    /**
+     * Checks that the saved form response can be displayed to the current user
+     *
+     * @param request
+     *            The Http request
+     * @param form
+     *            The Form
+     * @param formResponse
+     *            The saved form response
+     * @return true if the user can see the form response
+     */
+    private boolean canSeeFormResponse( HttpServletRequest request, Form form, FormResponse formResponse )
+    {
+        if ( formResponse == null || formResponse.getId( ) <= 0 )
+        {
+            return false;
+        }
+
+        LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
+
+        return formResponse.isPublished( ) || FormsResponseUtils.isAuthorized( formResponse, user, form );
     }
 
     /**

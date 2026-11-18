@@ -6,19 +6,13 @@
                 <#if dskey('portal.theme.site_property.forms.showResponseFormWarning.checkbox') == '1'>
                     <@cAlert class='warning mt-m' title='#i18n{portal.theme.site_property.forms.labelInfoResponse}' />
                 </#if>
+                <#if is_action_success>
+                    <@cAlert class='success mt-m' title='#i18n{forms.xpage.response.action.success}' />
+                </#if>
                 <@cCard title='#i18n{forms.multiviewForms.responseDetails.response.number} : ${formResponse.id!} ' class='mt-m white-bg-color'>
-                    <@cList class='ps-0'>
-                    <#list formResponse.steps as formQuestionResponseSteps>
-                        <#list formQuestionResponseSteps.questions as questionResponse>
-                        <@cListItem class='mb-s'>
-                            ${questionResponse.question.title!} :
-                            <#list questionResponse.entryResponse as response>
-                                <#if response.responseValue?? && response.responseValue !=''><@cInline type='strong' class='ms-sm'>${response.responseValue!}</@cInline></#if>
-                            </#list>
-                        </@cListItem>
-                        </#list>
+                    <#list list_step_display as step_display>
+                        ${step_display}
                     </#list>
-                    </@cList>
                     <#if workflow_action_list?has_content>
                         <@cTitle level=2>#i18n{forms.multiviewForms.view_record_history.actions}</@cTitle>
                         <@cList class='ps-0'>
@@ -38,9 +32,11 @@
                         </#list>
                         </@cList>
                     </#if>
+                    <#if back_url?has_content>
                     <@cBlock class='d-flex justify-content-center pt-m ps-0'>
-                        <@cLink class='btn btn-primary' href='.' label='#i18n{portal.util.labelBack}' />
+                        <@cLink class='btn btn-primary' href=back_url label='#i18n{portal.util.labelBack}' />
                     </@cBlock>
+                    </#if>
                 </@cCard>
             </@cCol>
         </@cRow>
