@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.forms.validation;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 public class DayDelayMinimumValidator extends AbstractDayDistanceValidator
@@ -55,12 +56,13 @@ public class DayDelayMinimumValidator extends AbstractDayDistanceValidator
         super( strValidatorName, strValidatorDisplayName, listAvailableEntryType );
     }
 
+    /**
+     * The date is at least the number of days of the control before today (0: today or before)
+     */
     @Override
-    public boolean validateControl( Integer controlValue, Integer value )
+    public boolean validateControl( int nControlValue, LocalDate date )
     {
-        LocalDate today = LocalDate.now();
-        LocalDate nDayDateBefore = today.minusDays( value );
-        return ( nDayDateBefore.isBefore( today ) );
+        return ChronoUnit.DAYS.between( date, LocalDate.now( ) ) >= nControlValue;
     }
 
     @Override

@@ -41,6 +41,12 @@ import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,26 +90,46 @@ public abstract class AbstractDayDistanceValidator extends AbstractValidator
     @Override
     public boolean validate( FormQuestionResponse questionResponse, Control control )
     {
-        if ( questionResponse.getEntryResponse().isEmpty() ){
+        // An empty date is not controlled: a mandatory question is checked by its mandatory flag
+        if ( questionResponse.getEntryResponse( ).isEmpty( ) )
+        {
+            return true;
+        }
+
+        Response response = questionResponse.getEntryResponse( ).get( 0 );
+
+        if ( StringUtils.isBlank( response.getResponseValue( ) ) )
+        {
+            return true;
+        }
+
+        // The value of a date question is the date in milliseconds since the epoch
+        long lDate = NumberUtils.toLong( response.getResponseValue( ), Long.MIN_VALUE );
+        int nControlValue = NumberUtils.toInt( control.getValue( ), -1 );
+
+        if ( ( lDate == Long.MIN_VALUE ) || ( nControlValue < 0 ) )
+        {
+            AppLogService.error( "Day distance control {}: invalid date {} or number of days {}", control.getId( ), response.getResponseValue( ),
+                    control.getValue( ) );
+
             return false;
         }
-        Response response = questionResponse.getEntryResponse( ).get( 0 );
-        if ( ! response.getResponseValue().isEmpty())
-        {
-            try
-            {
-                return validateControl(Integer.parseInt( control.getValue( ) ),
-                        Integer.parseInt( response.getResponseValue( ) ) );
-            }
-            catch( NumberFormatException e )
-            {
-                AppLogService.error( "Error number format", e );
-            }
-        }
-        return false;
+
+        LocalDate date = Instant.ofEpochMilli( lDate ).atZone( ZoneId.systemDefault( ) ).toLocalDate( );
+
+        return validateControl( nControlValue, date );
     }
 
-    public abstract boolean validateControl( Integer controlValue, Integer value );
+    /**
+     * Checks a date against the number of days of the control
+     *
+     * @param nControlValue
+     *            the number of days of the control
+     * @param date
+     *            the date of the response
+     * @return true if the date is valid
+     */
+    public abstract boolean validateControl( int nControlValue, LocalDate date );
 
     protected abstract String getLabelKey( );
     protected abstract String getHelpKey( );
