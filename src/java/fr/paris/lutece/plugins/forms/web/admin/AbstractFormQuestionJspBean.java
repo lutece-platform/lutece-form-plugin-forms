@@ -81,6 +81,9 @@ import fr.paris.lutece.util.ReferenceList;
 
 public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
 {
+    // The modification form of a group posts the id of the group as "id"
+    private static final String PARAMETER_ID_GROUP_POSTED = "id";
+
     private static final long serialVersionUID = -8828358457153413756L;
 
     private static final Set<Class<?>> ENTRY_TYPE_USER_REF_LIST = Set.of(
@@ -441,11 +444,20 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
             return redirectToViewManageForm( request );
         }
 
-        _group = _group != null ? _group : new Group( );
-        // The group to update is the one of the view, whose form has been checked: the posted data cannot change it
-        int nIdGroup = _group.getId( );
+        // The group to update is the one posted by the form (not the last one displayed in the session); it must belong to the posted step, whose
+        // form has been checked
+        int nIdGroup = NumberUtils.toInt( request.getParameter( PARAMETER_ID_GROUP_POSTED ), INTEGER_MINUS_ONE );
+        Group groupPosted = ( nIdGroup == INTEGER_MINUS_ONE ) ? null : getFormDatabaseService( ).findGroupByPrimaryKey( nIdGroup );
+
+        if ( groupPosted == null || groupPosted.getIdStep( ) != _step.getId( ) )
+        {
+            return redirectToViewManageForm( request );
+        }
+
+        _group = groupPosted;
         populate( _group, request );
         _group.setId( nIdGroup );
+        _group.setIdStep( _step.getId( ) );
 
         if ( !validateGroup( ) )
         {
