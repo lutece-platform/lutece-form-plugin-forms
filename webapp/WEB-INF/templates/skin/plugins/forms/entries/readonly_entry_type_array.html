@@ -4,10 +4,10 @@
 <@chItem class=entryCSSClass!?trim>
 <@cInline type='strong'>${entry.title!''} :</@cInline>
 <#if list_responses?has_content>
-    <#assign strResponse = '' /><#list list_responses as response><#if response.toStringValueResponse?? && response.toStringValueResponse?trim !=''><#assign strResponse = strResponse + response.toStringValueResponse + response?has_next?then( ' - ', '' ) /></#if></#list>
-    <#if strResponse?trim != ''>
-        <#list strResponse?keep_before_last('-')?split('-', 'r') as resp>
-            <@cInline class='me-xs'>${resp?trim}<#sep> - </#sep></@cInline>
+    <#assign filledResponses = list_responses?filter( response -> response.toStringValueResponse?? && response.toStringValueResponse?trim != '' ) />
+    <#if filledResponses?has_content>
+        <#list filledResponses as response>
+            <@cInline class='me-xs'>${response.toStringValueResponse?trim}<#sep> - </#sep></@cInline>
         </#list>
     <#else>
         <@cInline type='em'>#i18n{portal.theme.labelNoDataProvided}</@cInline>
