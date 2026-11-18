@@ -32,7 +32,7 @@
 <@cTr>
 <@cTh id='${idName}_row_${i}' scope='row'><#if arrayCellTitle( i, 1 )?has_content>${arrayCellTitle( i, 1 )}<#else><@cInline class='visually-hidden'>${i18n( 'forms.xpage.form.array.row', i - 1 )}</@cInline></#if></@cTh>
 <#list 2..nbColumns+1 as j>
-<@cTd><@cInput name='nIt' + entry_iteration_number + '_response_' + i + '_' + j value=arrayCellValue( i, j ) params={ 'aria-labelledby': idName + '_row_' + i + ' ' + idName + '_col_' + j } /></@cTd>
+<@cTd><@cInput name='nIt' + entry_iteration_number + '_response_' + entry.idEntry?c + '_' + i + '_' + j value=arrayCellValue( i, j ) params={ 'aria-labelledby': idName + '_row_' + i + ' ' + idName + '_col_' + j } /></@cTd>
 </#list>
 </@cTr>
 </#list>
