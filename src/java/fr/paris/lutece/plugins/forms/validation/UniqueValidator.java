@@ -42,6 +42,9 @@ import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
+import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
+import fr.paris.lutece.plugins.forms.business.FormResponse;
+import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.business.ResponseFilter;
@@ -113,7 +116,8 @@ public class UniqueValidator extends AbstractValidator
             for ( Response submittedResponse : listSubmittedResponses )
             {
                 String strSubmittedResponse = submittedResponse.getToStringValueResponse( );
-                if (StringUtils.isNotEmpty(strSubmittedResponse) && strValueEntry.equalsIgnoreCase( strSubmittedResponse ) )
+                if ( StringUtils.isNotEmpty( strSubmittedResponse ) && strValueEntry.equalsIgnoreCase( strSubmittedResponse )
+                        && isSubmittedByAnotherResponse( submittedResponse, formQuestionResponse.getIdFormResponse( ) ) )
                 {
                     return false;
                 }
@@ -123,4 +127,34 @@ public class UniqueValidator extends AbstractValidator
         return false;
     }
 
+    /**
+     * Tells whether a stored response holding the same value belongs to another submitted form response. The value of a draft (a form
+     * response saved to be completed later, its own draft included) or of the form response being validated is not taken.
+     *
+     * @param storedResponse
+     *            the stored response holding the same value
+     * @param nIdCurrentFormResponse
+     *            the id of the form response being validated, 0 for a new one
+     * @return true if the value is already submitted by another form response
+     */
+    private static boolean isSubmittedByAnotherResponse( Response storedResponse, int nIdCurrentFormResponse )
+    {
+        FormQuestionResponse storedQuestionResponse = FormQuestionResponseHome.selectFormQuestionResponseByEntryResponse( storedResponse );
+
+        if ( storedQuestionResponse == null )
+        {
+            return true;
+        }
+
+        int nIdFormResponse = storedQuestionResponse.getIdFormResponse( );
+
+        if ( ( nIdCurrentFormResponse > 0 ) && ( nIdFormResponse == nIdCurrentFormResponse ) )
+        {
+            return false;
+        }
+
+        FormResponse formResponse = FormResponseHome.findByPrimaryKey( nIdFormResponse );
+
+        return ( formResponse == null ) || !formResponse.isFromSave( );
+    }
 }
