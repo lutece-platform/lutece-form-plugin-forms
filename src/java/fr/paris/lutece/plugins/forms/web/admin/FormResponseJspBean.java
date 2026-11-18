@@ -62,6 +62,7 @@ import fr.paris.lutece.plugins.forms.exception.MaxFormResponseException;
 import fr.paris.lutece.plugins.forms.exception.QuotaLockTimeoutException;
 import fr.paris.lutece.plugins.forms.exception.QuestionValidationException;
 import fr.paris.lutece.plugins.forms.service.FormService;
+import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
 import fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.util.FormsUtils;
@@ -70,6 +71,7 @@ import fr.paris.lutece.plugins.forms.web.FormResponseManager;
 import fr.paris.lutece.plugins.forms.web.StepDisplayTree;
 import fr.paris.lutece.plugins.forms.web.breadcrumb.IBreadcrumb;
 import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
+import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
@@ -144,7 +146,7 @@ public class FormResponseJspBean extends AbstractJspBean
      * 
      */
     @View( value = VIEW_STEP, securityTokenAction = SECURITY_TOKEN_FORM_RESPONSE )
-    public String getStepView( HttpServletRequest request )
+    public String getStepView( HttpServletRequest request ) throws AccessDeniedException
     {
 
     	if ( FormsConstants.PARAMETER_INIT.equals( request.getParameter( FormsConstants.PARAMETER_INIT ) ) )
@@ -165,7 +167,8 @@ public class FormResponseJspBean extends AbstractJspBean
            	return redirectView(request, VIEW_ERROR );
         }
 
-        Form form = FormHome.findByPrimaryKey( _currentStep.getIdForm( ) );    
+        Form form = FormHome.findByPrimaryKey( _currentStep.getIdForm( ) );
+        checkUserAuthorizedOnForm( form, request );
        if ( !(FormsResponseUtils.checkNumberMaxResponseForm( form ) ) )
        {
            	addError( FormsConstants.MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM, getLocale( ) );
@@ -262,7 +265,7 @@ public class FormResponseJspBean extends AbstractJspBean
      * @return the view
      */
     @Action( value = ACTION_SAVE_STEP, securityTokenAction = SECURITY_TOKEN_FORM_RESPONSE )
-    public String doSaveStep( HttpServletRequest request )
+    public String doSaveStep( HttpServletRequest request ) throws AccessDeniedException
     {
     	try
         {	
@@ -290,7 +293,7 @@ public class FormResponseJspBean extends AbstractJspBean
      * @return the view
      */
     @Action( value = ACTION_SAVE_FORM_RESPONSE, securityTokenAction = SECURITY_TOKEN_FORM_RESPONSE )
-    public String doSaveFormResponse( HttpServletRequest request )
+    public String doSaveFormResponse( HttpServletRequest request ) throws AccessDeniedException
     {
         Form form = null;
         try
@@ -313,7 +316,7 @@ public class FormResponseJspBean extends AbstractJspBean
      * @return the View
      */
     @Action( value = ACTION_PREVIOUS_STEP, securityTokenDisabled = true, securityTokenAction = SECURITY_TOKEN_FORM_RESPONSE )
-    public String doReturnStep( HttpServletRequest request )
+    public String doReturnStep( HttpServletRequest request ) throws AccessDeniedException
     {
         try
         {
@@ -340,7 +343,7 @@ public class FormResponseJspBean extends AbstractJspBean
      * @return the View
      */
     @Action( value = ACTION_GO_TO_STEP, securityTokenDisabled = true, securityTokenAction = SECURITY_TOKEN_FORM_RESPONSE )
-    public String doGoToStep( HttpServletRequest request )
+    public String doGoToStep( HttpServletRequest request ) throws AccessDeniedException
     {
         try
         {
@@ -368,7 +371,7 @@ public class FormResponseJspBean extends AbstractJspBean
      * @return the View
      */
     @Action( value = ACTION_SAVE_FOR_BACKUP, securityTokenAction = SECURITY_TOKEN_FORM_RESPONSE )
-    public String doSaveForBackup( HttpServletRequest request )
+    public String doSaveForBackup( HttpServletRequest request ) throws AccessDeniedException
     {
         try
         {
@@ -410,7 +413,7 @@ public class FormResponseJspBean extends AbstractJspBean
      * @return the View
      */
     @Action( value = ACTION_RESET_BACKUP, securityTokenAction = SECURITY_TOKEN_FORM_RESPONSE )
-    public String doResetBackup( HttpServletRequest request )
+    public String doResetBackup( HttpServletRequest request ) throws AccessDeniedException
     {
         Form form = null;       
         try
@@ -436,7 +439,7 @@ public class FormResponseJspBean extends AbstractJspBean
      * @return the summary page
      */
     @Action( value = ACTION_FORM_RESPONSE_SUMMARY, securityTokenAction = SECURITY_TOKEN_FORM_RESPONSE )
-    public String doFormResponseSummary( HttpServletRequest request )
+    public String doFormResponseSummary( HttpServletRequest request ) throws AccessDeniedException
     {
         Form form = null;
         
@@ -469,7 +472,7 @@ public class FormResponseJspBean extends AbstractJspBean
      * @return the view
      */
     @Action( value = ACTION_SAVE_FORM_RESPONSE_SUMMARY, securityTokenAction = SECURITY_TOKEN_FORM_RESPONSE )
-    public synchronized String doSaveFormResponseSummary( HttpServletRequest request )
+    public synchronized String doSaveFormResponseSummary( HttpServletRequest request ) throws AccessDeniedException
     {
         Form form = null;
         
@@ -493,7 +496,7 @@ public class FormResponseJspBean extends AbstractJspBean
      * @return the XPage
      */
     @Action( value = ACTION_ADD_ITERATION, securityTokenAction = SECURITY_TOKEN_FORM_RESPONSE )
-    public synchronized String doAddIteration( HttpServletRequest request )
+    public synchronized String doAddIteration( HttpServletRequest request ) throws AccessDeniedException
     {
         try
         {
@@ -523,7 +526,7 @@ public class FormResponseJspBean extends AbstractJspBean
      * @return the XPage
      */
     @Action( value = ACTION_REMOVE_ITERATION, securityTokenAction = SECURITY_TOKEN_FORM_RESPONSE )
-    public synchronized String doRemoveIteration( HttpServletRequest request )
+    public synchronized String doRemoveIteration( HttpServletRequest request ) throws AccessDeniedException
     {
         try
         {
@@ -611,7 +614,7 @@ public class FormResponseJspBean extends AbstractJspBean
 	
         }
     }
-    private String doSaveResponse( HttpServletRequest request, Form form )
+    private String doSaveResponse( HttpServletRequest request, Form form ) throws AccessDeniedException
     {
         _currentStep = _formResponseManager.getCurrentStep( );
         if ( !_formResponseManager.validateFormResponses( ) )
@@ -720,6 +723,27 @@ public class FormResponseJspBean extends AbstractJspBean
     }
     
     /**
+     * Checks that the user may enter a response to the form in the back office: the RBAC permission VIEW_FORM_RESPONSE on the form (the one that
+     * shows the link in the list of the forms) and the workgroup of the form
+     * 
+     * @param form
+     *            the form
+     * @param request
+     *            the request
+     * @throws AccessDeniedException
+     *             if the user is not authorized on the form
+     */
+    private void checkUserAuthorizedOnForm( Form form, HttpServletRequest request ) throws AccessDeniedException
+    {
+        if ( form == null )
+        {
+            throw new AccessDeniedException( UNAUTHORIZED );
+        }
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( form.getId( ) ), FormsResourceIdService.PERMISSION_VIEW_FORM_RESPONSE, request, null );
+        checkWorkgroupPermission( form, request );
+    }
+
+    /**
      * Finds the form from the specified request
      * 
      * @param request
@@ -728,7 +752,7 @@ public class FormResponseJspBean extends AbstractJspBean
      * @throws FormNotFoundException
      *             if the form is not found
      */
-    private Form findFormFrom( HttpServletRequest request ) throws FormNotFoundException
+    private Form findFormFrom( HttpServletRequest request ) throws FormNotFoundException, AccessDeniedException
     {
         Form form = null;
 
@@ -756,7 +780,9 @@ public class FormResponseJspBean extends AbstractJspBean
         {
             form = FormHome.findByPrimaryKey( _currentStep.getIdForm( ) );
         }
-        
+
+        checkUserAuthorizedOnForm( form, request );
+
         return form;
     }
     
