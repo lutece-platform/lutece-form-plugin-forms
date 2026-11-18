@@ -39,14 +39,29 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
+import fr.paris.lutece.plugins.forms.business.Control;
+import fr.paris.lutece.plugins.forms.business.ControlHome;
+import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.Form;
+import fr.paris.lutece.plugins.forms.business.FormDisplay;
+import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
+import fr.paris.lutece.plugins.forms.business.Question;
+import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.exception.FormJsonImportException;
+import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
+import fr.paris.lutece.plugins.genericattributes.business.EntryType;
 import fr.paris.lutece.test.LuteceTestCase;
 import jakarta.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Copy and import of a step of a form
@@ -110,5 +125,108 @@ public class FormJsonServiceStepImportTest extends LuteceTestCase
     {
         assertThrows( FormJsonImportException.class, ( ) -> _formJsonService.jsonImportStep( _form.getId( ), "{}", Locale.FRENCH ) );
         assertEquals( 0, StepHome.getStepsListByForm( _form.getId( ) ).size( ) );
+    }
+
+    /**
+     * The export of a step (used by its duplication) keeps the validation controls of its questions and the conditions of its displays, not the
+     * conditions that its questions drive on the displays of other steps or on transitions
+     *
+     * @throws Exception
+     *             if the step cannot be exported
+     */
+    @Test
+    public void testStepExportKeepsOnlyTheControlsOfTheStep( ) throws Exception
+    {
+        Step step1 = createStep( "Step 1", true );
+        Step step2 = createStep( "Step 2", false );
+        List<Integer> listIdEntry = new ArrayList<>( );
+        List<Question> listQuestion = new ArrayList<>( );
+        List<FormDisplay> listDisplay = new ArrayList<>( );
+        List<Control> listControl = new ArrayList<>( );
+        try
+        {
+            Question q1 = createQuestion( step1, listIdEntry, listQuestion );
+            Question d = createQuestion( step2, listIdEntry, listQuestion );
+            FormDisplay displayQ1 = createDisplay( step1, q1, listDisplay );
+            FormDisplay displayD = createDisplay( step2, d, listDisplay );
+
+            Control validation = createControl( ControlType.VALIDATION, q1.getId( ), q1, listControl );
+            Control conditionInStep = createControl( ControlType.CONDITIONAL, displayQ1.getId( ), q1, listControl );
+            createControl( ControlType.CONDITIONAL, displayD.getId( ), q1, listControl );
+            createControl( ControlType.TRANSITION, 999999, q1, listControl );
+
+            Set<Integer> setExported = _formJsonService.jsonExportStepAsData( _form.getId( ), step1.getId( ) ).getControlList( ).stream( )
+                    .map( Control::getId ).collect( Collectors.toSet( ) );
+
+            assertEquals( Set.of( validation.getId( ), conditionInStep.getId( ) ), setExported );
+        }
+        finally
+        {
+            listControl.forEach( control -> ControlHome.remove( control.getId( ) ) );
+            listDisplay.forEach( display -> FormDisplayHome.remove( display.getId( ) ) );
+            listQuestion.forEach( question -> QuestionHome.remove( question.getId( ) ) );
+            listIdEntry.forEach( EntryHome::remove );
+        }
+    }
+
+    private Step createStep( String strTitle, boolean bInitial )
+    {
+        Step step = new Step( );
+        step.setTitle( strTitle );
+        step.setDescription( "" );
+        step.setIdForm( _form.getId( ) );
+        step.setInitial( bInitial );
+        StepHome.create( step );
+        return step;
+    }
+
+    private Question createQuestion( Step step, List<Integer> listIdEntry, List<Question> listQuestion )
+    {
+        Entry entry = new Entry( );
+        EntryType entryType = new EntryType( );
+        entryType.setIdType( 1 );
+        entry.setEntryType( entryType );
+        entry.setResourceType( Form.RESOURCE_TYPE );
+        entry.setIdResource( _form.getId( ) );
+        EntryHome.create( entry );
+        listIdEntry.add( entry.getIdEntry( ) );
+
+        Question question = new Question( );
+        question.setTitle( "Question of " + step.getTitle( ) );
+        question.setCode( "question_" + entry.getIdEntry( ) );
+        question.setColumnTitle( "column" );
+        question.setIdEntry( entry.getIdEntry( ) );
+        question.setIdStep( step.getId( ) );
+        QuestionHome.create( question );
+        listQuestion.add( question );
+        return question;
+    }
+
+    private FormDisplay createDisplay( Step step, Question question, List<FormDisplay> listDisplay )
+    {
+        FormDisplay display = new FormDisplay( );
+        display.setFormId( _form.getId( ) );
+        display.setStepId( step.getId( ) );
+        display.setCompositeId( question.getId( ) );
+        display.setCompositeType( CompositeDisplayType.QUESTION.getLabel( ) );
+        display.setParentId( 0 );
+        display.setDisplayOrder( 1 );
+        FormDisplayHome.create( display );
+        listDisplay.add( display );
+        return display;
+    }
+
+    private Control createControl( ControlType controlType, int nIdTarget, Question source, List<Control> listControl )
+    {
+        Control control = new Control( );
+        control.setControlType( controlType.getLabel( ) );
+        control.setIdControlTarget( nIdTarget );
+        control.setListIdQuestion( Set.of( source.getId( ) ) );
+        control.setValidatorName( "forms.mandatoryValidator" );
+        control.setValue( "" );
+        control.setErrorMessage( "error" );
+        ControlHome.create( control );
+        listControl.add( control );
+        return control;
     }
 }

@@ -149,6 +149,15 @@ public abstract class AbstractFormJsonService
             }
             controlList.addAll( _formDatabaseService.getControlByQuestion( question.getId( ) ) );
         }
+
+        // Only the controls whose target is in the step: the validation controls of its questions and the conditional displays of its displays.
+        // A condition of a display of another step or of a transition (not exported with the step) would be imported on that display or transition
+        List<FormDisplay> formDisplayList = getAllFormDisplays( idForm, idStep ).stream( ).filter( fd -> fd.getStepId( ) == idStep )
+                .collect( Collectors.toList( ) );
+        Set<Integer> setIdQuestion = questionList.stream( ).map( Question::getId ).collect( Collectors.toSet( ) );
+        Set<Integer> setIdDisplay = formDisplayList.stream( ).map( FormDisplay::getId ).collect( Collectors.toSet( ) );
+        controlList.removeIf( control -> !isControlTargetInStep( control, setIdQuestion, setIdDisplay ) );
+
         List<ControlMapping> controlMappingList = new ArrayList<>( );
         for ( Control control : controlList )
         {
@@ -163,10 +172,33 @@ public abstract class AbstractFormJsonService
         jsonData.setControlGroupList( controlGroupList );
         jsonData.setControlMappingList( controlMappingList );
 
-        List<FormDisplay> formDisplayList = getAllFormDisplays( idForm, idStep );
-        jsonData.setFormDisplayList( formDisplayList.stream( ).filter( fd -> fd.getStepId( ) == idStep ).collect( Collectors.toList( ) ) );
+        jsonData.setFormDisplayList( formDisplayList );
 
         return jsonData;
+    }
+
+    /**
+     * Tells whether the target of a control belongs to the exported step
+     * 
+     * @param control
+     *            the control
+     * @param setIdQuestion
+     *            the ids of the questions of the step
+     * @param setIdDisplay
+     *            the ids of the displays of the step
+     * @return true for a validation control of a question of the step or a conditional control of a display of the step
+     */
+    private static boolean isControlTargetInStep( Control control, Set<Integer> setIdQuestion, Set<Integer> setIdDisplay )
+    {
+        if ( ControlType.VALIDATION.getLabel( ).equals( control.getControlType( ) ) )
+        {
+            return setIdQuestion.contains( control.getIdControlTarget( ) );
+        }
+        if ( ControlType.CONDITIONAL.getLabel( ).equals( control.getControlType( ) ) )
+        {
+            return setIdDisplay.contains( control.getIdControlTarget( ) );
+        }
+        return false;
     }
 
     /**
