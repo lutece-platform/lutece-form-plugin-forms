@@ -39,6 +39,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -50,6 +51,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
 import fr.paris.lutece.plugins.forms.business.Control;
+import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.Group;
@@ -919,8 +921,11 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
 
         getFormDatabaseService( ).updateEntry( duplicatedEntry );
 
-        // Get the question controls
-        List<Control> listControlsToDuplicate = getFormDatabaseService( ).getControlByQuestion( _question.getId( ) );
+        // Get the validation controls of the question (their target is the question). The conditional display and transition controls whose
+        // source is the question belong to another display or to a transition: they are not copied
+        List<Control> listControlsToDuplicate = getFormDatabaseService( ).getControlByQuestion( _question.getId( ) ).stream( )
+                .filter( control -> ControlType.VALIDATION.getLabel( ).equals( control.getControlType( ) ) && control.getIdControlTarget( ) == _question.getId( ) )
+                .collect( Collectors.toList( ) );
 
         FormDisplay formDisplayToCopy = getFormDatabaseService( ).getFormDisplayByFormStepAndComposite( _step.getIdForm( ), _step.getId( ),
                 _question.getId( ) );
