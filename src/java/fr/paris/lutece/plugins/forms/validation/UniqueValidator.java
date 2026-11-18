@@ -94,6 +94,13 @@ public class UniqueValidator extends AbstractValidator
         {
             Response response = formQuestionResponse.getEntryResponse( ).get( 0 );
 
+            String strValueEntry = response.getResponseValue( );
+            // An empty value is not controlled: a mandatory question is checked by its mandatory flag
+            if ( StringUtils.isEmpty( strValueEntry ) )
+            {
+                return true;
+            }
+
             boolean multiForm = Boolean.parseBoolean( control.getValue( ) );
             ResponseFilter filter = new ResponseFilter( );
 
@@ -107,12 +114,6 @@ public class UniqueValidator extends AbstractValidator
             }
             Collection<Response> listSubmittedResponses = ResponseHome.getResponseList( filter );
 
-            String strValueEntry = response.getResponseValue( );
-            if (StringUtils.isEmpty(strValueEntry))
-            {
-        		return false;
-            }
-            
             for ( Response submittedResponse : listSubmittedResponses )
             {
                 String strSubmittedResponse = submittedResponse.getToStringValueResponse( );
@@ -124,7 +125,8 @@ public class UniqueValidator extends AbstractValidator
             }
             return true;
         }
-        return false;
+        // No response: nothing to control
+        return true;
     }
 
     /**

@@ -391,7 +391,8 @@ public class FormsResponseUtils
         
         for ( FormQuestionResponse formQuestionResponse : listResponsesTemp )
         {
-        	if ( bValidateQuestionStep )
+        	// A question hidden by a conditional display is not validated, as on the final submission (FormResponseManager.validateFormResponses)
+        	if ( bValidateQuestionStep && formQuestionResponse.getQuestion( ).isVisible( ) )
         	{
 	        	List<Control> listControl = ControlHome.getControlByQuestionAndType( formQuestionResponse.getQuestion( ).getId( ), ControlType.VALIDATION.getLabel( ) );
 	        	

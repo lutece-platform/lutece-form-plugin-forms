@@ -41,6 +41,8 @@ import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,10 +86,16 @@ public abstract class AbstractNumberValidator extends AbstractValidator
     @Override
     public boolean validate( FormQuestionResponse questionResponse, Control control )
     {
-        if ( questionResponse.getEntryResponse().isEmpty() ){
-            return false;
+        // An empty value is not controlled: a mandatory question is checked by its mandatory flag
+        if ( questionResponse.getEntryResponse( ).isEmpty( ) )
+        {
+            return true;
         }
         Response response = questionResponse.getEntryResponse( ).get( 0 );
+        if ( StringUtils.isBlank( response.getResponseValue( ) ) )
+        {
+            return true;
+        }
         if ( ! response.getResponseValue().isEmpty())
         {
             try
