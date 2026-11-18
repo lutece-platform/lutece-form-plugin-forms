@@ -102,7 +102,7 @@ public class ListMaxResponseValidator extends AbstractValidator
     {
         int nMaxResponse = getControlValueAsInt( control );
 
-        return ( nMaxResponse >= 0 ) && questionResponse.getEntryResponse( ).size( ) <= nMaxResponse;
+        return ( nMaxResponse >= 0 ) && countAnswers( questionResponse ) <= nMaxResponse;
     }
 
     @Override

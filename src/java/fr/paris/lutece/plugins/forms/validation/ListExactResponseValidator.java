@@ -84,7 +84,7 @@ public class ListExactResponseValidator extends AbstractValidator
     {
         int nExactResponse = getControlValueAsInt( control );
 
-        return ( nExactResponse >= 0 ) && questionResponse.getEntryResponse( ).size( ) == nExactResponse;
+        return ( nExactResponse >= 0 ) && countAnswers( questionResponse ) == nExactResponse;
     }
 
     @Override

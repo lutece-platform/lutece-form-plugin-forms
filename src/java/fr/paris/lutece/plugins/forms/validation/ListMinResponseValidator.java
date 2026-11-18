@@ -83,7 +83,7 @@ public class ListMinResponseValidator extends AbstractValidator
     {
         int nMinResponse = getControlValueAsInt( control );
 
-        return ( nMinResponse >= 0 ) && questionResponse.getEntryResponse( ).size( ) >= nMinResponse;
+        return ( nMinResponse >= 0 ) && countAnswers( questionResponse ) >= nMinResponse;
     }
 
     @Override

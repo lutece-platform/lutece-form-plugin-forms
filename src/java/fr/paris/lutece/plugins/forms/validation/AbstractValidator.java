@@ -169,6 +169,20 @@ public abstract class AbstractValidator implements IValidator
     }
 
     /**
+     * Counts the answers of a question: the responses holding a choice or a value. A question with several choices (check boxes) gives one
+     * empty response when nothing is ticked: it is not an answer.
+     *
+     * @param questionResponse
+     *            the response of the question
+     * @return the number of answers
+     */
+    protected static int countAnswers( FormQuestionResponse questionResponse )
+    {
+        return (int) questionResponse.getEntryResponse( ).stream( )
+                .filter( response -> ( response.getField( ) != null ) || StringUtils.isNotBlank( response.getResponseValue( ) ) ).count( );
+    }
+
+    /**
      * Retourne la valeur entiere portee par le controle.
      *
      * <p>La valeur peut etre absente ou non numerique lorsque le controle a ete enregistre sans
