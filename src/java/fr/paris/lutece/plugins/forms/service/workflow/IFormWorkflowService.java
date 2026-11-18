@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.forms.service.workflow;
 
+import java.util.List;
+
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.portal.business.user.AdminUser;
@@ -66,4 +68,13 @@ public interface IFormWorkflowService
      *            the user performing the remove action
      */
     void removeResources( int nIdWorkflow, int nIdForm, AdminUser adminUser );
+
+    /**
+     * Removes the workflow resources of form responses in every workflow, enabled or not : a form whose workflow was changed keeps the resources of its
+     * responses in the former one
+     *
+     * @param listIdFormResponse
+     *            the identifiers of the form responses
+     */
+    void removeResourcesOfResponses( List<Integer> listIdFormResponse );
 }

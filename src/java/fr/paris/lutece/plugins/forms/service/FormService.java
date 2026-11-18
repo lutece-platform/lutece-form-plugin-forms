@@ -392,12 +392,15 @@ public class FormService
             stepService.removeStep( step.getId( ) );
         }
 
+        // read before the responses go : their workflow resources are removed in every workflow, not only the current one of the form
+        List<Integer> listIdFormResponse = FormResponseHome.selectAllFormResponsesUncompleteByIdForm( nIdForm ).stream( ).map( FormResponse::getId )
+                .collect( Collectors.toList( ) );
+
         FormResponseHome.removeByForm( nIdForm );
         FormMessageHome.removeByForm( nIdForm );
         FormExportConfigHome.removeByForm( nIdForm );
 
         Form form = FormHome.findByPrimaryKey( nIdForm );
-        int nIdWorkflow = form.getIdWorkflow( );
         if ( form.getLogo( ) != null )
         {
             FileHome.remove( form.getLogo( ).getIdFile( ) );
@@ -405,7 +408,7 @@ public class FormService
 
         FormHome.remove( nIdForm );
 
-        _formWorkflowService.removeResources( nIdWorkflow, nIdForm, adminUser );
+        _formWorkflowService.removeResourcesOfResponses( listIdFormResponse );
     }
 
     /**
