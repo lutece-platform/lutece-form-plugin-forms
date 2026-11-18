@@ -39,8 +39,9 @@ document.addEventListener('DOMContentLoaded', function () {
 	document.body.classList.add('overflow-y-hidden');
 
 	// Initialize the dropdown button
-	const formSelector = document.querySelector('.forms-filter #id_form')
-	formSelector.options[0].textContent = '${i18n('forms.filter.option.labelAllForms')?js_string?no_esc}';
+	// The form selector only exists when the user may see at least two forms
+	const formSelector = document.querySelector('.forms-filter #id_form');
+	if ( formSelector && formSelector.options.length > 0 ) formSelector.options[0].textContent = '${i18n('forms.filter.option.labelAllForms')?js_string?no_esc}';
 
 	// Reset filter button - check if any filter is set
 	function hasActiveFilters() {
