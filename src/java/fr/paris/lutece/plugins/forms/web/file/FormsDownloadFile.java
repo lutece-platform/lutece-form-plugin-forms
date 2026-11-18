@@ -41,6 +41,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import fr.paris.lutece.util.url.UrlItem;
+import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
+import fr.paris.lutece.plugins.genericattributes.business.Response;
+import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
@@ -71,6 +75,7 @@ public final class FormsDownloadFile
 {
 
     // Messages
+    private static final String JSP_DOWNLOAD_FILE = "jsp/admin/plugins/forms/FormsDownloadFile.jsp";
     private static final String MESSAGE_ERROR_DURING_DOWNLOAD_FILE = "forms.error.downloadFile";
 
     // Constants
@@ -83,6 +88,29 @@ public final class FormsDownloadFile
     private FormsDownloadFile( )
     {
 
+    }
+
+    /**
+     * Gives the back office URL that downloads the file of a response (used by the exports): {@code jsp/admin/plugins/forms/FormsDownloadFile.jsp}
+     * with the ids of the file and of the response, checked by {@link #doDownloadFile(HttpServletRequest, HttpServletResponse)}
+     * 
+     * @param nIdResponse
+     *            the id of the response (genericattributes) holding the file
+     * @param strBaseUrl
+     *            the base URL of the application
+     * @return the URL
+     */
+    public static String getDownloadFileUrl( int nIdResponse, String strBaseUrl )
+    {
+        UrlItem url = new UrlItem( StringUtils.defaultString( strBaseUrl ) + JSP_DOWNLOAD_FILE );
+        Response response = ResponseHome.findByPrimaryKey( nIdResponse );
+        if ( response != null && response.getFile( ) != null )
+        {
+            url.addParameter( FormsConstants.PARAMETER_ID_FILE, response.getFile( ).getIdFile( ) );
+        }
+        url.addParameter( FormsConstants.PARAMETER_ID_RESPONSE, nIdResponse );
+
+        return url.getUrl( );
     }
 
     /**

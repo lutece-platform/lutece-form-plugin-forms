@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.service.entrytype;
 
+import fr.paris.lutece.plugins.forms.web.file.FormsDownloadFile;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -54,7 +55,6 @@ import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntry
 import fr.paris.lutece.plugins.genericattributes.service.file.GenericAttributeFileService;
 import fr.paris.lutece.portal.business.file.File;
 import fr.paris.lutece.portal.service.util.AppPathService;
-import fr.paris.lutece.util.url.UrlItem;
 
 /**
  * 
@@ -70,7 +70,6 @@ public class EntryTypeGalleryImage extends AbstractEntryTypeGalleryImage impleme
      */
     public static final String BEAN_NAME = "forms.entryTypeGalleryImage";
 
-    private static final String JSP_DOWNLOAD_FILE = "jsp/admin/plugins/forms/DoDownloadFile.jsp";
     private static final String TEMPLATE_CREATE = "admin/plugins/forms/entries/create_entry_type_gallery_image.html";
     private static final String TEMPLATE_MODIFY = "admin/plugins/forms/entries/modify_entry_type_gallery_image.html";
     private static final String TEMPLATE_READONLY_BACKOFFICE = "admin/plugins/forms/entries/readonly_entry_type_gallery_image.html";
@@ -193,9 +192,6 @@ public class EntryTypeGalleryImage extends AbstractEntryTypeGalleryImage impleme
      */
     private String getUrlDownloadFile( int nResponseId, String strBaseUrl )
     {
-        UrlItem url = new UrlItem( strBaseUrl + JSP_DOWNLOAD_FILE );
-        url.addParameter( PARAMETER_ID_RESPONSE, nResponseId );
-
-        return url.getUrl( );
+        return FormsDownloadFile.getDownloadFileUrl( nResponseId, strBaseUrl );
     }
 }

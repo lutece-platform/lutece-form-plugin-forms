@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.service.entrytype;
 
+import fr.paris.lutece.plugins.forms.web.file.FormsDownloadFile;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -43,7 +44,6 @@ import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.anonymization.IEntryAnonymizationType;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeFile;
 import fr.paris.lutece.plugins.genericattributes.service.upload.AbstractGenAttUploadHandler;
-import fr.paris.lutece.util.url.UrlItem;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -57,7 +57,6 @@ import jakarta.inject.Named;
 @Named( "forms.entryTypeFile" )
 public class EntryTypeFile extends AbstractEntryTypeFile implements IResponseComparator
 {
-    private static final String JSP_DOWNLOAD_FILE = "jsp/admin/plugins/forms/DoDownloadFile.jsp";
     private static final String TEMPLATE_CREATE = "admin/plugins/forms/entries/create_entry_type_file.html";
     private static final String TEMPLATE_MODIFY = "admin/plugins/forms/entries/modify_entry_type_file.html";
     private static final String TEMPLATE_READONLY_BACKOFFICE = "admin/plugins/forms/entries/readonly_entry_type_file.html";
@@ -123,10 +122,7 @@ public class EntryTypeFile extends AbstractEntryTypeFile implements IResponseCom
     @Override
     public String getUrlDownloadFile( int nResponseId, String strBaseUrl )
     {
-        UrlItem url = new UrlItem( strBaseUrl + JSP_DOWNLOAD_FILE );
-        url.addParameter( PARAMETER_ID_RESPONSE, nResponseId );
-
-        return url.getUrl( );
+        return FormsDownloadFile.getDownloadFileUrl( nResponseId, strBaseUrl );
     }
 
     /**

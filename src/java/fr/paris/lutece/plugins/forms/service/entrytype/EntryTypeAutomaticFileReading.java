@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.service.entrytype;
 
+import fr.paris.lutece.plugins.forms.web.file.FormsDownloadFile;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -64,7 +65,6 @@ import fr.paris.lutece.plugins.genericattributes.util.GenericAttributesUtils;
 import fr.paris.lutece.portal.service.upload.MultipartItem;
 import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 import fr.paris.lutece.util.ReferenceList;
-import fr.paris.lutece.util.url.UrlItem;
 
 /**
  * This class is a service for the entry type Automatic File Reading
@@ -74,7 +74,6 @@ import fr.paris.lutece.util.url.UrlItem;
 @Named( "forms.entryTypeAutomaticFileReading" )
 public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile implements IResponseComparator
 {
-    private static final String JSP_DOWNLOAD_FILE = "jsp/admin/plugins/forms/DoDownloadFile.jsp";
     private static final String TEMPLATE_CREATE = "admin/plugins/forms/entries/create_entry_type_auto_file_reading.html";
     private static final String TEMPLATE_MODIFY = "admin/plugins/forms/entries/modify_entry_type_auto_file_reading.html";
     private static final String TEMPLATE_READONLY_BACKOFFICE = "admin/plugins/forms/entries/readonly_entry_type_auto_file_reading.html";
@@ -143,10 +142,7 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile impleme
     @Override
     public String getUrlDownloadFile( int nResponseId, String strBaseUrl )
     {
-        UrlItem url = new UrlItem( strBaseUrl + JSP_DOWNLOAD_FILE );
-        url.addParameter( PARAMETER_ID_RESPONSE, nResponseId );
-
-        return url.getUrl( );
+        return FormsDownloadFile.getDownloadFileUrl( nResponseId, strBaseUrl );
     }
 
     /**
