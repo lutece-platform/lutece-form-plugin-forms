@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.web.entrytype;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.enterprise.inject.spi.CDI;
@@ -150,29 +151,14 @@ public class EntryTypeFileDataService extends EntryTypeDefaultDataService
         String strNewAttributeName = getAttributeName( question, nNewIterationNumber );
         List<MultipartItem> listCurrentFileItem = handler.getListUploadedFiles( strCurrentAttributeName, request.getSession( ) );
         List<MultipartItem> listNewFileItem = handler.getListUploadedFiles( strNewAttributeName, request.getSession( ) );
-        int nCurrentFileItemNumber = listCurrentFileItem.size( );
-        int nNewFileItemNumber = listNewFileItem.size( );
 
-        // Adds previous file items into new file item
-        listNewFileItem.addAll( listCurrentFileItem );
-
-        // Adds new file items into previous file item
-        for ( int i = 0; i < nNewFileItemNumber; i++ )
-        {
-            listCurrentFileItem.add( listNewFileItem.get( i ) );
-        }
-
-        // Removes previous file items
-        for ( int i = 0; i < nCurrentFileItemNumber; i++ )
-        {
-            listCurrentFileItem.remove( i );
-        }
-
-        // Removes new file items
-        for ( int i = 0; i < nNewFileItemNumber; i++ )
-        {
-            listNewFileItem.remove( i );
-        }
+        // Swap the file items of the two iterations (the lists are the ones of the session)
+        List<MultipartItem> listPreviousCurrentFileItem = new ArrayList<>( listCurrentFileItem );
+        List<MultipartItem> listPreviousNewFileItem = new ArrayList<>( listNewFileItem );
+        listCurrentFileItem.clear( );
+        listCurrentFileItem.addAll( listPreviousNewFileItem );
+        listNewFileItem.clear( );
+        listNewFileItem.addAll( listPreviousCurrentFileItem );
     }
 
 }
