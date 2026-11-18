@@ -619,7 +619,7 @@ public class FormXPage extends MVCApplication
                 return getStepView( request );
             }
             FormsResponseUtils.fillResponseManagerWithResponses( request, true, _formResponseManager, _stepDisplayTree.getQuestions( ), false );
-            boolean needValidation = form.isCaptchaStepFinal( );
+            boolean needValidation = isCaptchaDisplayedOnSubmittedStep( form );
             if ( isCaptchaKO( request, needValidation ) )
             {
                 addWarning( MESSAGE_WARNING_CAPTCHA, getLocale( request ) );
@@ -721,7 +721,7 @@ public class FormXPage extends MVCApplication
                 return getStepView( request );
             }
             FormsResponseUtils.fillResponseManagerWithResponses( request, true, _formResponseManager, _stepDisplayTree.getQuestions( ), false );
-            boolean needValidation = form.isCaptchaStepFinal( );
+            boolean needValidation = isCaptchaDisplayedOnSubmittedStep( form );
             if ( isCaptchaKO( request, needValidation ) )
             {
                 addWarning( MESSAGE_WARNING_CAPTCHA, getLocale( request ) );
@@ -1020,6 +1020,22 @@ public class FormXPage extends MVCApplication
         }
         IsRequestComingFromAction = true;
         return getStepView(  request );
+    }
+
+    /**
+     * Tells whether the step submitted with the response (or to go to the summary) displayed a captcha: the final step with the captcha of the
+     * final step, or the initial step with the captcha of the initial step (a form with one step, initial and final, has no next step button:
+     * its captcha of the initial step is checked here)
+     *
+     * @param form
+     *            the form
+     * @return true if the captcha must be checked
+     */
+    private boolean isCaptchaDisplayedOnSubmittedStep( Form form )
+    {
+        Step step = _formResponseManager.getCurrentStep( );
+
+        return form.isCaptchaStepFinal( ) || ( ( step != null ) && step.isInitial( ) && form.isCaptchaStepInitial( ) );
     }
 
     private boolean isCaptchaKO( HttpServletRequest request, boolean needValidation )
