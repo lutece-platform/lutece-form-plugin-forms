@@ -517,8 +517,8 @@ public class FormJspBean extends AbstractJspBean
 
         if ( AccessControlService.getInstance( ).isAvailable( ) )
         {
-            // This will delete the remove the link between resource & access control.
-            AccessControlService.getInstance( ).linkResourceToAccessControl( _form.getId( ), Form.RESOURCE_TYPE, -1 );
+            // This will delete the remove the link between resource & access control : the form being removed, not the one kept in session
+            AccessControlService.getInstance( ).linkResourceToAccessControl( nId, Form.RESOURCE_TYPE, -1 );
         }
 
         FormService formService = SpringContextService.getBean( FormService.BEAN_NAME );
