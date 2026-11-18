@@ -20,13 +20,13 @@
 		</#list>
 	</@manageFeature>
 	<@div class='mt-3'>
-		<@tform method='post' id='modifyLogicalOperator' action='jsp/admin/plugins/forms/ManageControls.jsp?view=manageConditionControl'>
+		<@tform method='post' id='modifyLogicalOperator' action='jsp/admin/plugins/forms/ManageControls.jsp'>
 			<@input type='hidden' name='id_step' value='${step.id}' />
 			<@input type='hidden' name='id_target' value='${id_target?c}' />
 			<@input type='hidden' name='control_type' value='${control_type}' />
 			<@inputGroup>
 				<@select name='logical_operator' items=logicalOperators default_value='${logical_operator_label!}' />
-				<@button type='submit' name='view_modifyLogicalOperator' value='validateLogicalOperator' hideTitle=['all'] buttonIcon='check'/>
+				<@button type='submit' name='action_modifyLogicalOperator' value='validateLogicalOperator' hideTitle=['all'] buttonIcon='check'/>
 			</@inputGroup>
 		</@tform>
 	</@div>

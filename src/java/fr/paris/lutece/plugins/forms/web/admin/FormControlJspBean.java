@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.forms.web.admin;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -126,6 +127,7 @@ public class FormControlJspBean extends AbstractJspBean
     private static final String ACTION_MODIFY_CONTROL = "modifyControl";
     private static final String ACTION_REMOVE_CONTROL = "removeControl";
     private static final String ACTION_CANCEL_AND_RETURN = "cancelAndReturn";
+    private static final String ACTION_MODIFY_LOGICAL_OPERATOR = "modifyLogicalOperator";
 
     // Infos
     private static final String INFO_CONTROL_CREATED = "forms.info.control.created";
@@ -305,7 +307,7 @@ public class FormControlJspBean extends AbstractJspBean
      *            The HTTP request
      * @return The page
      */
-    @View( value = VIEW_MANAGE_CONDITION_CONTROL, defaultView = true )
+    @View( value = VIEW_MANAGE_CONDITION_CONTROL, defaultView = true, securityTokenAction = ACTION_MODIFY_LOGICAL_OPERATOR )
     public String getManageConditionControl( HttpServletRequest request )
     {
         clearAttributes( );
@@ -349,11 +351,6 @@ public class FormControlJspBean extends AbstractJspBean
 
         model.put( MARK_LOGICAL_OPERATORS_LIST, ControlGroupHome.getLogicalOperatorsReferenceList(request.getLocale()) );
         ControlGroup controlGroup = ControlGroupHome.findByPrimaryKey(nIdControlGroup).orElse(null);
-        String strLogicalOperatorParam = request.getParameter(FormsConstants.PARAMETER_LOGICAL_OPERATOR);
-        if (strLogicalOperatorParam != null) {
-            LogicalOperator logicalOperator = LogicalOperator.valueOf(strLogicalOperatorParam.toUpperCase());
-            updateControlGroup(listConditionControl, controlGroup, logicalOperator);
-        }
         model.put( FormsConstants.MARK_ID_CONTROL_GROUP, (controlGroup != null ? controlGroup.getId() : null) );
         model.put( FormsConstants.MARK_LOGICAL_OPERATOR_LABEL, (controlGroup != null ? controlGroup.getLogicalOperator().getLabel() : LogicalOperator.AND.getLabel()) );
         model.put( MARK_LIST_CONDITION_CONTROL, listConditionControl );
@@ -362,6 +359,54 @@ public class FormControlJspBean extends AbstractJspBean
         HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_MANAGE_CONDITION_CONTROL, locale, model );
 
         return getAdminPage( templateList.getHtml( ) );
+    }
+
+    /**
+     * Change the logical operator (and / or) of the conditions of a target
+     *
+     * @param request
+     *            The HTTP request
+     * @return The URL of the condition list
+     */
+    @Action( ACTION_MODIFY_LOGICAL_OPERATOR )
+    public String doModifyLogicalOperator( HttpServletRequest request )
+    {
+        clearAttributes( );
+        retrieveParameters( request );
+
+        if ( _step == null || _controlType == null )
+        {
+            return redirectToViewManageForm( request );
+        }
+
+        LogicalOperator logicalOperator = null;
+        String strLogicalOperator = request.getParameter( FormsConstants.PARAMETER_LOGICAL_OPERATOR );
+        for ( LogicalOperator operator : LogicalOperator.values( ) )
+        {
+            if ( operator.name( ).equalsIgnoreCase( strLogicalOperator ) )
+            {
+                logicalOperator = operator;
+            }
+        }
+
+        List<Control> listControl = ControlHome.getControlByControlTargetAndType( _nIdTarget, _controlType );
+        if ( logicalOperator != null && !listControl.isEmpty( ) )
+        {
+            List<ConditionControl> listConditionControl = new ArrayList<>( );
+            int nIdControlGroup = listControl.get( 0 ).getIdControlGroup( );
+            for ( Control control : listControl )
+            {
+                listConditionControl.add( new ConditionControl( null, null, control ) );
+            }
+            updateControlGroup( listConditionControl, ControlGroupHome.findByPrimaryKey( nIdControlGroup ).orElse( null ), logicalOperator );
+        }
+
+        Map<String, String> mapParameters = new HashMap<>( );
+        mapParameters.put( FormsConstants.PARAMETER_ID_STEP, String.valueOf( _step.getId( ) ) );
+        mapParameters.put( FormsConstants.PARAMETER_ID_TARGET, String.valueOf( _nIdTarget ) );
+        mapParameters.put( FormsConstants.PARAMETER_CONTROL_TYPE, _controlType.name( ) );
+
+        return redirect( request, VIEW_MANAGE_CONDITION_CONTROL, mapParameters );
     }
 
     private void updateControlGroup(List<ConditionControl> listConditionControl, ControlGroup controlGroup, LogicalOperator logicalOperator)
