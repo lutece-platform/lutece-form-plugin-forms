@@ -638,7 +638,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
             return redirect( request, AdminMessageService.getMessageUrlReturningTo( request, strMessage, AdminMessage.TYPE_STOP,
                     getJspManageQuestions( request, _formDisplay.getStepId( ) ) ) );
         }
-        else if ( existsCondtionalControlUsingQuestion( _formDisplay ) )
+        else if ( existsConditionUsingQuestion( _formDisplay ) )
         {
             return redirect( request, AdminMessageService.getMessageUrlReturningTo( request, MESSAGE_CANT_REMOVE_ENTRY_CONDITION_ATTACHED, AdminMessage.TYPE_STOP,
                     getJspManageQuestions( request, _formDisplay.getStepId( ) ) ) );
@@ -686,23 +686,30 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     }
     
     /**
-     * check that a conditional control using a question exists
+     * check that a condition (conditional display or transition) uses the question of the display, or a question of its descendants
      * 
      * @param formDisplay
      *            The form dispay
-     * @return true if a conditional control exists, false otherwise
+     * @return true if a conditional or transition control uses one of these questions, false otherwise
      */
-    private boolean existsCondtionalControlUsingQuestion( FormDisplay formDisplay )
+    private boolean existsConditionUsingQuestion( FormDisplay formDisplay )
     {
-        boolean existsCondtionalControl = false;
-
         if ( CompositeDisplayType.QUESTION.getLabel( ).equalsIgnoreCase( formDisplay.getCompositeType( ) ) )
         {
-            existsCondtionalControl = CollectionUtils.isNotEmpty(ControlHome.getControlByQuestionAndType( 
-            		formDisplay.getCompositeId( ), ControlType.CONDITIONAL.getLabel( ) ) );
+            int nIdQuestion = formDisplay.getCompositeId( );
+            return CollectionUtils.isNotEmpty( ControlHome.getControlByQuestionAndType( nIdQuestion, ControlType.CONDITIONAL.getLabel( ) ) )
+                    || CollectionUtils.isNotEmpty( ControlHome.getControlByQuestionAndType( nIdQuestion, ControlType.TRANSITION.getLabel( ) ) );
         }
-        
-        return existsCondtionalControl;
+
+        for ( FormDisplay childDisplay : FormDisplayHome.getFormDisplayListByParent( formDisplay.getStepId( ), formDisplay.getId( ) ) )
+        {
+            if ( existsConditionUsingQuestion( childDisplay ) )
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -728,6 +735,12 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
 
         checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( _formDisplay.getFormId( ) ), FormsResourceIdService.PERMISSION_MODIFY,
                 request, null );
+
+        if ( existsConditionUsingQuestion( _formDisplay ) )
+        {
+            return redirect( request, AdminMessageService.getMessageUrlReturningTo( request, MESSAGE_CANT_REMOVE_ENTRY_CONDITION_ATTACHED, AdminMessage.TYPE_STOP,
+                    getJspManageQuestions( request, _formDisplay.getStepId( ) ) ) );
+        }
 
         getFormDisplayService( ).deleteDisplayAndDescendants( nIdDisplay );
 

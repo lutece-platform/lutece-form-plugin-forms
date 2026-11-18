@@ -276,7 +276,10 @@ public class FormControlJspBean extends AbstractJspBean
         else
         {
             _question = QuestionHome.findByPrimaryKey( _control.getListIdQuestion( ).iterator( ).next( ) );
-            _step = StepHome.findByPrimaryKey( _question.getIdStep( ) );
+            if ( _question != null )
+            {
+                _step = StepHome.findByPrimaryKey( _question.getIdStep( ) );
+            }
         }
 
         if ( ControlType.TRANSITION.equals( _controlType ) )

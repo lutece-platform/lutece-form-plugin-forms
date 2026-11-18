@@ -283,6 +283,11 @@ public class FormsResponseUtils
             for ( Control transitionControl : listTransitionControl )
             {
                 Question targetQuestion = QuestionHome.findByPrimaryKey( transitionControl.getListIdQuestion( ).iterator( ).next( ) );
+                if ( targetQuestion == null )
+                {
+                    // The question of the condition no longer exists: there is no response to check
+                    continue;
+                }
                 Step stepTarget = StepHome.findByPrimaryKey( targetQuestion.getIdStep( ) );
                 List<FormQuestionResponse> listQuestionResponse = formResponseManager.findResponsesFor( stepTarget ).stream( )
                         .filter( q -> transitionControl.getListIdQuestion( ).stream( ).anyMatch( t -> t.equals( q.getQuestion( ).getId( ) ) ) )
