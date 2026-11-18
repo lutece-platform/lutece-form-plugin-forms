@@ -370,10 +370,17 @@ public class FormExportJspBean extends AbstractJspBean
     }
 
     @Action( ACTION_MOVE_UP_EXPORT_CONFIG )
-    public String doMoveUpExportConfig( HttpServletRequest request )
+    public String doMoveUpExportConfig( HttpServletRequest request ) throws AccessDeniedException
     {
         int idConfig = NumberUtils.toInt( request.getParameter( PARAMETER_ID_CONFIG ), FormsConstants.DEFAULT_ID_VALUE );
         int idForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
+
+        if ( idForm == FormsConstants.DEFAULT_ID_VALUE )
+        {
+            return redirect( request, VIEW_MANAGE_FORMS );
+        }
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( idForm ), FormsResourceIdService.PERMISSION_MODIFY, request, null );
+        checkWorkgroupPermission( idForm, request );
 
         if ( idConfig == FormsConstants.DEFAULT_ID_VALUE )
         {
@@ -386,6 +393,11 @@ public class FormExportJspBean extends AbstractJspBean
         List<FormExportConfig> existingConfigList = FormExportConfigHome.findByForm( idForm );
 
         FormExportConfig configMovedUp = FormExportConfigHome.findByPrimaryKey( idConfig );
+        // The configuration must belong to the form whose list is reordered
+        if ( configMovedUp == null || configMovedUp.getIdForm( ) != idForm )
+        {
+            throw new AccessDeniedException( UNAUTHORIZED );
+        }
         int orderMovedUp = configMovedUp.getOrder( );
 
         for ( FormExportConfig config : existingConfigList )
@@ -408,10 +420,17 @@ public class FormExportJspBean extends AbstractJspBean
     }
 
     @Action( ACTION_MOVE_DOWN_EXPORT_CONFIG )
-    public String doMoveDownExportConfig( HttpServletRequest request )
+    public String doMoveDownExportConfig( HttpServletRequest request ) throws AccessDeniedException
     {
         int idConfig = NumberUtils.toInt( request.getParameter( PARAMETER_ID_CONFIG ), FormsConstants.DEFAULT_ID_VALUE );
         int idForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
+
+        if ( idForm == FormsConstants.DEFAULT_ID_VALUE )
+        {
+            return redirect( request, VIEW_MANAGE_FORMS );
+        }
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( idForm ), FormsResourceIdService.PERMISSION_MODIFY, request, null );
+        checkWorkgroupPermission( idForm, request );
 
         if ( idConfig == FormsConstants.DEFAULT_ID_VALUE )
         {
@@ -424,6 +443,11 @@ public class FormExportJspBean extends AbstractJspBean
         List<FormExportConfig> existingConfigList = FormExportConfigHome.findByForm( idForm );
 
         FormExportConfig configMovedDown = FormExportConfigHome.findByPrimaryKey( idConfig );
+        // The configuration must belong to the form whose list is reordered
+        if ( configMovedDown == null || configMovedDown.getIdForm( ) != idForm )
+        {
+            throw new AccessDeniedException( UNAUTHORIZED );
+        }
         int orderMovedDown = configMovedDown.getOrder( );
 
         for ( FormExportConfig config : existingConfigList )
