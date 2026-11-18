@@ -124,7 +124,7 @@ public class FormWorkflowConfigJspBean extends AbstractJspBean
         {
             return redirect( request, VIEW_MANAGE_FORMS );
         }
-        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY, request, null );
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY_PARAMS, request, null );
 
         Form formToBeModified = FormHome.findByPrimaryKey( nId );
 

@@ -166,7 +166,7 @@ public class FormMultiviewConfigJspBean extends AbstractJspBean
         {
             return redirect( request, VIEW_MANAGE_FORMS );
         }
-        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_MANAGE_MULTIVIEW );
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY_PARAMS, request, ACTION_MANAGE_MULTIVIEW );
 
         Form formToBeModified = FormHome.findByPrimaryKey( nId );
 
@@ -204,7 +204,7 @@ public class FormMultiviewConfigJspBean extends AbstractJspBean
         {
             return redirect( request, VIEW_MANAGE_FORMS );
         }
-        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_MANAGE_MULTIVIEW );
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY_PARAMS, request, ACTION_MANAGE_MULTIVIEW );
 
         Form formToBeModified = FormHome.findByPrimaryKey( nId );
 
