@@ -37,6 +37,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -73,6 +75,7 @@ public abstract class AbstractFileGenerator implements IFileGenerator
 
     private List<FormExportConfig> _configList = null;
     private Form _form;
+    private final Set<String> _setGeneratedNames = new HashSet<>( );
 
     /**
      * Constructor
@@ -109,7 +112,28 @@ public abstract class AbstractFileGenerator implements IFileGenerator
         {
             nameValues.add( String.valueOf( response.getId( ) ) );
         }
-        return FileUtil.normalizeFileName( nameValues.stream( ).collect( Collectors.joining( "_" ) ) );
+        String strName = FileUtil.normalizeFileName( nameValues.stream( ).collect( Collectors.joining( "_" ) ) );
+
+        // The files of an export are written in the same directory: a name already given to another response of this export (or an empty name)
+        // gets the id of the response, so that no file overwrites another one
+        String strIdResponse = String.valueOf( response.getId( ) );
+        if ( StringUtils.isBlank( strName ) )
+        {
+            strName = strIdResponse;
+        }
+        else
+            if ( _setGeneratedNames.contains( strName.toLowerCase( ) ) )
+            {
+                strName = strName + "_" + strIdResponse;
+            }
+        String strUniqueName = strName;
+        for ( int nSuffix = 2; _setGeneratedNames.contains( strUniqueName.toLowerCase( ) ); nSuffix++ )
+        {
+            strUniqueName = strName + "_" + nSuffix;
+        }
+        _setGeneratedNames.add( strUniqueName.toLowerCase( ) );
+
+        return strUniqueName;
     }
     
     protected String generateMultiFormResponsesFileName(List<FormResponse> listFormResponse, int startRange, int endRange)
