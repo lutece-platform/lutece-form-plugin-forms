@@ -33,6 +33,9 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 /**
  * This is the business class for the object FormCategory
  */
@@ -40,8 +43,12 @@ public class FormCategory
 {
     private int _nId;
 
+    @NotBlank( message = "#i18n{forms.validation.formCategory.Code.notEmpty}" )
+    @Size( max = 100, message = "#i18n{forms.validation.formCategory.Code.size}" )
     private String _strCode;
 
+    @NotBlank( message = "#i18n{forms.validation.formCategory.Name.notEmpty}" )
+    @Size( max = 100, message = "#i18n{forms.validation.formCategory.Name.size}" )
     private String _strName;
 
     /**

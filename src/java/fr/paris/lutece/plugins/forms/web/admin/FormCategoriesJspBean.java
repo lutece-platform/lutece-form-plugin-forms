@@ -261,7 +261,7 @@ public class FormCategoriesJspBean extends AbstractJspBean
         // Check constraints
         if ( !validateBean( formCategory, VALIDATION_ATTRIBUTES_PREFIX ) )
         {
-            return redirectView( request, VIEW_MODIFY_CATEGORY );
+            return redirect( request, VIEW_MODIFY_CATEGORY, PARAMETER_ID_CATEGORY, nIdCategory );
         }
         FormCategoryHome.update( formCategory );
         addInfo( INFO_CATEGORY_UPDATED, getLocale( ) );

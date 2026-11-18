@@ -4,10 +4,10 @@
 		<@tform class='form' method='post' name='modify_category' action='jsp/admin/plugins/forms/ManageFormsCategories.jsp'  params={"target": "_top"}>
 		<@input type='hidden' name='id_category' value='${category.id}' />
 		<@formGroup labelFor='title' labelKey='#i18n{forms.modify_form_category.labelName}' mandatory=true>
-			<@input type='text' name='name' id='name' value=category.name!'' maxlength=255 />
+			<@input type='text' name='name' id='name' value=category.name!'' maxlength=100 />
 		</@formGroup>
 		<@formGroup labelFor='title' labelKey='#i18n{forms.modify_form_category.labelCode}' mandatory=true>
-			<@input type='text' name='code' id='code' value=category.code!'' maxlength=255 />
+			<@input type='text' name='code' id='code' value=category.code!'' maxlength=100 />
 		</@formGroup>
 		<@formGroup rows=2>
 			<@formsButton okAction='modifyCategory' viewAction='' />

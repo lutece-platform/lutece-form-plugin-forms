@@ -3,10 +3,10 @@
 		<@pageHeader title='#i18n{forms.createFormCategory.title}' />
 		<@tform class='form' method='post' name='create_category' action='jsp/admin/plugins/forms/ManageFormsCategories.jsp'  params={"target": "_top"}>
 			<@formGroup labelFor='title' labelKey='#i18n{forms.create_form_category.labelName}' mandatory=true>
-				<@input type='text' name='name' id='name' value=category.name!'' maxlength=255 />
+				<@input type='text' name='name' id='name' value=category.name!'' maxlength=100 />
 			</@formGroup>
 			<@formGroup labelFor='title' labelKey='#i18n{forms.create_form_category.labelCode}' mandatory=true>
-				<@input type='text' name='code' id='code' value=category.code!'' maxlength=255 />
+				<@input type='text' name='code' id='code' value=category.code!'' maxlength=100 />
 			</@formGroup>
 			<@formGroup rows=2>
 				<@formsButton okAction='createCategory' viewAction='' />
