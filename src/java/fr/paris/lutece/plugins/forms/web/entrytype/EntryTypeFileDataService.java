@@ -109,7 +109,8 @@ public class EntryTypeFileDataService extends EntryTypeDefaultDataService
         String strAttributeName = getAttributeName( question, question.getIterationNumber( ) );
         List<MultipartItem> listFileItem = handler.getListUploadedFiles( strAttributeName, request.getSession( ) );
 
-        for ( int i = 0; i < listFileItem.size( ); i++ )
+        // From the last one: removeFileItem removes the item from this list, which shrinks
+        for ( int i = listFileItem.size( ) - 1; i >= 0; i-- )
         {
             handler.removeFileItem( strAttributeName, request.getSession( ), i );
         }
