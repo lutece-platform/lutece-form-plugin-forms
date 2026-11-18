@@ -118,23 +118,26 @@ public class FormResponseCsvExport
      */
     public Map<Integer, List<String>> buildMapQuestionDataToExport( FormResponse formResponse,  CSVDataLine csvDataLine)
     {
-        // one mapQuestionData item per Question containing a list of responses (one response per iteration)
+        // one mapQuestionData item per Question containing a list of responses: the item i is the response of iteration i, an empty string for an
+        // iteration without response (a file question without file stores no response: the next iterations must keep their column)
         Map<Integer, List<String>> mapQuestionData = new java.util.HashMap<>( );
-        for ( FormQuestionResponse formQuestionResponse : FormQuestionResponseHome.getFormQuestionResponseListByFormResponse( formResponse.getId( ))) {
-            if(formQuestionResponse != null && formQuestionResponse.getQuestion() != null) {
-                Integer questionId = formQuestionResponse.getQuestion().getId();
-                List<String> responseValue = csvDataLine.responseToIterationsStrings(formQuestionResponse);
-                if (responseValue != null && !responseValue.isEmpty()) {
-                    String responseValueString = String.join(" ", responseValue);
-                    if (mapQuestionData.containsKey(questionId)) {
-                        List<String> listResponse = mapQuestionData.get(questionId);
-                        listResponse.add(responseValueString);
-                        mapQuestionData.put(questionId, listResponse);
-                    } else {
-                        List<String> listResponse = new ArrayList<>();
-                        listResponse.add(responseValueString);
-                        mapQuestionData.put(questionId, listResponse);
+        for ( FormQuestionResponse formQuestionResponse : FormQuestionResponseHome.getFormQuestionResponseListByFormResponse( formResponse.getId( ) ) )
+        {
+            if ( formQuestionResponse != null && formQuestionResponse.getQuestion( ) != null )
+            {
+                Integer questionId = formQuestionResponse.getQuestion( ).getId( );
+                List<String> responseValue = csvDataLine.responseToIterationsStrings( formQuestionResponse );
+                if ( responseValue != null && !responseValue.isEmpty( ) )
+                {
+                    int nIteration = Math.max( 0, formQuestionResponse.getQuestion( ).getIterationNumber( ) );
+                    List<String> listResponse = mapQuestionData.computeIfAbsent( questionId, k -> new ArrayList<>( ) );
+                    while ( listResponse.size( ) <= nIteration )
+                    {
+                        listResponse.add( "" );
                     }
+                    String strPrevious = listResponse.get( nIteration );
+                    String strValue = String.join( " ", responseValue );
+                    listResponse.set( nIteration, strPrevious.isEmpty( ) ? strValue : strPrevious + " " + strValue );
                 }
             }
         }
