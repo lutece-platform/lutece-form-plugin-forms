@@ -352,7 +352,10 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         _question.setTitle( strTitle );
         _question.setCode( _entry.getCode( ) );
         _question.setDescription( _entry.getComment( ) );
-        _question.setMultiviewColumnOrder( NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_ORDER ), 0 ) );
+        // The question screens do not post the multiview column order: keep the stored one (set by the multiview configuration)
+        Question storedQuestion = getFormDatabaseService( ).findQuestionByPrimaryKey( _question.getId( ) );
+        int nStoredMultiviewOrder = ( storedQuestion != null ) ? storedQuestion.getMultiviewColumnOrder( ) : _question.getMultiviewColumnOrder( );
+        _question.setMultiviewColumnOrder( NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_ORDER ), nStoredMultiviewOrder ) );
         getFormDatabaseService( ).updateQuestion( _question );
         return null;
 
