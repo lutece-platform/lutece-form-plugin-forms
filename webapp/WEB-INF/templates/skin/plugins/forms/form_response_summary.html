@@ -2,6 +2,16 @@
 <@cForm id='summary-validate' action='jsp/site/Portal.jsp?page=forms' >
 <@cInput name='id_form' value=id_form type='hidden' />
 <@cInput name='token' id='summary-token' value=token type='hidden' />
+<#-- The warnings of the summary, e.g. a wrong captcha -->
+<#if warnings??>
+<@cContainer>
+	<#if warnings?size gt 0 >
+	<#assign first = warnings[0] />
+	<#assign messageWarning = '\n	' + ( first?is_string )?then( '\n		' + ( warnings )?map( warning -> ( warning!' #i18n{portal.util.message.titleWarning} ' )?string )?join( '' ) + '\n	', '\n		' + ( warnings )?map( warning -> ( warning.message?? )?then( ( warning.message!' #i18n{portal.util.message.titleWarning} ' )?string, '' ) )?join( '' ) + '\n	' ) + '\n	' />
+		<@cAlert type='warning' class='mb-m' id='messages_warnings_div' title=messageWarning! dismissible=true />
+	</#if>
+</@cContainer>
+</#if>
 <@cContainer>
 	<@cRow>
 		<@cCol>
