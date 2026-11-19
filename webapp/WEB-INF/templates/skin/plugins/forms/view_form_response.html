@@ -1,16 +1,12 @@
 <@messages errors=errors warnings=warnings infos=infos />
+<#if is_action_success>
+    <div class="alert alert-success fs-6" role="status">#i18n{forms.xpage.response.action.success}</div>
+</#if>
 <div class="card border-secondary">
     <div class="card-header bg-white border border-0"><h2 class="card-title text-primary">#i18n{forms.xpage.response.title} #${formResponse.id}</h2></div>
     <div class="card-body fs-6">
-        <#list formResponse.steps as formQuestionResponseSteps>
-            <#list formQuestionResponseSteps.questions as questionResponse>
-                <p class="fw-bold">${questionResponse.question.title} :</p>
-                <ul>
-                    <#list questionResponse.entryResponse as response>
-                        <li>${response.responseValue!}</li>
-                    </#list>
-                </ul>
-            </#list>
+        <#list list_step_display as step_display>
+            ${step_display}
         </#list>
         <#if workflow_action_list?has_content>
             <h2>#i18n{forms.multiviewForms.view_record_history.actions}</h2>
@@ -22,5 +18,8 @@
         </#if>
     </div>
     <div class="card-footer bg-white border border-0">
+        <#if back_url?has_content>
+            <a class="btn btn-primary btn-sm" href="${back_url}">#i18n{forms.form.returnPage}</a>
+        </#if>
     </div>
 </div>
