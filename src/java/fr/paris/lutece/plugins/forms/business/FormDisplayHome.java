@@ -113,14 +113,11 @@ public final class FormDisplayHome
         if ( formDisplay == null )
         {
             formDisplay = _dao.load( nKey, _plugin );
-            if ( formDisplay != null )
+            if ( formDisplay == null )
             {
-                _cache.putInCache( cacheKey, formDisplay );
+                return null;
             }
-        }
-        if ( formDisplay == null )
-        {
-            return null;
+            _cache.putInCache( cacheKey, formDisplay );
         }
         // never alter the cached instance: work on a copy, the cache is reset on each write
         FormDisplay formDisplayCopy = new FormDisplay( formDisplay );
@@ -219,14 +216,11 @@ public final class FormDisplayHome
         if ( formDisplay == null )
         {
             formDisplay = _dao.selectFormdisplayByFormStepAndComposite( nIdForm, nIdStep, nIdComposite, _plugin );
-            if ( formDisplay != null )
+            if ( formDisplay == null )
             {
-                _cache.putInCache( cacheKey, formDisplay );
+                return null;
             }
-        }
-        if ( formDisplay == null )
-        {
-            return null;
+            _cache.putInCache( cacheKey, formDisplay );
         }
         // never alter the cached instance: work on a copy, the cache is reset on each write
         FormDisplay formDisplayCopy = new FormDisplay( formDisplay );
