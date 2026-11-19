@@ -85,19 +85,17 @@ public class FormDisplayService extends AbstractFormDisplayService
                     ControlHome.remove( control.getId( ) );
                 }
 
-                listControl = ControlHome.getControlByControlTargetAndType( formDisplayCompositeId, ControlType.CONDITIONAL );
-                int nIdControlGroup = 0;
-                for ( Control control : listControl )
-                {
-                	if (nIdControlGroup == 0) {
-            			nIdControlGroup = control.getIdControlGroup();
-            		}
-                    ControlHome.remove( control.getId( ) );
-                }
-                // Delete control group
-                ControlGroupHome.remove(nIdControlGroup);
-                
+                // The target of a conditional control is the display, not the question
+                listControl = ControlHome.getControlByControlTargetAndType( formDisplayToDelete.getId( ), ControlType.CONDITIONAL );
+                int nIdControlGroup = listControl.isEmpty( ) ? 0 : listControl.get( 0 ).getIdControlGroup( );
+
                 ControlHome.removeByControlTarget( formDisplayToDelete.getId( ), ControlType.CONDITIONAL );
+
+                // Delete control group
+                if ( nIdControlGroup != 0 )
+                {
+                    ControlGroupHome.remove( nIdControlGroup );
+                }
 
                 // Delete the Question and its Entry
                 QuestionHome.remove( formDisplayCompositeId );

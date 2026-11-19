@@ -79,6 +79,7 @@ import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.web.util.LocalizedPaginator;
 import fr.paris.lutece.util.ReferenceItem;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.AbstractPaginator;
 import fr.paris.lutece.util.html.HtmlTemplate;
@@ -249,8 +250,16 @@ public class FormControlJspBean extends AbstractJspBean
         }
         else
         {
-            _question = QuestionHome.findByPrimaryKey( _control.getListIdQuestion( ).iterator( ).next( ) );
-            _step = StepHome.findByPrimaryKey( _question.getIdStep( ) );
+            _question = QuestionHome.findByPrimaryKey( _control.getIdFirstQuestion( ) );
+
+            if ( _question == null )
+            {
+                AppLogService.error( "Forms : the control {} is driven by no existing question, its screen opens without a step", _control.getId( ) );
+            }
+            else
+            {
+                _step = StepHome.findByPrimaryKey( _question.getIdStep( ) );
+            }
         }
 
         if ( ControlType.TRANSITION.equals( _controlType ) )
@@ -279,10 +288,8 @@ public class FormControlJspBean extends AbstractJspBean
     @View( value = VIEW_MANAGE_CONDITION_CONTROL, defaultView = true )
     public String getManageConditionControl( HttpServletRequest request )
     {
-        if (!FormsConstants.PARAMETER_VALIDATE_LOGICAL_OPERATOR.equals(request.getParameter(FormsConstants.PARAMETER_VIEW_MODIFY_LOGICAL_OPERATOR))) {
-            clearAttributes( );
-            retrieveParameters( request );
-        }
+        clearAttributes( );
+        retrieveParameters( request );
 
         if ( _step == null || _controlType == null )
         {
@@ -296,8 +303,17 @@ public class FormControlJspBean extends AbstractJspBean
             if (nIdControlGroup == 0) {
                 nIdControlGroup = control.getIdControlGroup();
             }
-            Question targetQuestion = QuestionHome.findByPrimaryKey( control.getListIdQuestion( ).iterator( ).next( ) );
-            Step targetStep = StepHome.findByPrimaryKey( targetQuestion.getIdStep( ) );
+            Question targetQuestion = QuestionHome.findByPrimaryKey( control.getIdFirstQuestion( ) );
+            Step targetStep = ( targetQuestion == null ) ? null : StepHome.findByPrimaryKey( targetQuestion.getIdStep( ) );
+
+            if ( targetStep == null )
+            {
+                // the screen through which a condition is repaired has to open even when one of them names a question that is gone
+                AppLogService.error( "Forms : the condition {} is driven by no existing question, it is left out of the list", control.getId( ) );
+
+                continue;
+            }
+
             ConditionControl conditionControl = new ConditionControl(targetStep.getTitle(), targetQuestion.getTitle(), control);
             listConditionControl.add(conditionControl);
         }
@@ -313,6 +329,7 @@ public class FormControlJspBean extends AbstractJspBean
         model.put( MARK_NB_ITEMS_PER_PAGE, StringUtils.EMPTY + _nItemsPerPage );
 
         model.put( FormsConstants.PARAMETER_CONTROL_TYPE, _controlType.name( ) );
+        model.put( FormsConstants.PARAMETER_ID_TARGET, _nIdTarget );
         model.put( FormsConstants.MARK_STEP_HOME, StepHome.class );
         model.put( FormsConstants.MARK_QUESTION_HOME, QuestionHome.class );
         model.put( FormsConstants.MARK_VALIDATOR_MANAGER, EntryServiceManager.getInstance( ) );
@@ -361,6 +378,13 @@ public class FormControlJspBean extends AbstractJspBean
     @View( VIEW_MODIFY_CONDITION_CONTROL )
     public String getModifyConditionControl( HttpServletRequest request )
     {
+        // Entering the creation from the condition list: never reuse a target, step or control left in session by another form
+        if ( request.getParameter( FormsConstants.PARAMETER_ID_TARGET ) != null )
+        {
+            clearAttributes( );
+            retrieveParameters( request );
+        }
+
         if ( _step == null )
         {
             int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
@@ -517,10 +541,10 @@ public class FormControlJspBean extends AbstractJspBean
 
         if ( _control.getListIdQuestion( ) != null && !_control.getListIdQuestion( ).isEmpty( ) )
         {
-            Question q = QuestionHome.findByPrimaryKey( _control.getListIdQuestion( ).iterator( ).next( ) );
-            EntryType ent = q.getEntry( ).getEntryType( );
+            // the first question that can still be read seeds the intersection and the others narrow it, rather than the first of the set, which
+            // may be gone : seeding from a question that no longer exists used to break this screen outright
+            ReferenceList refListAvailableValidator = null;
 
-            ReferenceList refListAvailableValidator = EntryServiceManager.getInstance( ).getRefListAvailableValidator( ent );
             for ( int idQuest : _control.getListIdQuestion( ) )
             {
                 Question question = QuestionHome.findByPrimaryKey( idQuest );
@@ -528,6 +552,13 @@ public class FormControlJspBean extends AbstractJspBean
                 {
                     EntryType entryType = question.getEntry( ).getEntryType( );
                     ReferenceList refListAvailableValidatorTemp = EntryServiceManager.getInstance( ).getRefListAvailableValidator( entryType );
+
+                    if ( refListAvailableValidator == null )
+                    {
+                        refListAvailableValidator = refListAvailableValidatorTemp;
+                        continue;
+                    }
+
                     ReferenceList refListAvailTemp = new ReferenceList( );
                     for ( ReferenceItem refList : refListAvailableValidatorTemp )
                     {
@@ -539,6 +570,13 @@ public class FormControlJspBean extends AbstractJspBean
                     refListAvailableValidator = refListAvailTemp;
                 }
             }
+
+            if ( refListAvailableValidator == null )
+            {
+                AppLogService.error( "Forms : no question of the control {} can be read, its screen offers no validator", _control.getId( ) );
+                refListAvailableValidator = new ReferenceList( );
+            }
+
             model.put( FormsConstants.MARK_AVAILABLE_VALIDATORS, refListAvailableValidator );
 
             if ( CollectionUtils.isNotEmpty( refListAvailableValidator ) && StringUtils.EMPTY.equals( _control.getValidatorName( ) ) )
@@ -553,7 +591,16 @@ public class FormControlJspBean extends AbstractJspBean
         if ( StringUtils.isNotEmpty( _control.getValidatorName( ) ) )
         {
             IValidator validator = EntryServiceManager.getInstance( ).getValidator( _control.getValidatorName( ) );
-            strValidatorTemplate = validator.getDisplayHtml( _control );
+
+            if ( validator == null )
+            {
+                AppLogService.error( "Forms : the control {} names the validator {}, which no plugin provides, its screen opens without it",
+                        _control.getId( ), _control.getValidatorName( ) );
+            }
+            else
+            {
+                strValidatorTemplate = validator.getDisplayHtml( _control );
+            }
         }
         if(_controlType.name() == "TRANSITION") {
             model.put("nextStepTitle", request.getParameter("nextStepTitle"));

@@ -66,6 +66,33 @@ public class FormDisplay implements Serializable
     private List<Control> _validationControlList = new ArrayList<>( );
 
     /**
+     * Default constructor
+     */
+    public FormDisplay( )
+    {
+    }
+
+    /**
+     * Copy constructor
+     * 
+     * Leaves out the controls, which are computed for each copy
+     * 
+     * @param source
+     *            FormDisplay to copy
+     */
+    public FormDisplay( FormDisplay source )
+    {
+        _nId = source._nId;
+        _nFormId = source._nFormId;
+        _nStepId = source._nStepId;
+        _nCompositeId = source._nCompositeId;
+        _nParentId = source._nParentId;
+        _nDisplayOrder = source._nDisplayOrder;
+        _strCompositeType = source._strCompositeType;
+        _nDepth = source._nDepth;
+    }
+
+    /**
      * @return the _nId
      */
     public int getId( )

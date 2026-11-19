@@ -71,6 +71,7 @@ import fr.paris.lutece.plugins.forms.export.ExportServiceManager;
 import fr.paris.lutece.plugins.forms.export.IFormatExport;
 import fr.paris.lutece.plugins.forms.service.FormPanelConfigIdService;
 import fr.paris.lutece.plugins.forms.service.FormsPlugin;
+import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
 import fr.paris.lutece.plugins.forms.service.MultiviewFormService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.form.FormDisplayFactory;
@@ -323,6 +324,9 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         if ( formatExport != null )
         {
             int idForm = Integer.parseInt( strIdForm );
+            // The form id comes from the request : check that the user is allowed to view its responses
+            checkUserPermission( Form.RESOURCE_TYPE, strIdForm, FormsResourceIdService.PERMISSION_VIEW_FORM_RESPONSE, request, null );
+            checkWorkgroupPermission( idForm, request );
             Form form = FormHome.findByPrimaryKey( idForm );
             List<FormFilter> listFormFilter = _listFormFilterDisplay.stream( ).map( IFormFilterDisplay::getFormFilter ).collect( Collectors.toList( ) );
 

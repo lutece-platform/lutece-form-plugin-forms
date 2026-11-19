@@ -189,12 +189,12 @@ public class FormsResponseUtilsTest extends LuteceTestCase
     }
 
     /**
-     * Documents an important corner case : if the controlling question's response is not (yet)
-     * present in {@code listResponsesTemp} - e.g. an ordering issue in the step's question list -
-     * the filtered response list passed to the validator is empty. {@code AbstractValidator}
-     * (the base class of every validator shipped with plugin-forms) returns {@code true} for an
-     * empty list ("vacuous truth"), so in this situation the question defaults to *visible*
-     * rather than hidden.
+     * Documents an important corner case : if the controlling question's response is not present in
+     * {@code listResponsesTemp} - e.g. a question of a step which has not been filled - the filtered
+     * response list passed to the validator is empty. {@code AbstractValidator} (the base class of
+     * every validator shipped with plugin-forms) returns {@code true} for an empty list ("vacuous
+     * truth"), so in this situation the question defaults to *visible*, as on display side
+     * ({@code CompositeQuestionDisplay}).
      */
     @Test
     public void testControllingResponseMissing_QuestionDefaultsVisible( )
@@ -209,6 +209,91 @@ public class FormsResponseUtilsTest extends LuteceTestCase
         boolean bIsVisible = FormsResponseUtils.isQuestionConditionallyVisible( targetQuestion, Collections.emptyList( ), nIdForm );
 
         assertTrue( bIsVisible );
+    }
+
+    /**
+     * A controlling question of another step is evaluated as on display side ({@code CompositeQuestionDisplay}) :
+     * the validator is applied as is, the visibility filter only concerns the controlling questions of the same step
+     * (the responses loaded from database do not carry the visibility of their question).
+     */
+    @Test
+    public void testControllingQuestionOnOtherStep_ValidatorAppliedAsIs( )
+    {
+        int nIdForm = IdGenerator.generateId( );
+        Question targetQuestion = createQuestion( IdGenerator.generateId( ), IdGenerator.generateId( ) );
+        FormDisplay formDisplay = createFormDisplay( nIdForm, targetQuestion );
+
+        Question controllingQuestion = createQuestion( IdGenerator.generateId( ), IdGenerator.generateId( ) );
+        controllingQuestion.setIsVisible( false );
+        createConditionalControl( formDisplay.getId( ), controllingQuestion.getId( ), VALIDATOR_NUMBER_SUPERIOR, "10", 0 );
+
+        List<FormQuestionResponse> listResponses = Collections.singletonList( createResponse( controllingQuestion, "20" ) );
+
+        boolean bIsVisible = FormsResponseUtils.isQuestionConditionallyVisible( targetQuestion, listResponses, nIdForm );
+
+        assertTrue( bIsVisible );
+    }
+
+    @Test
+    public void testControllingResponseEmpty_QuestionIsHidden( )
+    {
+        int nIdForm = IdGenerator.generateId( );
+        Question targetQuestion = createQuestion( IdGenerator.generateId( ), IdGenerator.generateId( ) );
+        FormDisplay formDisplay = createFormDisplay( nIdForm, targetQuestion );
+
+        Question controllingQuestion = createQuestion( IdGenerator.generateId( ), targetQuestion.getIdStep( ) );
+        createConditionalControl( formDisplay.getId( ), controllingQuestion.getId( ), VALIDATOR_NUMBER_SUPERIOR, "10", 0 );
+
+        List<FormQuestionResponse> listResponses = Collections.singletonList( createResponse( controllingQuestion, "" ) );
+
+        boolean bIsVisible = FormsResponseUtils.isQuestionConditionallyVisible( targetQuestion, listResponses, nIdForm );
+
+        assertFalse( bIsVisible );
+    }
+
+    /**
+     * Cascade : the controlling question is itself hidden by its own condition. Its (stale) response
+     * must not make the target question visible.
+     */
+    @Test
+    public void testControllingQuestionHidden_QuestionIsHidden( )
+    {
+        int nIdForm = IdGenerator.generateId( );
+        Question targetQuestion = createQuestion( IdGenerator.generateId( ), IdGenerator.generateId( ) );
+        FormDisplay formDisplay = createFormDisplay( nIdForm, targetQuestion );
+
+        Question controllingQuestion = createQuestion( IdGenerator.generateId( ), targetQuestion.getIdStep( ) );
+        controllingQuestion.setIsVisible( false );
+        createConditionalControl( formDisplay.getId( ), controllingQuestion.getId( ), VALIDATOR_NUMBER_SUPERIOR, "10", 0 );
+
+        List<FormQuestionResponse> listResponses = Collections.singletonList( createResponse( controllingQuestion, "20" ) );
+
+        boolean bIsVisible = FormsResponseUtils.isQuestionConditionallyVisible( targetQuestion, listResponses, nIdForm );
+
+        assertFalse( bIsVisible );
+    }
+
+    @Test
+    public void testOrGroup_AllControllingResponsesEmpty_QuestionIsHidden( )
+    {
+        int nIdForm = IdGenerator.generateId( );
+        Question targetQuestion = createQuestion( IdGenerator.generateId( ), IdGenerator.generateId( ) );
+        FormDisplay formDisplay = createFormDisplay( nIdForm, targetQuestion );
+
+        int nIdControlGroup = createControlGroup( LogicalOperator.OR );
+
+        Question controllingQuestion1 = createQuestion( IdGenerator.generateId( ), targetQuestion.getIdStep( ) );
+        Question controllingQuestion2 = createQuestion( IdGenerator.generateId( ), targetQuestion.getIdStep( ) );
+        createConditionalControl( formDisplay.getId( ), controllingQuestion1.getId( ), VALIDATOR_NUMBER_SUPERIOR, "10", nIdControlGroup );
+        createConditionalControl( formDisplay.getId( ), controllingQuestion2.getId( ), VALIDATOR_NUMBER_SUPERIOR, "10", nIdControlGroup );
+
+        List<FormQuestionResponse> listResponses = new ArrayList<>( );
+        listResponses.add( createResponse( controllingQuestion1, "" ) );
+        listResponses.add( createResponse( controllingQuestion2, "" ) );
+
+        boolean bIsVisible = FormsResponseUtils.isQuestionConditionallyVisible( targetQuestion, listResponses, nIdForm );
+
+        assertFalse( bIsVisible );
     }
 
     @Test
@@ -309,13 +394,14 @@ public class FormsResponseUtilsTest extends LuteceTestCase
     /**
      * Builds a plain in-memory Question (not persisted : isQuestionConditionallyVisible only
      * ever reads the id/step already set on the object it is given, it never re-fetches the
-     * question from database).
+     * question from database). Visible by default, like a question without conditional display.
      */
     private Question createQuestion( int nId, int nIdStep )
     {
         Question question = new Question( );
         question.setId( nId );
         question.setIdStep( nIdStep );
+        question.setIsVisible( true );
         return question;
     }
 

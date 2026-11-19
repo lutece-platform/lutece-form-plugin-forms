@@ -63,6 +63,30 @@ public class Step implements Serializable
     private boolean _bIsTitleDisplayed;
 
     /**
+     * Default constructor
+     */
+    public Step( )
+    {
+    }
+
+    /**
+     * Copy constructor
+     * 
+     * @param source
+     *            Step to copy
+     */
+    public Step( Step source )
+    {
+        _nId = source._nId;
+        _strTitle = source._strTitle;
+        _strDescription = source._strDescription;
+        _nIdForm = source._nIdForm;
+        _bIsInitial = source._bIsInitial;
+        _bIsFinal = source._bIsFinal;
+        _bIsTitleDisplayed = source._bIsTitleDisplayed;
+    }
+
+    /**
      * Returns the Id
      * 
      * @return The Id

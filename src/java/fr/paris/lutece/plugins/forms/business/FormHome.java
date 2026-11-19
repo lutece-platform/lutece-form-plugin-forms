@@ -70,7 +70,7 @@ public final class FormHome
     public static Form create( Form form )
     {
         _dao.insert( form, _plugin );
-        _cache.putInCache( _cache.getFormCacheKey( form.getId( ) ), form );
+        _cache.removeKey( _cache.getFormCacheKey( form.getId( ) ) );
         _cache.removeKey( _cache.getFormListCacheKey( ) );
         return form;
     }
@@ -85,7 +85,7 @@ public final class FormHome
     public static Form update( Form form )
     {
         _dao.store( form, _plugin );
-        _cache.putInCache( _cache.getFormCacheKey( form.getId( ) ), form );
+        _cache.removeKey( _cache.getFormCacheKey( form.getId( ) ) );
         _cache.removeKey( _cache.getFormListCacheKey( ) );
         return form;
     }
@@ -119,12 +119,8 @@ public final class FormHome
             form = _dao.load( nKey, _plugin );
             _cache.putInCache( formCacheKey, form );
         }
-        else
-        {
-            // return a copy to prevent dynamic members sharing
-            form = new Form( form );
-        }
-        return form;
+        // return a copy to prevent dynamic members sharing, including on the first load
+        return form != null ? new Form( form ) : null;
     }
 
     /**

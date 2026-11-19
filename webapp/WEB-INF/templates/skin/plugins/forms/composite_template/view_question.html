@@ -25,6 +25,7 @@
 			});
 			var displayField = $('.display_field_${question.id!''}_${question.iterationNumber}');
 			var bOtherStepValidated = true;
+			var bHasOtherStepControl = ${(other_step_validation??)?c};
 			<#if other_step_validation??>
 				<#if other_step_validation>
 					displayField.show();
@@ -66,7 +67,7 @@
 					</#list>
 					var bIsQuestionDisplayed;
 					<#if logical_operator_label == 'or'>
-						bIsQuestionDisplayed = (nValidControlsCount > 0) || bOtherStepValidated;
+						bIsQuestionDisplayed = (nValidControlsCount > 0) || ( bHasOtherStepControl && bOtherStepValidated );
 					<#else>
 						bIsQuestionDisplayed = (nNotValidControlsCount == 0) && bOtherStepValidated;
 					</#if>

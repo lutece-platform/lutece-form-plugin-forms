@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import fr.paris.lutece.plugins.forms.service.cache.FormsCacheService;
@@ -169,7 +170,25 @@ public final class ControlHome
             }
             _cache.putInCache( controlCacheKey, control );
         }
-        return control;
+        // return a copy so that callers never alter the cached instance
+        return control != null ? control.clone( ) : null;
+    }
+
+    /**
+     * Copy a cached list of controls so that callers never alter the cached instances
+     * 
+     * @param listControl
+     *            the cached list
+     * @return a new list containing a copy of each control
+     */
+    private static List<Control> copyOf( List<Control> listControl )
+    {
+        List<Control> listCopy = new ArrayList<>( listControl.size( ) );
+        for ( Control control : listControl )
+        {
+            listCopy.add( control.clone( ) );
+        }
+        return listCopy;
     }
 
     /**
@@ -225,7 +244,7 @@ public final class ControlHome
             }
             _cache.putInCache( cacheKey, listControl );
         }
-        return listControl;
+        return copyOf( listControl );
     }
 
     /**
@@ -267,7 +286,7 @@ public final class ControlHome
             }
             _cache.putInCache( cacheKey, listControl );
         }
-        return listControl;
+        return copyOf( listControl );
     }
 
     /**

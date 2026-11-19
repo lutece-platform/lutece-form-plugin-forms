@@ -37,7 +37,9 @@ import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
+import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 
 import java.util.List;
@@ -78,6 +80,9 @@ public class FormPanelFormsInitializerQueryPart extends AbstractFormPanelInitial
         List<Form> listForms = FormHome.getFormList( );
         // Only keep the Forms that can be accessed by the current user
         listForms = (List<Form>) AdminWorkgroupService.getAuthorizedCollection( listForms, user );
+        // Only keep the Forms on which the current user is allowed to view the responses
+        listForms.removeIf( form -> !RBACService.isAuthorized( Form.RESOURCE_TYPE, String.valueOf( form.getId( ) ),
+                FormsResourceIdService.PERMISSION_VIEW_FORM_RESPONSE, user ) );
 
         // Create Lucene queries to retrieve the Forms that match the specified IDs
         List<Query> queries = listForms.stream( ).map( form -> IntPoint.newExactQuery( FormsConstants.PARAMETER_ID_FORM, form.getId( ) ) )

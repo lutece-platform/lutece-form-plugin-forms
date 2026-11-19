@@ -58,6 +58,7 @@ import fr.paris.lutece.plugins.forms.business.form.panel.initializer.impl.FormPa
 import fr.paris.lutece.plugins.forms.business.form.panel.initializer.impl.FormPanelFormsInitializerMock;
 import fr.paris.lutece.plugins.forms.service.FormsMultiviewAuthorizationService;
 import fr.paris.lutece.plugins.forms.service.IFormsMultiviewAuthorizationService;
+import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.test.LuteceTestCase;
 
 /**
@@ -65,6 +66,9 @@ import fr.paris.lutece.test.LuteceTestCase;
  */
 public class FormsMultiviewAuthorizationServiceTest extends LuteceTestCase
 {
+    // Constants
+    private static final String ATTRIBUTE_ADMIN_USER = "lutece_admin_user";
+
     // Variables
     private FormPanel _formPanel;
     private FormColumnFactory _formColumnFactory;
@@ -115,7 +119,7 @@ public class FormsMultiviewAuthorizationServiceTest extends LuteceTestCase
         IFormsMultiviewAuthorizationService formsMultiviewAuthorizationService = new FormsMultiviewAuthorizationService(
                 _formPanel.getFormPanelConfiguration( ), formListFacade, _formColumnFactory );
 
-        boolean bIsUserAuthorize = formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponse( new MockHttpServletRequest( ), nIdFormResponse );
+        boolean bIsUserAuthorize = formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponse( createAdminRequest( ), nIdFormResponse );
         assertThat( bIsUserAuthorize, is( Boolean.TRUE ) );
     }
 
@@ -133,7 +137,7 @@ public class FormsMultiviewAuthorizationServiceTest extends LuteceTestCase
         IFormsMultiviewAuthorizationService formsMultiviewAuthorizationService = new FormsMultiviewAuthorizationService(
                 _formPanel.getFormPanelConfiguration( ), formListFacade, _formColumnFactory );
 
-        boolean bIsUserAuthorize = formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponse( new MockHttpServletRequest( ), nIdFormResponse );
+        boolean bIsUserAuthorize = formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponse( createAdminRequest( ), nIdFormResponse );
         assertThat( bIsUserAuthorize, is( Boolean.FALSE ) );
     }
 
@@ -150,7 +154,7 @@ public class FormsMultiviewAuthorizationServiceTest extends LuteceTestCase
         IFormsMultiviewAuthorizationService formsMultiviewAuthorizationService = new FormsMultiviewAuthorizationService(
                 _formPanel.getFormPanelConfiguration( ), formListFacade, _formColumnFactory );
 
-        boolean bIsUserAuthorize = formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponse( new MockHttpServletRequest( ), nIdFormResponse );
+        boolean bIsUserAuthorize = formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponse( createAdminRequest( ), nIdFormResponse );
         assertThat( bIsUserAuthorize, is( Boolean.FALSE ) );
     }
 
@@ -167,7 +171,25 @@ public class FormsMultiviewAuthorizationServiceTest extends LuteceTestCase
         IFormsMultiviewAuthorizationService formsMultiviewAuthorizationService = new FormsMultiviewAuthorizationService( null, formListFacade,
                 _formColumnFactory );
 
-        boolean bIsUserAuthorize = formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponse( new MockHttpServletRequest( ), nIdFormResponse );
+        boolean bIsUserAuthorize = formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponse( createAdminRequest( ), nIdFormResponse );
         assertThat( bIsUserAuthorize, is( Boolean.FALSE ) );
+    }
+
+    /**
+     * Create a request carrying an admin user: the forms filtering applies the RBAC check on the current admin user as soon as forms exist in the
+     * database (they may have been created by other tests)
+     *
+     * @return the request
+     */
+    private MockHttpServletRequest createAdminRequest( )
+    {
+        AdminUser adminUser = new AdminUser( );
+        adminUser.setAccessCode( "admin" );
+        adminUser.setLastName( "test" );
+
+        MockHttpServletRequest request = new MockHttpServletRequest( );
+        request.getSession( true ).setAttribute( ATTRIBUTE_ADMIN_USER, adminUser );
+
+        return request;
     }
 }

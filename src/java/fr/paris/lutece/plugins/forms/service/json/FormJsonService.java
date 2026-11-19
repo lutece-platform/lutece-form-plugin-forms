@@ -43,7 +43,6 @@ import java.util.stream.Collectors;
 
 import fr.paris.lutece.plugins.forms.business.ControlGroup;
 import fr.paris.lutece.plugins.forms.business.ControlGroupHome;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -68,12 +67,15 @@ import fr.paris.lutece.plugins.forms.business.TransitionHome;
 import fr.paris.lutece.plugins.forms.business.export.FormExportConfig;
 import fr.paris.lutece.plugins.forms.business.export.FormExportConfigHome;
 import fr.paris.lutece.plugins.forms.service.FormDatabaseService;
-import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.plugins.forms.service.FormsPlugin;
+import fr.paris.lutece.plugins.forms.service.cache.FormsCacheService;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.ReferenceItemFieldHome;
 import fr.paris.lutece.plugins.referencelist.business.ReferenceItemHome;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.util.AppException;
+import fr.paris.lutece.util.sql.TransactionManager;
 
 /**
  * Json service to handle import/export
@@ -122,7 +124,7 @@ public class FormJsonService extends AbstractFormJsonService
                     field.setLinkedItem( ReferenceItemHome.findByPrimaryKey( idItem ) );
                 }
             }
-            controlList.addAll( ControlHome.getControlByQuestion( question.getId( ) ) );
+            addControlsOnce( controlList, ControlHome.getControlByQuestion( question.getId( ) ) );
         }
         List<ControlMapping> controlMappingList = new ArrayList<>( );
         for ( Control control : controlList )
@@ -152,12 +154,9 @@ public class FormJsonService extends AbstractFormJsonService
      * 
      * @return
      */
-    @Transactional( FormsConstants.BEAN_TRANSACTION_MANAGER )
     public void jsonImportForm( String json, Locale locale ) throws JsonProcessingException
     {
         FormJsonData jsonData = _objectMapper.readValue( json, FormJsonData.class );
-
-        int newIdForm = importForm( jsonData.getForm( ), jsonData.getFormMessage( ), locale );
 
         List<FormExportConfig> formExportConfigList = jsonData.getFormExportConfigList( );
         List<Step> stepList = jsonData.getStepList( );
@@ -169,13 +168,29 @@ public class FormJsonService extends AbstractFormJsonService
         List<ControlMapping> controlMappingList = jsonData.getControlMappingList( );
         List<ControlGroup> controlGroupList = jsonData.getControlGroupList();
 
-        importSteps( newIdForm, stepList, groupList, transitionList, questionList, formDisplayList );
-        importQuestions( newIdForm, questionList, controlList, controlMappingList, formDisplayList, formExportConfigList );
-        importGroups( groupList, formDisplayList );
-        importFormDisplay( newIdForm, formDisplayList, controlList );
-        importTransitions( transitionList, controlList );
-        importControls( controlList, controlMappingList, controlGroupList );
-        importFormExportConfig( newIdForm, formExportConfigList );
+        TransactionManager.beginTransaction( FormsPlugin.getPlugin( ) );
+
+        try
+        {
+            int newIdForm = importForm( jsonData.getForm( ), jsonData.getFormMessage( ), locale );
+
+            importSteps( newIdForm, stepList, groupList, transitionList, questionList, formDisplayList );
+            importQuestions( newIdForm, questionList, controlList, controlMappingList, formDisplayList, formExportConfigList );
+            importGroups( groupList, formDisplayList );
+            importFormDisplay( newIdForm, formDisplayList, controlList );
+            importTransitions( transitionList, controlList );
+            importControls( controlList, controlMappingList, controlGroupList );
+            importFormExportConfig( newIdForm, formExportConfigList );
+
+            TransactionManager.commitTransaction( FormsPlugin.getPlugin( ) );
+        }
+        catch( Exception e )
+        {
+            TransactionManager.rollBack( FormsPlugin.getPlugin( ) );
+            // the caches were repopulated while the transaction was running : they now describe rows the rollback has undone
+            SpringContextService.<FormsCacheService> getBean( FormsCacheService.BEAN_NAME ).resetCache( );
+            throw new AppException( "Forms : the import of the form failed", e );
+        }
     }
 
     private int importForm( Form form, FormMessage formMessage, Locale locale )
@@ -228,6 +243,9 @@ public class FormJsonService extends AbstractFormJsonService
 
     private void updateControlWithNewTransition( List<Control> controlList, Map<Integer, Integer> mapIdTransitions )
     {
+        controlList.removeIf( control -> ControlType.TRANSITION.getLabel( ).equals( control.getControlType( ) )
+                && isUnresolvedReference( mapIdTransitions, control.getIdControlTarget( ), "control " + control.getId( ), "target transition" ) );
+
         for ( Control control : controlList )
         {
             if ( ControlType.TRANSITION.getLabel( ).equals( control.getControlType( ) ) )

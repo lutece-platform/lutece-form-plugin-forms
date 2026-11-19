@@ -68,7 +68,7 @@ public final class GroupHome
     public static Group create( Group group )
     {
         _dao.insert( group, _plugin );
-        _cache.putInCache( _cache.getGroupCacheKey( group.getId( ) ), group );
+        _cache.removeKey( _cache.getGroupCacheKey( group.getId( ) ) );
         return group;
     }
 
@@ -82,7 +82,7 @@ public final class GroupHome
     public static Group update( Group group )
     {
         _dao.store( group, _plugin );
-        _cache.putInCache( _cache.getGroupCacheKey( group.getId( ) ), group );
+        _cache.removeKey( _cache.getGroupCacheKey( group.getId( ) ) );
         return group;
     }
 
@@ -114,7 +114,8 @@ public final class GroupHome
             group = _dao.load( nKey, _plugin );
             _cache.putInCache( cacheKey, group );
         }
-        return group;
+        // never return the cached instance: callers may alter it, the cache is reset on each write
+        return group != null ? new Group( group ) : null;
     }
 
     /**

@@ -39,6 +39,7 @@ import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.ReferenceList;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -115,7 +116,8 @@ public final class StepHome
             step = _dao.load( nKey, _plugin );
             _cache.putInCache( stepCacheKey, step );
         }
-        return step;
+        // never return the cached instance: callers may alter it, the cache is reset on each write
+        return step != null ? new Step( step ) : null;
     }
 
     /**
@@ -134,7 +136,8 @@ public final class StepHome
             step = _dao.selectInitialStep( nIdForm, _plugin );
             _cache.putInCache( stepCacheKey, step );
         }
-        return step;
+        // never return the cached instance: callers may alter it, the cache is reset on each write
+        return step != null ? new Step( step ) : null;
     }
 
     /**
@@ -213,7 +216,8 @@ public final class StepHome
             listIdStep = _dao.selectIdStepsListByForm( nIdForm, _plugin );
             _cache.putInCache( stepCacheKey, listIdStep );
         }
-        return listIdStep;
+        // never return the cached instance: callers may alter it, the cache is reset on each write
+        return new ArrayList<>( listIdStep );
     }
 
     /**
