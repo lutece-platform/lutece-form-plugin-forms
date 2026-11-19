@@ -128,6 +128,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
     private static final String ERROR_GROUP_NOT_UPDATED = "forms.error.group.notUpdated";
     protected static final String ERROR_STEP_OR_GROUP_NOT_VALIDATED = "forms.error.moveComposite.stepOrGroup.notvalidated";
     protected static final String ERROR_OCCURED_MOVING_COMPOSITE = "forms.error.moveComposite.notCompleted";
+    protected static final String ERROR_DISPLAY_ORDER_NOT_VALID = "forms.error.moveComposite.displayOrder.notValid";
     protected static final String ERROR_QUESTION_CODE_ALREADY_EXISTS = "forms.error.question.codeAlreadyExists";
     protected static final String ERROR_CODE_EXISTS = " Provided code already exists ";
 
@@ -757,6 +758,29 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         }
 
         return bValidGroup;
+    }
+
+    /**
+     * Tell whether a position can receive the FormDisplay to move: the positions offered by the move screen, from 1 to the number of elements of the target
+     * group, plus one when the element comes from another group or step
+     * 
+     * @param formDisplayToMove
+     *            the FormDisplay to be moved
+     * @param nIdStepTarget
+     *            the target Step identifier
+     * @param nIdParentTarget
+     *            the target Parent Display identifier (0 if root level of the step )
+     * @param nDisplayOrderTarget
+     *            the target position within parent
+     * @return true if the position exists in the target group, false otherwise
+     */
+    protected boolean isValidDisplayOrderTarget( FormDisplay formDisplayToMove, int nIdStepTarget, int nIdParentTarget, int nDisplayOrderTarget )
+    {
+        int nNbDisplayInTargetGroup = getFormDatabaseService( ).getFormDisplayListByParent( nIdStepTarget, nIdParentTarget ).size( );
+        boolean bMoveToDifferentGroup = ( formDisplayToMove.getParentId( ) != nIdParentTarget ) || ( formDisplayToMove.getStepId( ) != nIdStepTarget );
+        int nMaxDisplayOrder = bMoveToDifferentGroup ? nNbDisplayInTargetGroup + 1 : nNbDisplayInTargetGroup;
+
+        return ( nDisplayOrderTarget >= 1 ) && ( nDisplayOrderTarget <= nMaxDisplayOrder );
     }
 
     /**

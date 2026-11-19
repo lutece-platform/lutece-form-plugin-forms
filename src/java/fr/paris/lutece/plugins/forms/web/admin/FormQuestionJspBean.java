@@ -825,6 +825,12 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
             return redirect( request, VIEW_MOVE_COMPOSITE, FormsConstants.PARAMETER_ID_DISPLAY, nIdDisplay );
         }
 
+        if ( !isValidDisplayOrderTarget( _formDisplay, nIdStepTarget, nIdParentTarget, nDisplayOrderTarget ) )
+        {
+            addError( ERROR_DISPLAY_ORDER_NOT_VALID, getLocale( ) );
+            return redirect( request, VIEW_MOVE_COMPOSITE, FormsConstants.PARAMETER_ID_DISPLAY, nIdDisplay );
+        }
+
         moveDisplay( _formDisplay, nIdStepTarget, nIdParentTarget, nDisplayOrderTarget );
 
         addInfo( INFO_MOVE_COMPOSITE_SUCCESSFUL, getLocale( ) );
