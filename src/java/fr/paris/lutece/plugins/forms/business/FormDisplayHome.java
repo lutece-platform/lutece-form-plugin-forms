@@ -236,12 +236,9 @@ public final class FormDisplayHome
             formDisplay = _dao.selectFormdisplayByFormStepAndComposite( nIdForm, nIdStep, nIdComposite, _plugin );
             if ( formDisplay != null )
             {
+                initConditionalDisplayForFormDisplay( formDisplay );
                 _cache.putInCache( cacheKey, formDisplay );
             }
-        }
-        if ( formDisplay != null )
-        {
-            initConditionalDisplayForFormDisplay( formDisplay );
         }
         return formDisplay;
     }
