@@ -1,21 +1,35 @@
-if (inputValue === undefined || inputValue === '') {
-    return false;
+function parseDay( value )
+{
+	if ( value === undefined || value === null )
+	{
+		return null;
+	}
+	const strValue = String( value ).trim( );
+	let match = /^(\d{4})-(\d{1,2})-(\d{1,2})/.exec( strValue );
+	if ( match )
+	{
+		return new Date( match[1], match[2] - 1, match[3] ).getTime( );
+	}
+	match = /^(\d{1,2})\/(\d{1,2})\/(\d{4})/.exec( strValue );
+	if ( match )
+	{
+		return new Date( match[3], match[2] - 1, match[1] ).getTime( );
+	}
+	return null;
 }
 
-const lang = window.navigator.language;
-moment.locale(lang);
-
-const dateControl = moment(controlValue);
-
-if (Array.isArray(inputValue)) {
-    for (let i = 0; i < inputValue.length; i++) {
-        const dateInput = moment(inputValue[i]);
-        if (!(dateInput.valueOf() ${operation?no_esc} dateControl.valueOf())) {
-            return false;
-        }
-    }
-    return true;
+const dateControl = parseDay( controlValue );
+const listValues = Array.isArray( inputValue ) ? inputValue : [ inputValue ];
+if ( dateControl === null || listValues.length === 0 )
+{
+	return false;
 }
-
-const dateInput = moment(inputValue);
-return dateInput ${operation?no_esc} dateControl;
+for ( let i = 0; i < listValues.length; i++ )
+{
+	const dateInput = parseDay( listValues[i] );
+	if ( dateInput === null || !( dateInput ${operation?no_esc} dateControl ) )
+	{
+		return false;
+	}
+}
+return true;
