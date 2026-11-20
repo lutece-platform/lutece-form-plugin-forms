@@ -38,11 +38,13 @@ import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.anonymization.AbstractTextAnonymizationService;
 import fr.paris.lutece.plugins.genericattributes.service.anonymization.IEntryTypeAnonymisationService;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 
 /**
  * {@link IEntryTypeAnonymisationService} that replace the wildcard by the form id.
  */
 @ApplicationScoped
+@Named( "forms.formIdAnonymizationService" )
 public class FormIdAnonymizationService extends AbstractTextAnonymizationService
 {
     @Override

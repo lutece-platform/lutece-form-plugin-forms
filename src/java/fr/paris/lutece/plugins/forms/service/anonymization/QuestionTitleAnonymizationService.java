@@ -39,11 +39,13 @@ import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.anonymization.AbstractTextAnonymizationService;
 import fr.paris.lutece.plugins.genericattributes.service.anonymization.IEntryTypeAnonymisationService;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 
 /**
  * {@link IEntryTypeAnonymisationService} that replace the wildcard by the question title.
  */
 @ApplicationScoped
+@Named( "forms.questionTitleAnonymizationService" )
 public class QuestionTitleAnonymizationService extends AbstractTextAnonymizationService
 {
     @Override
