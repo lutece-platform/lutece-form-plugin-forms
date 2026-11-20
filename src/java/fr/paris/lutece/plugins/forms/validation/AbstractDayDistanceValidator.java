@@ -120,6 +120,12 @@ public abstract class AbstractDayDistanceValidator extends AbstractValidator
         return validateControl( nControlValue, date );
     }
 
+    @Override
+    public String getJavascriptControlValue( Control control )
+    {
+        return control.getValue( );
+    }
+
     /**
      * Checks a date against the number of days of the control
      *
