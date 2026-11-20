@@ -6,33 +6,25 @@
 <#assign entryCSSClass = ( entry.CSSClass?split(' ') )?map( ecc -> ( !ecc?contains('col') )?then( ' ' + ( ecc )?string + ' ', '' ) )?join( '' ) />
 <#assign galleryHelp = ( entry.helpMessage?exists&&entry.helpMessage!='' )?then( ( entry.helpMessage )?string, '' ) />
 <#if list_responses?? && list_responses?has_content><#list list_responses as response><#if response?? && response.file??><#assign idFileSelected = response.file.idFile /></#if></#list></#if>
+<#-- The message of the error of the question, if any -->
+<#assign galleryError = ''>
+<#if list_responses?? && list_responses?has_content>
+	<#assign response_error = list_responses[0]/>
+	<#if response_error.entry.idEntry == entry.idEntry && response_error.entry.error?? && response_error.entry.error.isDisplayableError>
+		<#assign galleryError><#if response_error.entry.error.mandatoryError><#if entry.errorMessage?has_content>${entry.errorMessage}<#else>#i18n{forms.message.mandatory.entry}</#if><#else>${response_error.entry.error.errorMessage}</#if></#assign>
+	</#if>
+</#if>
+<#assign describedBy = ( ( galleryHelp != '' )?then( 'help_' + idName, '' ) + galleryError?has_content?then( ' err_' + idName, '' ) )?trim />
 <@cRow class='mb-sm'>
 	<@cCol class=entryCSSClass!?trim>
 		<@cLabel label=entry.title for=idName id='label${entry.idEntry}' required=entry.mandatory />
 		<#if galleryHelp !=''><@cFormHelp id='help_${idName}' label=entry.helpMessage /></#if>
-		<@galleryImage codeGallery=codeGallery inputName=idName idFileSelected=idFileSelected />
-		<#if list_responses?? && list_responses?has_content>
-			<#assign response_error = list_responses[0]/>
-			<#if response_error.entry.idEntry == entry.idEntry && response_error.entry.error?? && response_error.entry.error.isDisplayableError>
-				<#assign error = response_error.entry.error><#if error.mandatoryError><#if entry.errorMessage?has_content>${entry.errorMessage}<#else>#i18n{forms.message.mandatory.entry}</#if><#else>${error.errorMessage}</#if>
-				<@cFormError id='err_${idName}' label=error />
-			</#if>
-		</#if>
+		<#-- The selection input is loaded with the gallery: the group around it carries the label, the help and the error -->
+		<div role="group" aria-labelledby="label${entry.idEntry}"<#if describedBy != ''> aria-describedby="${describedBy}"</#if><#if galleryError?has_content> class="is-invalid"</#if>>
+			<@galleryImage codeGallery=codeGallery inputName=idName idFileSelected=idFileSelected />
+		</div>
+		<#if galleryError?has_content><@cFormError id='err_${idName}' label=galleryError /></#if>
 	</@cCol>
 </@cRow>
 </#if>
-<script>
-<#if galleryHelp !='' || error !=''> 
-document.addEventListener( 'DOMContentLoaded', function() {
-	const galleryInput = document.getElementById('${idName?js_string?no_esc}');
-	<#if galleryHelp !=''>
-	galleryInput.setAttribute('aria-describedby', 'help_${entry.idEntry?js_string?no_esc}');
-	<#else>
-	const gallery = galleryInput.closest('.gallery-image');
-	galleryInput.setAttribute('aria-describedby', 'err_${entry.idEntry?js_string?no_esc}');
-	gallery.classList.add('is-invalid');
-	</#if>
-});
-</#if>
-</script>
 </@cTpl>
