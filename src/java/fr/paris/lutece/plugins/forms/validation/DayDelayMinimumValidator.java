@@ -33,14 +33,18 @@
  */
 package fr.paris.lutece.plugins.forms.validation;
 
+import fr.paris.lutece.portal.service.template.AppTemplateService;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.List;
 
 public class DayDelayMinimumValidator extends AbstractDayDistanceValidator
 {
+    private static final String TEMPLATE_JAVASCRIPT = "/skin/plugins/forms/validators/day_delay_minimum_javascript.html";
+
     /**
      * Constructor of the AbstractValidator
      *
@@ -63,6 +67,12 @@ public class DayDelayMinimumValidator extends AbstractDayDistanceValidator
     public boolean validateControl( int nControlValue, LocalDate date )
     {
         return ChronoUnit.DAYS.between( date, LocalDate.now( ) ) >= nControlValue;
+    }
+
+    @Override
+    public String getJavascriptValidation( )
+    {
+        return AppTemplateService.getTemplate( TEMPLATE_JAVASCRIPT, _locale, new HashMap<>( ) ).getHtml( );
     }
 
     @Override
