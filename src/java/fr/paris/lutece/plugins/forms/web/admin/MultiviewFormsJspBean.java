@@ -234,7 +234,8 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
         // Build the Column for the Panel and save their values for the active panel
         initiatePaginatorProperties( request );
-        if ( bFormSelectionChanged )
+        // A new filter gives a new list: its first page is shown (the page links carry the page index, not the filters)
+        if ( bFormSelectionChanged || ( bHasFilterParameters && request.getParameter( PARAMETER_PAGE_INDEX ) == null ) )
         {
             resetCurrentPaginatorPageIndex( );
         }

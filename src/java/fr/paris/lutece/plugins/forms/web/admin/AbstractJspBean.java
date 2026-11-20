@@ -100,6 +100,8 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
     protected void initiatePaginatorProperties( HttpServletRequest request )
     {
         _strCurrentPageIndex = AbstractPaginator.getPageIndex( request, AbstractPaginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
+        // A page index that is not a positive number (page_index=0, typed or bookmarked) is the first page: it must not stay in the session
+        _strCurrentPageIndex = String.valueOf( getCurrentPageIndex( ) );
         int nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( PROPERTY_DEFAULT_LIST_ITEM_PER_PAGE, 50 );
         _nItemsPerPage = AbstractPaginator.getItemsPerPage( request, AbstractPaginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage, nDefaultItemsPerPage );
 
@@ -121,6 +123,8 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
     protected Map<String, Object> getPaginatedListModel( HttpServletRequest request, String strBookmark, List<Integer> list, String strUrl, int nbTotalItems )
     {
         _strCurrentPageIndex = AbstractPaginator.getPageIndex( request, AbstractPaginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
+        // A page index that is not a positive number (page_index=0, typed or bookmarked) is the first page: it must not stay in the session
+        _strCurrentPageIndex = String.valueOf( getCurrentPageIndex( ) );
 
         // Paginator
         _paginator = new LocalizedDelegatePaginator<>( list, _nItemsPerPage, strUrl, PARAMETER_PAGE_INDEX, _strCurrentPageIndex, nbTotalItems, getLocale( ) );
@@ -333,11 +337,7 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
      */
     private int getCurrentPageIndex( )
     {
-        if ( _strCurrentPageIndex != null )
-        {
-            return Integer.parseInt( _strCurrentPageIndex );
-        }
-        return 1;
+        return Math.max( 1, NumberUtils.toInt( _strCurrentPageIndex, 1 ) );
     }
 
     /**
