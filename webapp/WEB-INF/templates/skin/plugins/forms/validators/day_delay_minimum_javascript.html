@@ -1,0 +1,37 @@
+function parseDay( value )
+{
+	if ( value === undefined || value === null )
+	{
+		return null;
+	}
+	var strValue = String( value ).trim( );
+	var match = /^(\d{4})-(\d{2})-(\d{2})/.exec( strValue );
+	if ( match )
+	{
+		return new Date( match[1], match[2] - 1, match[3] ).getTime( );
+	}
+	match = /^(\d{2})\/(\d{2})\/(\d{4})/.exec( strValue );
+	if ( match )
+	{
+		return new Date( match[3], match[2] - 1, match[1] ).getTime( );
+	}
+	return null;
+}
+
+var nDays = parseInt( controlValue, 10 );
+var listValues = Array.isArray( inputValue ) ? inputValue : [ inputValue ];
+if ( isNaN( nDays ) || listValues.length === 0 )
+{
+	return false;
+}
+var today = new Date( );
+var dateLimit = new Date( today.getFullYear( ), today.getMonth( ), today.getDate( ) - nDays ).getTime( );
+for ( var i = 0; i < listValues.length; i++ )
+{
+	var dateInput = parseDay( listValues[i] );
+	if ( dateInput === null || dateInput > dateLimit )
+	{
+		return false;
+	}
+}
+return true;
