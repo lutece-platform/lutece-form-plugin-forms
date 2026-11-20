@@ -477,6 +477,13 @@ public class FormsResponseUtils
         {
             nIdControlGroup = control.getIdControlGroup( );
 
+            // A condition on a disabled question cannot be met
+            if ( !control.isActive( ) )
+            {
+                nNotValidControlsCount++;
+                continue;
+            }
+
             IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
 
             if ( validator != null )

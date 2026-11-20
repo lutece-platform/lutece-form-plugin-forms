@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import fr.paris.lutece.plugins.forms.util.IdGenerator;
 import fr.paris.lutece.test.LuteceTestCase;
 
 public class FormMessageBusinessTest extends LuteceTestCase
@@ -41,13 +42,13 @@ public class FormMessageBusinessTest extends LuteceTestCase
     public void testCRUD( )
     {
         FormMessage formMessage = new FormMessage( );
-        formMessage.setIdForm( 1 );
+        formMessage.setIdForm( IdGenerator.generateId( ) );
         formMessage.setEndMessageDisplay( true );
         formMessage.setEndMessage( "Message" );
 
         FormMessageHome.create( formMessage );
 
-        FormMessage loaded = FormMessageHome.findByForm( formMessage.getId( ) );
+        FormMessage loaded = FormMessageHome.findByForm( formMessage.getIdForm( ) );
         assertNotNull( loaded );
         assertEquals( formMessage.getIdForm( ), loaded.getIdForm( ) );
         assertEquals( formMessage.getEndMessageDisplay( ), loaded.getEndMessageDisplay( ) );
@@ -56,13 +57,13 @@ public class FormMessageBusinessTest extends LuteceTestCase
         formMessage.setEndMessage( "Message 2" );
         FormMessageHome.update( formMessage );
 
-        loaded = FormMessageHome.findByForm( formMessage.getId( ) );
+        loaded = FormMessageHome.findByForm( formMessage.getIdForm( ) );
         assertNotNull( loaded );
         assertEquals( formMessage.getEndMessage( ), loaded.getEndMessage( ) );
 
         FormMessageHome.remove( formMessage.getId( ) );
 
-        loaded = FormMessageHome.findByForm( formMessage.getId( ) );
+        loaded = FormMessageHome.findByForm( formMessage.getIdForm( ) );
         assertNull( loaded );
     }
 }

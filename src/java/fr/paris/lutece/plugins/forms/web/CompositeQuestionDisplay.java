@@ -255,6 +255,13 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                     if (nIdControlGroup == 0) {
                         nIdControlGroup = control.getIdControlGroup();
                     }
+                    // A condition on a disabled question cannot be met : evaluated server side, like the controls on another step
+                    if ( !control.isActive( ) )
+                    {
+                        nNotValidControlsCount++;
+                        listOtherStepControl.add( control );
+                        continue;
+                    }
                     final IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
                     if ( validator != null )
                     {

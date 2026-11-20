@@ -803,6 +803,10 @@ public class FormControlJspBean extends AbstractJspBean
         }
 
         populate( _control, request, getLocale( ) );
+        // Not posted (populate sets it to false) : a conditional control is inactive when one of its questions is disabled
+        _control.setActive( !ControlType.CONDITIONAL.getLabel( ).equals( _control.getControlType( ) ) || _control.getListIdQuestion( ) == null
+                || _control.getListIdQuestion( ).stream( ).map( QuestionHome::findByPrimaryKey )
+                        .noneMatch( question -> question != null && question.getEntry( ) != null && question.getEntry( ).isDisabled( ) ) );
         return validateBean( _control, CONTROL_VALIDATION_ATTRIBUTES_PREFIX );
     }
 
