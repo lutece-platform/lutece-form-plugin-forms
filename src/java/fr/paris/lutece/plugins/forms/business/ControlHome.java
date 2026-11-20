@@ -231,6 +231,20 @@ public final class ControlHome
     }
 
     /**
+     * Activates or deactivates the conditional controls which use a question
+     * 
+     * @param nIdQuestion
+     *            the question id
+     * @param bActive
+     *            true to activate the controls, false to deactivate them
+     */
+    public static void updateConditionalControlsActivation( int nIdQuestion, boolean bActive )
+    {
+        _dao.updateConditionalActiveByQuestion( nIdQuestion, bActive, _plugin );
+        _cache.resetCache( );
+    }
+
+    /**
      * Return the number of controls linked to the display
      * 
      * @param nIdControlTarget

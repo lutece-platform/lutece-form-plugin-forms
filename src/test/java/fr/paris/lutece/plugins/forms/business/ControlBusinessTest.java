@@ -37,6 +37,7 @@ import java.util.HashSet;
 
 import org.junit.jupiter.api.Test;
 
+import fr.paris.lutece.plugins.forms.util.IdGenerator;
 import fr.paris.lutece.test.LuteceTestCase;
 
 public class ControlBusinessTest extends LuteceTestCase
@@ -73,5 +74,39 @@ public class ControlBusinessTest extends LuteceTestCase
         controleLoaded = ControlHome.findByPrimaryKey( control.getId( ) );
 
         assertNull( controleLoaded );
+    }
+
+    /**
+     * Only the conditional controls of the question are deactivated, then activated again
+     */
+    @Test
+    public void testUpdateConditionalControlsActivation( )
+    {
+        int nIdQuestion = IdGenerator.generateId( );
+        Control conditionalControl = createControl( ControlType.CONDITIONAL, nIdQuestion );
+        Control validationControl = createControl( ControlType.VALIDATION, nIdQuestion );
+
+        ControlHome.updateConditionalControlsActivation( nIdQuestion, false );
+
+        assertFalse( ControlHome.findByPrimaryKey( conditionalControl.getId( ) ).isActive( ) );
+        assertTrue( ControlHome.findByPrimaryKey( validationControl.getId( ) ).isActive( ) );
+
+        ControlHome.updateConditionalControlsActivation( nIdQuestion, true );
+
+        assertTrue( ControlHome.findByPrimaryKey( conditionalControl.getId( ) ).isActive( ) );
+
+        ControlHome.remove( conditionalControl.getId( ) );
+        ControlHome.remove( validationControl.getId( ) );
+    }
+
+    private Control createControl( ControlType controlType, int nIdQuestion )
+    {
+        Control control = new Control( );
+        control.setValidatorName( "validator1" );
+        control.setControlType( controlType.getLabel( ) );
+        control.setListIdQuestion( new HashSet<>( ) );
+        control.getListIdQuestion( ).add( nIdQuestion );
+
+        return ControlHome.create( control );
     }
 }

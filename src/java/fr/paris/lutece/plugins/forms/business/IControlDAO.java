@@ -238,4 +238,16 @@ public interface IControlDAO
      * @return The referenceList which contains the data of all the control mapping object
      */
     List<ControlMapping> selectMappingControlList( int nIdControl, Plugin plugin );
+
+    /**
+     * Activates or deactivates the conditional controls which use a question
+     * 
+     * @param nIdQuestion
+     *            the question id
+     * @param bActive
+     *            true to activate the controls, false to deactivate them
+     * @param plugin
+     *            the Plugin
+     */
+    void updateConditionalActiveByQuestion( int nIdQuestion, boolean bActive, Plugin plugin );
 }

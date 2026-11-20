@@ -51,15 +51,15 @@ import jakarta.enterprise.context.ApplicationScoped;
 public final class ControlDAO implements IControlDAO
 {
     // Constants
-    private static final String SQL_QUERY_SELECTALL = "SELECT fc.id_control, fc.value, fc.error_message, fc.validator_name, fc.control_type, fc.id_control_target, fc.id_control_group FROM forms_control fc ";
-    private static final String SQL_QUERY_CONTROLQUESTIONS_SELECTALL = "SELECT fc.id_control, fc.value, fc.error_message, fc.validator_name, fc.control_type, fc.id_control_target, fc.id_control_group FROM forms_control fc join forms_control_question fcq on(fcq.id_control = fc.id_control) ";
+    private static final String SQL_QUERY_SELECTALL = "SELECT fc.id_control, fc.value, fc.error_message, fc.validator_name, fc.control_type, fc.id_control_target, fc.id_control_group, fc.is_active FROM forms_control fc ";
+    private static final String SQL_QUERY_CONTROLQUESTIONS_SELECTALL = "SELECT fc.id_control, fc.value, fc.error_message, fc.validator_name, fc.control_type, fc.id_control_target, fc.id_control_group, fc.is_active FROM forms_control fc join forms_control_question fcq on(fcq.id_control = fc.id_control) ";
 
     private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE fc.id_control = ?";
     private static final String SQL_QUERY_SELECT_BY_QUESTION = SQL_QUERY_CONTROLQUESTIONS_SELECTALL + "WHERE fcq.id_question = ?";
     private static final String SQL_QUERY_SELECT_BY_QUESTION_AND_TYPE = SQL_QUERY_CONTROLQUESTIONS_SELECTALL
             + " WHERE fcq.id_question = ? AND fc.control_type = ?";
     private static final String SQL_QUERY_SELECT_BY_CONTROL_TARGET = SQL_QUERY_SELECTALL + " WHERE fc.id_control_target = ? AND fc.control_type = ?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_control ( value, error_message, validator_name, control_type, id_control_target, id_control_group ) VALUES ( ?, ?, ?, ?, ?, ? ) ";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_control ( value, error_message, validator_name, control_type, id_control_target, id_control_group, is_active ) VALUES ( ?, ?, ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_INSERT_CONTROL_QUESTION = "INSERT INTO forms_control_question ( id_control, id_question ) VALUES ( ?, ? ) ";
     private static final String SQL_QUERY_INSERT_CONTROL_QUESTION_VALUE = "INSERT INTO forms_control_question_mapping ( id_control, id_question, value ) VALUES ( ?, ?, ? ) ";
 
@@ -68,7 +68,8 @@ public final class ControlDAO implements IControlDAO
     private static final String SQL_QUERY_DELETE_CONTROL_QUESTION_VALUE = "DELETE FROM forms_control_question_mapping WHERE id_control = ? ";
 
     private static final String SQL_QUERY_DELETE_BY_CONTROL_TARGET = "DELETE FROM forms_control WHERE id_control_target = ? AND control_type = ?";
-    private static final String SQL_QUERY_UPDATE = "UPDATE forms_control SET id_control = ?, value = ?, error_message = ?,  validator_name = ?, control_type = ?, id_control_target = ?, id_control_group = ? WHERE id_control = ?";
+    private static final String SQL_QUERY_UPDATE = "UPDATE forms_control SET id_control = ?, value = ?, error_message = ?,  validator_name = ?, control_type = ?, id_control_target = ?, id_control_group = ?, is_active = ? WHERE id_control = ?";
+    private static final String SQL_QUERY_UPDATE_CONDITIONAL_ACTIVE_BY_QUESTION = "UPDATE forms_control SET is_active = ? WHERE control_type = 'conditional' AND id_control IN ( SELECT fcq.id_control FROM forms_control_question fcq WHERE fcq.id_question = ? )";
 
     private static final String SQL_QUERY_SELECTALL_ID = "SELECT id_control FROM forms_control";
 
@@ -94,6 +95,7 @@ public final class ControlDAO implements IControlDAO
             daoUtil.setString( nIndex++, control.getControlType( ) );
             daoUtil.setInt( nIndex++, control.getIdControlTarget( ) );
             daoUtil.setInt( nIndex++, control.getIdControlGroup( ) );
+            daoUtil.setBoolean( nIndex++, control.isActive( ) );
 
             daoUtil.executeUpdate( );
             if ( daoUtil.nextGeneratedKey( ) )
@@ -248,6 +250,7 @@ public final class ControlDAO implements IControlDAO
             daoUtil.setString( nIndex++, control.getControlType( ) );
             daoUtil.setInt( nIndex++, control.getIdControlTarget( ) );
             daoUtil.setInt( nIndex++, control.getIdControlGroup() );
+            daoUtil.setBoolean( nIndex++, control.isActive( ) );
 
             daoUtil.setInt( nIndex, control.getId( ) );
 
@@ -330,6 +333,20 @@ public final class ControlDAO implements IControlDAO
         return listControl;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void updateConditionalActiveByQuestion( int nIdQuestion, boolean bActive, Plugin plugin )
+    {
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE_CONDITIONAL_ACTIVE_BY_QUESTION, plugin ) )
+        {
+            daoUtil.setBoolean( 1, bActive );
+            daoUtil.setInt( 2, nIdQuestion );
+            daoUtil.executeUpdate( );
+        }
+    }
+
     @Override
     public List<Control> selectControlByQuestionAndType( int nIdQuestion, String strControlType, Plugin plugin )
     {
@@ -366,6 +383,7 @@ public final class ControlDAO implements IControlDAO
         control.setControlType( daoUtil.getString( "control_type" ) );
         control.setIdControlTarget( daoUtil.getInt( "id_control_target" ) );
         control.setIdControlGroup(daoUtil.getInt("id_control_group") ); 
+        control.setActive( daoUtil.getBoolean( "is_active" ) );
 
         return control;
     }

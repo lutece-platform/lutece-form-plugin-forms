@@ -232,6 +232,16 @@ ${breadcrumb_template}
 				</#if>
 				<@formGroup rows=2 labelFor='disabled' helpKey='#i18n{forms.create_entry.labelDisableQuestionHelp}'>
 				<@checkBox orientation='switch' name='disabled' id='disabled' labelKey='#i18n{forms.create_entry.labelDisableQuestion}' value='1' checked=entry.disabled />
+				<#if dependent_questions_warning??>
+				<div id='disabled-dependent-questions' class='mt-2<#if !entry.disabled> d-none</#if>'>
+					<@alert color='warning' title=dependent_questions_warning iconTitle='alert-triangle' />
+				</div>
+				<script>
+					document.getElementById( 'disabled' ).addEventListener( 'change', function( ) {
+						document.getElementById( 'disabled-dependent-questions' ).classList.toggle( 'd-none', !this.checked );
+					} );
+				</script>
+				</#if>
 				</@formGroup>
 				<@bottomFormFixedButtons>
 					<@button type='submit' name='action_modifyQuestion' title='#i18n{forms.modify_entry.buttonSave}' buttonIcon='device-floppy' />

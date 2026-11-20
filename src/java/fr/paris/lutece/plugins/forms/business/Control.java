@@ -66,6 +66,8 @@ public class Control implements Cloneable, Serializable
     
     private int _nIdControlGroup;
 
+    private boolean _bActive = true;
+
     /**
      * @return the _nId
      */
@@ -194,6 +196,23 @@ public class Control implements Cloneable, Serializable
 	public void setIdControlGroup(int nIdControlGroup) {
 		this._nIdControlGroup = nIdControlGroup;
 	}
+
+	/**
+     * @return true if the control is active (a conditional control is inactive when one of its questions is disabled)
+     */
+    public boolean isActive( )
+    {
+        return _bActive;
+    }
+
+    /**
+     * @param bActive
+     *            true if the control is active
+     */
+    public void setActive( boolean bActive )
+    {
+        _bActive = bActive;
+    }
 
 	/**
      * {@inheritDoc}
