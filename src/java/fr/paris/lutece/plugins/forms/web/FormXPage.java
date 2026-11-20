@@ -469,6 +469,13 @@ public class FormXPage extends MVCApplication
         // Set whether the current form's responses are from a backed up save or not
         modelForStep.put( FormsConstants.MARK_HAS_BACKUP_RESPONSE, _formResponseManager.getFormResponse( ).isFromSave( ) );
         _stepDisplayTree.addModel( modelForStep );
+        // The page shows the alert of a loaded backup with the button deleting the backup: it needs them too
+        model.put( FormsConstants.MARK_HAS_BACKUP_RESPONSE, _formResponseManager.getFormResponse( ).isFromSave( ) );
+        LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
+        if ( user != null )
+        {
+            model.put( FormsConstants.MARK_USER, user );
+        }
 
         FormsResponseUtils.populateFormWithLogoAndNumberResponse(form);
         model.put( FormsConstants.MARK_FORM, form );
