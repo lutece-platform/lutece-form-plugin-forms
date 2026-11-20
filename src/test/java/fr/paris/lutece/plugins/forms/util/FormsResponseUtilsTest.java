@@ -365,6 +365,52 @@ public class FormsResponseUtilsTest extends LuteceTestCase
         assertTrue( bIsVisible );
     }
 
+    /**
+     * A conditional control using a disabled question is inactive : it is not met, even if the response satisfies it
+     */
+    @Test
+    public void testInactiveCondition_QuestionIsHidden( )
+    {
+        int nIdForm = IdGenerator.generateId( );
+        Question targetQuestion = createQuestion( IdGenerator.generateId( ), IdGenerator.generateId( ) );
+        FormDisplay formDisplay = createFormDisplay( nIdForm, targetQuestion );
+
+        Question controllingQuestion = createQuestion( IdGenerator.generateId( ), targetQuestion.getIdStep( ) );
+        createConditionalControl( formDisplay.getId( ), controllingQuestion.getId( ), VALIDATOR_NUMBER_SUPERIOR, "10", 0 );
+        ControlHome.updateConditionalControlsActivation( controllingQuestion.getId( ), false );
+
+        List<FormQuestionResponse> listResponses = Collections.singletonList( createResponse( controllingQuestion, "20" ) );
+
+        boolean bIsVisible = FormsResponseUtils.isQuestionConditionallyVisible( targetQuestion, listResponses, nIdForm );
+
+        assertFalse( bIsVisible );
+    }
+
+    /**
+     * In a OR group, an inactive condition is not met but does not prevent another met condition from displaying the question
+     */
+    @Test
+    public void testOrGroup_InactiveConditionAndMetCondition_QuestionIsVisible( )
+    {
+        int nIdForm = IdGenerator.generateId( );
+        Question targetQuestion = createQuestion( IdGenerator.generateId( ), IdGenerator.generateId( ) );
+        FormDisplay formDisplay = createFormDisplay( nIdForm, targetQuestion );
+
+        int nIdControlGroup = createControlGroup( LogicalOperator.OR );
+
+        Question disabledQuestion = createQuestion( IdGenerator.generateId( ), targetQuestion.getIdStep( ) );
+        Question controllingQuestion = createQuestion( IdGenerator.generateId( ), targetQuestion.getIdStep( ) );
+        createConditionalControl( formDisplay.getId( ), disabledQuestion.getId( ), VALIDATOR_NUMBER_SUPERIOR, "10", nIdControlGroup );
+        createConditionalControl( formDisplay.getId( ), controllingQuestion.getId( ), VALIDATOR_NUMBER_SUPERIOR, "10", nIdControlGroup );
+        ControlHome.updateConditionalControlsActivation( disabledQuestion.getId( ), false );
+
+        List<FormQuestionResponse> listResponses = Collections.singletonList( createResponse( controllingQuestion, "20" ) );
+
+        boolean bIsVisible = FormsResponseUtils.isQuestionConditionallyVisible( targetQuestion, listResponses, nIdForm );
+
+        assertTrue( bIsVisible );
+    }
+
     // ---------------------------------------------------------------------
     // Test data builders
     // ---------------------------------------------------------------------

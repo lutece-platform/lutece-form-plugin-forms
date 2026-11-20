@@ -842,6 +842,10 @@ public class FormControlJspBean extends AbstractJspBean
         _control.setIdControlTarget( nIdControlTarget );
         _control.setIdControlGroup( nIdControlGroup );
         _control.setListIdQuestion( listIdQuestion );
+        // Not posted (populate sets it to false) : a conditional control is inactive when one of its questions is disabled
+        _control.setActive( !ControlType.CONDITIONAL.getLabel( ).equals( strControlType ) || listIdQuestion == null
+                || listIdQuestion.stream( ).map( QuestionHome::findByPrimaryKey )
+                        .noneMatch( question -> question != null && question.getEntry( ) != null && question.getEntry( ).isDisabled( ) ) );
 
         return validateBean( _control, CONTROL_VALIDATION_ATTRIBUTES_PREFIX );
     }

@@ -55,6 +55,10 @@ public abstract class AbstractNumberValidator extends AbstractValidator
 
     private static final String MARK_HELP = "help_key";
 
+    private static final String MARK_OPERATION = "operation";
+
+    private static final String TEMPLATE_JAVASCRIPT = "/skin/plugins/forms/validators/number_value_javascript.html";
+
     /**
      * Constructor of the AbstractValidator
      *
@@ -81,6 +85,22 @@ public abstract class AbstractNumberValidator extends AbstractValidator
         HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( TEMPLATE_DISPLAY_HTML, _locale, model );
 
         return htmlTemplateQuestion.getHtml( );
+    }
+
+    @Override
+    public String getJavascriptValidation( )
+    {
+        Map<String, Object> model = new HashMap<>( );
+        model.put( MARK_OPERATION, getOperation( ) );
+        HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( TEMPLATE_JAVASCRIPT, _locale, model );
+
+        return htmlTemplate.getHtml( );
+    }
+
+    @Override
+    public String getJavascriptControlValue( Control control )
+    {
+        return control.getValue( );
     }
 
     @Override
@@ -112,6 +132,8 @@ public abstract class AbstractNumberValidator extends AbstractValidator
     }
 
     public abstract boolean validateControl( Double controlValue, Double value );
+
+    protected abstract String getOperation( );
 
     protected abstract String getLabelKey( );
     protected abstract String getHelpKey( );

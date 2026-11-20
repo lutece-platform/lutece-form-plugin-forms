@@ -68,5 +68,10 @@ public class NumberInferiorValidator extends AbstractNumberValidator
     protected String getHelpKey( ){
         return StringUtils.EMPTY;
     }
-}
 
+    @Override
+    protected String getOperation( )
+    {
+        return "<";
+    }
+}

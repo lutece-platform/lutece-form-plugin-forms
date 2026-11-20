@@ -177,6 +177,7 @@ validator_name varchar(255) NOT NULL,
 control_type varchar(255) NOT NULL,
 id_control_target int default '0' NOT NULL,
 id_control_group int,
+is_active SMALLINT default 1 NOT NULL,
 PRIMARY KEY (id_control)
 );
 
