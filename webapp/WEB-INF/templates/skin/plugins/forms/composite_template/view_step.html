@@ -72,7 +72,24 @@ window.__sessionTimeoutConfig.saveAction = function() {
 	if (!form) return Promise.resolve();
 	var fd = new FormData(form);
 	fd.append('action_doSaveForBackup', '');
-	return fetch(form.action, { method: 'POST', body: fd });
+	return fetch(form.action, { method: 'POST', body: fd }).then(function(response) {
+		if (!response.ok) {
+			throw new Error('The backup has not been saved');
+		}
+		return response.text();
+	}).then(function(html) {
+		// The save spends the security token of the page: the page takes the new one, so that its next submit is accepted
+		var doc = new DOMParser().parseFromString(html, 'text/html');
+		var newToken = doc.getElementById('step-token');
+		var token = document.getElementById('step-token');
+		if (newToken && token) {
+			token.value = newToken.value;
+		}
+		// A refused save (expired page, lost session, sign in asked) does not answer the step without warning
+		if (!newToken || doc.getElementById('messages_warnings_div')) {
+			throw new Error('The backup has not been saved');
+		}
+	});
 };
 </script>
 </#if>
