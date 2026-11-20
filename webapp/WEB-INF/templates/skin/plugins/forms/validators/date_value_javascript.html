@@ -1,28 +1,35 @@
-if(inputValue !== undefined && inputValue !== '')
+function parseDay( value )
 {
-	var lang = window.navigator.language;
-	moment.locale(lang);
-	
-	var dateControl = moment(controlValue);
-	if(Array.isArray(inputValue))
+	if ( value === undefined || value === null )
 	{
-		for(var i=0;i<inputValue.length;i++)
-		{
-			var dateInput = moment(inputValue[i]);
-			if ( !(dateInput.getTime() ${operation} dateControl.getTime() ) )
-			{
-				return false;
-			}
-		}
-		return true;
+		return null;
 	}
-	else
+	var strValue = String( value ).trim( );
+	var match = /^(\d{4})-(\d{2})-(\d{2})/.exec( strValue );
+	if ( match )
 	{
-		var dateInput = moment(inputValue);
-		return dateInput ${operation} dateControl;
+		return new Date( match[1], match[2] - 1, match[3] ).getTime( );
 	}
+	match = /^(\d{2})\/(\d{2})\/(\d{4})/.exec( strValue );
+	if ( match )
+	{
+		return new Date( match[3], match[2] - 1, match[1] ).getTime( );
+	}
+	return null;
 }
-else
+
+var dateControl = parseDay( controlValue );
+var listValues = Array.isArray( inputValue ) ? inputValue : [ inputValue ];
+if ( dateControl === null || listValues.length === 0 )
 {
 	return false;
 }
+for ( var i = 0; i < listValues.length; i++ )
+{
+	var dateInput = parseDay( listValues[i] );
+	if ( dateInput === null || !( dateInput ${operation} dateControl ) )
+	{
+		return false;
+	}
+}
+return true;
