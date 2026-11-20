@@ -81,5 +81,15 @@ public class FormsListPortletHome extends PortletHome
     {
         return _dao;
     }
-}
 
+    /**
+     * Removes a deleted form from every forms list portlet
+     *
+     * @param nIdForm
+     *            the id of the form
+     */
+    public static void removeForm( int nIdForm )
+    {
+        _dao.deleteByForm( nIdForm );
+    }
+}

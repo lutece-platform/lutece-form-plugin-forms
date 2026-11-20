@@ -55,6 +55,7 @@ import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormHome;
+import fr.paris.lutece.plugins.forms.business.portlet.FormsListPortletHome;
 import fr.paris.lutece.plugins.forms.business.FormMessageHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
@@ -557,6 +558,7 @@ public class FormService
             FileHome.remove( form.getLogo( ).getIdFile( ) );
         }
 
+        FormsListPortletHome.removeForm( nIdForm );
         FormHome.remove( nIdForm );
 
         _formWorkflowService.removeResources( nIdWorkflow, nIdForm, adminUser );

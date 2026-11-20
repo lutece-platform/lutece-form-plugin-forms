@@ -48,6 +48,7 @@ public class FormsListPortletDAO implements IFormsListPortletDAO
     private static final String SQL_QUERY_SELECT = "SELECT id_form FROM forms_list_portlet WHERE id_portlet = ? ";
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_list_portlet ( id_portlet, id_form ) VALUES ( ?, ? )";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_list_portlet WHERE id_portlet = ? ";
+    private static final String SQL_QUERY_DELETE_BY_FORM = "DELETE FROM forms_list_portlet WHERE id_form = ? ";
 
     /**
      * { @inheritDoc }
@@ -118,5 +119,18 @@ public class FormsListPortletDAO implements IFormsListPortletDAO
     {
         delete( portlet.getId( ) );
         insert( portlet );
+    }
+
+    /**
+     * { @inheritDoc }
+     */
+    @Override
+    public void deleteByForm( int nIdForm )
+    {
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_FORM ) )
+        {
+            daoUtil.setInt( 1, nIdForm );
+            daoUtil.executeUpdate( );
+        }
     }
 }

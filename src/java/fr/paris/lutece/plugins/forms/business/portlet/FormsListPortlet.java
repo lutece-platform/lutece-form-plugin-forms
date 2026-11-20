@@ -39,11 +39,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
+import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.portal.business.portlet.PortletHtmlContent;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
@@ -85,7 +87,8 @@ public class FormsListPortlet extends PortletHtmlContent implements Serializable
         {
     	    Map<String, Object> model = new HashMap<>( );
 
-    	    model.put( MARK_FORMS_LIST, FormHome.getFormByPrimaryKeyList( _formsIdList ) );
+    	    // Only the forms still published: a form unpublished after the configuration of the portlet is no longer offered
+    	    model.put( MARK_FORMS_LIST, FormHome.getFormByPrimaryKeyList( _formsIdList ).stream( ).filter( Form::isActive ).collect( Collectors.toList( ) ) );
     	    model.put( MARK_PORTLET_NAME, this.getName( ) );
 
             HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_PORTLET_FORMSLIST, getLocale( request ), model );

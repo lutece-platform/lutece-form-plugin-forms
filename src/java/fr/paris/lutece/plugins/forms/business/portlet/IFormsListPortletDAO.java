@@ -37,5 +37,11 @@ import fr.paris.lutece.portal.business.portlet.IPortletInterfaceDAO;
 
 public interface IFormsListPortletDAO extends IPortletInterfaceDAO
 {
-	// No specific method
+    /**
+     * Removes a form from every forms list portlet
+     *
+     * @param nIdForm
+     *            the id of the form
+     */
+    void deleteByForm( int nIdForm );
 }
