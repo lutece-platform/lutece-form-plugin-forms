@@ -49,6 +49,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
 import fr.paris.lutece.plugins.forms.business.Control;
+import fr.paris.lutece.plugins.forms.business.ControlHome;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.Group;
@@ -324,6 +325,9 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
                 }
             }
         }
+
+        // The conditional displays which use a disabled question are inactive
+        ControlHome.updateConditionalControlsActivation( _question.getId( ), !_entry.isDisabled( ) );
 
         String strTitle = buildQuestionTitle( _entry );
         _question.setTitle( strTitle );

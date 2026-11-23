@@ -71,4 +71,10 @@ public class NumberSuperiorValidator extends AbstractNumberValidator
     {
         return StringUtils.EMPTY;
     }
+
+    @Override
+    protected String getOperation( )
+    {
+        return ">";
+    }
 }

@@ -47,6 +47,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
+import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.ControlHome;
 import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.Form;
@@ -73,6 +74,7 @@ import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServ
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.file.FileServiceException;
+import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.image.ImageResourceManager;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
@@ -121,6 +123,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     private static final String MESSAGE_CANT_REMOVE_ENTRY_RESOURCES_ATTACHED = "forms.message.cantRemoveEntry.resourceAttached";
     private static final String MESSAGE_CANT_REMOVE_GROUP_RESOURCES_ATTACHED = "forms.message.cantRemoveGroup.resourceAttached";
     private static final String MESSAGE_CANT_REMOVE_ENTRY_CONDITION_ATTACHED = "forms.message.cantRemoveEntry.conditionAttached";
+    private static final String MESSAGE_DEPENDENT_QUESTIONS_WARNING = "forms.modifyEntry.dependentQuestionsWarning";
 
     // Warning messages
     private static final String WARNING_CONFIRM_REMOVE_QUESTION_FORM_ACTIVE = "forms.warning.deleteComposite.confirmRemoveQuestion.formActive";
@@ -128,6 +131,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     private static final String WARNING_INSUFFICIENT_MODIFY_PERMISSION_TO_DELETE_COMPOSITE = "forms.warning.deleteComposite.insufficientModifyPermission";
     // Markers
     private static final String MARK_FIELDS_LIST_BY_ID_ENTRIES = "fields_list_by_id_entries";
+    private static final String MARK_DEPENDENT_QUESTIONS_WARNING = "dependent_questions_warning";
 
     // Constants
     private static final String PUBLIC_IMAGE_RESOURCE = "public_image_resource";
@@ -413,6 +417,15 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         }
         
         model.put( MARK_FIELDS_LIST_BY_ID_ENTRIES, fieldsList );
+
+        // The target of a conditional control is the display of the question (or group) which depends on this question
+        long nDependentQuestions = ControlHome.getControlByQuestionAndType( _question.getId( ), ControlType.CONDITIONAL.getLabel( ) ).stream( )
+                .map( Control::getIdControlTarget ).distinct( ).count( );
+        if ( nDependentQuestions > 0 )
+        {
+            model.put( MARK_DEPENDENT_QUESTIONS_WARNING,
+                    I18nService.getLocalizedString( MESSAGE_DEPENDENT_QUESTIONS_WARNING, new Object [ ] { nDependentQuestions }, getLocale( ) ) );
+        }
 
         IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( _entry );
         HtmlTemplate template = AppTemplateService.getTemplate( entryTypeService.getTemplateModify( _entry, false ), getLocale( ), model );

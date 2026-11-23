@@ -1,3 +1,16 @@
+<#-- Warning shown when the question is disabled while other questions depend on it -->
+<#macro dependentQuestionsWarning>
+<#if dependent_questions_warning??>
+<div id='disabled-dependent-questions' class='mt-2<#if !entry.disabled> d-none</#if>'>
+	<@alert color='warning' title=dependent_questions_warning iconTitle='alert-triangle' />
+</div>
+<script>
+	document.getElementById( 'disabled' ).addEventListener( 'change', function( ) {
+		document.getElementById( 'disabled-dependent-questions' ).classList.toggle( 'd-none', !this.checked );
+	} );
+</script>
+</#if>
+</#macro>
 <#macro confirmField>
 <script type="text/javascript">
 function changeVisilityConfirmFieldTitle(){

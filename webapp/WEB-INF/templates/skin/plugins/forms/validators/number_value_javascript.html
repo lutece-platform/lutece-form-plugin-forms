@@ -1,0 +1,10 @@
+if(inputValue !== undefined && inputValue !== null && inputValue !== '')
+{
+	var nInputValue = parseFloat(String(inputValue).replace(',', '.'));
+	var nControlValue = parseFloat(String(controlValue).replace(',', '.'));
+	return !isNaN(nInputValue) && !isNaN(nControlValue) && nInputValue ${operation} nControlValue;
+}
+else
+{
+	return false;
+}
