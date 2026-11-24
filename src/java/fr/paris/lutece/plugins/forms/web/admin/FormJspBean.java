@@ -791,13 +791,44 @@ public class FormJspBean extends AbstractJspBean
 
         if ( _accessControlService.isAvailable( ) )
         {
-            int idAccessControl = NumberUtils.toInt( request.getParameter( PARAMETER_ID_ACCESS_CONTROL ), -1 );
+            int idAccessControl = getAccessControlToLink( NumberUtils.toInt( request.getParameter( PARAMETER_ID_ACCESS_CONTROL ), -1 ),
+                    _accessControlService.findAccessControlForResource( _form.getId( ), Form.RESOURCE_TYPE ),
+                    _accessControlService.getAccessControlsEnabled( getUser( ), getLocale( ) ) );
             _accessControlService.linkResourceToAccessControl( _form.getId( ), Form.RESOURCE_TYPE, idAccessControl );
         }
 
         addInfo( INFO_FORM_UPDATED, getLocale( ) );
 
         return redirectView( request, VIEW_MANAGE_FORMS );
+    }
+
+    /**
+     * Gives the access control to link to the form after its modification. The select only offers the enabled access controls of the workgroups
+     * of the user: when the form is linked to another one (disabled, or of another workgroup), the select shows "-" and the link is kept, unless
+     * the user chose one of the offered access controls. A posted value that is not offered is ignored.
+     *
+     * @param nIdPosted
+     *            the access control posted by the form, -1 for none
+     * @param nIdCurrent
+     *            the access control linked to the form, -1 for none
+     * @param listSelectable
+     *            the access controls offered to the user (with the "-" item)
+     * @return the access control to link, -1 for none
+     */
+    static int getAccessControlToLink( int nIdPosted, int nIdCurrent, ReferenceList listSelectable )
+    {
+        boolean bPostedOffered = nIdPosted == -1 || isOffered( listSelectable, nIdPosted );
+        boolean bCurrentOffered = nIdCurrent == -1 || isOffered( listSelectable, nIdCurrent );
+        if ( !bPostedOffered || ( nIdPosted == -1 && !bCurrentOffered ) )
+        {
+            return nIdCurrent;
+        }
+        return nIdPosted;
+    }
+
+    private static boolean isOffered( ReferenceList listSelectable, int nIdAccessControl )
+    {
+        return listSelectable != null && listSelectable.stream( ).anyMatch( item -> String.valueOf( nIdAccessControl ).equals( item.getCode( ) ) );
     }
 
     /**
