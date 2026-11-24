@@ -4,7 +4,11 @@
 	    <@cRow>
             <@cCol>
                 <#if dskey('portal.theme.site_property.forms.showResponseFormWarning.checkbox') == '1'>
-                    <@cAlert class='warning mt-m' title='#i18n{portal.theme.site_property.forms.labelInfoResponse}' />
+                    <#assign labelInfoResponse = dskey('portal.theme.site_property.forms.labelInfoResponse')!'' />
+                    <#-- the text typed in the site properties; dskey answers 'DS Value Missing' for a key that is not in the datastore -->
+                    <#if labelInfoResponse?has_content && labelInfoResponse != 'DS Value Missing'>
+                    <@cAlert class='warning mt-m' title=labelInfoResponse />
+                    </#if>
                 </#if>
                 <#if is_action_success>
                     <@cAlert class='success mt-m' title='#i18n{forms.xpage.response.action.success}' />
