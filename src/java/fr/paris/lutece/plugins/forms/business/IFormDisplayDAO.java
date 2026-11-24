@@ -147,11 +147,16 @@ public interface IFormDisplayDAO
     List<FormDisplay> selectFormDisplayListByForm( int nIdForm, Plugin plugin );
 
     /**
-     * 
+     * Loads the displays of a parent display of a step, in the export order: a question display by the export_display_order of its question, a
+     * group display by the lowest export_display_order of the questions it holds; equal orders by display_order, a group without question last.
+     *
      * @param nIdStep
-     * @param nIdParent TODO
+     *            the step id
+     * @param nIdParent
+     *            the parent display id, 0 for the root of the step
      * @param plugin
-     * @return The list which contains the data of all the FormDisplay objects ordered by export_display_order column from forms_question
+     *            the plugin to use
+     * @return The list of the FormDisplay objects in the export order
      */
 	List<FormDisplay> selectFormDisplayListByParentOrderByQuestionExportDisplayOrder(int nIdStep, int nIdParent, Plugin plugin);
 }

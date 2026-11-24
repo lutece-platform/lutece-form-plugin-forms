@@ -35,7 +35,10 @@ package fr.paris.lutece.plugins.forms.business;
 
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.ReferenceList;
@@ -62,10 +65,11 @@ public final class FormDisplayDAO implements IFormDisplayDAO
             + "FROM forms_display d INNER JOIN forms_group g ON d.id_composite = g.id_group "
             + "WHERE d.id_step = ? AND d.composite_type = ? order by d.id_parent, d.display_order";
     private static final String SQL_QUERY_SELECT_BY_FROM_STEP_COMPOSITE = SQL_QUERY_SELECTALL + " WHERE id_form = ? AND id_step = ? AND id_composite = ?";
-    private static final String SQL_QUERY_SELECT_BY_PARENT_ORDER_BY_QUESTION_EXPORT_DISPLAY_ORDER = "SELECT fd.id_display, fd.id_form, fd.id_step, fd.id_composite, fd.id_parent, fd.display_order, fd.composite_type, fd.display_depth "
-            + "FROM forms_display fd LEFT JOIN forms_question fq ON fd.id_composite = fq.id_question "
-            + "WHERE fd.id_step = ? AND id_parent = ? "
-            + "ORDER BY fq.export_display_order ASC, fd.display_order ASC";
+    // The question is joined to the question displays only: the id_composite of a group display is an id_group
+    private static final String SQL_QUERY_SELECT_BY_STEP_WITH_QUESTION_EXPORT_DISPLAY_ORDER = "SELECT fd.id_display, fd.id_form, fd.id_step, fd.id_composite, fd.id_parent, fd.display_order, fd.composite_type, fd.display_depth, fq.export_display_order "
+            + "FROM forms_display fd LEFT JOIN forms_question fq ON fd.composite_type = ? AND fd.id_composite = fq.id_question "
+            + "WHERE fd.id_step = ?";
+    private static final String COLUMN_EXPORT_DISPLAY_ORDER = "export_display_order";
     
     /**
      * {@inheritDoc }
@@ -198,19 +202,77 @@ public final class FormDisplayDAO implements IFormDisplayDAO
     @Override
     public List<FormDisplay> selectFormDisplayListByParentOrderByQuestionExportDisplayOrder( int nIdStep, int nIdParent, Plugin plugin )
     {
-    	List<FormDisplay> formDisplayList = new ArrayList<>( );
-    	try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_PARENT_ORDER_BY_QUESTION_EXPORT_DISPLAY_ORDER, plugin ) )
+        Map<Integer, List<FormDisplay>> mapChildren = new HashMap<>( );
+        Map<Integer, Integer> mapQuestionExportOrder = new HashMap<>( );
+
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_STEP_WITH_QUESTION_EXPORT_DISPLAY_ORDER, plugin ) )
         {
-            daoUtil.setInt( 1, nIdStep );
-            daoUtil.setInt( 2, nIdParent );
+            daoUtil.setString( 1, CompositeDisplayType.QUESTION.getLabel( ) );
+            daoUtil.setInt( 2, nIdStep );
             daoUtil.executeQuery( );
 
             while ( daoUtil.next( ) )
             {
-                formDisplayList.add( dataToObject( daoUtil ) );
+                FormDisplay formDisplay = dataToObject( daoUtil );
+                mapChildren.computeIfAbsent( formDisplay.getParentId( ), k -> new ArrayList<>( ) ).add( formDisplay );
+
+                if ( daoUtil.getObject( COLUMN_EXPORT_DISPLAY_ORDER ) != null )
+                {
+                    mapQuestionExportOrder.put( formDisplay.getId( ), daoUtil.getInt( COLUMN_EXPORT_DISPLAY_ORDER ) );
+                }
             }
         }
-    	return formDisplayList;
+
+        Map<Integer, Integer> mapExportOrder = new HashMap<>( );
+        List<FormDisplay> formDisplayList = new ArrayList<>( mapChildren.getOrDefault( nIdParent, new ArrayList<>( ) ) );
+        formDisplayList.sort( Comparator
+                .comparing( ( FormDisplay formDisplay ) -> getExportOrder( formDisplay, mapChildren, mapQuestionExportOrder, mapExportOrder ),
+                        Comparator.nullsLast( Comparator.naturalOrder( ) ) )
+                .thenComparingInt( FormDisplay::getDisplayOrder ) );
+
+        return formDisplayList;
+    }
+
+    /**
+     * Returns the export order of a display: the export order of its question, or for a group the lowest export order of the questions it holds,
+     * at any depth
+     *
+     * @param formDisplay
+     *            the display
+     * @param mapChildren
+     *            the displays of the step by parent display id
+     * @param mapQuestionExportOrder
+     *            the export order of the question displays by display id
+     * @param mapExportOrder
+     *            the export orders already computed, by display id
+     * @return the export order, or null for a group without question
+     */
+    private static Integer getExportOrder( FormDisplay formDisplay, Map<Integer, List<FormDisplay>> mapChildren, Map<Integer, Integer> mapQuestionExportOrder,
+            Map<Integer, Integer> mapExportOrder )
+    {
+        if ( !CompositeDisplayType.GROUP.getLabel( ).equals( formDisplay.getCompositeType( ) ) )
+        {
+            return mapQuestionExportOrder.get( formDisplay.getId( ) );
+        }
+        if ( mapExportOrder.containsKey( formDisplay.getId( ) ) )
+        {
+            return mapExportOrder.get( formDisplay.getId( ) );
+        }
+
+        Integer nExportOrder = null;
+
+        for ( FormDisplay child : mapChildren.getOrDefault( formDisplay.getId( ), new ArrayList<>( ) ) )
+        {
+            Integer nChildExportOrder = getExportOrder( child, mapChildren, mapQuestionExportOrder, mapExportOrder );
+
+            if ( nChildExportOrder != null && ( nExportOrder == null || nChildExportOrder < nExportOrder ) )
+            {
+                nExportOrder = nChildExportOrder;
+            }
+        }
+        mapExportOrder.put( formDisplay.getId( ), nExportOrder );
+
+        return nExportOrder;
     }
 
     /**
