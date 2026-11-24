@@ -71,6 +71,8 @@ import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.plugins.workflowcore.exception.ResourceWorkflowLockedException;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.message.AdminMessage;
+import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.message.SiteMessage;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.message.SiteMessageService;
@@ -141,6 +143,7 @@ public class FormResponseXPage extends MVCApplication
     private static final String MARK_LIST_STEP_DISPLAY = "list_step_display";
     private static final String MARK_ACTION_SUCCESS = "is_action_success";
     private static final String MARK_BACK_URL = "back_url";
+    private static final String MARK_TASK_FORM_ERROR = "task_form_error";
 
     // Parameters
     private static final String PARAMETER_ID_ACTION = "id_action";
@@ -254,20 +257,7 @@ public class FormResponseXPage extends MVCApplication
         {
         	_formsAsynchronousUploadHandler.removeSessionFiles( request.getSession( ) );
 
-            String strHtmlTasksForm = _workflowService.getDisplayTasksForm( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, request,
-                    locale, null );
-
-            Map<String, Object> model = new LinkedHashMap<>( );
-            model.put( MARK_ID_FORM_RESPONSE, String.valueOf( nIdFormResponse ) );
-            model.put( MARK_ID_ACTION, String.valueOf( nIdAction ) );
-            model.put( MARK_TASK_FORM, HtmlMarkup.of( strHtmlTasksForm ) );
-            model.put( SecurityTokenService.MARK_TOKEN, _securityTokenService.getToken( request, ACTION_SAVE_TASK_FORM ) );
-
-            XPage xPage = getXPage( TEMPLATE_TASK_FORM_RESPONSE, locale, model );
-            xPage.setTitle( I18nService.getLocalizedString( MESSAGE_FORM_RESPONSE_PAGETITLE, locale ) );
-            xPage.setPathLabel( I18nService.getLocalizedString( MESSAGE_FORM_RESPONSE_PATHLABEL, locale ) );
-
-            return xPage;
+            return getTaskFormXPage( request, nIdFormResponse, nIdAction, locale, null );
         }
 
         try
@@ -329,7 +319,8 @@ public class FormResponseXPage extends MVCApplication
                 String strError = _workflowService.doSaveTasksForm( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, nIdForm, request, locale, user );
                 if ( strError != null )
                 {
-                    return redirect( request, strError );
+                    // strError is the URL of the back-office message page: the task form is displayed again in the front office, with the message
+                    return getTaskFormXPage( request, nIdFormResponse, nIdAction, locale, getTaskFormError( request, strError, locale ) );
                 }
             }
             catch( AppException e )
@@ -350,6 +341,66 @@ public class FormResponseXPage extends MVCApplication
             addError( MESSAGE_ACTION_ERROR, locale );
         }
         return redirect( request, VIEW_FORM_RESPONSE, FormsConstants.PARAMETER_ID_RESPONSE, nIdFormResponse );
+    }
+
+    /**
+     * Builds the page of the task form of a workflow action
+     *
+     * @param request
+     *            The Http request
+     * @param nIdFormResponse
+     *            The id of the form response
+     * @param nIdAction
+     *            The id of the action
+     * @param locale
+     *            The locale
+     * @param taskFormError
+     *            The error of the previous validation of the task form, or {@code null}
+     * @return the page
+     */
+    private XPage getTaskFormXPage( HttpServletRequest request, int nIdFormResponse, int nIdAction, Locale locale, Object taskFormError )
+    {
+        String strHtmlTasksForm = _workflowService.getDisplayTasksForm( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, request, locale, null );
+
+        Map<String, Object> model = new LinkedHashMap<>( );
+        model.put( MARK_ID_FORM_RESPONSE, String.valueOf( nIdFormResponse ) );
+        model.put( MARK_ID_ACTION, String.valueOf( nIdAction ) );
+        model.put( MARK_TASK_FORM, HtmlMarkup.of( strHtmlTasksForm ) );
+        model.put( SecurityTokenService.MARK_TOKEN, _securityTokenService.getToken( request, ACTION_SAVE_TASK_FORM ) );
+        if ( taskFormError != null )
+        {
+            model.put( MARK_TASK_FORM_ERROR, taskFormError );
+        }
+
+        XPage xPage = getXPage( TEMPLATE_TASK_FORM_RESPONSE, locale, model );
+        xPage.setTitle( I18nService.getLocalizedString( MESSAGE_FORM_RESPONSE_PAGETITLE, locale ) );
+        xPage.setPathLabel( I18nService.getLocalizedString( MESSAGE_FORM_RESPONSE_PATHLABEL, locale ) );
+
+        return xPage;
+    }
+
+    /**
+     * Returns the error of the validation of a task form. The task components report it the back-office way: they store an AdminMessage in the session
+     * and answer the URL of the back-office message page, which a front-office user must not be sent to.
+     *
+     * @param request
+     *            The Http request
+     * @param strError
+     *            The error answered by the validation of the task form
+     * @param locale
+     *            The locale
+     * @return the message of the task as markup (its arguments are escaped, its text sanitized), or the generic error message of the action
+     */
+    static Object getTaskFormError( HttpServletRequest request, String strError, Locale locale )
+    {
+        AdminMessage message = strError.contains( AdminMessageService.getMessageRelativeUrl( ) ) ? AdminMessageService.getMessage( request ) : null;
+
+        if ( message != null )
+        {
+            return message.getMarkup( locale );
+        }
+
+        return I18nService.getLocalizedString( MESSAGE_ACTION_ERROR, locale );
     }
 
     private Collection<Action> getActionsForUser( HttpServletRequest request, FormResponse formResponse )

@@ -3,6 +3,10 @@
 	<@cRow>
 		<@cCol>
 			<@cCard title='#i18n{forms.tasks_form_workflow.title}' class='mt-5'>
+				<#if task_form_error??>
+				<#-- a markup value (the message of the task, sanitized by the core) is not escaped again, a string is -->
+				<@cAlert type='danger' class='danger' title=task_form_error />
+				</#if>
 				<@cForm id='form-validate' action='jsp/site/Portal.jsp' enctype="multipart/form-data">
 				<@cInput type='hidden' name='page' id='task-form-page' value='formsResponse' />
 				<@cInput type='hidden' name='id_action' value='${id_action}' />
