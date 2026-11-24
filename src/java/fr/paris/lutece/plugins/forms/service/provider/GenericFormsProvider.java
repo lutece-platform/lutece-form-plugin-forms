@@ -262,7 +262,7 @@ public abstract class GenericFormsProvider {
 			urlFilesLinkFo.addParameter( FormsConstants.PARAMETER_PAGE, PARAMETER_PAGE_FORM_RESPONSE );
 			urlFilesLinkFo.addParameter( FormsConstants.PARAMETER_TARGET_VIEW, PARAMETER_VIEW_FORM_FILES_LINK_FO );
 			urlFilesLinkFo.addParameter( PARAMETER_ID_FORM_RESPONSES_FO, formResponse.getId( ) );
-			model.put( MARK_URL_FO_FILES_LINK, url.getUrl( ) );
+			model.put( MARK_URL_FO_FILES_LINK, urlFilesLinkFo.getUrl( ) );
 		}
 
 		return model;
