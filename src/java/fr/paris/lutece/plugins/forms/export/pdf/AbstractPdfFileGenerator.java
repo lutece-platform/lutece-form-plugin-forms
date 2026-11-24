@@ -45,6 +45,7 @@ import java.util.Locale;
 import java.util.Map;
 import fr.paris.lutece.portal.service.template.HtmlMarkup;
 import java.util.HashMap;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import fr.paris.lutece.portal.service.html.XSSSanitizerException;
@@ -113,6 +114,7 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
     // markers
     private static final String MARK_PDF_CELL_LIST = "list_pdf_cell";
     private static final String MARK_FORM_TITLE = "form_title";
+    private static final Pattern LINE_BREAK = Pattern.compile( "\\r\\n|\\r|\\n" );
     
     protected final String _formTitle;
 	
@@ -447,7 +449,7 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
 
             if ( strResponseValue != null )
             {
-                listResponseValue.add( isRichText( entry ) ? sanitize( strResponseValue ) : escape( strResponseValue ) );
+                listResponseValue.add( isRichText( entry ) ? sanitize( strResponseValue ) : escapeText( strResponseValue ) );
             }
         }
 
@@ -507,6 +509,19 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
     private static String escape( String strText )
     {
         return strText == null ? null : HTMLOutputFormat.INSTANCE.escapePlainText( strText );
+    }
+
+    /**
+     * Escapes a plain text answer written in the HTML of a PDF cell, and keeps its line breaks as br elements, as the read-only displays of the
+     * answer do: HTML would collapse them into spaces.
+     *
+     * @param strText
+     *            the text, may be null
+     * @return the escaped text, null for null
+     */
+    static String escapeText( String strText )
+    {
+        return strText == null ? null : LINE_BREAK.matcher( escape( strText ) ).replaceAll( "<br>" );
     }
 
     protected void generatePdfFile(Path directoryFile, HtmlTemplate htmltemplate, String fileName) throws PdfConverterServiceException, IOException
