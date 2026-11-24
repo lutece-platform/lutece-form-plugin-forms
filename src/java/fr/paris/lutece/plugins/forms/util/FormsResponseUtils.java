@@ -467,7 +467,7 @@ public class FormsResponseUtils
             nIdControlGroup = control.getIdControlGroup( );
 
             // A condition on a disabled question cannot be met
-            if ( !control.isActive( ) )
+            if ( isControlOnDisabledQuestion( control ) )
             {
                 nNotValidControlsCount++;
                 continue;
@@ -497,6 +497,25 @@ public class FormsResponseUtils
         boolean bIsOrOperator = controlGroup != null && LogicalOperator.OR.getLabel( ).equals( controlGroup.getLogicalOperator( ).getLabel( ) );
 
         return bIsOrOperator ? ( nValidControlsCount > 0 ) : ( nNotValidControlsCount == 0 );
+    }
+
+    /**
+     * Tells whether a control uses a disabled question. A disabled question is not displayed and has no response: a conditional display
+     * control on it cannot be met, otherwise the validators would accept the missing response ("vacuous truth") and display the question.
+     *
+     * @param control
+     *            the control
+     * @return {@code true} if one of the questions of the control is disabled, {@code false} otherwise
+     */
+    public static boolean isControlOnDisabledQuestion( Control control )
+    {
+        if ( control == null || CollectionUtils.isEmpty( control.getListIdQuestion( ) ) )
+        {
+            return false;
+        }
+
+        return control.getListIdQuestion( ).stream( ).map( QuestionHome::findByPrimaryKey )
+                .anyMatch( question -> question != null && question.getEntry( ) != null && question.getEntry( ).isDisabled( ) );
     }
 
     /**

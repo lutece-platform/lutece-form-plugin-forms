@@ -52,6 +52,14 @@ import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.LogicalOperator;
 import fr.paris.lutece.plugins.forms.business.Question;
+import fr.paris.lutece.plugins.forms.business.Form;
+import fr.paris.lutece.plugins.forms.business.QuestionHome;
+import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
+import fr.paris.lutece.plugins.genericattributes.business.EntryType;
+import fr.paris.lutece.plugins.genericattributes.business.Field;
+import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.test.LuteceTestCase;
 
@@ -64,6 +72,8 @@ public class FormsResponseUtilsTest extends LuteceTestCase
     private final List<Integer> _listCreatedFormDisplayIds = new ArrayList<>( );
     private final List<Integer> _listCreatedControlIds = new ArrayList<>( );
     private final List<Integer> _listCreatedControlGroupIds = new ArrayList<>( );
+    private final List<Integer> _listCreatedQuestionIds = new ArrayList<>( );
+    private final List<Integer> _listCreatedEntryIds = new ArrayList<>( );
 
     @AfterEach
     public void cleanup( )
@@ -101,8 +111,32 @@ public class FormsResponseUtilsTest extends LuteceTestCase
                 // best effort cleanup
             }
         }
+        for ( Integer nIdQuestion : _listCreatedQuestionIds )
+        {
+            try
+            {
+                QuestionHome.remove( nIdQuestion );
+            }
+            catch ( Exception e )
+            {
+                // best effort cleanup
+            }
+        }
+        for ( Integer nIdEntry : _listCreatedEntryIds )
+        {
+            try
+            {
+                EntryHome.remove( nIdEntry );
+            }
+            catch ( Exception e )
+            {
+                // best effort cleanup
+            }
+        }
         _listCreatedControlIds.clear( );
         _listCreatedControlGroupIds.clear( );
+        _listCreatedQuestionIds.clear( );
+        _listCreatedEntryIds.clear( );
         _listCreatedFormDisplayIds.clear( );
     }
 
@@ -366,31 +400,48 @@ public class FormsResponseUtilsTest extends LuteceTestCase
     }
 
     /**
-     * A conditional control using a disabled question is inactive : it is not met, even if the response satisfies it
+     * A conditional control on a disabled question is not met: the disabled question is not displayed and has no response, the
+     * question depending on it is hidden (before, the validator accepted the missing response and the question was displayed)
      */
     @Test
-    public void testInactiveCondition_QuestionIsHidden( )
+    public void testConditionOnDisabledQuestion_QuestionIsHidden( )
     {
         int nIdForm = IdGenerator.generateId( );
         Question targetQuestion = createQuestion( IdGenerator.generateId( ), IdGenerator.generateId( ) );
         FormDisplay formDisplay = createFormDisplay( nIdForm, targetQuestion );
 
-        Question controllingQuestion = createQuestion( IdGenerator.generateId( ), targetQuestion.getIdStep( ) );
-        createConditionalControl( formDisplay.getId( ), controllingQuestion.getId( ), VALIDATOR_NUMBER_SUPERIOR, "10", 0 );
-        ControlHome.updateConditionalControlsActivation( controllingQuestion.getId( ), false );
+        Question disabledQuestion = createPersistedQuestion( targetQuestion.getIdStep( ), true );
+        createConditionalControl( formDisplay.getId( ), disabledQuestion.getId( ), VALIDATOR_NUMBER_SUPERIOR, "10", 0 );
 
-        List<FormQuestionResponse> listResponses = Collections.singletonList( createResponse( controllingQuestion, "20" ) );
-
-        boolean bIsVisible = FormsResponseUtils.isQuestionConditionallyVisible( targetQuestion, listResponses, nIdForm );
+        boolean bIsVisible = FormsResponseUtils.isQuestionConditionallyVisible( targetQuestion, new ArrayList<>( ), nIdForm );
 
         assertFalse( bIsVisible );
     }
 
     /**
-     * In a OR group, an inactive condition is not met but does not prevent another met condition from displaying the question
+     * The same condition on an enabled question is met by a matching response
      */
     @Test
-    public void testOrGroup_InactiveConditionAndMetCondition_QuestionIsVisible( )
+    public void testConditionOnEnabledQuestion_QuestionIsVisible( )
+    {
+        int nIdForm = IdGenerator.generateId( );
+        Question targetQuestion = createQuestion( IdGenerator.generateId( ), IdGenerator.generateId( ) );
+        FormDisplay formDisplay = createFormDisplay( nIdForm, targetQuestion );
+
+        Question enabledQuestion = createPersistedQuestion( targetQuestion.getIdStep( ), false );
+        createConditionalControl( formDisplay.getId( ), enabledQuestion.getId( ), VALIDATOR_NUMBER_SUPERIOR, "10", 0 );
+
+        List<FormQuestionResponse> listResponses = Collections.singletonList( createResponse( enabledQuestion, "20" ) );
+
+        assertTrue( FormsResponseUtils.isQuestionConditionallyVisible( targetQuestion, listResponses, nIdForm ) );
+    }
+
+    /**
+     * In a OR group, a condition on a disabled question is not met but does not prevent another met condition from displaying the
+     * question
+     */
+    @Test
+    public void testOrGroup_ConditionOnDisabledQuestionAndMetCondition_QuestionIsVisible( )
     {
         int nIdForm = IdGenerator.generateId( );
         Question targetQuestion = createQuestion( IdGenerator.generateId( ), IdGenerator.generateId( ) );
@@ -398,17 +449,36 @@ public class FormsResponseUtilsTest extends LuteceTestCase
 
         int nIdControlGroup = createControlGroup( LogicalOperator.OR );
 
-        Question disabledQuestion = createQuestion( IdGenerator.generateId( ), targetQuestion.getIdStep( ) );
+        Question disabledQuestion = createPersistedQuestion( targetQuestion.getIdStep( ), true );
         Question controllingQuestion = createQuestion( IdGenerator.generateId( ), targetQuestion.getIdStep( ) );
         createConditionalControl( formDisplay.getId( ), disabledQuestion.getId( ), VALIDATOR_NUMBER_SUPERIOR, "10", nIdControlGroup );
         createConditionalControl( formDisplay.getId( ), controllingQuestion.getId( ), VALIDATOR_NUMBER_SUPERIOR, "10", nIdControlGroup );
-        ControlHome.updateConditionalControlsActivation( disabledQuestion.getId( ), false );
 
         List<FormQuestionResponse> listResponses = Collections.singletonList( createResponse( controllingQuestion, "20" ) );
 
-        boolean bIsVisible = FormsResponseUtils.isQuestionConditionallyVisible( targetQuestion, listResponses, nIdForm );
+        assertTrue( FormsResponseUtils.isQuestionConditionallyVisible( targetQuestion, listResponses, nIdForm ) );
+    }
 
-        assertTrue( bIsVisible );
+    /**
+     * In a AND group, a condition on a disabled question hides the question even when the other condition is met
+     */
+    @Test
+    public void testAndGroup_ConditionOnDisabledQuestionAndMetCondition_QuestionIsHidden( )
+    {
+        int nIdForm = IdGenerator.generateId( );
+        Question targetQuestion = createQuestion( IdGenerator.generateId( ), IdGenerator.generateId( ) );
+        FormDisplay formDisplay = createFormDisplay( nIdForm, targetQuestion );
+
+        int nIdControlGroup = createControlGroup( LogicalOperator.AND );
+
+        Question disabledQuestion = createPersistedQuestion( targetQuestion.getIdStep( ), true );
+        Question controllingQuestion = createQuestion( IdGenerator.generateId( ), targetQuestion.getIdStep( ) );
+        createConditionalControl( formDisplay.getId( ), disabledQuestion.getId( ), VALIDATOR_NUMBER_SUPERIOR, "10", nIdControlGroup );
+        createConditionalControl( formDisplay.getId( ), controllingQuestion.getId( ), VALIDATOR_NUMBER_SUPERIOR, "10", nIdControlGroup );
+
+        List<FormQuestionResponse> listResponses = Collections.singletonList( createResponse( controllingQuestion, "20" ) );
+
+        assertFalse( FormsResponseUtils.isQuestionConditionallyVisible( targetQuestion, listResponses, nIdForm ) );
     }
 
     // ---------------------------------------------------------------------
@@ -454,6 +524,40 @@ public class FormsResponseUtilsTest extends LuteceTestCase
      * Persists a {@code ControlType.CONDITIONAL} control targeting the given FormDisplay,
      * controlled by the given question id.
      */
+    /**
+     * Persists a question and its entry, disabled or not (field "disabled" of the entry), so that the question is found by
+     * QuestionHome with its entry
+     */
+    private Question createPersistedQuestion( int nIdStep, boolean bDisabled )
+    {
+        Entry entry = new Entry( );
+        EntryType entryType = new EntryType( );
+        entryType.setIdType( 1 );
+        entry.setEntryType( entryType );
+        entry.setResourceType( Form.RESOURCE_TYPE );
+        EntryHome.create( entry );
+        _listCreatedEntryIds.add( entry.getIdEntry( ) );
+
+        Field fieldDisabled = new Field( );
+        fieldDisabled.setParentEntry( entry );
+        fieldDisabled.setCode( IEntryTypeService.FIELD_DISABLED );
+        fieldDisabled.setValue( String.valueOf( bDisabled ) );
+        FieldHome.create( fieldDisabled );
+
+        Question question = new Question( );
+        question.setTitle( "Controlling question" );
+        question.setCode( "controlling_" + entry.getIdEntry( ) );
+        question.setDescription( "" );
+        question.setColumnTitle( "Controlling question" );
+        question.setIdStep( nIdStep );
+        question.setIdEntry( entry.getIdEntry( ) );
+        QuestionHome.create( question );
+        _listCreatedQuestionIds.add( question.getId( ) );
+        question.setIsVisible( true );
+
+        return question;
+    }
+
     private Control createConditionalControl( int nIdFormDisplayTarget, int nIdControllingQuestion, String strValidatorName, String strValue,
             int nIdControlGroup )
     {

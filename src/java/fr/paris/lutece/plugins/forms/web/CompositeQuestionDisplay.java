@@ -65,6 +65,7 @@ import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.plugins.forms.util.FormsResponseUtils;
 import fr.paris.lutece.plugins.forms.util.FormsUtils;
 import fr.paris.lutece.plugins.forms.validation.IValidator;
 import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
@@ -262,7 +263,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay, Serializable
                         nIdControlGroup = control.getIdControlGroup();
                     }
                     // A condition on a disabled question cannot be met : evaluated server side, like the controls on another step
-                    if ( !control.isActive( ) )
+                    if ( FormsResponseUtils.isControlOnDisabledQuestion( control ) )
                     {
                         nNotValidControlsCount++;
                         listOtherStepControl.add( control );
