@@ -242,6 +242,14 @@ public class FormResponseXPage extends MVCApplication
         }
 
         Locale locale = getLocale( request );
+
+        if ( !_workflowService.canProcessAction( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, formResponse.getFormId( ), request, false, user ) )
+        {
+            // The action is not available (any more) in the current state of the response, or not to this user
+            addError( MESSAGE_ACTION_ERROR, locale );
+            return redirect( request, VIEW_FORM_RESPONSE, FormsConstants.PARAMETER_ID_RESPONSE, nIdFormResponse );
+        }
+
         if ( _workflowService.isDisplayTasksForm( nIdAction, locale ) )
         {
         	_formsAsynchronousUploadHandler.removeSessionFiles( request.getSession( ) );
@@ -276,6 +284,7 @@ public class FormResponseXPage extends MVCApplication
             else
             {
                 AppLogService.error( "Error processing action for id response '" + nIdFormResponse + "' - cause : " + e.getMessage( ), e );
+                addError( MESSAGE_ACTION_ERROR, locale );
             }
         }
         // Redirect to the correct view
@@ -332,6 +341,7 @@ public class FormResponseXPage extends MVCApplication
                 else
                 {
                     AppLogService.error( "Error processing action for record " + nIdFormResponse, e );
+                    addError( MESSAGE_ACTION_ERROR, locale );
                 }
             }
         }

@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.forms.web;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -46,6 +47,7 @@ import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.portal.service.datastore.DatastoreService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.util.mvc.utils.MVCMessage;
 import fr.paris.lutece.test.LuteceTestCase;
 
 /**
@@ -147,5 +149,22 @@ public class FormResponseViewTemplateTest extends LuteceTestCase
         DatastoreService.removeData( DSKEY_LABEL_INFO );
         strHtml = render( new HashMap<>( ) );
         assertFalse( strHtml.contains( "DS Value Missing" ), strHtml );
+    }
+
+    /**
+     * The errors and infos of the XPage, added by a refused or failed workflow action, are displayed (FP-04)
+     */
+    @Test
+    public void testErrorsAndInfosAreDisplayed( )
+    {
+        Map<String, Object> model = new HashMap<>( );
+        model.put( "errors", List.of( new MVCMessage( "FP04 erreur <script>" ) ) );
+        model.put( "infos", List.of( new MVCMessage( "FP04 info" ) ) );
+
+        String strHtml = render( model );
+
+        assertTrue( strHtml.contains( "FP04 erreur &lt;script&gt;" ), strHtml );
+        assertTrue( strHtml.contains( "alert-danger" ), strHtml );
+        assertTrue( strHtml.contains( "FP04 info" ), strHtml );
     }
 }
