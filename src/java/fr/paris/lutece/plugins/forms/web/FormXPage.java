@@ -83,6 +83,7 @@ import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.upload.MultipartItem;
+import fr.paris.lutece.portal.business.accesscontrol.AccessControlSessionData;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.service.util.BeanUtils;
@@ -117,6 +118,7 @@ public class FormXPage extends MVCApplication
     protected static final String MESSAGE_LIST_FORMS_PAGETITLE = "forms.xpage.listForms.pagetitle";
     protected static final String MESSAGE_LIST_FORMS_PATHLABEL = "forms.xpage.listForms.pathlabel";
     private static final String MESSAGE_WARNING_LOST_SESSION = "forms.warning.lost.session";
+    private static final String MESSAGE_ERROR_ACCESS_CONTROL_NOT_PASSED = "forms.error.form.accessControlNotPassed";
     private static final String MESSAGE_WARNING_CAPTCHA = "forms.warning.wrong.captcha";
     private static final String MESSAGE_WARNING_INACTIVE_STATE_BYPASSED = "forms.warning.inactive.state.bypassed";
     private static final String MESSAGE_ERROR_TOKEN = "Invalid security token";
@@ -923,7 +925,41 @@ public class FormXPage extends MVCApplication
                 SiteMessageService.setMessage( request, FormsConstants.MESSAGE_ERROR_INACTIVE_FORM, SiteMessage.TYPE_INFO );
             }
         }
+        checkAccessControlPassed( request, form );
         return form;
+    }
+
+    /**
+     * The actions of a form protected by an access control are only accepted once the visitor has passed it, as the display of a step requires
+     * (a response loaded from a backup is exempted, as on the step view)
+     *
+     * @param request
+     *            The Http request
+     * @param form
+     *            The form
+     * @throws SiteMessageException
+     *             if the access control of the form has not been passed
+     */
+    private void checkAccessControlPassed( HttpServletRequest request, Form form ) throws SiteMessageException
+    {
+        if ( !_accessControlService.isAvailable( ) || bypassInactiveState( form, request )
+                || ( _formResponseManager != null && _formResponseManager.getFormResponse( ).isFromSave( ) )
+                || _accessControlService.findAccessControlForResource( form.getId( ), Form.RESOURCE_TYPE ) == -1 )
+        {
+            return;
+        }
+        AccessControlSessionData sessionData = ( request.getSession( false ) != null )
+                ? (AccessControlSessionData) request.getSession( false ).getAttribute( AccessControlSessionData.getSessionKey( form.getId( ), Form.RESOURCE_TYPE ) )
+                : null;
+        if ( sessionData == null || !sessionData.isAccessControlResult( ) )
+        {
+            UrlItem url = new UrlItem( AppPathService.getPortalUrl( ) );
+            url.addParameter( MVCUtils.PARAMETER_PAGE, XPAGE_NAME );
+            url.addParameter( MVCUtils.PARAMETER_VIEW, VIEW_STEP );
+            url.addParameter( FormsConstants.PARAMETER_ID_FORM, form.getId( ) );
+            url.addParameter( FormsConstants.PARAMETER_INIT, String.valueOf( true ) );
+            SiteMessageService.setMessage( request, MESSAGE_ERROR_ACCESS_CONTROL_NOT_PASSED, SiteMessage.TYPE_STOP, url.getUrl( ) );
+        }
     }
 
     /**
