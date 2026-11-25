@@ -340,7 +340,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         }
         catch( CodeAlreadyExistsException e )
         {
-            AppLogService.error( "{}{}", ERROR_CODE_EXISTS, e.getCode( ), e );
+            AppLogService.debug( "{}{}", ERROR_CODE_EXISTS, e.getCode( ) );
             addError( ERROR_QUESTION_CODE_ALREADY_EXISTS, getLocale( ) );
         }
         return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
@@ -409,7 +409,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         }
         catch( CodeAlreadyExistsException e )
         {
-            AppLogService.error( ERROR_CODE_EXISTS, e );
+            AppLogService.debug( "{}{}", ERROR_CODE_EXISTS, e.getCode( ) );
             addError( ERROR_QUESTION_CODE_ALREADY_EXISTS, getLocale( ) );
             return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
         }
@@ -490,7 +490,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         }
         catch( CodeAlreadyExistsException e )
         {
-            AppLogService.error( "{}{}", ERROR_CODE_EXISTS, e.getCode( ), e );
+            AppLogService.debug( "{}{}", ERROR_CODE_EXISTS, e.getCode( ) );
             addError( ERROR_QUESTION_CODE_ALREADY_EXISTS, getLocale( ) );
         }
         return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
@@ -541,7 +541,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         }
         catch( CodeAlreadyExistsException e )
         {
-            AppLogService.error( ERROR_CODE_EXISTS, e );
+            AppLogService.debug( "{}{}", ERROR_CODE_EXISTS, e.getCode( ) );
             addError( ERROR_QUESTION_CODE_ALREADY_EXISTS, getLocale( ) );
         }
         return redirect( request, VIEW_MODIFY_QUESTION, FormsConstants.PARAMETER_ID_STEP, _step.getId( ), FormsConstants.PARAMETER_ID_QUESTION,
