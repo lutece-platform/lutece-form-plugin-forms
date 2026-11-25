@@ -35,7 +35,9 @@ package fr.paris.lutece.plugins.forms.service.cache;
 
 import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.Form;
+import fr.paris.lutece.plugins.forms.service.FormsPlugin;
 import fr.paris.lutece.plugins.genericattributes.business.EntryEvent;
+import fr.paris.lutece.plugins.genericattributes.business.EntryTypeEvent;
 import fr.paris.lutece.portal.service.cache.AbstractCacheableService;
 import fr.paris.lutece.portal.service.cache.CacheConfigUtil;
 import fr.paris.lutece.portal.service.util.AppLogService;
@@ -327,6 +329,20 @@ public class FormsCacheService extends AbstractCacheableService<String, Object>
         // No test of the status: the reset reaches the cache shared with the other instances when this one has it
         // disabled
         if ( Form.RESOURCE_TYPE.equals( event.getResourceType( ) ) )
+        {
+            resetCache( );
+        }
+    }
+
+    /**
+     * Process an entry type event: the cached questions carry a copy of the entry type of their entry (its regular expression, for instance)
+     *
+     * @param event
+     *            The event to process
+     */
+    public void processEntryTypeEvent( @Observes EntryTypeEvent event )
+    {
+        if ( isCacheEnable( ) && FormsPlugin.PLUGIN_NAME.equals( event.getPlugin( ) ) )
         {
             resetCache( );
         }

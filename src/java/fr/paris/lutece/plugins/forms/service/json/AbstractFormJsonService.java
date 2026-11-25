@@ -74,8 +74,10 @@ import fr.paris.lutece.plugins.forms.service.IFormDatabaseService;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.IMapProvider;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.DerivedEntryTypeService;
 import fr.paris.lutece.plugins.referencelist.business.ReferenceItemHome;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
@@ -299,6 +301,8 @@ public abstract class AbstractFormJsonService
             int oldIdQuestion = question.getId( );
 
             Entry entry = question.getEntry( );
+            // The ids of the derived entry types differ from one instance to the other
+            entry.setEntryType( CDI.current( ).select( DerivedEntryTypeService.class ).get( ).resolveImportedEntryType( entry.getEntryType( ) ) );
             entry.setIdResource( newIdForm );
             entry.setResourceType( Form.RESOURCE_TYPE );
             _formDatabaseService.createEntry( entry );

@@ -27,6 +27,7 @@
 	<@cInput name=idName class=( fieldWidth gt 0 )?then( 'form-control mw-100', 'form-control' ) placeholder=placeholder required=entry.mandatory! html5Required=false value=fieldValue?string maxlength=field_max_size_number?number helpMsg=helpMsg errorMsg=errorMsg width=fieldWidth autocomplete=entryAutocomplete />
 	<#if imageCode?has_content>${imageCode!}</#if>
 </@cField>
+<#include "/skin/plugins/forms/entries/fill_entry_regex_control.html" />
 <#assign confirmField=getFieldByCode( entry, "confirm_field")>
 <#if confirmField.value?boolean >
 <#assign idName =  buildEntryName( entry, entry_iteration_number )>
@@ -43,3 +44,11 @@
 </#if>
 </#if>
 </@cTpl>
+<#if !formsWidthScript??><#global formsWidthScript = true />
+<#-- The width of a text field is carried by data-forms-width (htmlAttributes refuses a style in params) and set here -->
+<script>
+( ( apply ) => { if ( document.readyState === 'loading' ) { document.addEventListener( 'DOMContentLoaded', apply ); } else { apply( ); } } )( ( ) => {
+	document.querySelectorAll( '[data-forms-width]' ).forEach( ( e ) => { e.style.width = e.dataset.formsWidth + 'px'; } );
+} );
+</script>
+</#if>
