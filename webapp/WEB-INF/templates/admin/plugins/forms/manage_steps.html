@@ -221,22 +221,3 @@ document.addEventListener('mouseup', function (e) {
 	document.querySelectorAll('[id^="step_"]').forEach(card => card.classList.remove('linking-start', 'linking-target'));
 });
 </script>
-<#if template_provider??>
-	<@modal id='importTemplateModal'>
-		<@modalHeader modalTitle='#i18n{forms.manage_steps.buttonImportTemplate}' />
-		<@modalBody>
-			<@tform class='form' method='post' name='upload_form' action='jsp/admin/plugins/forms/ManageSteps.jsp'>
-				<@input type='hidden' name='token' value='${token}' />
-				<@input type='hidden' name='id_form' value='${form.id}' />
-				<@formGroup labelKey='#i18n{forms.manageForm.labelStepTemplates}'>
-					<@select name='id_template' items=template_provider.stepTemplateList />
-				</@formGroup>
-				<@formGroup>
-					<@button type='submit' name='action_doImportTemplate' buttonIcon='check' title='#i18n{portal.admin.message.buttonValidate}' />
-					<@button type='cancel' name='action_doCancelImport' buttonIcon='times' title='#i18n{portal.admin.message.buttonCancel}' cancel=true />
-				</@formGroup>
-			</@tform>
-		</@modalBody>
-	</@modal>
-</#if>
-<@scrollTopBtn />
