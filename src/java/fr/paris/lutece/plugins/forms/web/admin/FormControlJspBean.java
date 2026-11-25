@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.web.admin;
 
+import java.util.Objects;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -83,6 +84,7 @@ import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import fr.paris.lutece.portal.util.mvc.utils.MVCUtils;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.web.cdi.mvc.Models;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
@@ -125,6 +127,8 @@ public class FormControlJspBean extends AbstractJspBean
     private static final String VIEW_MODIFY_CONTROL = "modifyControl";
     private static final String VIEW_MODIFY_CONDITION_CONTROL = "modifyConditionControl";
     private static final String VIEW_CONFIRM_REMOVE_CONTROL = "confirmRemoveControl";
+    // view of FormQuestionJspBean (ManageQuestions.jsp), return of the removal of an orphan control
+    private static final String VIEW_MANAGE_QUESTIONS = "manageQuestions";
 
     // Actions
     private static final String ACTION_MODIFY_CONTROL = "modifyControl";
@@ -764,11 +768,57 @@ public class FormControlJspBean extends AbstractJspBean
         }
         else
         {
+            // A control whose target (transition, display) no longer exists: removed as well, back to the questions it reads
+            String strOrphanReturnUrl = ( controlToRemove != null ) ? removeOrphanControl( request, controlToRemove ) : null;
+            if ( strOrphanReturnUrl != null )
+            {
+                return redirect( request, strOrphanReturnUrl );
+            }
             addError( ERROR_CONTROL_REMOVED, getLocale( ) );
             return redirectToViewManageForm( request );
         }
 
         return redirect( request, getControlReturnUrl( request ) );
+    }
+
+    /**
+     * Removes a control whose target no longer exists (LUT-35553 refused it, leaving the removal to SQL). The form of the control is the one of the
+     * questions it reads: processController checked the rights and the workgroup of the user on that form (ReferencedFormsResolver); a control that
+     * reads no existing question is not removed, nothing telling which form it belongs to.
+     *
+     * @param request
+     *            the request
+     * @param control
+     *            the control to remove
+     * @return the URL of the questions of the step of the first question the control reads, or null if the control was not removed
+     */
+    private String removeOrphanControl( HttpServletRequest request, Control control )
+    {
+        Step step = null;
+        if ( control.getListIdQuestion( ) != null )
+        {
+            step = control.getListIdQuestion( ).stream( ).sorted( ).map( QuestionHome::findByPrimaryKey ).filter( Objects::nonNull )
+                    .map( question -> StepHome.findByPrimaryKey( question.getIdStep( ) ) ).filter( Objects::nonNull ).findFirst( ).orElse( null );
+        }
+        if ( step == null )
+        {
+            return null;
+        }
+
+        ControlHome.remove( control.getId( ) );
+        if ( ControlType.CONDITIONAL.getLabel( ).equals( control.getControlType( ) )
+                && ControlHome.getControlCountByControlTargetAndType( control.getIdControlTarget( ), ControlType.CONDITIONAL ) == 0 )
+        {
+            ControlGroupHome.remove( control.getIdControlGroup( ) );
+        }
+        _controlRemovedEvent.select( ControlEvent.class, new TypeQualifier( EventAction.REMOVE ) ).fire( new ControlEvent( control, request ) );
+        clearAttributes( );
+
+        UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + FormsConstants.JSP_MANAGE_QUESTIONS );
+        url.addParameter( MVCUtils.PARAMETER_VIEW, VIEW_MANAGE_QUESTIONS );
+        url.addParameter( FormsConstants.PARAMETER_ID_STEP, step.getId( ) );
+        url.addParameter( FormsConstants.PARAMETER_INFO_KEY, INFO_CONTROL_REMOVED );
+        return url.getUrl( );
     }
 
     /**
