@@ -1,150 +1,203 @@
-<@pageContainer params={"data-feature": "#i18n{forms.adminFeature.manageForms.name}"} class='forms-multiview' >
-    <@pageColumn>
-		<@pageHeader id='multiviewFormsHeader' title='#i18n{forms.multiviewForms.boxTitle}' />
-		<@formBreadCrumb>
-			<@breadcrumbItem>#i18n{forms.multiviewForms.boxTitle}</@breadcrumbItem>
-		</@formBreadCrumb>
-		<@row>
-			<@columns xs=12 md=3 lg=2 class='mt-2'>
-				<@messages errors=errors warnings=warnings />
-				<@tform action='jsp/admin/plugins/forms/MultiviewForms.jsp' id='searchForm' type='flex' class='gap-2 flex-column'>
+<#assign selectedFormValue = '' />
+<#list form_filter_list![] as f><#if ( f.parameterName!'' ) == 'id_form'><#assign selectedFormValue = f.value!'' /></#if></#list>
+<#assign hasSelectedForm = selectedFormValue?has_content && selectedFormValue != '-1' />
+<#-- With a single form the form filter is set automatically and shows no selector: it is not a filter the user chose -->
+<#assign hasActiveFilter = false />
+<#list form_filter_list![] as f><#assign filterValue = f.value!'' /><#if filterValue?has_content && filterValue != '-1' && ( ( f.parameterName!'' ) != 'id_form' || ( f.template!'' )?contains( '<select' ) )><#assign hasActiveFilter = true /></#if></#list>
+<@pageContainer params={"data-feature": "#i18n{forms.adminFeature.manageForms.name}"} class='forms-multiview'>
+	<@pageColumn>
+		<#assign pageTitle><span class="avatar avatar-sm bg-purple-lt me-2"><@icon style='message-2' /></span>#i18n{forms.multiviewForms.title}</#assign>
+		<@pageHeader id='multiviewFormsHeader' title=pageTitle toolsClass='gap-2'>
+			<#if multiviewExportAction??>
+			<@div class='dropdown'>
+				<@button id='btn_export' class='justify-content-start' title='#i18n{forms.adminFeature.multiviewForms.export.buttonName}' tooltip=hasSelectedForm?then( '', '#i18n{forms.export.error.filter}' ) buttonIcon='download' disabled=( !table_template?has_content || !hasSelectedForm ) dropdownMenu=true>
+					<@p class='dropdown-header'>#i18n{forms.multiviewForms.export.menuTitle}</@p>
+					<hr class="dropdown-divider">
+					<#list format_export_list![] as format>
+					<#assign formatName = ( format.name!'' )?upper_case>
+					<#if formatName?contains('PDF')>
+						<#assign formatIcon = 'file-type-pdf'>
+					<#elseif formatName?contains('CSV')>
+						<#assign formatIcon = 'file-type-csv'>
+					<#elseif formatName?contains('ZIP')>
+						<#assign formatIcon = 'file-zip'>
+					<#else>
+						<#assign formatIcon = 'file'>
+					</#if>
+					<@button type='button' class='dropdown-item justify-content-start' params={"data-format-export": "${format.code}"} buttonIcon=formatIcon title=format.name />
+					</#list>
+				</@button>
+			</@div>
+			</#if>
+			<#if multiviewConfigAction??>
+			<@aButton id='btn_multiview_config' color='light' href='${multiviewConfigAction.url!}' title='${multiviewConfigAction.name}' buttonIcon='settings' hideTitle=['all'] />
+			</#if>
+		</@pageHeader>
+		<@messages errors=errors![] warnings=warnings![] />
+		<#if export_success?has_content>
+		<@alert color='success' iconTitle='file-download' dismissible=true title='#i18n{forms.export.async.message}'>
+			<@aButton href='jsp/admin/plugins/filegenerator/ManageMyFiles.jsp' target='_blank' color='light' size='sm' title='#i18n{forms.multiviewForms.export.linkMyFiles}' buttonIcon='external-link' />
+		</@alert>
+		</#if>
+		<@tabs>
+			<@tabList>
+			<#list form_panel_list![] as form_panel><#if form_panel.template??>${form_panel.template?no_esc}</#if></#list>
+			</@tabList>
+			<@div id='multi-form-list' class='p-3' params={"data-reorder-token": "${reorder_columns_token!}"}>
+				<@tform action='jsp/admin/plugins/forms/MultiviewForms.jsp' id='searchForm'>
 					<#include 'includes/include_manage_multiview_forms_header.html'>
 				</@tform>
-			</@columns>
-			<@columns xs=12 md=9 lg=10>
-				<@tabs>
-					<@tabList>
-					<#list form_panel_list as form_panel><#if form_panel.template??>${form_panel.template?no_esc}</#if></#list>
-					</@tabList>
-				<#if table_template?has_content>
-					<@div id='multi-form-list' class='p-3'>
-					${table_template}												
-					<@paginationAdmin paginator=paginator combo=1 showcount=0 />
-					</@div>
-				<#else>
-					<@empty title='#i18n{forms.multiviewForms.noFormResponses}' subtitle=' ' iconName='notes-off' />
-				</#if>
-				</@tabs>
-			</@columns>
-		</@row>
+			<#if table_template?has_content>
+				<@div class='d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2'>
+					<@span class='text-secondary' params={"role": "status"}><@span class='fw-semibold text-body'>${paginator.itemsCount}</@span> #i18n{forms.multiviewForms.labelResponses}</@span>
+				</@div>
+				<#-- The table runs from edge to edge of the card, like the forms list -->
+				<@div class='forms-multiview-table mx-n3 border-top'>${table_template?no_esc}</@div>
+				<#if paginator.itemsCount gte 10><@div class='mt-3'><@paginationAdmin paginator=paginator combo=1 showcount=0 /></@div></#if>
+				<script>
+				sessionStorage.setItem('multiview_offset', '${( paginator.pageCurrent - 1 ) * paginator.itemsPerPage}');
+				sessionStorage.setItem('multiview_total', '${paginator.itemsCount}');
+				</script>
+			<#elseif hasActiveFilter>
+				<@empty title='#i18n{forms.multiviewForms.noFormResponses}' subtitle='#i18n{forms.multiviewForms.noFormResponses.filtered}' iconName='filter-off'>
+					<@div class="empty-action"><@button color='primary' class='btn-reset-filter' title='#i18n{forms.multiviewForms.labelResetFilters}' buttonIcon='filter-x' /></@div>
+				</@empty>
+			<#else>
+				<@empty title='#i18n{forms.multiviewForms.noFormResponses}' subtitle='#i18n{forms.multiviewForms.noFormResponses.panel}' iconName='notes-off' />
+			</#if>
+			</@div>
+		</@tabs>
 	</@pageColumn>
 </@pageContainer>
 <script src="themes/admin/shared/plugins/forms/js/multiview/forms-multiview.js"></script>
 <@dateFilterJs />
 <@scrollTopBtn />
-<@formsToastr infos=infos />
+<@formsToastr infos=export_success?has_content?then( [], infos![] ) />
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-	// Set body class for multiview forms page
-	document.body.classList.add('overflow-y-hidden');
+	const form = document.getElementById('searchForm');
+	if (!form) return;
 
-	// Initialize the dropdown button
-	// The form selector only exists when the user may see at least two forms
-	const formSelector = document.querySelector('.forms-filter #id_form');
-	if ( formSelector && formSelector.options.length > 0 ) formSelector.options[0].textContent = '${i18n('forms.filter.option.labelAllForms')?js_string?no_esc}';
+	// Labels come from data attributes: a translation holding a quote cannot break the script
+	const labels = document.getElementById('multiview-active-filters').dataset;
 
-	// Reset filter button - check if any filter is set
-	function hasActiveFilters() {
-		const form = document.getElementById('searchForm');
-		if (!form) return false;
-		let hasFilter = false;
-		form.querySelectorAll('input:not([type="submit"]):not([type="button"]):not([type="hidden"])').forEach(input => {
-			if ((input.type === 'checkbox' || input.type === 'radio') && input.checked) {
-				hasFilter = true;
-			} else if (input.type !== 'checkbox' && input.type !== 'radio' && input.value.trim() !== '') {
-				hasFilter = true;
-			}
-		});
-		form.querySelectorAll('select').forEach(select => {
-			if (select.selectedIndex > 0) {
-				hasFilter = true;
-			}
-		});
-		form.querySelectorAll('textarea').forEach(textarea => {
-			if (textarea.value.trim() !== '') {
-				hasFilter = true;
-			}
-		});
-		return hasFilter;
+	const formSelector = form.querySelector('.forms-filter #id_form');
+	if (formSelector && formSelector.options.length > 0) {
+		formSelector.options[0].textContent = labels.labelAllForms;
 	}
 
-	function toggleResetFilterButtons() {
-		const show = hasActiveFilters();
-		document.querySelectorAll('.btn-reset-filter').forEach(btn => {
-			btn.style.display = show ? '' : 'none';
-		});
-	}
-
-	// Initial visibility check
-	toggleResetFilterButtons();
-
-	// Reset filter button click handler
-	document.querySelectorAll('.btn-reset-filter').forEach(btn => {
-		btn.addEventListener('click', function (e) {
-			e.preventDefault();
-			const form = document.getElementById('searchForm');
-			if (form) {
-				form.querySelectorAll('input:not([type="submit"]):not([type="button"]):not([type="hidden"])').forEach(input => {
-					if (input.type === 'checkbox' || input.type === 'radio') {
-						input.checked = false;
-					} else {
-						input.value = '';
-					}
-				});
-				form.querySelectorAll('select').forEach(select => {
-					select.selectedIndex = 0;
-				});
-				form.querySelectorAll('textarea').forEach(textarea => {
-					textarea.value = '';
-				});
-				form.submit();
-			}
+	// Export: the chosen format and the action travel with the search form
+	document.querySelectorAll('[data-format-export]').forEach(btn => {
+		btn.addEventListener('click', () => {
+			const formatField = document.getElementById('format_export');
+			if (formatField) formatField.value = btn.dataset.formatExport;
+			const action = document.createElement('input');
+			action.type = 'hidden';
+			action.name = 'action_doExportResponses';
+			action.value = btn.dataset.formatExport;
+			form.appendChild(action);
+			form.submit();
 		});
 	});
 
-	// The checkboxes of the filter work with the keyboard too: set once the page is loaded, not on a mouse press
-	if( document.getElementById("${( filter_name! )?js_string?no_esc}_button") ){
-		setInputAndListener("${( filter_name! )?js_string?no_esc}");
+	// Visible filter fields, grouped by name (a checkbox group is one filter)
+	function filterFields() {
+		const fields = new Map();
+		form.querySelectorAll('input:not([type="hidden"]):not([type="submit"]):not([type="button"]), select').forEach(el => {
+			if (!el.name) return;
+			if (!fields.has(el.name)) fields.set(el.name, []);
+			fields.get(el.name).push(el);
+		});
+		return fields;
 	}
 
-	<#if export_success?has_content>
-	const filegenerator = 'jsp/admin/plugins/filegenerator/ManageMyFiles.jsp';
-	const exportEl = document.querySelector('.forms-filter:has( #format_export');
-	if (exportEl) {
-		const p = document.createElement('p');
-		p.className = 'text-primary text-wrap mt-3'; // ms-auto pushes it to the right in Bootstrap 5
-		const a = document.createElement('a');
-		a.className = 'btn btn-outline-secondary';
-		a.target='_blank';
-		a.setAttribute('style','white-space:wrap;');
-		a.href = filegenerator;
-		a.textContent = "${i18n('forms.export.async.message')?js_string?no_esc}";
-		const i = document.createElement('i');
-		i.className = 'ti ti-external-link ms-2';
-		i.setAttribute('aria-hidden', 'true');
-		a.appendChild(i);
-		p.appendChild(a);
-		exportEl.appendChild(p);
+	function labelOf(name, el) {
+		const label = form.querySelector('label[for="' + CSS.escape(el.id || name) + '"]') || form.querySelector('label[for="' + CSS.escape(name) + '"]');
+		return label ? label.textContent.trim() : name;
 	}
-	</#if>
 
+	function valueOf(elements) {
+		const first = elements[0];
+		if (first.tagName === 'SELECT') {
+			return first.selectedIndex > 0 && first.value !== '-1' ? first.options[first.selectedIndex].textContent.trim() : '';
+		}
+		if (first.type === 'checkbox' || first.type === 'radio') {
+			return elements.filter(e => e.checked && !e.id.startsWith('all_'))
+				.map(e => { const l = form.querySelector('label[for="' + CSS.escape(e.id) + '"]'); return l ? l.textContent.trim() : e.value; })
+				.join(', ');
+		}
+		return first.value.trim();
+	}
+
+	function clearField(name, elements) {
+		elements.forEach(e => {
+			if (e.tagName === 'SELECT') e.selectedIndex = 0;
+			else if (e.type === 'checkbox' || e.type === 'radio') e.checked = false;
+			else e.value = '';
+		});
+		// Date range filters keep their bounds in two hidden fields
+		['_from', '_to'].forEach(suffix => {
+			const bound = document.getElementById(name + suffix);
+			if (bound) bound.value = '';
+		});
+	}
+
+	function clearAll() {
+		filterFields().forEach((elements, name) => clearField(name, elements));
+	}
+
+	// Active filters as removable chips
+	const chipsBox = document.getElementById('multiview-active-filters');
+	const chipsList = document.getElementById('multiview-active-filters-list');
+	let activeCount = 0;
+	filterFields().forEach((elements, name) => {
+		const value = valueOf(elements);
+		if (!value) return;
+		activeCount++;
+		const chip = document.createElement('span');
+		chip.className = 'badge bg-primary-lt text-primary d-inline-flex align-items-center gap-1 fs-5 fw-normal';
+		chip.textContent = labelOf(name, elements[0]) + ' : ' + value;
+		const remove = document.createElement('button');
+		remove.type = 'button';
+		remove.className = 'btn-close btn-close-sm ms-1';
+		remove.setAttribute('aria-label', labels.labelRemove + ' ' + chip.textContent);
+		remove.addEventListener('click', () => { clearField(name, elements); form.submit(); });
+		chip.appendChild(remove);
+		chipsList.appendChild(chip);
+	});
+	if (chipsBox && activeCount > 0) chipsBox.classList.remove('d-none');
+
+	document.querySelectorAll('.btn-reset-filter').forEach(btn => {
+		if (activeCount === 0 && btn.closest('.empty') === null) btn.hidden = true;
+		btn.addEventListener('click', e => {
+			e.preventDefault();
+			clearAll();
+			form.submit();
+		});
+	});
+
+	// Checkbox dropdown filters: submitted by the search button or the apply button of the filters modal
+	document.querySelectorAll('.dropdown-select[id$="_button"]').forEach(btn => {
+		setInputAndListener(btn.id.replace(/_button$/, ''), labels);
+	});
 });
 
-function setInputAndListener(filterName) {
-	const checkboxes = document.getElementById(filterName + "_checkboxes_group").querySelectorAll('input[type=checkbox]');
+function setInputAndListener(filterName, labels) {
+	const group = document.getElementById(filterName + "_checkboxes_group");
+	if (!group) return;
+	const checkboxes = group.querySelectorAll('input[type=checkbox]');
 	let allChecked = true;
 	for (let i = 0; i < checkboxes.length; i++) {
 		let checkbox = checkboxes[i];
 		if (checkbox.name === filterName) {
 			if (i !== 0 && allChecked && !checkbox.checked) {
 				allChecked = false;
-				document.getElementById(filterName + "_select_all_filters").innerText = "${i18n('forms.multiviewForms.form_filter.select_all')?js_string?no_esc}";
-
+				document.getElementById(filterName + "_select_all_filters").innerText = labels.labelSelectAll;
 			}
 			if (i === checkboxes.length - 1 && allChecked) {
 				checkboxes[0].value = "";
 				checkboxes[0].name = "";
-				document.getElementById(filterName + "_select_all_filters").innerText = "${i18n('forms.multiviewForms.form_filter.unselect_all')?js_string?no_esc}";
+				document.getElementById(filterName + "_select_all_filters").innerText = labels.labelUnselectAll;
 			}
 			// No submission on change (a change of context on input): the filter button submits the form
 			checkbox.addEventListener('change', function (ev) {

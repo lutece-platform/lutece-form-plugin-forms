@@ -3,113 +3,131 @@
 <#if questions_list?has_content><#list questions_list as question_item><#if question_item.id = question.id><#return true></#if></#list></#if>
 <#return false>
 </#function>
+<#function stepIdsOf questions>
+<#local ids = [] />
+<#list questions as question><#if !ids?seq_contains(question.step.id)><#local ids = ids + [ question.step.id ] /></#if></#list>
+<#return ids>
+</#function>
+<#macro helpHeader label help>
+<@span params={"data-bs-toggle": "tooltip", "title": "${help}"}>${label} <@icon style='help-circle' class='text-secondary' /></@span>
+</#macro>
+<#assign bc>
+<@formBreadCrumb><@breadcrumbItem>${form.title!}</@breadcrumbItem></@formBreadCrumb>
+</#assign>
 <@pageContainer>
-    <@pageColumn>
-		<@pageHeader title='${form.title!}' />
-		<@box>
-			<@boxBody>
-				<@formBreadCrumb><@breadcrumbItem>${form.title!}</@breadcrumbItem></@formBreadCrumb>
-				<@formTabs tab='multiview'>
-					<@row>
-						<@columns sm=2 class='mt-5'>
-							<@tabList vertical=true class='nav-segmented nav-segmented-vertical'>
-								<@tabLink id='multiview-1-tab' tabIcon='settings-question' class='w-100' active=true href='#multiview-1' title='#i18n{forms.modify_form.multiview.config.display}' />
-								<@tabLink id='multiview-2-tab' tabIcon='filter-question' class='w-100' href='#multiview-2' title='#i18n{forms.modify_form.multiview.config.filter}' />
-							</@tabList>
-						</@columns>
-						<@columns sm=10>
-							<@tabContent>
-								<@tabPanel id="multiview-1" active=true>
-									<@tform class='form' method='post' name='manage_export' action='jsp/admin/plugins/forms/ManageFormMultiviewConfig.jsp'>
-									    <@input type='hidden' id='token' name='token' value='${token}' />
-										<@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
-										<@table id='list' headBody=true  class='table-striped is-fullwidth' params={"data-toggle": "table", "data-group-by": "true", "data-group-by-field": "step", "data-search": "true", "data-show-columns": "true"}>
-											<@tr>
-												<@th params={"data-field": "step"}>#i18n{forms.manage_question_response.step}</@th>
-												<@th params={"data-field": "title"}>#i18n{forms.manage_question_response.columnTitle}</@th>
-												<@th params={"data-sortable": "true", "data-field": "visibleGlobal"}><@span params={"data-bs-toggle": "tooltip", "title": "#i18n{forms.modify_question.labelDisplayMultiviewGlobal}"}>#i18n{forms.modify_question.globalView} <@icon style='help-circle' /></@span></@th>
-												<@th params={"data-sortable": "true", "data-field": "visibleForm"}><@span params={"data-bs-toggle": "tooltip", "title": "#i18n{forms.modify_question.labelDisplayMultiviewFormSelected}"}>#i18n{forms.modify_question.formSelectedView} <@icon style='help-circle' /></@span></@th>
-												<@th params={"data-sortable": "true", "data-field": "column"}>#i18n{forms.modify_question.labelColumnTitle}</@th>
-												<@th params={"data-sortable": "true", "data-field": "order"}><@span params={"data-bs-toggle": "tooltip", "title": "#i18n{forms.modify_question.labelColumnOrderTitle}"}>#i18n{forms.modify_form.labelOrder}<@icon style='help-circle' /></@span></@th>
-											</@tr>
-											<@tableHeadBodySeparator />
-											<#list questionList as question>
-												<#assign stepTitle=question.step.title!?replace("- hidden","") />
+	<@pageColumn>
+		<@pageHeader title='${form.title!}' breadcrumb=bc />
+		<@formTabs tab='multiview'>
+			<@row class='row-cards mt-0'>
+				<@columns lg=3>
+					<@formSubNav>
+						<@formSubNavLink id='multiview-1-tab' target='multiview-1' iconName='settings-question' title='#i18n{forms.modify_form.multiview.config.display}' active=true />
+						<@formSubNavLink id='multiview-2-tab' target='multiview-2' iconName='filter-question' title='#i18n{forms.modify_form.multiview.config.filter}' />
+					</@formSubNav>
+				</@columns>
+				<@columns lg=9>
+					<@tabContent class='p-0'>
+						<@tabPanel id="multiview-1" active=true>
+							<@tform class='form' method='post' name='manage_export' action='jsp/admin/plugins/forms/ManageFormMultiviewConfig.jsp'>
+								<@input type='hidden' id='token' name='token' value='${token}' />
+								<@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
+								<#if questionList?has_content>
+									<#list stepIdsOf( questionList ) as stepId>
+										<#assign stepQuestions = questionList?filter( q -> q.step.id == stepId ) />
+										<@formSection title=stepQuestions[0].step.title!?replace("- hidden","") subtitle='#i18n{forms.modify_form.section.multiviewDisplay.subtitle}' bodyClass='p-0'>
+											<@table class='card-table table-vcenter' hover=true>
 												<@tr>
-													<@td>${stepTitle!}</@td>
-													<@td>${question.title!}</@td>
-													<@td>
-														<#if isQuestionTypeFileOrImg(question, nonDisplayableQuestionList)>
-															<@checkBox disabled=true orientation='switch' name='is_visible_multiview_global_${question.id}' value='0' disabled=true checked=false/>
-															<@icon style='help-circle' title="#i18n{forms.modify_question.nonDisplayable.question.help}" params={"data-bs-toggle": "tooltip"} />
-														<#else>
-															<@checkBox orientation='switch' labelKey='#i18n{forms.modify_question.labelDisplayMultiviewGlobal}' labelClass='visually-hidden'  name='is_visible_multiview_global_${question.id}' value='1' checked=question.isVisibleMultiviewGlobal()/>
-														</#if>
-													</@td>
-													<@td>
-														<#if isQuestionTypeFileOrImg(question, nonDisplayableQuestionList)>
-															<@checkBox disabled=true orientation='switch' name='is_visible_multiview_form_selected_${question.id}' value='0' disabled=true checked=false />
-															<@icon style='help-circle' title="#i18n{forms.modify_question.nonDisplayable.question.help}" params={"data-bs-toggle": "tooltip"} />
-														<#else>
-															<@checkBox orientation='switch' labelKey='#i18n{forms.modify_question.labelDisplayMultiviewFormSelected}' labelClass='visually-hidden'  name='is_visible_multiview_form_selected_${question.id}' value='1' checked=question.isVisibleMultiviewFormSelected() />
-														</#if>
-													</@td>
-													<@td>
-														<@formLabel labelFor='column_title_${question.id}' labelKey='#i18n{forms.modify_question.labelColumnTitle}' hideLabel=['all'] />
-														<@input type='text' name='column_title_${question.id}' value='${question.columnTitle!}' />
-													</@td>
-													<@td>
-														<@formLabel labelFor='multiview_column_order_${question.id}' labelKey='#i18n{forms.modify_question.labelColumnOrderTitle}' hideLabel=['all'] />
-														<@input type='number' name='multiview_column_order_${question.id}' min=0 value='${question.multiviewColumnOrder}' />
-													</@td>
+													<@th>#i18n{forms.manage_question_response.columnTitle}</@th>
+													<@th class='w-1 text-nowrap'><@helpHeader label='#i18n{forms.modify_question.globalView}' help='#i18n{forms.modify_question.labelDisplayMultiviewGlobal}' /></@th>
+													<@th class='w-1 text-nowrap'><@helpHeader label='#i18n{forms.modify_question.formSelectedView}' help='#i18n{forms.modify_question.labelDisplayMultiviewFormSelected}' /></@th>
+													<@th>#i18n{forms.modify_question.labelColumnTitle}</@th>
+													<@th class='text-nowrap'><@helpHeader label='#i18n{forms.modify_form.labelOrder}' help='#i18n{forms.modify_question.labelColumnOrderTitle}' /></@th>
 												</@tr>
-											</#list>
-										</@table>
-										<@bottomFormFixedButtons>
-											<@headerButton name='action_modifyVisibleQuestions' label='forms.modify_form.buttonValidate' />
-										</@bottomFormFixedButtons>
-									</@tform>
-								</@tabPanel>
-								<@tabPanel id='multiview-2'>
-									<@tform class='form' method='post' name='manage_export' action='jsp/admin/plugins/forms/ManageFormMultiviewConfig.jsp'>
-									    <@input type='hidden' id='token' name='token' value='${token}' />
-										<@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
-										<@table id='list' headBody=true  class='table-striped is-fullwidth' params={"data-toggle": "table", "data-group-by": "true", "data-group-by-field": "step", "data-search": "true", "data-show-columns": "true"}>
-											<@tr>
-												<@th params={"data-field": "step"}>#i18n{forms.manage_question_response.step}</@th>
-												<@th params={"data-field": "title"}>#i18n{forms.manage_question_response.columnTitle}</@th>
-												<@th params={"data-sortable": "true", "data-field": "filterGlobal"}><@span params={"data-bs-toggle": "tooltip", "title": "#i18n{forms.modify_question.labelFilterableMultiviewGlobal}"}>#i18n{forms.modify_question.globalView} <@icon style='help-circle' /></@span></@th>
-												<@th params={"data-sortable": "true", "data-field": "filterForm"}><@span params={"data-bs-toggle": "tooltip", "title": "#i18n{forms.modify_question.labelFilterableMultiviewFormSelected}"}>#i18n{forms.modify_question.formSelectedView} <@icon style='help-circle' /></@span></@th>
-											</@tr>
-											<@tableHeadBodySeparator />
-											<#list filterableQuestionList?sort_by('id') as question>
+												<#list stepQuestions as question>
+													<#assign nonDisplayable = isQuestionTypeFileOrImg( question, nonDisplayableQuestionList ) />
+													<@tr>
+														<@td>${question.title!}</@td>
+														<@td>
+															<#if nonDisplayable>
+																<span class="d-inline-flex align-items-center gap-1" data-bs-toggle="tooltip" title="#i18n{forms.modify_question.nonDisplayable.question.help}">
+																	<@checkBox orientation='switch' name='is_visible_multiview_global_${question.id}' value='0' labelKey='#i18n{forms.modify_question.nonDisplayable.question.help}' labelClass='visually-hidden' disabled=true checked=false />
+																	<@icon style='help-circle' class='text-secondary' />
+																</span>
+															<#else>
+																<@checkBox orientation='switch' labelKey='#i18n{forms.modify_question.labelDisplayMultiviewGlobal} : ${question.title!}' labelClass='visually-hidden' name='is_visible_multiview_global_${question.id}' value='1' checked=question.isVisibleMultiviewGlobal() />
+															</#if>
+														</@td>
+														<@td>
+															<#if nonDisplayable>
+																<span class="d-inline-flex align-items-center gap-1" data-bs-toggle="tooltip" title="#i18n{forms.modify_question.nonDisplayable.question.help}">
+																	<@checkBox orientation='switch' name='is_visible_multiview_form_selected_${question.id}' value='0' labelKey='#i18n{forms.modify_question.nonDisplayable.question.help}' labelClass='visually-hidden' disabled=true checked=false />
+																	<@icon style='help-circle' class='text-secondary' />
+																</span>
+															<#else>
+																<@checkBox orientation='switch' labelKey='#i18n{forms.modify_question.labelDisplayMultiviewFormSelected} : ${question.title!}' labelClass='visually-hidden' name='is_visible_multiview_form_selected_${question.id}' value='1' checked=question.isVisibleMultiviewFormSelected() />
+															</#if>
+														</@td>
+														<@td>
+															<@formLabel labelFor='column_title_${question.id}' labelKey='#i18n{forms.modify_question.labelColumnTitle}' hideLabel=['all'] />
+															<@input type='text' name='column_title_${question.id}' id='column_title_${question.id}' value='${question.columnTitle!}' />
+														</@td>
+														<@td>
+															<@formLabel labelFor='multiview_column_order_${question.id}' labelKey='#i18n{forms.modify_question.labelColumnOrderTitle}' hideLabel=['all'] />
+															<@input type='number' name='multiview_column_order_${question.id}' id='multiview_column_order_${question.id}' min=0 value='${question.multiviewColumnOrder}' />
+														</@td>
+													</@tr>
+												</#list>
+											</@table>
+										</@formSection>
+									</#list>
+									<@formActionsBar>
+										<@button type='submit' name='action_modifyVisibleQuestions' buttonIcon='device-floppy' title='#i18n{forms.modify_form.buttonValidate}' color='primary' />
+									</@formActionsBar>
+								<#else>
+									<@box><@empty title='#i18n{forms.manage_questions.action.noQuestions}' iconName='message-2-question' /></@box>
+								</#if>
+							</@tform>
+						</@tabPanel>
+						<@tabPanel id='multiview-2'>
+							<@tform class='form' method='post' name='manage_export' action='jsp/admin/plugins/forms/ManageFormMultiviewConfig.jsp'>
+								<@input type='hidden' id='token' name='token' value='${token}' />
+								<@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
+								<#if filterableQuestionList?has_content>
+									<#list stepIdsOf( filterableQuestionList ) as stepId>
+										<#assign stepQuestions = filterableQuestionList?filter( q -> q.step.id == stepId ) />
+										<@formSection title=stepQuestions[0].step.title!?replace("- hidden","") subtitle='#i18n{forms.modify_form.section.multiviewFilter.subtitle}' bodyClass='p-0'>
+											<@table class='card-table table-vcenter' hover=true>
 												<@tr>
-													<@td>${stepTitle!}</@td>
-													<@td>${question.title!}</@td>
-													<@td>
-														<@formGroup>
-															<@checkBox orientation='switch' name='is_filterable_multiview_global_${question.id}' id='is_filterable_multiview_global_${question.id}' value='${question.id}' checked=(question.isFiltrableMultiviewGlobal()!) />
-														</@formGroup>
-													</@td>
-													<@td>
-														<@formGroup>
-															<@checkBox orientation='switch' name='is_filterable_multiview_form_selected_${question.id}' id='is_filterable_multiview_form_selected_${question.id}' value='${question.id}' checked=(question.isFiltrableMultiviewFormSelected()!) />
-														</@formGroup>
-													</@td>
+													<@th>#i18n{forms.manage_question_response.columnTitle}</@th>
+													<@th class='w-1 text-nowrap'><@helpHeader label='#i18n{forms.modify_question.globalView}' help='#i18n{forms.modify_question.labelFilterableMultiviewGlobal}' /></@th>
+													<@th class='w-1 text-nowrap'><@helpHeader label='#i18n{forms.modify_question.formSelectedView}' help='#i18n{forms.modify_question.labelFilterableMultiviewFormSelected}' /></@th>
 												</@tr>
-											</#list>
-										</@table>
-										<@bottomFormFixedButtons>
-											<@headerButton name='action_modifyFilterableQuestions' label='forms.modify_form.buttonValidate' />
-										</@bottomFormFixedButtons>
-									</@tform>
-								</@tabPanel>
-							</@tabContent>
-						</@columns>
-					</@row>
-				</@formTabs>
-			</@boxBody>
-		</@box>
+												<#list stepQuestions as question>
+													<@tr>
+														<@td>${question.title!}</@td>
+														<@td>
+															<@checkBox orientation='switch' name='is_filterable_multiview_global_${question.id}' id='is_filterable_multiview_global_${question.id}' value='${question.id}' labelKey='#i18n{forms.modify_question.labelFilterableMultiviewGlobal} : ${question.title!}' labelClass='visually-hidden' checked=(question.isFiltrableMultiviewGlobal()!) />
+														</@td>
+														<@td>
+															<@checkBox orientation='switch' name='is_filterable_multiview_form_selected_${question.id}' id='is_filterable_multiview_form_selected_${question.id}' value='${question.id}' labelKey='#i18n{forms.modify_question.labelFilterableMultiviewFormSelected} : ${question.title!}' labelClass='visually-hidden' checked=(question.isFiltrableMultiviewFormSelected()!) />
+														</@td>
+													</@tr>
+												</#list>
+											</@table>
+										</@formSection>
+									</#list>
+									<@formActionsBar>
+										<@button type='submit' name='action_modifyFilterableQuestions' buttonIcon='device-floppy' title='#i18n{forms.modify_form.buttonValidate}' color='primary' />
+									</@formActionsBar>
+								<#else>
+									<@box><@empty title='#i18n{forms.manage_questions.action.noQuestions}' iconName='filter-off' /></@box>
+								</#if>
+							</@tform>
+						</@tabPanel>
+					</@tabContent>
+				</@columns>
+			</@row>
+		</@formTabs>
 	</@pageColumn>
 </@pageContainer>
 <@formsToastr infos=infos warnings=warnings errors=errors />

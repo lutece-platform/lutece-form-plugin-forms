@@ -1,4 +1,4 @@
-<#include "/skin/plugins/asynchronousupload/upload_commons.html" />
+<#include "/admin/plugins/asynchronousupload/upload_commons.html" />
 <#if list_responses?? && list_responses?has_content>
   <#list list_responses as response>
     <#if response.file?? && response.file.title?? && response.file.title != ''>
@@ -14,7 +14,7 @@
   <#assign listFiles = ''>
 </#if>
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
-<@formGroup class='${entry.CSSClass!}' labelFor='${idName}' id='label${entry.idEntry}' labelKey='${entry.title}' helpKey='${entry.helpMessage!}' mandatory=entry.mandatory htmlRequired=false  rows=2>
+<@formGroup class='${entry.CSSClass!}' labelFor='${idName}' id='label${entry.idEntry}' labelKey='${entry.title}' helpKey='${entry.helpMessage!}' mandatory=entry.mandatory rows=2>
     <#assign fieldName=idName >
     <#assign cssClass=entry.CSSClass!'' >
     <#if list_responses??>
@@ -25,9 +25,9 @@
         </#if>
       </#list>
     </#if>
-    <@addFileInput fieldName=fieldName handler=uploadHandler cssClass=cssClass multiple=true />
+    <@addFileBOInput fieldName=fieldName handler=uploadHandler cssClass=cssClass multiple=true />
     <@div id='listUpload'>
-      <@addUploadedFilesBox fieldName=fieldName handler=uploadHandler listFiles=listFiles />
+      <@addBOUploadedFilesBox fieldName=fieldName handler=uploadHandler listFiles=listFiles />
     </@div>
     <#if list_responses?? && list_responses?has_content>
       <#assign response_error = list_responses[0]>

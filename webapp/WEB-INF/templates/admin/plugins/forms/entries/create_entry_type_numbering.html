@@ -1,9 +1,8 @@
 <#include "all_entry_commons.html" />
-${breadcrumb_template}
+${breadcrumb_template?no_esc}
 <@row>
 	<@columns>
 		<@box>
-			<@boxHeader title='#i18n{forms.create_entry.titleQuestion} : "${form.title}" - #i18n{forms.create_entry.labelEntryType} : ${entry.entryType.title}' />
 			<@boxBody>
 				<@tform action="${action}">
 					<@fieldSet legend='#i18n{forms.create_entry.titleQuestion} : "${form.title}" - #i18n{forms.create_entry.labelEntryType} : ${entry.entryType.title}' hideLegend=['all']>
@@ -13,10 +12,8 @@ ${breadcrumb_template}
 						</#if>
 						<@input type='hidden' name='id_parent' value='${id_parent!"0"}' />
 						<@input type='hidden' name='id_step' value='${step.id!"0"}' />
+						<@columnField />
 						
-						<@formGroup labelFor='type' labelKey='#i18n{forms.create_entry.labelType}'>
-							<@staticText><@tag color='info'>${entry.entryType.title}</@tag></@staticText>
-						</@formGroup>
 						<@formGroup labelFor='title' labelKey='#i18n{forms.create_entry.labelTitle}' helpKey='#i18n{forms.create_entry.labelTitleComment}' mandatory=true>
 							<@input type='text' name='title' id='title' value='' maxlength=255 />
 						</@formGroup>
@@ -30,15 +27,15 @@ ${breadcrumb_template}
 							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
 						</@formGroup>
 						<@formGroup helpKey='#i18n{forms.create_entry.labelResponsesIndexedComment}'>
-							<@checkBox orientation='switch' labelFor='is_indexed' labelKey='#i18n{forms.create_entry.labelResponsesIndexed}' name='is_indexed' id='is_indexed' value='1' checked=true />
+							<@checkBox orientation='switch' labelKey='#i18n{forms.create_entry.labelResponsesIndexed}' name='is_indexed' id='is_indexed' value='1' checked=true />
 						</@formGroup>
 						<@formGroup labelFor='disabled' helpKey='#i18n{forms.create_entry.labelDisableQuestionHelp}'>
 							<@checkBox orientation='switch' name='disabled' id='disabled' labelKey='#i18n{forms.create_entry.labelDisableQuestion}' value='1' />
 						</@formGroup>
 						<@formGroup>
-							<@button type='submit' name='action_createQuestion' buttonIcon='save' title='#i18n{forms.modify_entry.buttonSave}' hideTitle=['xs'] />
+							<@button type='submit' name='action_createQuestion' buttonIcon='device-floppy' title='#i18n{forms.modify_entry.buttonSave}' hideTitle=['xs'] />
 							<@button type='submit' name='action_createQuestionAndManageEntries' buttonIcon='check' title='#i18n{forms.create_entry.buttonApply}' hideTitle=['xs'] />
-							<@button type='cancel' name='view_manageQuestions' buttonIcon='close' title='#i18n{forms.create_entry.buttonCancel}' hideTitle=['xs'] color='default' cancel=true />
+							<@button type='cancel' name='view_manageQuestions' buttonIcon='x' title='#i18n{forms.create_entry.buttonCancel}' hideTitle=['xs'] color='light' cancel=true />
 						</@formGroup>
 					</@fieldSet>
 				</@tform>

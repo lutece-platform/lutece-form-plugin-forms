@@ -1,6 +1,6 @@
-<@h level=2>${step.title!}</@h>
-<@listGroup class='list-group-flush step' id='step-${step.id}' params={"tabindex": "0", "data-title": ( step.title! )}>
-<@listGroupItem>
-${stepContent}
-</@listGroupItem>
-</@listGroup>
+<@box class='step' id='step-${step.id}' params={"tabindex": "-1", "data-title": ( step.title! )}>
+	<@boxHeader title=step.title! titleLevel='h2' />
+	<@boxBody>
+	${stepContent}
+	</@boxBody>
+</@box>

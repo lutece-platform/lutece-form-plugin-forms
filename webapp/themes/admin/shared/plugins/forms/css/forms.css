@@ -1,4 +1,11 @@
 /* Portal admin override 														*/
+/* Small Devices, Tablets						*/
+@media only screen and (max-width :768px) {
+	#forms-list .btn-action {
+		width: 100%
+	}
+
+}
 /* Manage Question																*/
 #main-form-content .list-unstyled li:hover{
     background-color: rgba(var(--tblr-scrollbar-color,var(--tblr-body-color-rgb)),0.16);
@@ -86,22 +93,27 @@ table.table-hover tbody tr:hover {
 }
 
 /* Table Header 			*/
-#multi-form-list {
-    overflow-y: hidden;
-    height: 65vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
 #multi-form-list .table-responsive {
-    max-height: 55vh;
+    max-height: max(20rem, calc(100vh - 26rem));
 }
 
 #multi-form-list .table-responsive table thead {
     position: sticky;
     top: 0;
+    z-index: 1;
 }
+
+/* One line per cell, like the forms list: the full value stays in the title tooltip */
+#multi-form-list .forms-cell-clamp {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 16rem;
+}
+#multi-form-list tbody td { white-space: nowrap; }
+
+#multiview-active-filters .btn-close { width: .5rem; height: .5rem; }
 
 .multiview-th{
 	max-width: 150px;
@@ -121,20 +133,59 @@ table.table-hover tbody tr:hover {
 }
 
 /* Multiview - Detail view */
-#form-response-details .box.step-group:hover {
-	background-color: var(--tblr-light)
+#steps-content .step { scroll-margin-top: 1rem; }
+#steps-content .step > .card-header .card-title { font-size: 1.125rem; }
+#steps-content legend {
+	font-size: 1rem;
+	font-weight: 600;
+	margin: 1rem 0 .25rem;
+	padding: 0;
 }
-
-#form-response-details legend {
+#steps-content .card-body > legend:first-child,
+#steps-content .fieldset-group:first-child > legend { margin-top: 0; }
+#steps-content .list-group-item { padding: .5rem 0; background: transparent; }
+#steps-content .list-group-item > .row { --tblr-gutter-y: .25rem; }
+#steps-content .list-group-item > .row > .col-sm-3 p,
+#steps-content .list-group-item > .row > .col-sm-3 label {
+	text-align: start;
 	font-weight: 400;
-	font-size: 130%;
-	border-bottom: 1px solid var(--tblr-primary);
-	color: var(--tblr-primary);
-	width: 100%;
+	color: var(--tblr-secondary);
+	margin-bottom: 0;
 }
+#steps-content .list-group-item > .row > .col-sm-9 p:last-child { margin-bottom: 0; }
+#steps-content .list-group-item.is-empty > .row > .col-sm-9::before {
+	content: "\2014";
+	color: var(--tblr-secondary);
+}
+#steps-content.hide-empty .list-group-item.is-empty { display: none; }
+#steps-content.hide-empty .fieldset-group:not(:has(.list-group-item:not(.is-empty))) { display: none; }
 
-#form-response-details .fieldset-group .row:hover {
-	color: var(--tblr-primary);
+/* Multiview - Detail view - sidebar */
+/* Stuck at the height of the response toolbar (its top padding included), under the page header */
+#response-sidebar {
+	position: sticky;
+	top: calc(var(--forms-toolbar-top, 204px) + .5rem);
+	max-height: calc(100vh - var(--forms-toolbar-top, 204px) - 1.5rem);
+	overflow-y: auto;
+}
+#response-sidebar .img-action { width: 16px; height: 16px; }
+#response-sidebar dd { margin-bottom: .5rem; }
+
+/* Multiview - Detail view - toolbar, sticky under the page header, and step index */
+.forms-sticky-toolbar { position: sticky; top: var(--forms-toolbar-top, 112px); z-index: 99; }
+.forms-response #response-toolbar { padding: .5rem 0; background-color: var(--tblr-bg-surface-secondary); }
+/* The search form only wraps the filters: without its own box, the toolbar stays stuck along the whole list */
+.forms-multiview #searchForm { display: contents; }
+.forms-multiview #multiview-toolbar { margin: -1rem -1rem 0; padding: 1rem 1rem 0; background-color: var(--tblr-bg-surface); }
+#step-toc { max-width: 25%; }
+
+/* Multiview - Detail view - history timeline */
+/* Multiview - Detail view - history timeline */
+.timeline-form {
+	list-style: none;
+	position: relative;
+	padding-left: 1.25rem;
+	margin: 0;
 }
 
 .layout-fluid #form-response-details{
@@ -149,41 +200,7 @@ table.table-hover tbody tr:hover {
 .layout-fluid #form-response-details #toc-side-toggle {
 	display: none;
 }
-
-/* Multiview - Aside - timeline */
-.timeline-form {
-	list-style-type: none;
-	position: relative;
-}
-
-.timeline-form:before {
-	content: ' ';
-	background: var(--tblr-light);
-	display: inline-block;
-	position: absolute;
-	left: 29px;
-	width: 2px;
-	height: 100%;
-	z-index: 400;
-}
-
-.timeline-form>li {
-	margin: 20px 0;
-	padding-left: 20px;
-}
-
-.timeline-form>li:before {
-	content: ' ';
-	background: var(--tblr-light);
-	display: inline-block;
-	position: absolute;
-	border-radius: 50%;
-	border: 3px solid var(--tblr-info);
-	left: 20px;
-	width: 20px;
-	height: 20px;
-	z-index: 400;
-}
+.timeline-form p { margin-bottom: .25rem; }
 
 /* Multiview - Aside - Scroll  */
 #scroll {
@@ -191,62 +208,6 @@ table.table-hover tbody tr:hover {
 	right: 2rem;
 	bottom: 2rem;
 	display: none;
-}
-
-/* Multiview - TOC 			*/
-#response-sidebar {
-	position: sticky;
-	left: 16vw;
-	top: 200px;
-	overflow-y: auto;
-	height: auto;
-}
-
-#response-sidebar .card-body{
-	overflow-y: auto;
-	max-height: 70vh;
-}
-
-#response-sidebar h2 {
-	font-size: 140%;
-	color: var(--tblr-primary);
-	border-bottom: 1px solid var(--tblr-gray-400)
-}
-
-#response-sidebar .img-action {
-	position: absolute;
-	left: 16px;
-	width: 16px
-}
-
-/* Multiview - Step TOC 	*/
-#toc-box {
-	position: fixed;
-	top:222px;
-	left:0;
-	height: 80vh;
-	width: 15vw;
-	z-index: 1;
-}
-
-#toc-expand-toggle {
-    position: fixed;
-    z-index: 99;
-    top: 222px;
-    left: 0;
-    background-color: var(--tblr-light);
-    padding: 5px;
-    border: 1px solid #DDD;
-    border-radius: 3px;
-}
-
-#toc-expand-toggle:hover {
-	cursor: pointer;
-}
-
-#step-toc{
-	overflow-y: auto;
-	height: 60vh;
 }
 
 /* Admin Map - Module forms-multiviewmapleaflet		*/
@@ -399,7 +360,9 @@ table.table-hover tbody tr:hover {
 /* RESPONSIVE FIX 								*/
 /* Small Devices, Tablets						*/
 @media only screen and (max-width :768px) {
-	#page-header{
+	#page-header,
+	.forms-response #page-header,
+	.forms-response #page-header + nav{
 		position: initial;
 	}
 
@@ -415,9 +378,11 @@ table.table-hover tbody tr:hover {
 		display: none
 	}
 
-	#step-toc .nav-pills span {
-		width: 50px;
+	/* A quarter of a phone is too narrow for the step titles */
+	#step-toc{
+		max-width: none;
 	}
+
 
 	#multiview-no-forms {
 		height: auto
@@ -427,9 +392,6 @@ table.table-hover tbody tr:hover {
 /* Small devices (landscape phones, 576px and up) 			*/
 /* Extra small devices (portrait phones, less than 576px) 	*/
 @media (max-width: 575.98px) { 
-	#step-toc {
-		display: none
-	}
 
 	.filter-list {
 		display: block;

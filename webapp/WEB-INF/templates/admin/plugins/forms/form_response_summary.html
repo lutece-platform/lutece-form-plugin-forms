@@ -8,7 +8,7 @@
         <@input name='id_form' value=id_form type='hidden' />
         <@input type='hidden' name='token' value=token />
         <@div id='form-response-summary'>
-            <#if form.countResponses><@p>#i18n{forms.create_entry.manageField.labelFieldNumber}: <@span class='font-weight-bold'>${form.currentNumberResponse}</@span></@p></#if>
+            <#if form.countResponses><@p>#i18n{forms.create_entry.manageField.labelFieldNumber}: <@span class='fw-bold'>${form.currentNumberResponse}</@span></@p></#if>
             <#if list_summary_step_display?has_content><#list list_summary_step_display as summary_step_display>${summary_step_display}</#list></#if>
         </@div>
         <#assign label_button="#i18n{forms.summary.validate}" />

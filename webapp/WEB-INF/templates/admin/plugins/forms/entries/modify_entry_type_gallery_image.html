@@ -1,10 +1,10 @@
 <#include "all_entry_commons.html" />
 <@editFields editor=true required=false exportable=entry.exportable exportablePdf=entry.exportablePdf anonym=true >
 <@formGroup id='fgMandatory' rows=2>
-	<@checkBox labelFor='mandatory' labelKey='#i18n{forms.create_entry.labelMandatory}' name='mandatory' id='mandatory' value='1' checked=entry.mandatory />
+	<@checkBox labelKey='#i18n{forms.create_entry.labelMandatory}' name='mandatory' id='mandatory' value='1' checked=entry.mandatory />
 </@formGroup>
 <@formGroup rows=2>
-	<@checkBox labelFor='export_binary' labelKey='#i18n{forms.create_entry.labelExportBinary}' labelKey='#i18n{forms.create_entry.labelExportBinaryComment}' name='export_binary' id='export_binary' value='1' checked=exportBinary( entry ) />
+	<@checkBox labelKey='#i18n{forms.create_entry.labelExportBinaryComment}' name='export_binary' id='export_binary' value='1' checked=exportBinary( entry ) />
 	<@tag color='warning'>#i18n{forms.create_entry.labelExportBinaryWarning}</@tag>
 </@formGroup>
 </@editFields>				

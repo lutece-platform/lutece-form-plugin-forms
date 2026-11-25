@@ -1,31 +1,30 @@
-<@messages errors=errors />
-<@messages infos=infos />
+<@messages errors=errors![] infos=infos![] />
+<@div class='p-3'>
 <@div class='d-flex justify-content-end mb-3'>
 <#if nextStepTitle??>
-    <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&id_step=${step.id!}&nextStepTitle=${nextStepTitle!}" targetElement="#modify_transition_control'  buttonIcon='plus' title='#i18n{forms.manage_questions.action.addControl}' />
+    <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&id_step=${step.id!}&nextStepTitle=${nextStepTitle!}' buttonIcon='plus' title='#i18n{forms.manage_questions.action.addControl}' />
 <#else>
-   <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&id_step=${step.id!}" targetElement="#modify_transition_control" id="modify-control-${step.id!}' buttonIcon='plus' title='#i18n{forms.manage_questions.action.addControl}'/>
+   <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&id_step=${step.id!}' id='modify-control-${step.id!}' buttonIcon='plus' title='#i18n{forms.manage_questions.action.addControl}' />
 </#if>
 </@div>
 <#if control_list?size gt 0>
-<@ul class='list-group'>
+<@manageFeature>
 <#list control_list as control>
     <#assign validator = validatorManager.getValidator( control.validatorName ) />
-    <@li class='list-group-item d-flex justify-content-between align-items-start'>
-        <@span>${validator.validatorDisplayName}</@span>
-        <@span>
+    <@manageFeatureItem>
+        <@manageFeatureItemColumn auto=true flex=false>${validator.validatorDisplayName}</@manageFeatureItemColumn>
+        <@manageFeatureItemColumn align='end'>
             <#if nextStepTitle??>
               <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&id_control=${control.id!}&nextStepTitle=${nextStepTitle!}' title='#i18n{forms.manage_questions.action.control}' hideTitle=['all'] buttonIcon='pencil' /> 
             <#else>
                 <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&id_control=${control.id}&id_step=${step.id!}' title='#i18n{forms.manage_questions.action.control}' hideTitle=['all'] buttonIcon='pencil'/> 
             </#if>
             <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${control.id}' title='#i18n{forms.manage_controls.action.removeControl}' hideTitle=['all'] buttonIcon='trash' color='danger' target="_top" />
-        </@span>
-    </@li>
+        </@manageFeatureItemColumn>
+    </@manageFeatureItem>
     </#list>
-</@ul>
+</@manageFeature>
 <#else>
-<@alert color='warning'>
-    <@icon style='exclamation-triangle' /> #i18n{forms.manage_transitions.labelNoControl}
-</@alert>
+	<@empty title='#i18n{forms.manage_transitions.labelNoControl}' />
 </#if>
+</@div>

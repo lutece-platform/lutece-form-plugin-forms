@@ -1,9 +1,8 @@
 <#include "all_entry_commons.html" />
-${breadcrumb_template}
+${breadcrumb_template?no_esc}
 <@row>
     <@columns>
         <@box color='primary'>
-            <@boxHeader title='#i18n{forms.create_entry.titleQuestion} : "${form.title}"' />
             <@boxBody>
                 <@tform action='${action}' method='post'>
                     <@fieldSet legend='#i18n{forms.create_entry.titleQuestion} : "${form.title}"' hideLegend=['all']>
@@ -13,16 +12,10 @@ ${breadcrumb_template}
                         </#if>
                         <@input type='hidden' name='id_parent' value='${id_parent!"0"}' />
                         <@input type='hidden' name='id_step' value='${step.id!"0"}' />
+                        <@columnField />
                         <#if entry.fieldDepend?exists>
                             <@input type='hidden' name='id_field' value='${entry.fieldDepend.idField}' />
                         </#if>
-						<@formGroup labelKey='#i18n{forms.create_entry.labelType}'>
-							<@staticText>
-								<@tag color='info'>
-									${entry.entryType.title}
-								</@tag>
-							</@staticText>
-						</@formGroup>
                         <@formGroup labelFor='title' labelKey='#i18n{forms.create_entry.labelTitle}' mandatory=true helpKey='#i18n{forms.create_entry.labelTitleComment}'>
                             <@input type='text' name='title' id='title' value='' maxlength=255 />
                         </@formGroup>
@@ -36,9 +29,9 @@ ${breadcrumb_template}
                             <@input type='text' name='value' id='value' value='' maxlength=255 />
                         </@formGroup>
                         <@formGroup>
-                            <@button type='submit' name='action_createQuestion' buttonIcon='save' title='#i18n{forms.modify_entry.buttonSave}' />
+                            <@button type='submit' name='action_createQuestion' buttonIcon='device-floppy' title='#i18n{forms.modify_entry.buttonSave}' />
                             <@button type='submit' name='action_createQuestionAndManageEntries' buttonIcon='check' title='#i18n{forms.create_entry.buttonApplyAndManageVerification}' />
-                            <@button type='submit' name='view_manageQuestions' value='cancel' buttonIcon='times' title='#i18n{forms.create_entry.buttonCancel}' cancel=true />
+                            <@button type='submit' name='view_manageQuestions' value='cancel' buttonIcon='x' title='#i18n{forms.create_entry.buttonCancel}' cancel=true color='light' />
                         </@formGroup>
                     </@fieldSet>
                 </@tform>

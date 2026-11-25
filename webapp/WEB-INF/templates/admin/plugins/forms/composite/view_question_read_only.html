@@ -1,5 +1,9 @@
 <#if question.visible && questionContent?? && questionContent?markup_string?trim != ''>
-<li class="list-group-item<#if id_display??> display_field_${id_display}</#if>" data-display-control="${question.id}_${question.iterationNumber}">
+<#-- A question whose rendered text is only its own title has no answer, unless the answer is media or a link (photo, gallery, map, file) -->
+<#assign answerText = questionContent?markup_string?replace( '<[^>]*>', ' ', 'r' )?replace( '[^\\p{L}\\p{N}]', '', 'r' ) />
+<#assign titleText = ( question.title!'' )?replace( '[^\\p{L}\\p{N}]', '', 'r' ) />
+<#assign hasMedia = questionContent?markup_string?matches( '(?is).*<(img|a|table|canvas|video|audio|iframe|object|svg|script)[\\s>].*' ) />
+<li class="list-group-item<#if id_display??> display_field_${id_display}</#if><#if answerText == titleText && !hasMedia> is-empty</#if>" data-display-control="${question.id}_${question.iterationNumber}">
 ${questionContent}
 </li>
 </#if>

@@ -4,155 +4,146 @@
 -- @return the HTML code of the actions
 -->
 <#macro display_actions resource_actions >
-<#if resource_actions.workflow_action_list?exists>
-    <@h level=2>#i18n{forms.multiviewForms.view_record_history.actions}</@h>
-    <#if resource_actions.workflow_action_list?has_content>
-		<@div class="d-grid gap-2 position-relative mt-3">
-			<#list resource_actions.workflow_action_list as action>
-				<@tform action='jsp/admin/plugins/forms/ManageDirectoryFormResponseDetails.jsp' method='post' class='d-grid'>
-					<@input type='hidden' name='action' value='doProcessAction' />
-					<@input type='hidden' name='id_action' value='${action.id}' />
-					<@input type='hidden' name='id_form_response' value='${form_response.id}' />
-					<@input type='hidden' name='_csrftoken' value='${(link_tokens.doProcessAction)!}' />
-					<@button type='submit' class='btn-block is-fullwidth my-1'>
-						<@img class='img-circle img-action' url='image?resource_type=workflow_icon_img&id=${action.icon.id}' title='' alt='' /> ${action.name}
-					</@button>
-				</@tform>
-			</#list>
+<#if resource_actions.workflow_action_list?has_content>
+<@box id='response-actions'>
+	<@boxHeader title='#i18n{forms.multiviewForms.view_record_history.actions}' />
+	<@boxBody>
+	<#if resource_actions.workflow_action_list?has_content>
+		<@div class='d-grid gap-2'>
+		<#list resource_actions.workflow_action_list as action>
+			<@tform action='jsp/admin/plugins/forms/ManageDirectoryFormResponseDetails.jsp' method='post' class='d-grid'>
+				<@input type='hidden' name='action' value='doProcessAction' />
+				<@input type='hidden' name='id_action' value='${action.id}' />
+				<@input type='hidden' name='id_form_response' value='${form_response.id}' />
+				<@input type='hidden' name='_csrftoken' value='${(link_tokens.doProcessAction)!}' />
+				<@button type='submit' color='light' class='justify-content-start text-start text-wrap'>
+					<@img class='img-action me-2' url='image?resource_type=workflow_icon_img&id=${action.icon.id}' alt='' /> ${action.name}
+				</@button>
+			</@tform>
+		</#list>
 		</@div>
-    <#else>
-		<@alert color='warning'>
-            <@icon style='exclamation-triangle' /> #i18n{forms.multiviewForms.view_record_history.history_empty}
-        </@alert>
-    </#if>
+	<#else>
+		<@empty title='#i18n{forms.multiviewForms.view_record_history.history_empty}' />
+	</#if>
+	</@boxBody>
+</@box>
 </#if>
 </#macro>
-<@pageContainer params={"data-feature": "#i18n{forms.adminFeature.manageForms.name}"} class='forms-response' >
-    <@pageColumn>
-		<@pageHeader title='#i18n{forms.multiviewForms.responseDetails.title} ${form_response.id!} ${form.title!}' />
-		<@formBreadCrumb>
-			<@breadcrumbItem><@link href='jsp/admin/plugins/forms/MultiviewForms.jsp?current_selected_panel=forms&id_form=${form.id}' label='#i18n{forms.multiviewForms.boxTitle} ${form.title}' /></@breadcrumbItem>
-			<@breadcrumbItem>#i18n{forms.multiviewForms.responseDetails.title} ${form_response.id!}</@breadcrumbItem>
-		</@formBreadCrumb>
-		<@div id='form-response-details'>
-			<@messages errors=errors />
-			<@div id='toc'>
-				<@box id='toc-box'>
-					<@boxHeader id='toc-box-header' title=form.title boxTools=true>
-						<@button color='link' class='p-0' buttonIcon='arrow-right' id='toc-side-toggle' title='#i18n{forms.multiviewForms.responseDetails.hide.steps}' hideTitle=['all'] params={ 'aria-controls': 'toc-box' } />
-						<@button color='link' class='p-0' buttonIcon='layout-sidebar-right-expand' id='toc-compress-toggle' title='#i18n{forms.multiviewForms.responseDetails.hide.steps}' hideTitle=['all'] params={ 'aria-controls': 'toc', 'aria-expanded': 'true' } />
-					</@boxHeader>
-					<@boxBody>
-						<@div id='step-toc'>
-							<@nav type='pills' class='step-toc-list'></@nav>
-						</@div>
-					</@boxBody>
-				</@box>
-			</@div> 
-			<@box id='form-detail-header'>
-				<@boxBody>
-				<@button color='link' buttonIcon='layout-sidebar-left-expand' id='toc-expand-toggle' title='#i18n{forms.multiviewForms.responseDetails.show.steps}' hideTitle=['all'] params={ 'aria-controls': 'toc', 'aria-expanded': 'false' } />
-				<@row>
-					<@columns sm=8 id='steps-content' params={"data-bs-spy": "scroll", "data-bs-target": "#step-toc-list", "data-bs-smooth-scroll": "true"}>
-						<#if list_multiview_step_display?has_content>
-							<#list list_multiview_step_display as multiview_step_display>
-								${multiview_step_display}
-							</#list>
-						</#if>
-						<#if comment??>
-							<@box color='primary' class='step-group' id='step-comment' params={"data-title": "#i18n{module.forms.extend.response.comment.title}"}>
-								<@boxHeader title='#i18n{module.forms.extend.response.comment.title}' boxTools=true>
-									<@button color='link' buttonIcon='minus-square' title='#i18n{forms.multiviewForms.responseDetails.toggleBlock} #i18n{module.forms.extend.response.comment.title}' hideTitle=['all'] params={"data-bs-toggle": "collapse", "data-bs-target": "#box-step-content-comment", "aria-expanded": "true", "aria-controls": "box-step-content-comment"} />
-								</@boxHeader>
-								<@boxBody id='box-step-content-comment' class='collapse show'>
-									<@fieldSet class='fieldset-group' legend='#i18n{module.forms.extend.response.comment.subtitle}' legendClass='visually-hidden' fieldsetId='group-comment'>
-									${( comment!'' )?no_esc}
-									</@fieldSet>
-								</@boxBody>
-							</@box>
-						</#if>
-						<#if rating??>
-							<@box color='primary' class='step-group' id='step-rating' params={"data-title": "#i18n{module.forms.extend.response.rating.title}"}>
-								<@boxHeader title='#i18n{module.forms.extend.response.rating.title}' boxTools=true>
-									<@button color='link' buttonIcon='minus-square' title='#i18n{forms.multiviewForms.responseDetails.toggleBlock} #i18n{module.forms.extend.response.rating.title}' hideTitle=['all'] params={"data-bs-toggle": "collapse", "data-bs-target": "#box-step-content-rating", "aria-expanded": "true", "aria-controls": "box-step-content-rating"} />
-								</@boxHeader>
-								<@boxBody id='box-step-content-rating' class='collapse show'>
-								<@fieldSet class='fieldset-group' legend='#i18n{module.forms.extend.response.rating.subtitle}' legendClass='visually-hidden' fieldsetId='group-rating'>
-									${( rating!'' )?no_esc}
-								</@fieldSet>
-								</@boxBody>
-							</@box>
-						</#if>
-						<#if follow??>
-							<@box color='primary' class='step-group' id='step-follow' params={"data-title": "#i18n{module.forms.extend.response.follow.title}"}>
-								<@boxHeader title='#i18n{module.forms.extend.response.follow.title}' boxTools=true>
-									<@button color='link' buttonIcon='minus-square' title='#i18n{forms.multiviewForms.responseDetails.toggleBlock} #i18n{module.forms.extend.response.follow.title}' hideTitle=['all'] params={"data-bs-toggle": "collapse", "data-bs-target": "#box-step-content-follow", "aria-expanded": "true", "aria-controls": "box-step-content-follow"} />
-								</@boxHeader>
-								<@boxBody id='box-step-content-follow' class='collapse show'>
-									<@fieldSet class='fieldset-group' legend='#i18n{module.forms.extend.response.follow.subtitle}' legendClass='visually-hidden' fieldsetId='group-follow'>
-										${( follow!'' )?no_esc}
-									</@fieldSet>
-								</@boxBody>
-							</@box>
-						</#if>
-						<#if feedback??>
-							<@box color='primary' class='step-group' id='step-feedback' params={"data-title": "#i18n{module.forms.extend.response.feedback.title}"}>
-								<@boxHeader title='#i18n{module.forms.extend.response.feedback.title}' boxTools=true>
-									<@button color='link' buttonIcon='minus-square' title='#i18n{forms.multiviewForms.responseDetails.toggleBlock} #i18n{module.forms.extend.response.feedback.title}' hideTitle=['all'] params={"data-bs-toggle": "collapse", "data-bs-target": "#box-step-content-feedback", "aria-expanded": "true", "aria-controls": "box-step-content-feedback"} />
-								</@boxHeader>
-								<@boxBody id='box-step-content-feedback' class='collapse show'>
-									<@fieldSet class='fieldset-group' legend='#i18n{module.forms.extend.response.feedback.subtitle}' legendClass='visually-hidden' fieldsetId='group-feedback'>
-										${( feedback!'' )?no_esc}
-									</@fieldSet>
-								</@boxBody>
-							</@box>
-						</#if>
-					</@columns>
-					<@columns sm=4>
-						<@box id='response-sidebar'>
-							<@boxHeader id='info-box-header' title='' class='boxTool' boxTools=true>
-								<@tform method='get' id='form-response-detail-header' type='inline' action='jsp/admin/plugins/forms/MultiviewForms.jsp'>
-								<@input type='hidden' name='page' value='form' />
-								<@input type='hidden' name='session' value='session' />
-								<#assign editModeValue = "ReadOnly">
-								<#assign viewNumberAttValue = "1">
-								<#if list_filter_values?has_content>
-									<#list list_filter_values as filter_values>
-										<@input type='hidden' name='${filter_values.code}' value='${filter_values.name}' />		
-									</#list>
-								</#if>
-								<@button type='submit' buttonIcon='list' title='#i18n{portal.util.labelBack}' size='' />
-								</@tform>
-							</@boxHeader>
-							<@boxBody>
-								<@h level=2>#i18n{forms.multiviewForms.view_record_history.information}</@h>
-								<@p><@icon style='calendar' /> #i18n{forms.multiviewForms.responseDetails.response.dateCreation} : <strong>${form_response.creation}</strong></@p>
-								<@p><@icon style='calendar' /> #i18n{forms.multiviewForms.responseDetails.response.dateModification} : <strong>${form_response.update}</strong></@p>
+<#--
+-- A section added by an extension module (comment, rating, follow, feedback)
+-->
+<#macro extensionStep code content>
+<@box class='step' id='step-${code}' params={"tabindex": "-1", "data-title": "#i18n{module.forms.extend.response.${code}.title}"}>
+<@boxHeader title='#i18n{module.forms.extend.response.${code}.title}' titleLevel='h2' />
+<@boxBody>
+<@fieldSet class='fieldset-group' legend='#i18n{module.forms.extend.response.${code}.subtitle}' legendClass='visually-hidden' fieldsetId='group-${code}' fieldsetParams={"tabindex": "-1"}>
+${( content!'' )?no_esc}
+</@fieldSet>
+</@boxBody>
+</@box>
+</#macro>
+<@pageContainer params={"data-feature": "#i18n{forms.adminFeature.manageForms.name}"} class='forms-response'>
+	<@pageColumn>
+		<@pageHeader title='#i18n{forms.multiviewForms.responseDetails.title} ${form_response.id!}' description=form.title! toolsClass='gap-2 flex-wrap'>
+			<@div id='response-nav' class='btn-group' params={"role": "group", "aria-label": "#i18n{forms.multiviewForms.responseDetails.navigation}", "data-label-previous": "#i18n{portal.util.labelPrevious}", "data-label-next": "#i18n{portal.util.labelNext}"}></@div>
+			<#if form_response.published>
+			<@aButton color='light' href='jsp/site/Portal.jsp?page=formsResponse&view=formResponseView&id_response=${form_response.id}' target='_blank' title='#i18n{forms.permission.label.viewResult}' buttonIcon='external-link' />
+			</#if>
+			<@tform method='get' id='form-response-detail-header' type='inline' action='jsp/admin/plugins/forms/MultiviewForms.jsp'>
+				<@input type='hidden' name='page' value='form' />
+				<@input type='hidden' name='session' value='session' />
+				<#if list_filter_values?has_content>
+					<#list list_filter_values as filter_values>
+						<@input type='hidden' name='${filter_values.code}' value='${filter_values.name}' />
+					</#list>
+				</#if>
+				<@button type='submit' color='light' buttonIcon='list' title='#i18n{forms.multiviewForms.formResponseDetails.header.buttonBack}' />
+			</@tform>
+		</@pageHeader>
+		<@messages errors=errors![] warnings=warnings![] />
+		<@row id='form-response-details'>
+			<@columns lg=8>
+				<@div id='response-toolbar' class='forms-sticky-toolbar d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3'>
+					<@div id='step-toc' class='flex-grow-1' params={"hidden": true}>
+						<@select name='step_toc' id='step-toc-select' params={"aria-label": "#i18n{forms.multiviewForms.responseDetails.toc}"}></@select>
+					</@div>
+					<@span id='response-empty-count' class='text-secondary' params={"hidden": true, "data-label": "#i18n{forms.multiviewForms.responseDetails.emptyCount}"}></@span>
+					<@checkBox orientation='switch' name='hide_empty_answers' id='hide-empty-answers' value='1' labelKey='#i18n{forms.multiviewForms.responseDetails.hideEmpty}' wrapperClass='mb-0 ms-auto' />
+				</@div>
+				<@div id='steps-content'>
+				<#if list_multiview_step_display?has_content>
+					<#list list_multiview_step_display as multiview_step_display>
+						${multiview_step_display}
+					</#list>
+				<#else>
+					<@empty title='#i18n{forms.multiviewForms.view_record_history.history_empty}' subtitle=' ' iconName='file-off' />
+				</#if>
+				<#if comment??><@extensionStep code='comment' content=comment /></#if>
+				<#if rating??><@extensionStep code='rating' content=rating /></#if>
+				<#if follow??><@extensionStep code='follow' content=follow /></#if>
+				<#if feedback??><@extensionStep code='feedback' content=feedback /></#if>
+				</@div>
+			</@columns>
+			<@columns lg=4>
+				<@div id='response-sidebar'>
+					<@box id='response-status'>
+						<@boxHeader title='#i18n{forms.multiviewForms.view_record_history.information}' />
+						<@boxBody>
+							<#if resource_actions?exists && resource_actions.workflow_state?exists>
+							<@p class='mb-3'><@tag color='primary' class='fs-4'>${resource_actions.workflow_state.name}</@tag><@span class='visually-hidden'> #i18n{forms.multiviewForms.responseDetails.response.state}</@span></@p>
+							</#if>
+							<dl class="row mb-0">
+								<dt class="col-5 fw-normal text-secondary">#i18n{forms.multiviewForms.responseDetails.response.number}</dt>
+								<dd class="col-7">${form_response.id!}</dd>
+								<dt class="col-5 fw-normal text-secondary">#i18n{forms.multiviewForms.responseDetails.response.dateCreation}</dt>
+								<dd class="col-7">${form_response.creation!}</dd>
+								<dt class="col-5 fw-normal text-secondary">#i18n{forms.multiviewForms.responseDetails.response.dateModification}</dt>
+								<dd class="col-7">${form_response.update!}</dd>
+								<dt class="col-5 fw-normal text-secondary">#i18n{forms.multiviewForms.responseDetails.response.status}</dt>
+								<dd class="col-7"><#if form_response.published>#i18n{portal.util.labelYes}<#else>#i18n{portal.util.labelNo}</#if></dd>
 								<#if admin_depositary??>
-								<@p>#i18n{forms.multiviewForms.admin.depositary.label} : ${admin_depositary.firstName!} ${admin_depositary.lastName} - ${admin_depositary.email}</@p>
+								<dt class="col-5 fw-normal text-secondary">#i18n{forms.multiviewForms.admin.depositary.label}</dt>
+								<dd class="col-7 mb-0">${admin_depositary.firstName!} ${admin_depositary.lastName!}<br><@span class='text-secondary small text-break'>${admin_depositary.email!}</@span></dd>
 								</#if>
-								<#if resource_actions?exists && resource_actions.workflow_state?exists><@p><@icon style='info-circle' /> #i18n{forms.multiviewForms.responseDetails.response.state} : <strong>${resource_actions.workflow_state.name}</strong></@p></#if>
-								<@p><@icon style='info-circle' /><#if form_response.published> #i18n{forms.multiviewForms.responseDetails.response.status} : <strong> ${form_response.update!} </strong><#else>#i18n{forms.multiviewForms.responseDetails.response.status} : #i18n{portal.site.admin_page.labelNodeStatus1}</#if></@p>
-								<#if form_response.published>
-								<@p><@icon style='external-link' /> <@link href='jsp/site/Portal.jsp?page=formsResponse&view=formResponseView&id_response=${form_response.id}' target='_blank'>#i18n{forms.permission.label.viewResult}<@span class='visually-hidden'> (#i18n{portal.site.portal_footer.newWindow})</@span></@link></@p>
-								</#if>
-								<@display_actions resource_actions! />
-								${resource_history!}
-							</@boxBody>
-						</@box>
-					</@columns>
-				</@row>
-				</@boxBody>
-			</@box>
-		</@div>
+							</dl>
+						</@boxBody>
+					</@box>
+					<@display_actions resource_actions! />
+					<#if resource_history?has_content>
+					<@box id='response-history'>
+						<@boxBody>
+						${resource_history}
+						</@boxBody>
+					</@box>
+					</#if>
+				</@div>
+			</@columns>
+		</@row>
 	</@pageColumn>
 </@pageContainer>
-<!-- END  -->
 <@scrollTopBtn />
 <script src="themes/admin/shared/plugins/forms/js/multiview/forms-multiview.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-	// Set body class for multiview forms page
-	setNavButtons('${form_response.id?js_string?no_esc}', '${i18n('portal.util.labelPrevious')?js_string?no_esc}', '${i18n('portal.util.labelNext')?js_string?no_esc}');
+	setNavButtons('${form_response.id?c}');
+
+	// Unanswered questions: count them, and let the user hide them
+	const emptyAnswers = document.querySelectorAll('#steps-content .is-empty');
+	const emptyCount = document.getElementById('response-empty-count');
+	const hideEmpty = document.getElementById('hide-empty-answers');
+	if (emptyAnswers.length === 0) {
+		hideEmpty.closest('label').hidden = true;
+		return;
+	}
+	emptyCount.textContent = emptyAnswers.length + ' ' + emptyCount.dataset.label;
+	emptyCount.hidden = false;
+	let hidden = false;
+	try { hidden = localStorage.getItem('forms_hide_empty_answers') === 'true'; } catch (e) { /* storage unavailable */ }
+	hideEmpty.checked = hidden;
+	document.getElementById('steps-content').classList.toggle('hide-empty', hidden);
+	hideEmpty.addEventListener('change', function() {
+		document.getElementById('steps-content').classList.toggle('hide-empty', this.checked);
+		try { localStorage.setItem('forms_hide_empty_answers', this.checked); } catch (e) { /* storage unavailable */ }
+	});
 });
 </script>

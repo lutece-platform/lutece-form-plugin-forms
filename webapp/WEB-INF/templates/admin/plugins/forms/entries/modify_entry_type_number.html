@@ -1,4 +1,5 @@
 <#include "all_entry_commons.html" />
+<#assign placeholder = getFieldValueByCode( entry, "placeholder" )!'' >
 <@editFields editor=true datalist=['on','off'] labelErrorMessage=true exportable=entry.exportable exportablePdf=entry.exportablePdf anonym=true placeholder=placeholder  >
 <#if entry.fields?? && entry.fields?has_content>
 <#assign suffix = getFieldValueByCode( entry, 'suffix') >
@@ -6,6 +7,23 @@
 	<@input type='text' name='suffix' value=suffix maxlength=255 />
 </@formGroup>
 </#if>
+<#-- The number configuration: AbstractEntryTypeNumber.getRequestData rewrites the default value, min and max on every save -->
+<@formGroup labelFor='value' labelKey='#i18n{forms.create_entry.labelValueDefault}' rows=2>
+	<@input type='number' name='value' id='value' value=( getFieldByCode( entry, 'text_config' ).value )!'' />
+</@formGroup>
+<@formGroup labelFor='min' labelKey='#i18n{forms.create_entry.labelMin}' rows=2>
+	<@input type='number' name='min' id='min' value=( getFieldByCode( entry, 'min' ).value )!'' />
+</@formGroup>
+<@formGroup labelFor='max' labelKey='#i18n{forms.create_entry.labelMax}' rows=2>
+	<@input type='number' name='max' id='max' value=( getFieldByCode( entry, 'max' ).value )!'' />
+</@formGroup>
+<@formGroup labelFor='entry_step' labelKey='#i18n{forms.create_entry.labelStep}' helpKey='#i18n{forms.create_entry.labelStepHelp}' rows=2>
+	<@row>
+		<@columns sm=12 md=2>
+			<@input type='number' name='entry_step' id='entry_step' min=0 />
+		</@columns>
+	</@row>
+</@formGroup>
 </@editFields>
 <script>
 function setStep(c,i){
@@ -20,7 +38,7 @@ function setStep(c,i){
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-	const form = document.getElementById('form-number');
+	const form = document.getElementById('modifyEntryForm');
 	const entryCssClass = document.getElementById('css_class');
 	const entryStepInput = document.getElementById('entry_step');
 

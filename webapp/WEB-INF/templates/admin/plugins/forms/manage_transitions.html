@@ -5,19 +5,15 @@
 <#if step.final><#assign isOnlyOneStep=isOnlyOneStep+1></#if>
 <@pageContainer>
     <@pageColumn>
-		<@pageHeader title='${form.title!}'>
-        <#if form.active>
-            <@button type='button' id='forms-action' title='#i18n{forms.dashboard.row_actions}' buttonIcon='cog me-1' dropdownMenu=true >
-                <@aButton color='default dropdown-item justify-content-start' href='jsp/admin/plugins/forms/ManageFormResponse.jsp?view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.BOLink.label} ${form.title} [#i18n{portal.site.portal_footer.newWindow}]' target="_blank" buttonIcon='text-plus me-1' />
-                <@aButton color='default dropdown-item justify-content-start' href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.FOLink.label} ${form.title} [#i18n{portal.site.portal_footer.newWindow}]' target="_blank" buttonIcon='external-link me-1' />
-                <@aButton color='default dropdown-item justify-content-start' href='jsp/admin/plugins/forms/MultiviewForms.jsp?current_selected_panel=forms&id_form=${form.id}' title='#i18n{forms.manageForm.MultiviewLink.label} [#i18n{portal.site.portal_footer.newWindow}]' target="_blank" buttonIcon='list-alt me-1' />
-            </@button>
-        </#if>
-        </@pageHeader>
-        <@formBreadCrumb>
-            <@breadcrumbItem><@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}' title='Liste des étapes'>${form.title}</@link></@breadcrumbItem>
-            <@breadcrumbItem class='active' id='${step.id}'>${stepTitle}</@breadcrumbItem>
-        </@formBreadCrumb>
+		<#assign bc>
+		<@formBreadCrumb>
+			<@breadcrumbItem><@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}' title='#i18n{forms.manage_steps.title}'>${form.title}</@link></@breadcrumbItem>
+			<@breadcrumbItem class='active'>${stepTitle}</@breadcrumbItem>
+		</@formBreadCrumb>
+		</#assign>
+		<@pageHeader title='${form.title!}' breadcrumb=bc>
+			<@formActionsMenu form=form />
+		</@pageHeader>
         <@formTabs tab="transitions" type='steps'>
             <@tabContent>
             <@tabPanel id='manageStep' active=true>
@@ -26,7 +22,7 @@
                     #i18n{forms.create_step.pageTitle} : ${stepTitle}
                         <#if !step.final>
                         <@div class='ms-auto'>
-                            <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageTransitions.jsp?view=createTransition&id_step=${step.id}" useIframe=true targetElement="#offcanvasTransition" id="transition_${step.id}" title="#i18n{forms.manage_transitions.buttonAdd}" btnTitle="#i18n{forms.manage_transitions.buttonAdd}" btnIcon="plus" position="end" />
+                            <@aButton href="jsp/admin/plugins/forms/ManageTransitions.jsp?view=createTransition&id_step=${step.id}" title="#i18n{forms.manage_transitions.buttonAdd}" buttonIcon="plus" />
                         </@div>
                         </#if>
                     </@h>
@@ -40,7 +36,7 @@
                             <@input type='text' name='title' id='step-title' value='${stepTitle}' />
                         </@formGroup>
                         <@formGroup helpKey='#i18n{forms.modify_step.labelTitleDisplayed.help}' rows=2>
-                            <@checkBox orientation='switch' labelKey='#i18n{forms.modify_step.labelTitleDisplayed}' labelFor='titleDisplayed' name='titleDisplayed' id='titleDisplayed' value='1' checked=(step?has_content && step.titleDisplayed) />
+                            <@checkBox orientation='switch' labelKey='#i18n{forms.modify_step.labelTitleDisplayed}' name='titleDisplayed' id='titleDisplayed' value='1' checked=(step?has_content && step.titleDisplayed) />
                         </@formGroup>
                         <@formGroup labelKey='#i18n{forms.modify_step.labelDescription}' helpKey='#i18n{forms.modify_step.labelDescription.help}' rows=2>
                             <@input type='textarea' name='description'>${step.description!}</@input>
@@ -48,12 +44,12 @@
                         <@row>
                             <@columns>
                                 <@formGroup helpKey='#i18n{forms.modify_step.labelInitial.help}' rows=2>
-                                    <@checkBox orientation='switch' labelFor='initial' labelKey='#i18n{forms.modify_step.labelInitial}' name='initial' id='initial' value='1' checked=(step?has_content && step.initial) />
+                                    <@checkBox orientation='switch' labelKey='#i18n{forms.modify_step.labelInitial}' name='initial' id='initial' value='1' checked=(step?has_content && step.initial) />
                                 </@formGroup>
                             </@columns>
                             <@columns>
                                 <@formGroup helpKey='#i18n{forms.modify_step.labelFinal.help}' rows=2>
-                                    <@checkBox orientation='switch' labelFor='final' labelKey='#i18n{forms.modify_step.labelFinal}' name='final' id='final' value='1' checked=(step?has_content && step.final) />
+                                    <@checkBox orientation='switch' labelKey='#i18n{forms.modify_step.labelFinal}' name='final' id='final' value='1' checked=(step?has_content && step.final) />
                                 </@formGroup>
                             </@columns>
                         </@row>
@@ -83,10 +79,10 @@
                                 <@boxBody class='d-flex justify-content-between align-items-center'>
                                     <@ul class='list-unstyled d-flex form-actions mb-0'>
                                         <@li>
-                                            <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageTransitions.jsp?view=modifyTransition&id_step=${step.id}&id_transition=${transition.id}" useIframe=true id="modifyT__step_${step.id}_transition_${transition.id}" targetElement="#modify_transition" title="#i18n{forms.modify_transition.title}" btnTitle="#i18n{portal.util.labelModify}" btnIcon="pencil" position="end" />
+                                            <@aButton href="jsp/admin/plugins/forms/ManageTransitions.jsp?view=modifyTransition&id_step=${step.id}&id_transition=${transition.id}" title="#i18n{portal.util.labelModify}" buttonIcon="pencil" />
 						                 </@li>
                                         <@li>
-                                            <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${transition.id}&control_type=TRANSITION" useIframe=true id="modifyC__step_${step.id}_transition_${transition.id}" targetElement="#modify_transition_control" title="${controlTitle}" btnTitle="${controlTitle}" btnIcon="${controlIcon}" position="end" size="half" />
+                                            <@aButton href="jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${transition.id}&control_type=TRANSITION" title="${controlTitle}" buttonIcon="${controlIcon}" />
                                         </@li>
                                         <@li> 
                                             <@btnGroup>

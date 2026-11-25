@@ -1,23 +1,109 @@
 <#include "/admin/plugins/forms/edit_form_tabs.html" />
+<#-- Buttons that create a question of each type, in the "add a question" panels -->
+<#macro questionTypeButtons>
+<@row class='row-cols-2 g-2'>
+<#list entry_type_list?filter( item -> !item.group ) as item>
+	<@columns>
+		<@button type='submit' color='outline-primary d-flex w-100 justify-content-start' name='view_createQuestion' value='${item.idType}' title='#i18n{forms.manage_questions.buttonAdd} ${item.title}' buttonIcon='${item.iconName?keep_before(" ")} me-1'><@span class='text-truncate'>${item.title}</@span></@button>
+	</@columns>
+</#list>
+</@row>
+</#macro>
+<#-- The questions and groups whose parent is the display idParent (0: the step itself), groups holding their own children -->
+<#-- The column of a question or group, shown only when its step or group has several columns -->
+<#macro columnBadge idDisplay>
+<#local columns = display_columns!{} />
+<#if columns[idDisplay?c]??><@tag color='azure-lt' class='flex-shrink-0'>#i18n{forms.form_builder.column} ${columns[idDisplay?c]}</@tag></#if>
+</#macro>
+<#macro compositeList idParent>
+<#list composite_list?filter( c -> c.formDisplay.parentId == idParent ) as composite>
+	<#if composite.type == 'group'>
+		<@groupItem composite=composite />
+	<#else>
+		<@questionItem composite=composite />
+	</#if>
+</#list>
+</#macro>
+<#macro groupItem composite>
+<#local idDisplay=composite.formDisplay.id />
+<li class="mb-3">
+	<div class="card card-question" id="group-${idDisplay}">
+		<div class="card-header">
+			<@h level=3 class='card-title searchable'>${composite.title!?replace('- hidden','')}</@h>
+			<@columnBadge idDisplay=idDisplay />
+			<label for="parent_${idDisplay}" class="visually-hidden">
+				<input type="radio" id="parent_${idDisplay}" name="id_parent" value="${idDisplay}"<#if id_parent=idDisplay> checked</#if>>
+				${composite.title!?replace('- hidden','')}
+			</label>
+			<div class="card-actions btn-list">
+				<@button type='button' buttonIcon='plus' title="#i18n{forms.manage_questions.buttonAdd}" hideTitle=['xs','sm'] params={"data-bs-toggle": "modal", "data-bs-target": "#fieldTypeModal-${idDisplay}"} /><@modal id="fieldTypeModal-${idDisplay}" size='sm' params={"aria-labelledby": "fieldTypeModal-${idDisplay}-title"}><@modalHeader modalTitle="#i18n{forms.manage_questions.buttonAdd}" id="fieldTypeModal-${idDisplay}-title" /><@modalBody><@questionTypeButtons /></@modalBody></@modal>
+				<@aButton href="jsp/admin/plugins/forms/ManageQuestions.jsp?view=moveComposite&id_step=${step.id}&id_display=${idDisplay}" color="" class="btn-action" title="#i18n{forms.manage_questions.action.move}" buttonIcon="sort" hideTitle=['all'] />
+				<@aButton href="jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyGroup&id_step=${step.id}&id_group=${composite.formDisplay.compositeId}" color="" class="btn-action" title="#i18n{forms.manage_questions.action.updategroup.label}" buttonIcon="pencil" hideTitle=['all'] />
+				<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=getConfirmRemoveComposite&id_step=${step.id}&id_display=${idDisplay}' color='' class='btn-action text-danger' title='#i18n{forms.manage_questions.action.removeQuestion}' buttonIcon='trash' hideTitle=['all'] />
+			</div>
+		</div>
+		<div class="card-body p-2">
+			<#if composite_list?filter( c -> c.formDisplay.parentId == idDisplay )?has_content>
+				<ul class="list-unstyled mb-0"><@compositeList idParent=idDisplay /></ul>
+			<#else>
+				<@empty title='#i18n{forms.manage_questions.action.noQuestions}' iconName='message-2-question' class='py-3' />
+			</#if>
+		</div>
+	</div>
+</li>
+</#macro>
+<#macro questionItem composite>
+<#local idDisplay=composite.formDisplay.id />
+<#local idQuestion=composite.formDisplay.compositeId />
+<li data-url="jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyQuestion&id_step=${step.id}&id_question=${idQuestion}">
+	<@div class='d-flex align-items-center gap-2 px-3 py-2'>
+		<@icon style=composite.icon! class='text-secondary' />
+		<@span class='searchable fw-medium text-truncate'>${composite.title!?replace('- hidden','')}</@span>
+		<@columnBadge idDisplay=idDisplay />
+		<@div class='btn-list flex-nowrap ms-auto'>
+			<#-- A condition targets the display of the question, a validation control the question itself -->
+			<#if composite.formDisplay.displayControl??>
+				<@aButton href="jsp/admin/plugins/forms/ManageControls.jsp?view=manageConditionControl&id_step=${step.id}&id_target=${idDisplay}&control_type=CONDITIONAL" color="outline-secondary" title="#i18n{forms.manage_questions.action.condition}" buttonIcon="eye-question" hideTitle=['xs','sm','md'] />
+			</#if>
+			<#if composite.formDisplay.validationControlList?? && composite.formDisplay.validationControlList?has_content>
+				<@aButton href="jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${idQuestion}&control_type=VALIDATION" color="outline-secondary" title="#i18n{forms.manage_questions.action.control}" buttonIcon="settings-check" hideTitle=['xs','sm','md'] />
+			</#if>
+			<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyQuestion&id_step=${step.id}&id_question=${idQuestion}' color='' class='btn-action' title='#i18n{forms.manage_questions.action.modifyQuestion}' buttonIcon='pencil' hideTitle=['all'] />
+			<@button type='button' id='question-actions-${idDisplay}' title='#i18n{portal.util.labelActions}' buttonIcon='dots' hideTitle=['all'] dropdownMenu=true>
+				<@aButton href="jsp/admin/plugins/forms/ManageControls.jsp?view=manageConditionControl&id_step=${step.id}&id_target=${idDisplay}&control_type=CONDITIONAL" color="" class="dropdown-item justify-content-start" title="#i18n{forms.manage_questions.action.condition}" buttonIcon="eye-question me-2" />
+				<@aButton href="jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${idQuestion}&control_type=VALIDATION" color="" class="dropdown-item justify-content-start" title="#i18n{forms.manage_questions.action.control}" buttonIcon="settings-check me-2" />
+				<@button type='submit' formId='duplicate-question-${idQuestion}' color='link' class='dropdown-item justify-content-start'><@icon style='copy' class='me-2' />#i18n{forms.manage_questions.action.copy}</@button>
+				<@aButton href="jsp/admin/plugins/forms/ManageQuestions.jsp?view=moveComposite&id_step=${step.id}&id_display=${idDisplay}" color="" class="dropdown-item justify-content-start" title="#i18n{forms.manage_questions.action.move}" buttonIcon="sort me-2" />
+				<hr class="dropdown-divider">
+				<@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=getConfirmRemoveComposite&id_step=${step.id}&id_display=${idDisplay}' class='dropdown-item text-danger'><@icon style='trash' class='me-2' />#i18n{forms.manage_questions.action.removeQuestion}</@link>
+			</@button>
+		</@div>
+	</@div>
+</li>
+</#macro>
 <#assign stepTitle=step.title!?replace("- hidden","") />
+<#assign bc>
+ <@formBreadCrumb>
+<#if step.final && step.initial>   
+<@breadcrumbItem class='active is-active'>${form.title}</@breadcrumbItem>
+<#else>    
+<@breadcrumbItem><@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}' title='#i18n{forms.manage_steps.title}'>${form.title}</@link></@breadcrumbItem> 
+<@breadcrumbItem class='active'>${stepTitle}</@breadcrumbItem>
+</#if> 
+</@formBreadCrumb>
+</#assign>
 <@pageContainer>
     <@pageColumn>
-		<@pageHeader title='${form.title}'>
+		<@pageHeader title='${form.title}' breadcrumb=bc>
             <@tform type='inline'>
-				<@formGroup labelFor='plugin_type' labelKey='#i18n{portal.system.manage_plugins.buttonFilter}' hideLabel=['all'] formStyle='inline'>
+				<@formGroup labelFor='search_step' labelKey='#i18n{portal.system.manage_plugins.buttonFilter}' hideLabel=['all'] formStyle='inline'>
 					<@inputGroup>
 						<@input type='text' name='search_step' id='search_step' placeHolder='#i18n{portal.system.manage_plugins.buttonFilter}' autoComplete="off" />
 						<@button color='primary' title='#i18n{portal.system.manage_plugins.buttonFilter}' buttonIcon='filter' hideTitle=['all'] />
 					</@inputGroup>
 				</@formGroup>
 			</@tform>
-            <#if form.active>
-			    <@button type='button' id='forms-actions' title='#i18n{forms.dashboard.row_actions}' buttonIcon='cog me-1' dropdownMenu=true >
-					<@aButton color='default dropdown-item justify-content-start' href='jsp/admin/plugins/forms/ManageFormResponse.jsp?view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.BOLink.label} ${form.title} [#i18n{portal.site.portal_footer.newWindow}]' target="_blank" buttonIcon='text-plus me-1' />
-					<@aButton color='default dropdown-item justify-content-start' href='${prod_url}jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.FOLink.label} ${form.title} [#i18n{portal.site.portal_footer.newWindow}]' target="_blank" buttonIcon='external-link me-1' />
-					<@aButton color='default dropdown-item justify-content-start' href='jsp/admin/plugins/forms/MultiviewForms.jsp?current_selected_panel=forms&id_form=${form.id}' title='#i18n{forms.manageForm.MultiviewLink.label} [#i18n{portal.site.portal_footer.newWindow}]' target="_blank" buttonIcon='list-alt me-1' />
-                </@button>
-            </#if>
+            <@formActionsMenu form=form />
             <#if step.final && step.initial>   
                 <@tform type='inline' method='post' name='modify_step' action='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions'>
                     <@input type='hidden' name='id_form' value='${step.idForm}' />
@@ -27,14 +113,7 @@
                 </@tform> 
             </#if>  
 			</@pageHeader>
-            <@formBreadCrumb>
-                <#if step.final && step.initial>   
-                    <@breadcrumbItem class='active is-active'>${form.title}</@breadcrumbItem>
-                <#else>    
-                    <@breadcrumbItem><@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}' title='Liste des étapes'>${form.title}</@link></@breadcrumbItem> 
-                    <@breadcrumbItem class='active'>${stepTitle}</@breadcrumbItem>
-                </#if> 
-            </@formBreadCrumb>
+           
             <@formTabs tab='questions' class='align-items-center' type='steps' >
             <@tabContent>
                 <@div id='form-container' class='container'>
@@ -51,130 +130,21 @@
                                 <@h level=2>#i18n{forms.manage_questions.type.step.label} "${stepTitle?replace('- hidden','')}" </@h> 
                                 <#list entry_type_list as item>
                                     <#if item.group>
-                                        <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageQuestions.jsp?view=createGroup&id_step=${step.id}" useIframe=true targetElement="#form_createGroup" id="step-group-${step.id}"  btnIcon=item.iconName btnTitle="#i18n{forms.manage_questions.action.creategroup.label}" btnColor="primary" hideTitle=['xs','sm'] position="end" title="#i18n{forms.manage_questions.action.creategroup.label}" size="half" />
+                                        <@aButton href="jsp/admin/plugins/forms/ManageQuestions.jsp?view=createGroup&id_step=${step.id}" color="primary" title="#i18n{forms.manage_questions.action.creategroup.label}" buttonIcon=item.iconName hideTitle=['xs','sm'] />
                                     </#if>
                                 </#list>
                                 </@div>
-                                <#assign idCurrentGroup=0 />
-                                <#assign inGroup=false />
-                                <ul id="question-list" class="list-unstyled">
-                                <#if composite_list?size gt 0>
-                                    <#list composite_list as composite>
-                                        <li data-url="jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyQuestion&id_step=${step.id}&id_question=${composite.formDisplay.compositeId}">
-                                        <@input type='hidden' name='own_display_id_parent' value='${composite.formDisplay.parentId}' />
-                                        <@input type='hidden' name='own_display_id_composite' value='${composite.formDisplay.id}' />
-                                        <#assign parentd = 'parent_' + ( composite.formDisplay.id )?string />
-                                        <#assign group=composite.type == 'group' />
-                                        <#if idCurrentGroup != composite.formDisplay.parentId>
-                                                        </ul>
-                                                    </div> <!-- card-body -->
-                                                </div><!-- card -->
-                                            </li>
-                                            <li>
-                                            <#assign idCurrentGroup=0 />
-                                            <#assign inGroup=false />
-                                        <#else>   
-                                        </#if>
-                                        <#if group>
-                                            <#assign idCurrentGroup=composite.formDisplay.id />
-                                            <#assign groupCount=0 />
-                                            <#assign inGroup=true />
-                                            <div class="card card-question mb-4" id="group-${composite.formDisplay.id}">
-                                                <div class="card-header d-flex align-items-start justify-content-between">
-                                                    <@h level=3 class='mb-0 pt-2 searchable'>
-                                                        ${composite.title!?replace('- hidden','')} 
-                                                     </@h>
-                                                    <label for="${parentd}" class="visually-hidden">
-                                                        <input type="radio" id="${parentd}" name="id_parent" value="${composite.formDisplay.id!}" <#if id_parent=composite.formDisplay.id>checked</#if>>
-                                                    </label>
-                                                    <@cInline>
-                                                    <@offcanvas id="offcanvasFieldType-${composite.formDisplay.id!}" btnIcon="plus" class="offcanvas-field" btnTitle="#i18n{forms.manage_questions.buttonAdd}" title="#i18n{forms.manage_questions.buttonAdd}" size="sm" >
-                                                        <@row class='row-cols-2 g-2'>
-                                                            <#list entry_type_list?filter( item-> item.group=false) as item>
-                                                            <@columns>
-                                                                <#if !item.group>
-                                                                <@button type='submit' color='outline-primary d-flex w-100 justify-content-start' name='view_createQuestion' value='${item.idType}' title='#i18n{forms.manage_questions.buttonAdd} ${item.title}' buttonNested=true buttonIcon='${item.iconName?keep_before(" ")} me-1' ><@span class='text-truncate'>${item.title}</@span></@button>
-                                                                </#if>
-                                                            </@columns>
-                                                            </#list>
-                                                        </@row>
-                                                    </@offcanvas>
-                                                    <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageQuestions.jsp?view=moveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}" useIframe=true targetElement="move_composite" id="move-${composite.formDisplay.id}"  btnIcon="sort" btnTitle="#i18n{forms.manage_questions.action.move}" title="#i18n{forms.manage_questions.action.move}" hideTitle=['all'] />
-                                                    <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyGroup&id_step=${step.id}&id_group=${composite.formDisplay.compositeId}" useIframe=true id="modify-group-${composite.formDisplay.id}" btnIcon="pencil" btnTitle="#i18n{forms.manage_questions.action.updategroup.label}" title="#i18n{forms.manage_questions.action.updategroup.label}" hideTitle=['all'] size="half" />
-                                                    <@aButton hideTitle=['all']  href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=getConfirmRemoveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}' title='#i18n{forms.manage_questions.action.removeQuestion}' buttonIcon='trash' color='danger' />
-                                                    </@cInline>
-                                                </div>
-                                                <div class="card-body p-2">
-                                                    <ul class="list-unstyled">
-                                        <#else>
-                                            <#assign btnClass='' /> 
-                                            <#assign isConditional=composite.formDisplay.displayControl?? /> 
-                                            <#assign isValidated=composite.formDisplay.validationControlList?? && composite.formDisplay.validationControlList?has_content /> 
-                                            <@div class='d-flex justify-content-between align-items-center px-3 py-1'>
-                                                <@div class='d-flex align-items-center'>
-                                                    <@h level=4 class='mb-0'>
-                                                        <@icon style=composite.icon! class='me-2' />
-                                                        <@span class='searchable'>${composite.title!?replace('- hidden','')}</@span>
-                                                     </@h>
-                                                </@div>
-                                                <@div class='ms-auto me-1' >
-                                                    <#if isValidated>
-                                                        <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}&control_type=VALIDATION" useIframe=true targetElement="offcanvasField" id="validate-${composite.formDisplay.id}" btnColor="outline-secondary" btnIcon="settings-question" btnTitle="#i18n{forms.manage_questions.action.control}" title="#i18n{forms.manage_questions.action.control}" btnDisabled=isValidated  size="half"  />
-                                                    </#if>
-                                                    <#if isConditional>
-                                                        <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageControls.jsp?view=manageConditionControl&id_step=${step.id}&id_target=${composite.formDisplay.id}&control_type=CONDITIONAL" useIframe=true targetElement="offcanvasField" id="cond-${composite.formDisplay.id}" btnColor="outline-secondary" btnIcon="settings-check" btnTitle="#i18n{forms.manage_questions.action.condition}" title="##i18n{forms.manage_questions.action.condition}" />
-                                                    </#if>
-                                                </@div>   
-                                                <@span class="btn-toolbar">
-                                                    <@btnGroup class='mx-2'>
-                                                        <@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyQuestion&id_step=${step.id}&id_question=${composite.formDisplay.compositeId}' title='#i18n{forms.manage_questions.action.modifyQuestion}' buttonIcon='pencil' />
-                                                        <@aButton hideTitle=['all']  href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=getConfirmRemoveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}' title='#i18n{forms.manage_questions.action.removeQuestion}' buttonIcon='trash' color='danger' />
-                                                    </@btnGroup>
-                                                    <@button type='button' title='Actions' buttonIcon='cog' dropdownMenu=true >
-                                                        <@li>
-                                                            <#assign btnClass=isConditional?then('disabled','') /> 
-                                                            <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageControls.jsp?view=manageConditionControl&id_step=${step.id}&id_target=${composite.formDisplay.id}&control_type=CONDITIONAL" useIframe=true targetElement="offcanvasField" btnColor="" btnDisabled=isConditional btnClass="dropdown-item justify-content-start ${btnClass}" id="cond-${composite.formDisplay.id}" btnIcon="question" btnTitle="#i18n{forms.manage_questions.action.condition}" title="#i18n{forms.manage_questions.action.condition}" size="half" />
-                                                        </@li>
-                                                        <@li>
-                                                            <#assign btnClass=isValidated?then('disabled','') /> 
-                                                            <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}&control_type=VALIDATION" useIframe=true targetElement="offcanvasField" btnColor="" btnDisabled=isValidated btnClass="dropdown-item justify-content-start ${btnClass}" id="validate-${composite.formDisplay.id}"  btnIcon="check" btnTitle="#i18n{forms.manage_questions.action.control}" title="#i18n{forms.manage_questions.action.control}" size="half" />
-                                                        </@li>
-                                                        <@li><@button type='submit' formId='duplicate-question-${composite.formDisplay.compositeId}' color='link' class='btn-into dropdown-item justify-content-start'><@span><@icon style='copy'/> #i18n{forms.manage_questions.action.copy}</@span></@button></@li>
-                                                        <@li>
-                                                            <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageQuestions.jsp?view=moveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}" useIframe=true targetElement="offcanvasField" id="move-comp-${composite.formDisplay.id}" btnColor="" btnClass="dropdown-item justify-content-start"  btnIcon="sort" btnTitle="#i18n{forms.manage_questions.action.move}" title="#i18n{forms.manage_questions.action.move}" />
-                                                        </@li>
-                                                    </@button>
-                                                </@span>     
-                                            </@div>
-                                            <#if !inGroup><#else><#assign groupCount++ /></#if>           
-                                            </li>
-                                        </#if>
-                                    </#list>     
-                                        </ul>
-                                    </div>
-                                    <#if groupCount?? && groupCount==0>
-                                        <@empty title='#i18n{forms.manage_questions.action.noQuestions}' iconName='message-2-question' />
-                                    </#if>
-                                </div>
-                            <#else>
-                                <@empty title='#i18n{forms.manage_questions.action.noQuestions}' iconName='message-2-question' />
-                            </#if>
+                                <#if composite_list?has_content>
+                                    <ul id="question-list" class="list-unstyled"><@compositeList idParent=0 /></ul>
+                                <#else>
+                                    <@empty title='#i18n{forms.manage_questions.action.noQuestions}' iconName='message-2-question' />
+                                </#if>
                             </@tabPanel>
                          </@columns>
                      </@row>
                      <@row>
                         <@columns class='d-flex justify-content-center align-items-center'>
-                             <@offcanvas id="offcanvasFieldType2" class="offcanvas-field" btnIcon="plus" btnTitle="#i18n{forms.manage_questions.buttonAdd}" title="#i18n{forms.manage_questions.buttonAdd}" size="sm">
-                                <@row class='row-cols-2 g-2'>
-                                <#list entry_type_list?filter( item-> item.group=false) as item>
-                                    <@columns>
-                                        <#if !item.group>
-                                            <@button type='submit' color='outline-primary d-flex w-100 justify-content-start' name='view_createQuestion' value='${item.idType}' title='#i18n{forms.manage_questions.buttonAdd} ${item.title}' buttonNested=true buttonIcon='${item.iconName?keep_before(" ")} me-1' ><@span class='text-truncate'>${item.title}</@span></@button>
-                                        </#if>
-                                    </@columns>
-                                </#list>
-                            </@row>
-                            </@offcanvas>
+                             <@button type='button' buttonIcon='plus' title="#i18n{forms.manage_questions.buttonAdd}" params={"data-bs-toggle": "modal", "data-bs-target": "#fieldTypeModal2"} /><@modal id="fieldTypeModal2" size='sm' params={"aria-labelledby": "fieldTypeModal2-title"}><@modalHeader modalTitle="#i18n{forms.manage_questions.buttonAdd}" id="fieldTypeModal2-title" /><@modalBody><@questionTypeButtons /></@modalBody></@modal>
                         </@columns>
                     </@row>
                     </@tform>
@@ -193,18 +163,7 @@
 </@pageContainer>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.group-toggle').forEach(function (toggle) {
-        toggle.addEventListener('click', function () {
-            var nIdGroup = this.closest('.group').querySelector("input[name='own_display_id_composite']").value;
-            document.querySelectorAll(<#noparse>`input[name="own_display_id_parent"][value="${nIdGroup}"]`</#noparse>).forEach(function (input) {
-                input.closest('tr').classList.toggle('d-none');
-            });
-            this.classList.toggle('ti-minus-square');
-            this.classList.toggle('ti-plus-square');
-        });
-    });
-
-    document.querySelectorAll('#question-list :not( .card > .card-header) li').forEach( question => {
+    document.querySelectorAll('#question-list li[data-url]').forEach( question => {
         question.addEventListener('dblclick', function(e) {
             e.preventDefault();
             window.location.href = encodeURI(this.dataset.url);
@@ -212,8 +171,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // When the modal is about to be shown, check the radio button before the button that triggered it
-    document.querySelectorAll('.offcanvas-field').forEach( offcanvas => {
-        offcanvas.addEventListener('show.bs.offcanvas', function (event) {
+    document.querySelectorAll('.modal[id^="fieldTypeModal"]').forEach( modal => {
+        modal.addEventListener('show.bs.modal', function (event) {
         // Button that triggered the modal
         let triggerBtn = event.relatedTarget;
         if (!triggerBtn) return;
@@ -250,6 +209,8 @@ document.addEventListener('DOMContentLoaded', function () {
     if (stepList.length > 0) {
         // Build dropdown menu HTML
         const actionButtons = document.querySelector('#forms-actions');
+        // The settings menu, before which the steps menu goes, is shown for an active form only
+        if ( !actionButtons ) return;
         
         <#noparse>
         let menuHtml = `<div class="dropdown d-inline-block mx-2 my-0 py-0 ms-auto">

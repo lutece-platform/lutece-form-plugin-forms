@@ -1,7 +1,12 @@
 <#include "all_entry_commons.html" />
 <@editFields editor=true labelErrorMessage=true  exportable=entry.exportable exportablePdf=entry.exportablePdf anonym=true >
+<#-- One file per question: the save refuses a request without max_files -->
+<@input type='hidden' name='max_files' id='max_files' value='1' />
 <@formGroup labelFor='file_max_size' labelKey='#i18n{forms.create_entry.labelFileMaxSize}' mandatory=true>
 	<@input type='text' name='file_max_size' id='file_max_size' value=getFileMaxSize(entry) />
+</@formGroup>
+<@formGroup labelFor='export_binary' labelKey='#i18n{forms.create_entry.labelExportBinary}' rows=2>
+	<@checkBox orientation='switch' labelKey='#i18n{forms.create_entry.labelExportBinaryComment}' name='export_binary' id='export_binary' value='1' checked=exportBinary( entry ) />
 </@formGroup>
 <!-- File type -->
 <#assign fileType = getFieldValueByCode( entry, "file_type" )>

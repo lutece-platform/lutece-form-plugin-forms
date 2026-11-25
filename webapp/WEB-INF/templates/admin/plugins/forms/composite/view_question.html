@@ -112,8 +112,15 @@ document.addEventListener('DOMContentLoaded', function() {
 					}
 					var currentControl = "${question.id?js_string?no_esc}_${question.iterationNumber?js_string?no_esc}";
 					var currentInput = getInputElement(currentControl);
-					if ( currentInput[0] != undefined && currentInput[0].type != 'file' ){
-						currentInput[0].dispatchEvent(new Event('change', { bubbles: true }));
+					/* Cascade to the questions conditioned by this one, once: a condition loop (a question conditioned by itself, or A by B and B by A) would otherwise re-fire forever */
+					window.formsCascadingControls = window.formsCascadingControls || new Set();
+					if ( currentInput[0] != undefined && currentInput[0].type != 'file' && !window.formsCascadingControls.has(currentControl) ){
+						window.formsCascadingControls.add(currentControl);
+						try {
+							currentInput[0].dispatchEvent(new Event('change', { bubbles: true }));
+						} finally {
+							window.formsCascadingControls.delete(currentControl);
+						}
 					}
 				});
 			});
@@ -212,4 +219,3 @@ document.addEventListener('DOMContentLoaded', function() {
 	});
 });
 </script>
-<script src="themes/shared/plugins/forms/moment.min.js"></script>

@@ -3,7 +3,7 @@
 <#assign idFileSelected = ''>
 <#if entry.helpMessage?exists&&entry.helpMessage!=''><#assign helpKey = entry.helpMessage /></#if>
 <#if list_responses?? && list_responses?has_content><#list list_responses as response><#if response?? && response.file??><#assign idFileSelected = response.file.idFile /></#if></#list></#if>
-<@formGroup labelFor='${idName}' id='label${entry.idEntry}' labelKey='${entry.title}' helpKey=helpKey mandatory=entry.mandatory htmlRequired=false  rows=2>
+<@formGroup labelFor='${idName}' id='label${entry.idEntry}' labelKey='${entry.title}' helpKey=helpKey mandatory=entry.mandatory rows=2>
 	<@galleryImage codeGallery=codeGallery inputName=idName idFileSelected=idFileSelected/>
 	<#if list_responses?? && list_responses?has_content>
 		<#assign response_error = list_responses[0]>

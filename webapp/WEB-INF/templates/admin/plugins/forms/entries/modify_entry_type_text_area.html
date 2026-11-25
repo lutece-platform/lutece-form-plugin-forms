@@ -1,5 +1,5 @@
 <#include "all_entry_commons.html" />
-<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
+<#assign placeholder = getFieldValueByCode(entry, "placeholder")!'' >
 <#assign config=getFieldByCode( entry, "text_config")>
 <#assign field_max_size=getFieldValueByCode( entry, "max_size")>
 <@editFields editor=true datalist=['on','off','name'] labelErrorMessage=true image=true exportable=entry.exportable exportablePdf=entry.exportablePdf anonym=true placeholder=placeholder defaultValue=config.value! maxSize=field_max_size?number  >
@@ -11,6 +11,6 @@
 <@formGroup helpKey='#i18n{forms.create_entry.labelUseRichTextComment}' rows=2>
 	<#assign field_richtext=getFieldValueByCode( entry, "richtext")>
 	<#if field_richtext == 'true'><#assign checked = true /><#else><#assign checked=false /></#if>
-	<@checkBox orientation='switch' labelFor='css_class' labelKey='#i18n{forms.create_entry.labelUseRichText}' name='useRichText' id='useRichText' value='true' checked=checked />
+	<@checkBox orientation='switch' labelKey='#i18n{forms.create_entry.labelUseRichText}' name='useRichText' id='useRichText' value='true' checked=checked />
 </@formGroup>
 </@editFields>

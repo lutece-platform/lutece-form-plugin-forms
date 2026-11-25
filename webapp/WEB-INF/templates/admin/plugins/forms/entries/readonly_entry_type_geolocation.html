@@ -2,7 +2,7 @@
 <#assign iterationNumber = entry_iteration_number?c >
 <#if !entry.onlyDisplayInBack>
 <@row>
-    <@columns sm=3><@p class='text-right font-weight-bold'>${entry.title!''}</@p></@columns>
+    <@columns sm=3><@p class='text-end fw-bold'>${entry.title!''}</@p></@columns>
     <@columns sm=9>
         <#assign responseX = "" >
         <#assign responseY = "" >

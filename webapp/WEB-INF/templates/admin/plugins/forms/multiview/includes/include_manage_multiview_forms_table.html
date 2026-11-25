@@ -1,31 +1,27 @@
 ${multiviewmap!''}
-<@table headBody=true params={ 'aria-label': '#i18n{forms.multiviewForms.boxTitle}' }>
-<#-- The first column holds a real link to each response: the click on the row is a mouse shortcut only -->
+<@table headBody=true class='table-vcenter card-table' params={ 'aria-label': '#i18n{forms.multiviewForms.boxTitle}' }>
 <@tr>
-<@th scope='col'>#i18n{forms.multiviewForms.responseDetails.response.number}</@th>
 <#if form_response_column_header_template_list?has_content>
 	<#list form_response_column_header_template_list as form_response_column_header_template>
-		${form_response_column_header_template}
+		${form_response_column_header_template?no_esc}
 	</#list>
+	<@th><@span class='visually-hidden'>#i18n{portal.util.labelActions}</@span></@th>
 </#if>
 </@tr>
 <@tableHeadBodySeparator />
 <#if form_response_line_template_list?has_content>
 	<#list form_response_line_template_list as form_response_line_template>
 		<@tr params={"data-url": "${redirect_details_base_url}&id_form_response=${form_response_line_template.idFormResponse}"}>
-			<@td><@link href=safeUrl( redirect_details_base_url + '&id_form_response=' + form_response_line_template.idFormResponse?c )>${i18n( 'forms.multiviewForms.responseDetails.response.link', form_response_line_template.idFormResponse?c )}</@link></@td>
 			<#if form_response_line_template.formColumnCellTemplateList?has_content>
 				<#list form_response_line_template.formColumnCellTemplateList as form_column_cell_template>
 					${form_column_cell_template?no_esc}
 				</#list>
 			</#if>
+			<@td class='text-end text-nowrap w-1'><div class="btn-actions justify-content-end"><a href="${redirect_details_base_url}&id_form_response=${form_response_line_template.idFormResponse}" class="btn-action" title="#i18n{forms.multiviewForms.labelViewResponse} ${form_response_line_template.idFormResponse}"><@icon style='eye' /><span class="visually-hidden">#i18n{forms.multiviewForms.labelViewResponse} ${form_response_line_template.idFormResponse}</span></a></div></@td>
 		</@tr>
 	</#list>
 </#if>
 </@table>
-<#if paginator?? && form_response_line_template_list?size gt 9>
-<@paginationAdmin paginator=paginator combo=1 showcount=0 />
-</#if>
 <#if form_response_geojson_point_list?has_content>
 <script id="geojson_points" type="application/json">{
 	"type" : "FeatureCollection",

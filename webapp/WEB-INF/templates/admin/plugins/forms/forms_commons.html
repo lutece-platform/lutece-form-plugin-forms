@@ -2,9 +2,9 @@
 -- Check if the checkbox must be checked or not
 -- @param code the checkbox code
 -- @param referecen_list the default values list
--- @return the String 'checked="checked" if the checkbox must be checked, an empty String otherwise
+-- @return true if the checkbox must be checked, false otherwise (not named getChecked: appointment_commons.html declares a global getChecked returning a String)
 -->
-<#function getChecked code reference_list>
+<#function isFormsParamChecked code reference_list>
 <#if reference_list?has_content>
 <#list reference_list as reference_item>
 <#if reference_item.code = code>
@@ -241,7 +241,7 @@
 <#assign typeToast=''>
 <#assign messageToast=''>
 <#if errors??>
-	<#if errors?size gt 0 >
+	<#if (errors![])?size gt 0 >
 		<#assign typeToast='danger'>
 		<#list errors as error >
 			<#if error.message??><#assign messageToast='${error.message!"#i18n{portal.util.message.titleError} "}'></#if>
@@ -249,7 +249,7 @@
 	</#if>
 </#if>
 <#if warnings??>
-	<#if warnings?size gt 0 >
+	<#if (warnings![])?size gt 0 >
 		<#assign typeToast='warning'>
 		<#assign first = warnings[0] />
 		<#if first?is_string>
@@ -260,13 +260,13 @@
 	</#if>
 </#if>
 <#if infos??>
-	<#if infos?size gt 0 >
+	<#if (infos![])?size gt 0 >
 		<#assign typeToast='info'>
 		<#assign first = infos[0] />
 		 <#if first?is_string>
-			<#list infos as info ><#assign messageToast='${info!"#i18n{portal.util.labelInfo} "}'></#list>
+			<#list infos as info ><#assign messageToast='${info!"#i18n{portal.util.message.titleInfo} "}'></#list>
 		<#else>
-			<#list infos as info ><#if info.message??><#assign messageToast='${info.message!"#i18n{portal.util.labelInfo} "}'></#if></#list>
+			<#list infos as info ><#if info.message??><#assign messageToast='${info.message!"#i18n{portal.util.message.titleInfo} "}'></#if></#list>
 		</#if>
 	</#if>
 </#if>
@@ -283,6 +283,21 @@
 	<#nested>
 </@breadcrumbs>
 </#macro>   
+<#-- Actions menu of a form, in the header of its edition screens (steps, builder) -->
+<#macro formActionsMenu form>
+<#if form.active>
+	<#if extendableResourceActionsHtml?? && extendableResourceActionsHtml?has_content>${(extendableResourceActionsHtml!)?no_esc}</#if>
+	<@button type='button' id='forms-action' class='ms-2' color='light' title='#i18n{forms.dashboard.row_actions}' buttonIcon='cog' dropdownMenu=true>
+		<@link href='${prod_url!}jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' class='dropdown-item' params={"target": "_blank"}><@icon style='external-link' class='me-2' />#i18n{forms.manageForm.FOLink.label} ${form.title}</@link>
+		<@link href='jsp/admin/plugins/forms/ManageFormResponse.jsp?view=stepView&id_form=${form.id}&init=true' class='dropdown-item'><@icon style='text-plus' class='me-2' />#i18n{forms.manageForm.BOLink.label} ${form.title}</@link>
+		<@link href='jsp/admin/plugins/forms/MultiviewForms.jsp?current_selected_panel=forms&id_form=${form.id}' class='dropdown-item' params={"target": "_blank"}><@icon style='list-details' class='me-2' />#i18n{forms.manageForm.MultiviewLink.label}</@link>
+		<#if form.breadcrumbName=='forms-breadcrumbaccordion.breadcrumbAccordion'>
+			<@link href='jsp/admin/plugins/forms/modules/breadcrumbaccordion/ManageBreadcrumbAccordion.jsp?view=modifyBreadcrumb&id_form=${form.id}' class='dropdown-item'><@icon style='stack' class='me-2' />#i18n{module.forms.breadcrumbaccordion.manage_breadcrumbAccordion.title}</@link>
+		</#if>
+		<#nested>
+	</@button>
+</#if>
+</#macro>
 <#macro bottomFormFixedButtons>
 <#assign bottomClass = ( commonsThemeCode == 'tabler' )?then( 'fixed-bottom ', '' ) + 'd-flex gap-2 justify-content-end bg-light bg-gradient left-0 w-100 justify-content-center py-3 forms-bottom-bar' />
 <@div class=bottomClass>
@@ -303,128 +318,154 @@
 <@button type='submit' id='action_${okAction}' name='action_${okAction}' buttonIcon='check' title='#i18n{portal.admin.message.buttonValidate}' class='form-validation' />
 <#nested>
 <#if viewAction !=''>
-	<@button type='submit' name='view_${viewAction}' title='#i18n{portal.admin.message.buttonCancel}' cancel=true buttonIcon='times' class='form-validation' />
+	<@button type='submit' name='view_${viewAction}' title='#i18n{portal.admin.message.buttonCancel}' cancel=true buttonIcon='times' class='form-validation' color='light' />
 </#if>
 </#macro>
 <#macro modalFrameScript formId actionId='action_modifyControl' title='#i18n{portal.util.labelModify}' modalId='pubModal' iframeId='modalIframe' modalHeight=70 >
+</#macro>
+<#--
+Macro: formSection
+Description: A Tabler card of a form settings screen: a header with a title and an optional subtitle, then the fields in the card body.
+Parameters:
+- title (string): the title of the section
+- subtitle (string, optional): a short explanation shown under the title
+- id (string, optional): the id of the card
+- bodyClass (string, optional): additional classes of the card body
+- footer (markup, optional): the content of the card footer, aligned to the end (the buttons of a short form); no footer when empty
+-->
+<#macro formSection title subtitle='' id='' bodyClass='' footer=''>
+<@box id=id>
+	<div class="card-header">
+		<div>
+			<h3 class="card-title">${title}</h3>
+			<#if subtitle?has_content><p class="card-subtitle">${subtitle}</p></#if>
+		</div>
+	</div>
+	<@boxBody class=bodyClass>
+		<#nested>
+	</@boxBody>
+	<#if footer?has_content>
+	<@boxFooter class='d-flex flex-wrap justify-content-end gap-2'>${footer}</@boxFooter>
+	</#if>
+</@box>
+</#macro>
+<#--
+Macro: formActionsBar
+Description: The action bar of a form settings screen: a card that stays at the bottom of the viewport while the form is scrolled, and sits after the last field instead of over it.
+Parameters: none, the buttons are nested.
+-->
+<#macro formActionsBar>
+<div class="card position-sticky bottom-0 z-3 mt-3 shadow-sm">
+	<@boxBody class='d-flex flex-wrap justify-content-end gap-2 py-2'>
+		<#nested>
+	</@boxBody>
+</div>
+</#macro>
+<#--
+Macro: formSubNav
+Description: The vertical sub navigation of a form settings tab (Tabler transparent list group in a card), switching between tab panels.
+Parameters: none, the links (formSubNavLink) are nested.
+-->
+<#macro formSubNav>
+<@box>
+	<div class="list-group list-group-transparent p-2 mb-0" role="tablist">
+		<#nested>
+	</div>
+</@box>
+</#macro>
+<#--
+Macro: formSubNavLink
+Description: A link of the vertical sub navigation, showing the tab panel it targets.
+Parameters:
+- id (string): the id of the link, the panel is labelled by it
+- target (string): the id of the tab panel to show
+- iconName (string): the Tabler icon name
+- title (string): the label
+- active (boolean, optional): true for the panel shown first
+-->
+<#macro formSubNavLink id target iconName title active=false>
+<a class="list-group-item list-group-item-action d-flex align-items-center gap-2<#if active> active</#if>" id="${id}" data-bs-toggle="list" href="#${target}" role="tab" aria-controls="${target}" aria-selected="${active?c}"><@icon style=iconName />${title}</a>
 </#macro>
 <#macro formModel type='update'>
 <#include "/admin/plugins/asynchronousupload/upload_commons.html" />
 <@addRequiredBOJsFiles />
 <script src="jsp/admin/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=${uploadHandler.handlerName}" ></script>
-<@row> 
-	<@columns md=6 xl=4 > 
-		<@card>
-		<@fieldSet legend='#i18n{forms.modify_form.labelDescription}'>
+<@row class='row-cards'>
+	<@columns lg=6>
+		<@formSection title='#i18n{forms.modify_form.labelDescription}' subtitle='#i18n{forms.modify_form.section.description.subtitle}'>
 			<@formGroup labelKey='#i18n{forms.modify_form.labelTitle}' helpKey='#i18n{forms.modify_form.labelTitle.help}' mandatory=true rows=2>
-				<@input type='text' name='title' value='${form.title!}' />
+				<@input type='text' name='title' value='${form.title!}' mandatory=true />
 			</@formGroup>
 			<@formGroup labelKey='#i18n{forms.modify_form.labelDescription}' helpKey='#i18n{forms.modify_form.labelDescription.help}' rows=2>
-				<@input type='textarea' name='description'>${form.description!}</@input>
+				<@input type='textarea' name='description' rows=3>${form.description!}</@input>
 			</@formGroup>
 			<@formGroup labelKey='#i18n{forms.modify_form.labelCategory}' helpKey='#i18n{forms.modify_form.labelCategory.help}' rows=2>
 				<@select name='id_category' items=categoryList default_value='${form.idCategory!}' />
 			</@formGroup>
-			<@formGroup labelKey='#i18n{forms.modify_form.labelLogo}' helpKey='#i18n{forms.modify_form.labelLogo.help}' rows=2>
+			<@formGroup labelKey='#i18n{forms.modify_form.labelLogo}' helpKey='#i18n{forms.modify_form.labelLogo.help}' rows=2 class='mb-0'>
 				<@addFileBOInput fieldName="upload_logo" handler=uploadHandler submitBtnName='action_doSynchronousUploadDocument' cssClass='' multiple=true />
 				<#if !listFiles??><#assign listFiles = ''></#if>
 				<div id="listUpload">
 					<@addBOUploadedFilesBox fieldName="upload_logo" handler=uploadHandler submitBtnName='action_doSynchronousUploadDocument' listFiles=listFiles />
 				</div>
 			</@formGroup>
-		</@fieldSet>
-		<@fieldSet legend='#i18n{forms.create_form.display.label}'>
+		</@formSection>
+		<@formSection title='#i18n{forms.create_form.labelDates}' subtitle='#i18n{forms.modify_form.section.dates.subtitle}'>
 			<@row>
-				<@columns> 
-					<@formGroup labelKey='#i18n{forms.modify_form.labelBreadcrumb}' helpKey='#i18n{forms.modify_form.labelBreadcrumb.help}' mandatory=true rows=2>
-						<@select name='breadcrumbName' items=breadcrumbTypes default_value='${form.breadcrumbName!}' />
-					</@formGroup>
-				</@columns>
-			</@row>
-			<@row>
-				<@columns>
-					<@formGroup labelKey='#i18n{forms.create_form.labelCountResponses}' helpKey='#i18n{forms.create_form.labelCountResponses.help}' hideLabel=['all'] rows=2>
-						<@checkBox orientation='switch' labelFor='countResponses' labelKey='#i18n{forms.create_form.labelCountResponses}' name='countResponses' value='1' checked=(form?has_content && form.countResponses) />
-					</@formGroup>
-				</@columns>
-			</@row>
-		</@fieldSet>
-		</@card>
-	</@columns>					
-	<@columns md=6 xl=4 > 
-		<@card>
-		<@fieldSet legend='#i18n{forms.create_form.labelDates}'>  
-			<@row>
-				<@columns>   
+				<@columns md=6>
 					<@formGroup labelKey='#i18n{forms.modify_form.labelStartDate}' rows=2>
 						<@inputGroup>
-						<#assign availabilityStartDatestr = ""><#if form.availabilityStartDate?? ><#assign availabilityStartDatestr = form.availabilityStartDate?iso_local_nz></#if>
-								<@input type='datetime' language=locale name='availabilityStartDate' id='availabilityStartDate'  value='${availabilityStartDatestr}' />
-								<@inputGroupItem type='text'>
-									<@icon style='calendar' />
-								</@inputGroupItem>
+							<#assign availabilityStartDatestr = ""><#if form.availabilityStartDate?? ><#assign availabilityStartDatestr = form.availabilityStartDate?iso_local_nz></#if>
+							<@input type='datetime' language=locale name='availabilityStartDate' id='availabilityStartDate' value='${availabilityStartDatestr}' />
+							<@inputGroupItem type='text'><@icon style='calendar' /></@inputGroupItem>
 						</@inputGroup>
 					</@formGroup>
-				</@columns>  
-			</@row>
-			<@row>	     
-				<@columns>  
-					<@formGroup labelKey='#i18n{forms.modify_form.labelEndDate}' rows=2>     
+				</@columns>
+				<@columns md=6>
+					<@formGroup labelKey='#i18n{forms.modify_form.labelEndDate}' rows=2>
 						<@inputGroup>
-						<#assign availabilityEndDatestr = ""><#if form.availabilityEndDate?? ><#assign availabilityEndDatestr = form.availabilityEndDate?iso_local_nz></#if>
-								<@input type='datetime' language=locale name='availabilityEndDate' id='availabilityEndDate' value='${availabilityEndDatestr}' />
-								<@inputGroupItem type='text'>
-									<@icon style='calendar' />
-								</@inputGroupItem>
+							<#assign availabilityEndDatestr = ""><#if form.availabilityEndDate?? ><#assign availabilityEndDatestr = form.availabilityEndDate?iso_local_nz></#if>
+							<@input type='datetime' language=locale name='availabilityEndDate' id='availabilityEndDate' value='${availabilityEndDatestr}' />
+							<@inputGroupItem type='text'><@icon style='calendar' /></@inputGroupItem>
 						</@inputGroup>
 					</@formGroup>
-				</@columns>   
-			</@row>
-			<@row>
-				<@columns>
-					<@formGroup labelKey='#i18n{forms.modify_form.labelUnavailableMessage}' helpKey='#i18n{forms.modify_form.labelUnavailableMessage.help}' rows=2>
-						<@input type='textarea' name='unavailableMessage' richtext=true>${form.unavailableMessage!}</@input>
-					</@formGroup>
 				</@columns>
 			</@row>
-		</@fieldSet>
-		</@card>
-		<@card>
-		<@fieldSet legend='#i18n{forms.create_form.display.labelRestrictions}'>
-			<@row>     
-				<@columns lg=12 xl=6>  
-					<@formGroup labelFor='max_number_response' labelKey='#i18n{forms.create_form.labelMaxNumberResponse}' helpKey='#i18n{forms.create_form.labelMaxNumberResponseComment.help}' rows=2>
-						<@input name='maxNumberResponse' id='maxNumberResponse' type='number' value=form.maxNumberResponse?string!'0' />
-					</@formGroup>
-					<@formGroup labelKey='#i18n{forms.create_form.labelAuthentificationNeeded}' helpKey='#i18n{forms.create_form.labelAuthentificationNeeded.help}' hideLabel=['all'] rows=2>
-						<@checkBox orientation='switch' labelFor='authentificationNeeded' labelKey='#i18n{forms.create_form.labelAuthentificationNeeded}' name='authentificationNeeded' id='authentificationNeeded' value='1' checked=(form?has_content && form.authentificationNeeded) />
-					</@formGroup>
-					<@formGroup labelKey='#i18n{forms.create_form.labelAccessToResponsesByRole}' helpKey='#i18n{forms.create_form.labelAccessToResponsesByRole.help}' hideLabel=['all'] rows=2>
-						<@checkBox orientation='switch' labelFor='accessToResponsesByRole' labelKey='#i18n{forms.create_form.labelAccessToResponsesByRole}' name='accessToResponsesByRole' id='accessToResponsesByRole' value='1' checked=(form?has_content && form.accessToResponsesByRole) />
-					</@formGroup>	
-				</@columns>       
-				<@columns lg=12 xl=6>           
-					<@formGroup labelKey='#i18n{forms.create_form.labelLimitNumberResponse}' helpKey='#i18n{forms.create_form.labelLimitNumberResponse.help}' hideLabel=['all'] rows=2>
-						<@checkBox orientation='switch' labelFor='oneResponseByUser' labelKey='#i18n{forms.create_form.labelLimitNumberResponse}' name='oneResponseByUser' id='oneResponseByUser' value='1' checked=(form?has_content && form.oneResponseByUser) />
-					</@formGroup>
-					<@formGroup labelKey='#i18n{forms.create_form.labelBackupEnabled}' helpKey='#i18n{forms.create_form.labelBackupEnabled.help}' hideLabel=['all'] rows=2>
-						<@checkBox orientation='switch' labelFor='backupEnabled' labelKey='#i18n{forms.create_form.labelBackupEnabled}' name='backupEnabled' id='backupEnabled' value='1' checked=(form?has_content && form.backupEnabled) />
-					</@formGroup>
-				</@columns>
-			</@row>
-            <@row>
-                <@columns lg=12 xl=6>
-                    <@formGroup id='backupStoragePeriodGroup' labelFor='backupStoragePeriod' labelKey='#i18n{forms.create_form.labelBackupStoragePeriod}' helpKey='#i18n{forms.create_form.labelBackupStoragePeriod.help}' rows=2>
-                        <@input type='number' min=-1 name='backupStoragePeriod' id='backupStoragePeriod' value=form.backupStoragePeriod?string!'-1' />
-                    </@formGroup>
-                </@columns>
-            </@row>
-		</@fieldSet>
-		</@card>
+			<@formGroup labelKey='#i18n{forms.modify_form.labelUnavailableMessage}' helpKey='#i18n{forms.modify_form.labelUnavailableMessage.help}' rows=2 class='mb-0'>
+				<@input type='textarea' name='unavailableMessage' richtext=true>${form.unavailableMessage!}</@input>
+			</@formGroup>
+		</@formSection>
+		<@formSection title='#i18n{forms.create_form.display.labelRestrictions}' subtitle='#i18n{forms.modify_form.section.restrictions.subtitle}'>
+			<@formGroup labelFor='maxNumberResponse' labelKey='#i18n{forms.create_form.labelMaxNumberResponse}' helpKey='#i18n{forms.create_form.labelMaxNumberResponseComment.help}' rows=2>
+				<@input name='maxNumberResponse' id='maxNumberResponse' type='number' value=form.maxNumberResponse?string!'0' />
+			</@formGroup>
+			<@formGroup labelKey='#i18n{forms.create_form.labelLimitNumberResponse}' helpKey='#i18n{forms.create_form.labelLimitNumberResponse.help}' hideLabel=['all'] rows=2>
+				<@checkBox orientation='switch' labelKey='#i18n{forms.create_form.labelLimitNumberResponse}' name='oneResponseByUser' id='oneResponseByUser' value='1' checked=(form?has_content && form.oneResponseByUser) />
+			</@formGroup>
+			<@formGroup labelKey='#i18n{forms.create_form.labelAuthentificationNeeded}' helpKey='#i18n{forms.create_form.labelAuthentificationNeeded.help}' hideLabel=['all'] rows=2>
+				<@checkBox orientation='switch' labelKey='#i18n{forms.create_form.labelAuthentificationNeeded}' name='authentificationNeeded' id='authentificationNeeded' value='1' checked=(form?has_content && form.authentificationNeeded) />
+			</@formGroup>
+			<@formGroup labelKey='#i18n{forms.create_form.labelAccessToResponsesByRole}' helpKey='#i18n{forms.create_form.labelAccessToResponsesByRole.help}' hideLabel=['all'] rows=2>
+				<@checkBox orientation='switch' labelKey='#i18n{forms.create_form.labelAccessToResponsesByRole}' name='accessToResponsesByRole' id='accessToResponsesByRole' value='1' checked=(form?has_content && form.accessToResponsesByRole) />
+			</@formGroup>
+			<@formGroup labelKey='#i18n{forms.create_form.labelBackupEnabled}' helpKey='#i18n{forms.create_form.labelBackupEnabled.help}' hideLabel=['all'] rows=2>
+				<@checkBox orientation='switch' labelKey='#i18n{forms.create_form.labelBackupEnabled}' name='backupEnabled' id='backupEnabled' value='1' checked=(form?has_content && form.backupEnabled) />
+			</@formGroup>
+			<@formGroup id='backupStoragePeriodGroup' labelFor='backupStoragePeriod' labelKey='#i18n{forms.create_form.labelBackupStoragePeriod}' helpKey='#i18n{forms.create_form.labelBackupStoragePeriod.help}' rows=2 class='mb-0'>
+				<@input type='number' min=-1 name='backupStoragePeriod' id='backupStoragePeriod' value=form.backupStoragePeriod?string!'-1' />
+			</@formGroup>
+		</@formSection>
 	</@columns>
-	<@columns md=6 xl=4>
-		<@card>
-		<@fieldSet legend='#i18n{forms.create_form.labelDisplaySummary}'>
+	<@columns lg=6>
+		<@formSection title='#i18n{forms.create_form.display.label}' subtitle='#i18n{forms.modify_form.section.display.subtitle}'>
+			<@formGroup labelKey='#i18n{forms.modify_form.labelBreadcrumb}' helpKey='#i18n{forms.modify_form.labelBreadcrumb.help}' mandatory=true rows=2>
+				<@select name='breadcrumbName' items=breadcrumbTypes default_value='${form.breadcrumbName!}' />
+			</@formGroup>
+			<@formGroup labelKey='#i18n{forms.create_form.labelCountResponses}' helpKey='#i18n{forms.create_form.labelCountResponses.help}' hideLabel=['all'] rows=2 class='mb-0'>
+				<@checkBox orientation='switch' labelKey='#i18n{forms.create_form.labelCountResponses}' name='countResponses' id='countResponses' value='1' checked=(form?has_content && form.countResponses) />
+			</@formGroup>
+		</@formSection>
+		<@formSection title='#i18n{forms.create_form.labelDisplaySummary}' subtitle='#i18n{forms.modify_form.section.summary.subtitle}'>
 			<@formGroup labelKey='#i18n{forms.create_form.labelReturnUrl}' helpKey='#i18n{forms.create_form.labelReturnUrl.help}' rows=2>
 				<@input type='text' name='returnUrl' value='${form.returnUrl!}' />
 			</@formGroup>
@@ -433,52 +474,46 @@
 			</@formGroup>
 			<@formGroup labelKey='#i18n{forms.create_form.labelDisplaySummary}' hideLabel=['all'] helpKey='#i18n{forms.create_form.labelDisplaySummary.help}' rows=2>
 				<#if type='create'><#local isSummary=true ><#else><#local isSummary=(form?has_content && form.displaySummary)></#if>
-				<@checkBox orientation='switch' labelKey='#i18n{forms.create_form.labelDisplaySummary}' labelFor='displaySummary' name='displaySummary' id='displaySummary' value='1' checked=isSummary />
+				<@checkBox orientation='switch' labelKey='#i18n{forms.create_form.labelDisplaySummary}' name='displaySummary' id='displaySummary' value='1' checked=isSummary />
 			</@formGroup>
-			<@formGroup labelKey='#i18n{forms.create_form.labelEndMessageDisplay}' hideLabel=['all'] id='labelEndMessage' helpKey='#i18n{forms.create_form.labelEndMessageDisplay.help}'  rows=2>
-				<@checkBox orientation='switch' labelKey='#i18n{forms.create_form.labelEndMessageDisplay}' labelFor='endMessageDisplay' name='endMessageDisplay' id='endMessageDisplay' value='1' checked=(formMessage?has_content && formMessage.endMessageDisplay) />
+			<@formGroup labelKey='#i18n{forms.create_form.labelEndMessageDisplay}' hideLabel=['all'] id='labelEndMessage' helpKey='#i18n{forms.create_form.labelEndMessageDisplay.help}' rows=2>
+				<@checkBox orientation='switch' labelKey='#i18n{forms.create_form.labelEndMessageDisplay}' name='endMessageDisplay' id='endMessageDisplay' value='1' checked=(formMessage?has_content && formMessage.endMessageDisplay) />
 			</@formGroup>
 			<@formGroup labelKey='#i18n{forms.create_form.labelEndMessage}' id='endMessage' helpKey='#i18n{forms.create_form.labelEndMessage.help}' rows=2>
 				<@input type='textarea' name='endMessage' richtext=true>${formMessage.endMessage!}</@input>
 			</@formGroup>
-			<@formGroup labelKey='#i18n{forms.create_form.labelLabelEndMessageButton}' id='labelEndMessageButton' rows=2>
+			<@formGroup labelKey='#i18n{forms.create_form.labelLabelEndMessageButton}' id='labelEndMessageButton' rows=2 class='mb-0'>
 				<@input type='text' name='labelEndMessageButton' value='${formMessage.labelEndMessageButton!}' />
 			</@formGroup>
-		</@fieldSet>
-		<!-- workgroup -->
-		<@fieldSet legend='#i18n{forms.modify_form.workgroup.label}'>
+		</@formSection>
+		<@formSection title='#i18n{forms.modify_form.section.access.title}' subtitle='#i18n{forms.modify_form.section.access.subtitle}'>
 			<@formGroup labelKey='#i18n{forms.modify_form.workgroup.label}' rows=2>
 				<@select name='workgroup' items=workgroup_list default_value='${form.workgroup!workgroup_key_default_value}' />
 			</@formGroup>
-		</@fieldSet> 
-		<#if workflow_list?has_content && workflow_list?size gt 1>
-			<@fieldSet legend='#i18n{forms.modify_form.workflow.label}'>
+			<#if workflow_list?has_content && workflow_list?size gt 1>
 				<@formGroup labelKey='#i18n{forms.modify_form.workflow.label}' rows=2>
 					<@select name='idWorkflow' items=workflow_list default_value='${form.idWorkflow!}' />
 				</@formGroup>
-			</@fieldSet> 
-		</#if>
-		<#if accesscontrol_list?has_content && accesscontrol_list?size gt 1>
-			<@fieldSet legend='#i18n{forms.modify_form.accesscontrol.label}'>
+			</#if>
+			<#if accesscontrol_list?has_content && accesscontrol_list?size gt 1>
 				<@formGroup labelKey='#i18n{forms.modify_form.accesscontrol.label}' rows=2>
 					<@select name='id_accesscontrol' items=accesscontrol_list default_value='${accesscontrol_id!}' />
 				</@formGroup>
-			</@fieldSet> 
-		</#if>
+			</#if>
+		</@formSection>
 		<#if is_active_captcha>
-			<@fieldSet legend='#i18n{forms.modify_form.captcha.label}'>
-				<@formGroup labelKey='#i18n{forms.modify_form.labelCaptchaStepInitial}' hideLabel=['all'] id='labelCaptchaStepInitial' helpKey='#i18n{forms.modify_form.labelCaptchaStepInitial.help}'  rows=2>
-					<@checkBox orientation='switch' labelKey='#i18n{forms.modify_form.labelCaptchaStepInitial}' labelFor='captchaStepInitial' name='captchaStepInitial' value='1' checked=(form?has_content && form.captchaStepInitial) />
+			<@formSection title='#i18n{forms.modify_form.captcha.label}'>
+				<@formGroup labelKey='#i18n{forms.modify_form.labelCaptchaStepInitial}' hideLabel=['all'] id='labelCaptchaStepInitial' helpKey='#i18n{forms.modify_form.labelCaptchaStepInitial.help}' rows=2>
+					<@checkBox orientation='switch' labelKey='#i18n{forms.modify_form.labelCaptchaStepInitial}' name='captchaStepInitial' id='captchaStepInitial' value='1' checked=(form?has_content && form.captchaStepInitial) />
 				</@formGroup>
-				<@formGroup labelKey='#i18n{forms.modify_form.labelCaptchaStepFinal}' hideLabel=['all'] id='labelCaptchaStepFinal' helpKey='#i18n{forms.modify_form.labelCaptchaStepFinal.help}'  rows=2>
-					<@checkBox orientation='switch' labelKey='#i18n{forms.modify_form.labelCaptchaStepFinal}' labelFor='captchaStepFinal' name='captchaStepFinal' value='1' checked=(form?has_content && form.captchaStepFinal) />
+				<@formGroup labelKey='#i18n{forms.modify_form.labelCaptchaStepFinal}' hideLabel=['all'] id='labelCaptchaStepFinal' helpKey='#i18n{forms.modify_form.labelCaptchaStepFinal.help}' rows=2>
+					<@checkBox orientation='switch' labelKey='#i18n{forms.modify_form.labelCaptchaStepFinal}' name='captchaStepFinal' id='captchaStepFinal' value='1' checked=(form?has_content && form.captchaStepFinal) />
 				</@formGroup>
-				<@formGroup labelKey='#i18n{forms.modify_form.labelCaptchaRecap}' hideLabel=['all'] id='labelCaptchaRecap' helpKey='#i18n{forms.modify_form.labelCaptchaRecap.help}'  rows=2>
-					<@checkBox orientation='switch' labelKey='#i18n{forms.modify_form.labelCaptchaRecap}' labelFor='captchaRecap' name='captchaRecap' value='1' checked=(form?has_content && form.captchaRecap) />
+				<@formGroup labelKey='#i18n{forms.modify_form.labelCaptchaRecap}' hideLabel=['all'] id='labelCaptchaRecap' helpKey='#i18n{forms.modify_form.labelCaptchaRecap.help}' rows=2 class='mb-0'>
+					<@checkBox orientation='switch' labelKey='#i18n{forms.modify_form.labelCaptchaRecap}' name='captchaRecap' id='captchaRecap' value='1' checked=(form?has_content && form.captchaRecap) />
 				</@formGroup>
-			</@fieldSet> 
+			</@formSection>
 		</#if>
-		</@card>
 	</@columns>
 </@row>
 </#macro>

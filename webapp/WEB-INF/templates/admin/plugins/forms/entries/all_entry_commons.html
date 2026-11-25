@@ -93,19 +93,21 @@ ${breadcrumb_template}
 				<@input type='hidden' name='id_step' value='${step.id!}' />
 				<@input type='hidden' name='id_question' value='${question.id!}' />
 				<@input type='hidden' id='token' name='token' value='${token!}' />
+				<@columnField />
 				<#if hasTitle>
-				<@formGroup rows=2  labelFor='title' labelKey='#i18n{forms.create_entry.labelTitle}' helpKey='#i18n{forms.create_entry.labelTitleComment}' mandatory=true>
+				<@formGroup rows=2 labelFor='title' labelKey='#i18n{forms.create_entry.labelTitle}' helpKey='#i18n{forms.create_entry.labelTitleComment}' mandatory=true>
 					<@input type='text' name='title' id='title' value='${entry.title!}' maxlength=255 />
 				</@formGroup>
 				</#if>
-				<#if defaultValue !=''>
+				<#-- placeholder and defaultValue: false when the type has no such setting; a string, even empty, shows the input -->
+				<#if !defaultValue?is_boolean>
 					<@formGroup rows=2 labelFor='value' labelKey='#i18n{forms.create_entry.labelValueDefault}'>
-						<@input type='text' name='value' id='value' value='${config.value}' />
+						<@input type='text' name='value' id='value' value=defaultValue />
 					</@formGroup>
 				</#if>
 				<#if required>
 				<@formGroup rows=2 >
-					<@checkBox orientation='switch' labelFor='mandatory'labelKey='#i18n{forms.create_entry.labelMandatory}' name='mandatory' id='mandatory' value='1' checked=entry.mandatory labelKey='#i18n{forms.create_entry.labelMandatory}' />
+					<@checkBox orientation='switch' name='mandatory' id='mandatory' value='1' checked=entry.mandatory labelKey='#i18n{forms.create_entry.labelMandatory}' />
 				</@formGroup>
 				</#if>
 				${question_modify_template!}
@@ -128,7 +130,7 @@ ${breadcrumb_template}
 					<#assign checkedValue = false />
 					<#assign useRefListFieldId ="" />
 				</#if>
-					<@checkBox orientation='switch' labelFor='use_ref_list' labelKey='#i18n{forms.create_entry.labelUseRefList}' name='use_ref_list' id='use_ref_list' value='1' checked=checkedValue />
+					<@checkBox orientation='switch' labelKey='#i18n{forms.create_entry.labelUseRefList}' name='use_ref_list' id='use_ref_list' value='1' checked=checkedValue />
 				</@formGroup>
 				<@formGroup rows=2 labelFor='select_ref_list' id='use_ref_list_group' labelKey='#i18n{forms.create_entry.labelUseRefListSelect}' >
 					<@select name='select_ref_list' items=ref_list_select default_value=useRefListFieldId />
@@ -147,9 +149,9 @@ ${breadcrumb_template}
 				</#if>
 			</@fieldSet>
 			<@fieldSet legend='#i18n{forms.modify_entry.titleQuestion} : "${form.title}"' hideLegend=['all']>
-				<#if placeholder !=''>
+				<#if !placeholder?is_boolean>
 				<@formGroup rows=2 labelFor='placeholder' labelKey='#i18n{forms.create_entry.labelPlaceholder}'>
-					<@input type='text' name='placeholder' id='placeholder' value=placeholder! maxlength=100 />
+					<@input type='text' name='placeholder' id='placeholder' value=placeholder maxlength=100 />
 				</@formGroup>
 				</#if>
 				<@formGroup rows=2 labelFor='css_class' labelKey='#i18n{forms.create_entry.labelCSSClass}' helpKey='#i18n{forms.create_entry.labelCSSClassComment}'>
@@ -180,7 +182,7 @@ ${breadcrumb_template}
 						<#assign checkedValue = false />
 						<#assign confirmFieldTitle ="" />
 					</#if>
-					<@checkBox orientation='switch' labelFor='confirm_field' labelKey='#i18n{forms.create_entry.labelConfirmField}' name='confirm_field' id='confirm_field' value='1' checked=checkedValue />
+					<@checkBox orientation='switch' labelKey='#i18n{forms.create_entry.labelConfirmField}' name='confirm_field' id='confirm_field' value='1' checked=checkedValue />
 				</@formGroup>
 				<@formGroup rows=2 labelFor='confirm_field_title' id="confirm_field_title_group" labelKey='#i18n{forms.create_entry.labelConfirmFieldTitle}'>
 					<@input type='text' name='confirm_field_title' id='confirm_field_title' value='${confirmFieldTitle!}'  maxlength=255 />
@@ -194,7 +196,7 @@ ${breadcrumb_template}
 						<#list fields_list_by_id_entries as key, value>
 							<#if key = illustration_image_entry.idField>
 								<#assign image_url = value>
-								<@input type='file' id='illustration_image${key!}' name='illustration_image' fileName='#i18n{forms.modify_entry.downloadPicture}' fileURL='${image_url!\'\'}' showFileUrl=true showImage=true value=key />
+								<@input type='file' id='illustration_image${key!}' name='illustration_image' fileName='#i18n{forms.modify_entry.downloadPicture}' fileURL='${image_url!\'\'}' showFileUrl=true value=key />
 							</#if>
 						</#list>
 					<#else>
@@ -212,17 +214,17 @@ ${breadcrumb_template}
 						<#assign checkedValue = false />
 						<#assign anonPattern ="" />
 					</#if>
-					<@checkBox orientation='switch' labelFor='anonymizable' labelKey='#i18n{forms.create_entry.labelAnonymizable}' name='anonymizable' id='anonymizable' value='1' checked=checkedValue />
+					<@checkBox orientation='switch' labelKey='#i18n{forms.create_entry.labelAnonymizable}' name='anonymizable' id='anonymizable' value='1' checked=checkedValue />
 				</@formGroup>
 				<@formGroup rows=2 labelFor='anonymize_pattern' id="anonymize_pattern_group" labelKey='#i18n{forms.create_entry.labelAnonymizePattern}' helpKey='${anonymization_help_message}' >
 					<@input type='text' name='anonymize_pattern' id='anonymize_pattern' value='${anonPattern!}' maxlength=255 />
 				</@formGroup>
 				</#if>
 				<@formGroup rows=2 >
-					<@checkBox orientation='switch' labelFor='only_display_in_back' labelKey='#i18n{forms.create_entry.labelOnlyDisplayBack}' name='only_display_in_back' id='only_display_in_back' value='1'  labelKey='#i18n{forms.create_entry.labelOnlyDisplayBack}' checked=entry.onlyDisplayInBack />
+					<@checkBox orientation='switch' name='only_display_in_back' id='only_display_in_back' value='1' labelKey='#i18n{forms.create_entry.labelOnlyDisplayBack}' checked=entry.onlyDisplayInBack />
 				</@formGroup>
 				<@formGroup rows=2 helpKey='#i18n{forms.create_entry.labelResponsesIndexedComment}'>
-					<@checkBox orientation='switch' labelFor='is_indexed' labelKey='#i18n{forms.create_entry.labelResponsesIndexed}' name='is_indexed' id='is_indexed' value='1' checked=entry.indexed />
+					<@checkBox orientation='switch' labelKey='#i18n{forms.create_entry.labelResponsesIndexed}' name='is_indexed' id='is_indexed' value='1' checked=entry.indexed />
 				</@formGroup>
 				<#if entry.exportable>
 					<@input type='hidden' name='exportable' value='1' />
@@ -246,20 +248,21 @@ ${breadcrumb_template}
 				<@bottomFormFixedButtons>
 					<@button type='submit' name='action_modifyQuestion' title='#i18n{forms.modify_entry.buttonSave}' buttonIcon='device-floppy' />
 					<@button type='submit' name='action_saveQuestion' title='#i18n{forms.modify_entry.buttonApply}' value='apply' buttonIcon='check' />
-					<@button type='cancel' name='view_manageQuestions' buttonIcon='x' title='#i18n{forms.create_entry.buttonCancel}' color='default' cancel=true />
+					<@button type='cancel' name='view_manageQuestions' buttonIcon='x' title='#i18n{forms.create_entry.buttonCancel}' color='light' cancel=true />
 				</@bottomFormFixedButtons>
 			</@fieldSet>
+		</@boxBody>
 		</@box>
 	</@columns>
 	<#if options>
-		<@columns xs=12 md=4 lg=6 xl=6>
+		<@columns xs=xs md=md lg=lg xl=xl id='list'>
 			<@box color='primary' id='manage-field-options'>
 				<#if useRefListField?? && useRefListField.value?boolean>
 					<@boxHeader title='#i18n{forms.create_entry.manageField.title}'></@boxHeader>
 					<@boxBody>#i18n{forms.create_entry.messageUseRefList}</@boxBody>
 				<#else>
 					<@boxHeader title='#i18n{forms.create_entry.manageField.title}'>
-						<@offcanvas targetUrl="jsp/admin/plugins/forms/ModifyEntry.jsp?option_no_display_title=true&view_createField=&id_question=${question.id}" useIframe=true targetElement="#manageEntry" id="q_${question.id}_c" title="#i18n{forms.createField.title}" hideTtitle=['all'] btnTitle="#i18n{forms.createField.title}" btnIcon="plus" position="end" size="half" />
+						<@button type='button' buttonIcon='plus' title='#i18n{forms.createField.title}' hideTitle=['all'] params={"data-option-modal-url": "jsp/admin/plugins/forms/ModifyEntry.jsp?option_no_display_title=true&view_createField=&id_question=${question.id}", "data-option-modal-title": "#i18n{forms.createField.title}"} />
 					</@boxHeader>
 					<@boxBody>
 						<@ul class='list-group'>
@@ -271,7 +274,7 @@ ${breadcrumb_template}
 								<@span class='text-truncate w-50' params={"title": ( field.title!'' ) + ' > ' + ( field.value!'' )}>${field.title!} &gt; ${field.value!}</@span>
 								<@btnToolbar>
 								<#if field.defaultValue><@tag color='success'><@icon style='check' title='#i18n{forms.create_entry.manageField.rowDefaultValue}' /></@tag></#if>
-									<@offcanvas targetUrl="jsp/admin/plugins/forms/ModifyEntry.jsp?view=modifyField&id_question=${question.id}&id_field=${field.idField}&option_no_display_title=true" useIframe=true targetElement="#manageEntry" id="q_${question.id}_f_${field.idField}" title="#i18n{forms.modifyField.title}" hideTtitle=['all'] btnTitle="#i18n{portal.util.labelModify}" btnIcon="pencil" position="end" size="half" />
+									<@button type='button' buttonIcon='pencil' title='#i18n{portal.util.labelModify}' hideTitle=['all'] params={"data-option-modal-url": "jsp/admin/plugins/forms/ModifyEntry.jsp?view=modifyField&id_question=${question.id}&id_field=${field.idField}&option_no_display_title=true", "data-option-modal-title": "#i18n{forms.modifyField.title}"} />
 									<@btnGroup class='mx-1'>
 										<#if cpt!=1>
 											<@button type='submit' formId='move-field-up-${field.idField}' title='#i18n{forms.create_entry.manageField.titleMoveUp}' buttonIcon='chevron-up' hideTitle=['all'] />
@@ -305,6 +308,9 @@ ${breadcrumb_template}
 </#list>
 </#list>
 </#if>
+<#if options>
+<@optionModal />
+</#if>
 <#if editor>
 <@initEditor />
 </#if>
@@ -314,4 +320,75 @@ ${breadcrumb_template}
 <#if anonym>
 <@anonymPattern />
 </#if>
+</#macro>
+<#-- The modal where an option of a question is created or modified: the page of the option is loaded in an iframe,
+     cleared of the back office chrome; its save reloads the question (target _top), its cancel closes the modal -->
+<#macro optionModal>
+<style>
+#optionModal .modal-body iframe { height: 65vh; }
+#optionModal.option-modal-embedded .modal-dialog { margin: 0; width: 100%; max-width: 100%; height: 100%; }
+#optionModal.option-modal-embedded .modal-content { height: 100%; border-radius: 0; }
+#optionModal.option-modal-embedded .modal-body { display: flex; flex: 1 1 auto; min-height: 0; }
+#optionModal.option-modal-embedded .modal-body iframe { flex: 1 1 auto; height: 100%; }
+</style>
+<@modal id='optionModal' size='lg' params={"tabindex": "-1", "aria-labelledby": "optionModalTitle", "aria-hidden": "true"}>
+	<@modalHeader modalTitle='' id='optionModalTitle' />
+	<@modalBody>
+		<iframe id="optionModalFrame" name="optionModalFrame" class="w-100 border-0 d-block" title="#i18n{forms.createField.title}"></iframe>
+	</@modalBody>
+</@modal>
+<script>
+document.addEventListener( 'DOMContentLoaded', () => {
+	const modalElement = document.getElementById( 'optionModal' );
+	const frame = document.getElementById( 'optionModalFrame' );
+	if ( !modalElement || !frame || !window.bootstrap ) {
+		return;
+	}
+	const modal = bootstrap.Modal.getOrCreateInstance( modalElement );
+	if ( window.self !== window.top ) {
+		modalElement.classList.add( 'option-modal-embedded' );
+	}
+	const titleElement = modalElement.querySelector( '.modal-title' );
+	const cleanFrame = doc => {
+		const removeAll = selector => doc.querySelectorAll( selector ).forEach( el => el.remove( ) );
+		doc.querySelectorAll( '.skip-links' ).forEach( el => ( el.closest( 'nav' ) || el ).remove( ) );
+		removeAll( 'header, footer, aside.navbar, #navbar-menu, #sidebar-menu, .page > .sticky-top, .page > .navbar-expand-md, .page-header, #page-header, .breadcrumb' );
+		if ( doc.querySelector( '.page > .page-wrapper' ) ) {
+			removeAll( '.page > :not(.page-wrapper):not(script)' );
+		}
+		doc.querySelector( '.page-body' )?.classList.remove( 'page-body' );
+		doc.querySelector( '.container-xl' )?.classList.remove( 'container-xl' );
+		doc.body?.classList.add( 'bg-white' );
+		doc.querySelectorAll( 'a[href*="view=modifyQuestion"]' ).forEach( link => link.addEventListener( 'click', event => {
+			event.preventDefault( );
+			modal.hide( );
+		} ) );
+	};
+	document.addEventListener( 'click', event => {
+		const button = event.target.closest( '[data-option-modal-url]' );
+		if ( !button ) {
+			return;
+		}
+		event.preventDefault( );
+		titleElement.textContent = button.dataset.optionModalTitle || '';
+		frame.title = titleElement.textContent;
+		frame.style.opacity = '0';
+		frame.src = button.dataset.optionModalUrl;
+		modal.show( );
+	} );
+	frame.addEventListener( 'load', () => {
+		try {
+			if ( frame.contentDocument && frame.contentDocument.URL !== 'about:blank' ) {
+				cleanFrame( frame.contentDocument );
+			}
+		} catch ( e ) {
+			// a page of another origin is shown as it is
+		}
+		frame.style.opacity = '1';
+	} );
+	modalElement.addEventListener( 'hidden.bs.modal', () => {
+		frame.src = 'about:blank';
+	} );
+} );
+</script>
 </#macro>

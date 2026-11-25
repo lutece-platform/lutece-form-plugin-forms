@@ -3,147 +3,150 @@
 <#macro formActionItem url class><#if url?contains('action=')><@tform action=url?keep_before('?') method='post' class='d-inline'><#list url?keep_after('?')?split('&') as param><#if param?contains('=')><@input type='hidden' name=param?keep_before('=') value=param?keep_after('=') /></#if></#list><@input type='hidden' name='_csrftoken' value=(link_tokens[url?keep_after('action=')?keep_before('&')])!'' /><@button type='submit' color='link' class=class><#nested></@button></@tform><#else><@link href=url class=class><#nested></@link></#if></#macro>
 <@pageContainer>
     <@pageColumn>
-		<@pageHeader title='#i18n{forms.manageForm.title}' titleClass='mb-3'>
+		<#assign pageTitle><span class="avatar avatar-sm bg-purple-lt me-2"><@icon style='forms' /></span>#i18n{forms.manageForm.title}</#assign>
+		<@pageHeader title=pageTitle >
 			<@tform type='inline'>
 				<@formGroup labelFor='search_forms' labelKey='#i18n{portal.system.manage_plugins.buttonFilter}' hideLabel=['all'] formStyle='inline'>
 					<@inputGroup>
-						<@input type='text' name='search_forms' id='search_forms' placeHolder='#i18n{portal.system.manage_plugins.buttonFilter}' autoComplete="off" />
+						<@input type='text' name='search_forms' id='search_forms' placeHolder='#i18n{portal.system.manage_plugins.buttonFilter}' params={"autocomplete": "off"} />
 						<@button color='primary' title='#i18n{portal.system.manage_plugins.buttonFilter}' buttonIcon='filter' hideTitle=['all'] />
 					</@inputGroup>
 				</@formGroup>
 			</@tform>
 			<#if permission_create_forms>
-                <@aButton href='jsp/admin/plugins/forms/ManageForms.jsp?view=createForm' buttonIcon='plus' title='#i18n{forms.manageForm.buttonAdd}' hideTitle=['xs','sm','md'] class='card-header-icon' color='primary' />
-                <@button type='button' title='#i18n{forms.manageForm.buttonImport}' buttonIcon='upload' hideTitle=['xs','sm','md'] class='text-truncate' params={ 'data-bs-toggle': 'modal', 'data-bs-target': '#import-json' } />
+                <@aButton href='jsp/admin/plugins/forms/ManageForms.jsp?view=createForm' buttonIcon='plus' title='#i18n{forms.manageForm.buttonAdd}' hideTitle=['xs','sm','md'] color='primary' />
+                <#list (form_creation_actions![]) as creation_action>
+                <@aButton href=creation_action.url buttonIcon=creation_action.icon title='#i18n{${creation_action.titleKey}}' hideTitle=['xs','sm','md'] class='ms-1' />
+                </#list>
+                <@button type='button' buttonIcon='upload' title='#i18n{forms.manageForm.buttonImport}' hideTitle=['xs','sm','md'] class='text-truncate ms-1' params={"data-bs-toggle": "modal", "data-bs-target": "#import-json"} />
             </#if>
 		</@pageHeader>
-		<#if permission_create_forms>
-		<@modal id='import-json'>
-			<@modalHeader titleLevel='h2' modalTitle='#i18n{forms.manageForm.buttonImport}' />
-			<@modalBody>
-				<@tform id='importJsonModal' method='post' name='upload_form' action='jsp/admin/plugins/forms/ManageForms.jsp' enctype="multipart/form-data">
-				<@input type="hidden" name="token" value="${token}" />
-					<@formGroup labelKey='#i18n{forms.manageForm.labelImportFile}' labelFor='json_file' helpKey='#i18n{forms.manageForm.labelImportFile.help}' rows=2>
-						<@input type='file' name='json_file' id='json_file' />
-					</@formGroup>
-					<@formGroup rows=2>
-						<@button type='submit' name='action_doImportJson' buttonIcon='check' title='#i18n{portal.admin.message.buttonValidate}' />
-						<@button type='button' color='secondary' buttonIcon='times' title='#i18n{portal.admin.message.buttonCancel}' params={ 'data-bs-dismiss': 'modal' } />
-					</@formGroup>
-				</@tform>
-			</@modalBody>
-		</@modal>
-		</#if>
-        <@messages errors=errors infos=infos />
-        <#if form_list?size gt 0>
-            <@manageFeature id='forms-list'>
-                <#list form_list as form>
-                    <#assign can_publish=false>
-                    <#assign formTitle>
-                    <#if form.actions?exists>
-                        <#assign formActions = form.actions?map( actions -> actions.permission)>
-                        <#assign hasFormActionUpdate = formActions?seq_contains('MODIFY') >
-                        <#if hasFormActionUpdate>
-                            <#list form.actions as action>
-                                <#if action.permission=='MODIFY'>
-                                    <@link href='${action.url}&id_form=${form.id}${linkToken(action.url)}' title='${form.title}'>
-                                        <@h level=2 class='h3 mb-0 searchable text-truncate text-wrap' params={"title": ( form.title )}>
-                                            <#if !form.active><@icon style='times' class='text-danger fs-2' title='#i18n{portal.util.labelDisabled}' />	<#else>	<@icon style='check' class='text-success fs-2' title='#i18n{portal.util.labelEnabled}' /></#if>
-                                            ${form.title}
-                                        </@h>
-                                        <@p class='searchable fs-5 fw-light mb-0 d-none d-lg-inline-block'>#i18n{forms.manageForm.columnCreationDate} <@span class='fw-bold'>${form.creationDate}</@span></@p>
-                                     </@link>
-                                    <#break>
-                                </#if> 
-                            </#list>
+        <#if permission_create_forms>
+        <@modal id='import-json' params={"tabindex": "-1", "aria-labelledby": "import-json-title", "aria-hidden": "true"}>
+            <@tform id='importJsonModal' method='post' name='upload_form' action='jsp/admin/plugins/forms/ManageForms.jsp' params={"enctype": "multipart/form-data"}>
+                <@modalHeader modalTitle='#i18n{forms.manageForm.buttonImport}' id='import-json-title' />
+                <@modalBody>
+                    <@input type='hidden' name='token' value='${token}' />
+                    <@formGroup labelFor='json_file' labelKey='#i18n{forms.manageForm.labelImportFile}' helpKey='#i18n{forms.manageForm.labelImportFile.help}' mandatory=true rows=2>
+                        <@input type='file' name='json_file' id='json_file' mandatory=true params={"accept": ".json,application/json"} />
+                    </@formGroup>
+                </@modalBody>
+                <@modalFooter>
+                    <@button type='button' buttonIcon='x' title='#i18n{portal.admin.message.buttonCancel}' color='light' params={"data-bs-dismiss": "modal"} />
+                    <@button type='submit' name='action_doImportJson' buttonIcon='check' title='#i18n{portal.admin.message.buttonValidate}' color='primary' />
+                </@modalFooter>
+            </@tform>
+        </@modal>
+        </#if>
+        <@messages errors=errors![] infos=infos![] warnings=warnings![] />
+        <#if form_list?has_content>
+            <#setting locale=locale.language>
+            <@manageFeature layout='list' id='forms-list'>
+            <#list form_list as form>
+                <#assign formActions = (form.actions![])?map( a -> a.permission ) />
+                <#assign canModify = formActions?seq_contains('MODIFY') />
+                <#assign canPublish = formActions?seq_contains('PUBLISH') />
+                <#assign canViewResponses = formActions?seq_contains('VIEW_FORM_RESPONSE') />
+                <#assign isScheduled = !form.active && form.availabilityStartDate?? && form.availabilityStartDate gt .now?datetime />
+                <#assign formStatus><#if form.active>#i18n{portal.util.labelEnabled}<#else>#i18n{portal.util.labelDisabled}</#if></#assign><#assign formStatus = formStatus?markup_string />
+                <#assign publication>
+                    <#if form.active>
+                        <#if form.availabilityStartDate?? && form.availabilityEndDate?? && form.availabilityStartDate==form.availabilityEndDate>
+                            #i18n{forms.manageForm.columnPeriodDisponibilityThe} ${form.availabilityStartDate}
+                        <#elseif form.availabilityStartDate?? && form.availabilityEndDate??>
+                            #i18n{forms.manageForm.columnPeriodDisponibilityFromTo} ${form.availabilityStartDate} #i18n{forms.manageForm.columnPeriodDisponibilityTo} ${form.availabilityEndDate}
+                        <#elseif form.availabilityStartDate??>
+                            #i18n{forms.manageForm.columnPeriodDisponibilityFrom} ${form.availabilityStartDate}
+                        <#elseif form.availabilityEndDate??>
+                            #i18n{forms.manageForm.columnPeriodDisponibilityUntil} ${form.availabilityEndDate}
                         <#else>
-                            <@h level=2 class='h3 mb-0 searchable'>${form.title}</@h>   
-                            <@p class='searchable fs-5 fw-light mb-0 d-none d-lg-inline-block'>#i18n{forms.manageForm.columnCreationDate} <@span class='fw-bold'>${form.creationDate}</@span></@p>
+                            ${formStatus}
                         </#if>
+                    <#elseif isScheduled>
+                        #i18n{forms.manageForm.columnPeriodDisponibilityFrom} ${form.availabilityStartDate}
+                    <#else>
+                        #i18n{forms.manageForm.unavailable}
                     </#if>
-                    </#assign>
-                    <@manageFeatureItem id='form_${form.id}' >
-                        <@manageFeatureItemColumn auto=true flex=false>${formTitle}</@manageFeatureItemColumn>
-                        <@manageFeatureItemColumn align='end'>  
-                            <#if form.actions?exists><#list form.actions as action><#if action.permission=='PUBLISH'><#assign can_publish=true><#break></#if></#list></#if>
-                            <#if can_publish>
-                                <#setting locale=locale.language>
-                                <#assign publishBtnTitle>
-                                <#if form.active>
-                                    <@icon style='check'  />
-                                    <#if form.availabilityStartDate?? && form.availabilityEndDate?? && form.availabilityStartDate==form.availabilityEndDate>
-                                        #i18n{forms.manageForm.columnPeriodDisponibilityThe} ${form.availabilityStartDate}
-                                    <#elseif form.availabilityStartDate?? && form.availabilityEndDate??>
-                                        #i18n{forms.manageForm.columnPeriodDisponibilityFromTo} ${form.availabilityStartDate} #i18n{forms.manageForm.columnPeriodDisponibilityTo} ${form.availabilityEndDate}
-                                    <#elseif form.availabilityStartDate??>
-                                        #i18n{forms.manageForm.columnPeriodDisponibilityFrom} ${form.availabilityStartDate} 
-                                    <#elseif form.availabilityEndDate??>
-                                        #i18n{forms.manageForm.columnPeriodDisponibilityUntil} ${form.availabilityEndDate} 
-                                    </#if>
-                                <#else>
-                                    <#if form.availabilityStartDate?? &&  form.availabilityStartDate gt .now?datetime>
-                                        <@icon style='clock' /> #i18n{forms.manageForm.columnPeriodDisponibilityFrom} ${form.availabilityStartDate}
-                                    <#else>    
-                                        <@icon style='x' /> #i18n{forms.manageForm.unavailable}
-                                    </#if> 
-                                </#if>
-                                </#assign>
-                                <#assign publishBtnType = 'outline-' + ( form.active )?then( 'success', ( form.availabilityStartDate?? &&  form.availabilityStartDate gt .now?datetime )?then( 'info', 'danger' ) ) />
-                                <@link href='jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&id_form=${form.id}' class='btn btn-${publishBtnType} text-truncate searchable d-inline-block align-self-center forms-mw-400' title='#i18n{forms.action.publish.name}'>${publishBtnTitle}<@span class='visually-hidden'> - #i18n{forms.action.publish.name} ${form.title}</@span></@link>
-                            </#if>  
-                            <@div class='form-actions d-lg-flex justify-content-end align-items-center flex-wrap py-2'>
-                                <@aButton href='jsp/admin/plugins/forms/ManageForms.jsp?view=modifyForm&id_form=${form.id}&token=${token}' buttonIcon='cog' title='#i18n{portal.util.labelModify}' hideTitle=['md','lg','xl','xxl'] class='ms-lg-2' params={ 'aria-label': '#i18n{portal.util.labelModify} ' + form.title } />
-                                <@button type='button' class='overflow-visible ms-2' title='#i18n{portal.util.labelActions}' dropdownMenu=true params={ 'aria-label': '#i18n{portal.util.labelActions} ' + form.title } >
-                                <#if form.actions?exists>
-                                    <#list form.actions as action>
-                                        <#assign color='primary' />
-                                        <#assign perm=action.permission?lower_case />
-                                        <#if action.permission=='DELETE'>
-                                            <#assign color = 'danger' />
-                                            <#assign perm='' />
-                                        <#else>
-                                            <#assign color = 'primary' />
-                                        </#if>
+                </#assign><#assign publication = publication?markup_string />
+                <@manageFeatureItem id='form_${form.id}'>
+                        <@manageFeatureItemColumn class='d-flex align-items-center gap-2 text-truncate'>
+                            <span class="status-dot ${form.active?then('status-green', isScheduled?then('status-azure', 'status-red'))}" title="${formStatus}"></span><span class="visually-hidden">${formStatus}</span>
+                            <div class="text-truncate">
+                            <#if canModify>
+                            <a href="jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}" class="text-reset fw-semibold searchable" title="#i18n{portal.util.labelModify} ${form.title}">${form.title}</a>
+                            <#else>
+                            <span class="fw-semibold searchable">${form.title}</span>
+                            </#if>
+                            <div class="text-secondary small text-truncate"><span class="searchable">${publication?trim}</span><span class="d-none d-lg-inline"> &middot; #i18n{forms.manageForm.columnCreationDate} <span class="searchable">${form.creationDate}</span></span></div>
+                            </div>
+                        </@manageFeatureItemColumn>
+                        <@manageFeatureItemColumn auto=true align='end' class='d-flex align-items-center gap-2'>
+                            <#if canViewResponses>
+                            <a href="jsp/admin/plugins/forms/MultiviewForms.jsp?current_selected_panel=forms&id_form=${form.id}" class="badge bg-primary-lt" title="#i18n{forms.dashboard.row_responses}">${form.currentNumberResponse}<span class="visually-hidden"> #i18n{forms.dashboard.row_responses}</span></a>
+                            <#else>
+                            <span class="badge bg-primary-lt" title="#i18n{forms.dashboard.row_responses}">${form.currentNumberResponse}<span class="visually-hidden"> #i18n{forms.dashboard.row_responses}</span></span>
+                            </#if>
+                            <div class="btn-actions">
+                            <#if canPublish>
+                            <a href="jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&id_form=${form.id}&token=${token}" class="btn-action" title="#i18n{forms.action.publish.name}"><@icon style='calendar' /><span class="visually-hidden">#i18n{forms.action.publish.name}</span></a>
+                            </#if>
+                            <#if canModify>
+                            <a href="jsp/admin/plugins/forms/ManageFormBuilder.jsp?view=builder&id_form=${form.id}" class="btn-action" title="#i18n{forms.form_builder.pageTitle}"><@icon style='layout-board-split' /><span class="visually-hidden">#i18n{forms.form_builder.pageTitle}</span></a>
+                            </#if>
+                            <#list form.actions![] as action>
+                            <#if action.permission=='PARAM'>
+                            <a href="jsp/admin/plugins/forms/ManageForms.jsp?view=modifyForm&id_form=${form.id}&token=${token}" class="btn-action" title="${action.name!}"><@icon style=action.iconUrl! /><span class="visually-hidden">${action.name!}</span></a>
+                            </#if>
+                            </#list>
+                            <div class="dropdown">
+                                <a href="#" class="btn-action" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="#i18n{portal.util.labelActions} ${form.title}"><i class="ti ti-dots" aria-hidden="true"></i><span class="visually-hidden">#i18n{portal.util.labelActions} ${form.title}</span></a>
+                                <div class="dropdown-menu dropdown-menu-end">
+                                    <#list form.actions![] as action>
                                         <#assign separator = action.url?contains("?")?then("&", "?")>
-                                        <@formActionItem url='${action.url}${separator}id_form=${form.id}&token=${token}' class='dropdown-item ${perm}'> <@span class='text-${color}'><@icon style=action.iconUrl! /> ${action.name!}</@span></@formActionItem>
+                                        <@formActionItem url='${action.url}${separator}id_form=${form.id}&token=${token}' class='dropdown-item${(action.permission=="DELETE")?then(" text-danger", "")}'><@icon style=action.iconUrl! class='me-2' /> ${action.name!}</@formActionItem>
+                                        <#if action.permission=='MODIFY' && action.url?contains('ManageSteps.jsp')>
+                                        <@link href='jsp/admin/plugins/forms/ManageFormBuilder.jsp?view=builder&id_form=${form.id}' class='dropdown-item'><@icon style='layout-board-split' class='me-2' /> #i18n{forms.form_builder.pageTitle}</@link>
+                                        </#if>
                                     </#list>
-                                </#if>
-                                <#if form.active>
-                                    <#assign inactiveBypass=''>
-                                    <#assign color='success'>
-                                <#else>
-                                    <#assign inactiveBypass='&ts='+timestamp+'&token_bypass='+inactiveBypassTokens[form.id?string]>
-                                    <#assign color='warning'>
-                                </#if>
-                                <#if form.actions?exists>
-                                    <#list form.actions as action>
-                                    <#if action.permission=='VIEW_FORM_RESPONSE'>
-                                        <@link href='jsp/admin/plugins/forms/ManageFormResponse.jsp?&view=stepView&id_form=${form.id}&init=true' label='' class='dropdown-item'><@span> <@icon style='text-plus'/> #i18n{forms.manageForm.BOLink.label}</@span></@link>
+                                    <div class="dropdown-divider"></div>
+                                    <#if canViewResponses>
+                                    <@link href='jsp/admin/plugins/forms/ManageFormResponse.jsp?view=stepView&id_form=${form.id}&init=true' class='dropdown-item'><@icon style='text-plus' class='me-2' /> #i18n{forms.manageForm.BOLink.label}</@link>
                                     </#if>
-                                    </#list>
-                                </#if>
-                                <@link href='${prod_url}jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true${inactiveBypass}' label='' class='dropdown-item' target="_blank"><@span> <@icon style='external-link'/> #i18n{forms.manageForm.FOLink.label}<@span class='visually-hidden'> (#i18n{portal.site.portal_footer.newWindow})</@span></@span></@link>
-                                <#if is_active_kibana_forms_plugin>
-                                    <@link href='jsp/admin/plugins/kibana/KibanaDashboard.jsp?view=dashboard&tab=FormsDataSource_${form.id}' label='' class='dropdown-item' target="_blank"><@span> <@icon style='chart-area'/> #i18n{forms.manageForm.stats.label}<@span class='visually-hidden'> (#i18n{portal.site.portal_footer.newWindow})</@span></@span></@link>
-                                </#if>
-                                <#if form.breadcrumbName=='forms-breadcrumbaccordion.breadcrumbAccordion'>
-                                    <@aButton color='default dropdown-item justify-content-start' href='jsp/admin/plugins/forms/modules/breadcrumbaccordion/ManageBreadcrumbAccordion.jsp?view=modifyBreadcrumb&id_form=${form.id}' title='#i18n{module.forms.breadcrumbaccordion.manage_breadcrumbAccordion.title}' buttonIcon='stack' />
-                                </#if>
-                                </@button>
-                            </@div>  
-                    </@manageFeatureItemColumn>
+                                    <#if form.active>
+                                        <#assign inactiveBypass=''>
+                                    <#else>
+                                        <#assign inactiveBypass='&ts='+timestamp+'&token_bypass='+inactiveBypassTokens[form.id?string]>
+                                    </#if>
+                                    <@link href='${prod_url}jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true${inactiveBypass}' class='dropdown-item' target='_blank'><@icon style='external-link' class='me-2' /> #i18n{forms.manageForm.FOLink.label}<@span class='visually-hidden'> (#i18n{portal.site.portal_footer.newWindow})</@span></@link>
+                                    <#if is_active_kibana_forms_plugin>
+                                    <@link href='jsp/admin/plugins/kibana/KibanaDashboard.jsp?view=dashboard&tab=FormsDataSource_${form.id}' class='dropdown-item' target='_blank'><@icon style='chart-area' class='me-2' /> #i18n{forms.manageForm.stats.label}<@span class='visually-hidden'> (#i18n{portal.site.portal_footer.newWindow})</@span></@link>
+                                    </#if>
+                                    <#if form.breadcrumbName=='forms-breadcrumbaccordion.breadcrumbAccordion'>
+                                    <@link href='jsp/admin/plugins/forms/modules/breadcrumbaccordion/ManageBreadcrumbAccordion.jsp?view=modifyBreadcrumb&id_form=${form.id}' class='dropdown-item'><@icon style='stack' class='me-2' /> #i18n{module.forms.breadcrumbaccordion.manage_breadcrumbAccordion.title}</@link>
+                                    </#if>
+                                </div>
+                            </div>
+                            </div>
+                        </@manageFeatureItemColumn>
                 </@manageFeatureItem>
-                </#list>
+            </#list>
             </@manageFeature>
-            <#if form_list?size gt 10>
+            <#if paginator.itemsCount gte 10>
                 <@paginationAdmin paginator=paginator combo=1 showcount=0 />
             </#if>
         <#else>
             <@card>
             <#if permission_create_forms>
-                <@empty title='#i18n{forms.multiviewForms.view_record_history.history_empty}' subtitle='#i18n{forms.manageForm.buttonAdd}' actionTitle='#i18n{forms.manageForm.buttonAdd}' actionUrl='jsp/admin/plugins/forms/ManageForms.jsp?view=createForm' />
+                <@empty title='#i18n{forms.multiviewForms.view_record_history.history_empty}' iconName='file-off' subtitle='#i18n{forms.manageForm.buttonAdd}' actionTitle='#i18n{forms.manageForm.buttonAdd}' actionUrl='jsp/admin/plugins/forms/ManageForms.jsp?view=createForm' />
+                <#if (form_creation_actions![])?has_content>
+                <@div class='text-center pb-4'>
+                    <#list form_creation_actions as creation_action>
+                    <@aButton href=creation_action.url buttonIcon=creation_action.icon title='#i18n{${creation_action.titleKey}}' color='light' />
+                    </#list>
+                </@div>
+                </#if>
             <#else>
-                <@empty title='#i18n{forms.multiviewForms.view_record_history.history_empty}' subtitle=' ' />
+                <@empty title='#i18n{forms.multiviewForms.view_record_history.history_empty}' iconName='file-off' subtitle=' ' />
             </#if>
             </@card>
         </#if>
@@ -152,7 +155,7 @@
 <script type="module">
 import LuteceSearchList from './themes/shared/modules/luteceSearchList.js';
 const searchInput = document.querySelector("#search_forms");
-const searchElementList = document.querySelectorAll("#forms-list .card");
+const searchElementList = document.querySelectorAll("#forms-list .list-group-item");
 new LuteceSearchList( searchInput, searchElementList, {
 	searchableChild: [".searchable"],
 	highlight: true, 

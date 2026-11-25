@@ -1,5 +1,5 @@
 <@row>
-    <@columns sm=3><@p class='text-right font-weight-bold'>${entry.title!''}</@p></@columns>
+    <@columns sm=3><@p class='text-end fw-bold'>${entry.title!''}</@p></@columns>
     <@columns sm=9>
 		<#if getResponseContainingTheFieldWithCode( list_responses, "tos" )?? >
 			<#assign responseTos = getResponseContainingTheFieldWithCode( list_responses, "tos" ) >
@@ -9,10 +9,10 @@
 		</#if>
 		<#if responseAgreement?? && responseAgreement.toStringValueResponse == "true">
 			<@link href='jsp/site/Portal.jsp?page=formsTermsOfService&view=acceptedTermsOfService&id_response=${(responseTos.idResponse)!}' target='_blank'>
-				<@icon style='external-link-alt' /> #i18n{forms.entryType.termsOfService.readOnly.link}
+				<@icon style='external-link' /> #i18n{forms.entryType.termsOfService.readOnly.link}
 			</@link>
 		<#else>
-			<@tag color='warning'><@icon style='exclamation-triangle' /></@tag> #i18n{forms.entryType.termsOfService.readOnly.unknown}
+			<@tag color='warning'><@icon style='alert-triangle' /></@tag> #i18n{forms.entryType.termsOfService.readOnly.unknown}
 		</#if>
 	</@columns>
 </@row>

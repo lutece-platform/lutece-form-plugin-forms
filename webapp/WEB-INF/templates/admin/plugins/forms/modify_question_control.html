@@ -1,17 +1,17 @@
-<@tform method='post' id='modify_control' name='modify_control' action='jsp/admin/plugins/forms/ManageControls.jsp'>
-<@messages errors=errors />
+<@tform class='p-3'  method='post' id='modify_control' name='modify_control' action='jsp/admin/plugins/forms/ManageControls.jsp'>
+<@messages errors=errors![] />
 <@formGroup labelKey='#i18n{forms.modify_control.labelValidator}' helpKey='#i18n{forms.modify_control.labelValidator.help}' mandatory=true rows=2>
 	<@inputGroup>
 		<@select name='validatorName' items=availableValidators default_value='${control.validatorName!}' />
 		<@button type='submit' name='view_modifyControl' value='validateValidator' hideTitle=['all'] buttonIcon='check'/>
 	</@inputGroup>
 </@formGroup>
-${control_template}
+${control_template?no_esc}
 <@formGroup labelKey='#i18n{forms.modify_control.labelErrorMessage}' helpKey='#i18n{forms.modify_control.labelErrorMessage.help}' rows=2>
 	<@input type='text' name='errorMessage' value='${control.errorMessage!}' />
 </@formGroup>
 <#if control.id gt 0>
-<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${control.id}' title='#i18n{forms.manage_controls.action.removeControl}' buttonIcon='times' color='danger' />
+<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${control.id}' title='#i18n{forms.manage_controls.action.removeControl}' buttonIcon='trash' color='danger' />
 </#if>
 <@formsButton okAction='modifyControl' viewAction='' />
 </@tform>

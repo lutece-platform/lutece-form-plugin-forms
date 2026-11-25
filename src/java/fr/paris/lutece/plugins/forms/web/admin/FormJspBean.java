@@ -74,6 +74,7 @@ import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.exception.FormJsonImportException;
 import fr.paris.lutece.plugins.forms.service.FormCategoryService;
 import fr.paris.lutece.plugins.forms.service.FormService;
+import fr.paris.lutece.plugins.forms.service.IFormCreationActionProvider;
 import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
 import fr.paris.lutece.plugins.forms.service.json.FormJsonService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
@@ -161,6 +162,7 @@ public class FormJspBean extends AbstractJspBean
     private static final String MARK_FORM_MESSAGE = "formMessage";
     private static final String MARK_BREADCRUMB_TYPE = "breadcrumbTypes";
     private static final String MARK_PERMISSION_CREATE_FORMS = "permission_create_forms";
+    private static final String MARK_FORM_CREATION_ACTIONS = "form_creation_actions";
     private static final String MARK_WORKFLOW_REF_LIST = "workflow_list";
     private static final String MARK_WORKGROUP_REF_LIST = "workgroup_list";
     private static final String MARK_WEBAPP_URL = "webapp_url";
@@ -244,6 +246,8 @@ public class FormJspBean extends AbstractJspBean
     private Instance<ICaptchaService> _captchaService;
     @Inject
     private FormJsonService _formJsonService;
+    @Inject
+    private Instance<IFormCreationActionProvider> _formCreationActionProviders;
 
     /**
      * Build the Manage View
@@ -290,7 +294,7 @@ public class FormJspBean extends AbstractJspBean
         {
             listAuthorizedFormActions = (List<FormAction>) RBACService.getAuthorizedActionsCollection( listFormActions, form, (User) getUser( ) );
             form.setActions( listAuthorizedFormActions );
-
+            form.setCurrentNumberResponse( FormHome.getNumberOfResponseForms( form.getId( ) ) );
         }
 
         String strTimespamp = Long.toString( new Date( ).getTime( ) );
@@ -302,8 +306,12 @@ public class FormJspBean extends AbstractJspBean
 
         model.put( MARK_FORM_LIST, paginator.getPageItems( ) );
         model.put( MARK_LOCALE, request.getLocale( ) );
-        model.put( MARK_PERMISSION_CREATE_FORMS,
-                RBACService.isAuthorized( Form.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID, FormsResourceIdService.PERMISSION_CREATE, (User) adminUser ) );
+        boolean bPermissionCreateForms = RBACService.isAuthorized( Form.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID, FormsResourceIdService.PERMISSION_CREATE,
+                (User) adminUser );
+        model.put( MARK_PERMISSION_CREATE_FORMS, bPermissionCreateForms );
+        model.put( MARK_FORM_CREATION_ACTIONS, bPermissionCreateForms
+                ? _formCreationActionProviders.stream( ).filter( provider -> provider.isAuthorized( adminUser ) ).collect( Collectors.toList( ) )
+                : Collections.emptyList( ) );
         model.put( MARK_IS_ACTIVE_KIBANA_FORMS_PLUGIN, PluginService.isPluginEnable( KIBANA_FORMS_PLUGIN_NAME ) );
         model.put( FormsConstants.MARK_TIMESTAMP, strTimespamp );
         model.put( FormsConstants.MARK_INACTIVEBYPASSTOKENS, formIdToToken );

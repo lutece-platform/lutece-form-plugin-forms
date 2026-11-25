@@ -3,7 +3,7 @@
     <#if getError( list_responses, entry )?? >
         <#assign error = getError( list_responses, entry ) ><#if error?? && error.isDisplayableError><#assign hasError = true /></#if></#if>
         <#assign idName = buildEntryName( entry, entry_iteration_number )>
-        <@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=helpKey!'' class=entry.class!  mandatory=entry.mandatory htmlRequired=false rows=2>
+        <@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=helpKey!'' class=entry.class! mandatory=entry.mandatory rows=2>
             <@row id=idName class='align-items-center'>
             <#if list_responses?has_content>
                 <#assign beginHourCode = "begin_hour">
@@ -22,12 +22,12 @@
                         <#assign endHour = row[1].toStringValueResponse>
                     </#if>
                     <@columns xs=6 sm=4 md=3 xl=2>
-                        <@formLabel for='${idName}_begin'>#i18n{forms.message.slot.preposition.from}</@formLabel>
+                        <@formLabel labelFor='${idName}_begin'>#i18n{forms.message.slot.preposition.from}</@formLabel>
                         <#assign beginClass = 'form-control' + ( hasError )?then( ' is-invalid', '' ) />
                         <@input type='html5time' class=beginClass id='${idName}_begin' name='${idName}_begin' value=beginHour! />
                     </@columns>
                     <@columns xs=6 sm=4 md=3 xl=2>
-                        <@formLabel for="${idName}_end">#i18n{forms.message.slot.preposition.to}</@formLabel>
+                        <@formLabel labelFor="${idName}_end">#i18n{forms.message.slot.preposition.to}</@formLabel>
                         <#assign endClass = 'form-control' + ( hasError )?then( ' is-invalid', '' ) />
                         <@input type='html5time' class=endClass id='${idName}_end' name='${idName}_end' value=endHour! />
                     </@columns>
