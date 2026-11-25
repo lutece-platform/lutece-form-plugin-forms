@@ -2,7 +2,7 @@
 <#assign bc>
 <@formBreadCrumb><@breadcrumbItem>${form.title!}</@breadcrumbItem></@formBreadCrumb>
 </#assign>
-<@tform class='form' method='post' name='modify_forms_questions' action='jsp/admin/plugins/forms/ManageFormsQuestions.jsp'>
+<@tform class='form' method='post' name='modify_forms_questions' action='jsp/admin/plugins/forms/ManageForms.jsp'>
 <@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
 <@pageContainer>
 	<@pageColumn>
