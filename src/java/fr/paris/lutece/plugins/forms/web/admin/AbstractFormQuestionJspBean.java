@@ -35,11 +35,9 @@ package fr.paris.lutece.plugins.forms.web.admin;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -50,8 +48,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
-import fr.paris.lutece.plugins.forms.business.Control;
-import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
@@ -59,6 +55,8 @@ import fr.paris.lutece.plugins.forms.business.FormLayout;
 import fr.paris.lutece.plugins.forms.business.Group;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.Step;
+import fr.paris.lutece.plugins.forms.service.FormBuilderException;
+import fr.paris.lutece.plugins.forms.service.FormBuilderService;
 import fr.paris.lutece.plugins.forms.service.IFormDatabaseService;
 import fr.paris.lutece.plugins.forms.service.IFormDisplayService;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeCheckBox;
@@ -176,6 +174,9 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
     @Inject
     @Named( "defaultDatabaseFileStoreProvider" )
     protected IFileStoreServiceProvider _fileStoreProvider;
+
+    @Inject
+    private FormBuilderService _formBuilderService;
 
     private IFormDatabaseService _formDatabaseService;
     private IFormDisplayService _formDisplayService;
@@ -996,135 +997,50 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
      */
     protected void moveDisplay( FormDisplay formDisplayToMove, int nIdStepTarget, int nIdParentTarget, int nColumnTarget, int nDisplayOrderTarget )
     {
-        int nIdOriginStep = _formDisplay.getStepId( );
-        int nIdOriginParent = _formDisplay.getParentId( );
-        int nOriginDisplayOrder = _formDisplay.getDisplayOrder( );
-
-        List<FormDisplay> listDisplayInTargetGroup = getFormDatabaseService( ).getFormDisplayListByParent( nIdStepTarget, nIdParentTarget );
-
-        formDisplayToMove.setParentId( nIdParentTarget );
-
-        int nTargetDepth = getFormDisplayService( ).getDisplayDepthFromParent( nIdParentTarget );
-        // update the idStep and depth of the display and all its descendants
-        getFormDisplayService( ).setChildrenDisplayDepthAndStep( formDisplayToMove, nTargetDepth, nIdStepTarget );
-
-        // Rebuild the Position values of the Display and all its sibling inside
-        // Parent
-        if ( !listDisplayInTargetGroup.isEmpty( ) )
-        {
-            // If move inside same group, first remove the Display from the list
-            // before adding it at the right index
-            if ( ( nIdOriginStep == nIdStepTarget && nIdOriginParent == nIdParentTarget ) )
-            {
-                listDisplayInTargetGroup.remove( nOriginDisplayOrder - 1 );
-            }
-            listDisplayInTargetGroup.add( nDisplayOrderTarget - 1, formDisplayToMove );
-
-            getFormDisplayService( ).rebuildDisplayPositionSequence( listDisplayInTargetGroup );
-        }
-
-        // If move to a different group, rebuild the positions sequence within
-        // the origin group
-        if ( ( nIdOriginParent != nIdParentTarget ) || ( nIdOriginStep != nIdStepTarget ) )
-        {
-            List<FormDisplay> listDisplayInOriginGroup = getFormDatabaseService( ).getFormDisplayListByParent( nIdOriginStep, nIdOriginParent );
-            getFormDisplayService( ).rebuildDisplayPositionSequence( listDisplayInOriginGroup );
-        }
+        _formBuilderService.moveDisplay( formDisplayToMove, nIdStepTarget, nIdParentTarget, nColumnTarget, nDisplayOrderTarget, getFormDatabaseService( ),
+                getFormDisplayService( ) );
     }
 
     /**
-     * Perform the Question creation with its Entry
+     * Duplicates the question given by the request (parameter id_target) right after it, with its entry, its fields and its validation controls. The
+     * conditional controls the question is the source of are not copied: they belong to the displays they condition. The work is done by
+     * {@link FormBuilderService#duplicateQuestion(int, int, java.util.Locale)}, shared with the form builder.
      * 
      * @param request
      *            The HTTP request
-     * @return The URL to display error message after performing the action or null if no error occurred
+     * @return true if the question was duplicated; false otherwise, an error message being added
      */
-    protected String processQuestionDuplication( HttpServletRequest request )
+    protected boolean processQuestionDuplication( HttpServletRequest request )
     {
-        int nIdQuestion = INTEGER_MINUS_ONE;
-
-        String strIdQuestion = request.getParameter( FormsConstants.PARAMETER_ID_TARGET );
+        int nIdQuestion = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_TARGET ), INTEGER_MINUS_ONE );
         int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), INTEGER_MINUS_ONE );
-        Question questionToCopy = null;
 
         if ( ( _step == null ) || nIdStep != _step.getId( ) )
         {
             _step = getFormDatabaseService( ).findStepByPrimaryKey( nIdStep );
         }
-
-        if ( StringUtils.isNotEmpty( strIdQuestion ) )
+        if ( _step == null )
         {
-            nIdQuestion = NumberUtils.toInt( strIdQuestion, INTEGER_MINUS_ONE );
+            addError( ERROR_QUESTION_NOT_CREATED, getLocale( ) );
+            return false;
         }
 
-        _question = getFormDatabaseService( ).findQuestionByPrimaryKey( nIdQuestion );
-
-        // A missing, invalid or unknown step or question: back to the list of forms
-        if ( _step == null || _question == null )
-        {
-            return getJspManageForm( request );
-        }
-
-        // Get the question to copy and clone it
+        FormDisplay displayToCopy = getFormDatabaseService( ).getFormDisplayByFormStepAndComposite( _step.getIdForm( ), _step.getId( ), nIdQuestion );
         try
         {
-            questionToCopy = _question.clone( );
-            questionToCopy.setEntry( _question.getEntry( ) );
+            if ( displayToCopy == null )
+            {
+                throw new FormBuilderException( FormBuilderService.ERROR_DISPLAY_NOT_FOUND );
+            }
+            _formBuilderService.duplicateQuestion( _step.getIdForm( ), displayToCopy.getId( ), getLocale( ) );
+            return true;
         }
-        catch( CloneNotSupportedException e )
+        catch( FormBuilderException e )
         {
-            AppLogService.error( "Unable to clone question with id " + nIdQuestion, e );
-            return null;
+            AppLogService.getLogger( ).error( "Unable to duplicate the question {} : {}", nIdQuestion, e.getMessageKey( ) );
+            addError( ERROR_QUESTION_NOT_CREATED, getLocale( ) );
+            return false;
         }
-
-        // Create a duplicated entry
-        Entry duplicatedEntry = getFormDatabaseService( ).copyEntry( _question.getEntry( ) );
-        duplicatedEntry.setTitle( "Copie de " + duplicatedEntry.getTitle( ) );
-        duplicatedEntry.setCode( "question_" + duplicatedEntry.getIdEntry( ) );
-
-        getFormDatabaseService( ).updateEntry( duplicatedEntry );
-
-        // Get the validation controls of the question (their target is the question). The conditional display and transition controls whose
-        // source is the question belong to another display or to a transition: they are not copied
-        List<Control> listControlsToDuplicate = getFormDatabaseService( ).getControlByQuestion( _question.getId( ) ).stream( )
-                .filter( control -> ControlType.VALIDATION.getLabel( ).equals( control.getControlType( ) ) && control.getIdControlTarget( ) == _question.getId( ) )
-                .collect( Collectors.toList( ) );
-
-        FormDisplay formDisplayToCopy = getFormDatabaseService( ).getFormDisplayByFormStepAndComposite( _step.getIdForm( ), _step.getId( ),
-                _question.getId( ) );
-
-        questionToCopy.setEntry( duplicatedEntry );
-        questionToCopy.setIdEntry( duplicatedEntry.getIdEntry( ) );
-        questionToCopy.setTitle( "Copie de " + questionToCopy.getTitle( ) );
-        questionToCopy.setCode( duplicatedEntry.getCode( ) );
-
-        getFormDatabaseService( ).createQuestion( questionToCopy );
-
-        // Duplicates the controls of the question
-        for ( Control control : listControlsToDuplicate )
-        {
-
-            Set<Integer> listQuestion = new HashSet<>( );
-            listQuestion.add( questionToCopy.getId( ) );
-            control.setListIdQuestion( listQuestion );
-            control.setIdControlTarget( questionToCopy.getId( ) );
-            getFormDatabaseService( ).createControl( control );
-        }
-
-        if ( questionToCopy.getId( ) != INTEGER_MINUS_ONE )
-        {
-            FormDisplay formDisplay = new FormDisplay( );
-            formDisplay.setDisplayOrder( formDisplayToCopy.getDisplayOrder( ) + 1 );
-            formDisplay.setFormId( _step.getIdForm( ) );
-            formDisplay.setStepId( questionToCopy.getIdStep( ) );
-            formDisplay.setParentId( formDisplayToCopy.getParentId( ) );
-            formDisplay.setCompositeId( questionToCopy.getId( ) );
-            formDisplay.setCompositeType( CompositeDisplayType.QUESTION.getLabel( ) );
-            formDisplay.setDepth( formDisplayToCopy.getDepth( ) );
-            getFormDatabaseService( ).createFormDisplay( formDisplay );
-        }
-
-        return null;
     }
 
     /**
@@ -1148,6 +1064,26 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
             }
         }
         return false;
+    }
+
+    /**
+     * Returns the question this session last created or opened, so that the form builder can place the question its creation screen just created
+     *
+     * @return the question identifier, 0 if none
+     */
+    public int getWorkingQuestionId( )
+    {
+        return _question != null ? _question.getId( ) : 0;
+    }
+
+    /**
+     * Returns the group this session last created or opened, so that the form builder can place the group its creation screen just created
+     *
+     * @return the group identifier, 0 if none
+     */
+    public int getWorkingGroupId( )
+    {
+        return _group != null ? _group.getId( ) : 0;
     }
 
     protected IFormDisplayService getFormDisplayService( )

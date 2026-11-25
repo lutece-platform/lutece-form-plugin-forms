@@ -710,3 +710,30 @@ table.table-hover tbody tr:hover {
 .forms-min-h-10rem { min-height: 10rem !important; }
 .forms-min-h-15rem { min-height: 15rem !important; }
 .forms-bottom-bar { --tblr-bg-opacity: .5; }
+
+/* Form builder */
+.fb-sticky { top: 1rem; }
+.fb-handle { cursor: grab; }
+.fb-dropzone { min-height: 3rem; border: 1px dashed transparent; border-radius: var(--tblr-border-radius); transition: border-color .15s, background-color .15s; }
+.fb-dropzone:not(:has(> .fb-node))::before { content: attr(data-empty-label); display: block; padding: 1rem; text-align: center; color: var(--tblr-secondary); }
+.fb-dragging .fb-dropzone { border-color: var(--tblr-border-color); }
+.fb-dragging .fb-dropzone:hover { border-color: var(--tblr-primary); background-color: var(--tblr-primary-lt); }
+.fb-columns .fb-dropzone { border-color: var(--tblr-border-color); padding: .25rem; }
+.fb-step-dropzone { display: none; }
+.fb-dragging .fb-step-dropzone { display: block; min-height: 2rem; margin: 0 .75rem .5rem; border: 1px dashed var(--tblr-primary); border-radius: var(--tblr-border-radius); }
+.fb-step-dropzone > .fb-node, .fb-step-dropzone > .fb-palette-item { display: none; }
+.fb-preview { pointer-events: none; padding-inline: var(--tblr-card-spacer-x, 1rem); }
+.fb-disabled .fb-preview { opacity: .5; }
+.fb-node.fb-selected { box-shadow: 0 0 0 2px var(--tblr-primary); }
+.fb-node.sortable-ghost, .fb-palette-item.sortable-ghost { opacity: .4; }
+.fb-node.sortable-chosen { box-shadow: var(--tblr-shadow-dropdown); }
+.fb-editor-frame { height: calc(100vh - 12rem); }
+/* While a field is added or edited, the side panel takes the place of the center column */
+#form-builder.fb-editing > .fb-col-canvas { display: none; }
+@media (min-width: 768px) { #form-builder.fb-editing > .fb-col-panel { width: 75%; } }
+@media (min-width: 1200px) { #form-builder.fb-editing > .fb-col-panel { width: 83.333333%; } }
+#fb-palette-list { max-height: calc(100vh - 18rem); overflow-y: auto; }
+.fb-badge-link { cursor: pointer; line-height: 1; }
+.fb-badge-link:focus { outline: none; }
+.fb-badge-link:focus-visible .badge { outline: 2px solid var(--tblr-primary); outline-offset: 1px; }
+.fb-badge-link:hover .badge { filter: brightness(.95); }

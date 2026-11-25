@@ -1,0 +1,129 @@
+<#include "/admin/plugins/forms/edit_form_tabs.html" />
+<#assign builderParams = {"data-form-id": "${form.id}", "data-step-id": (step??)?then("${(step.id)!}", "0"), "data-token": "${builder_token!}", "data-max-id-display": "${max_id_display}", "data-msg-confirm-remove": "#i18n{forms.form_builder.message.confirmDelete}", "data-msg-confirm-remove-step": "#i18n{forms.form_builder.message.confirmDeleteStep}", "data-msg-saved": "#i18n{forms.form_builder.message.saved}", "data-msg-network": "#i18n{forms.form_builder.message.error.network}", "data-label-palette": "#i18n{forms.form_builder.palette.title}"} />
+<#assign bc>
+<@formBreadCrumb><@breadcrumbItem>${form.title!}</@breadcrumbItem></@formBreadCrumb>
+</#assign>
+<@pageContainer>
+	<@pageColumn>
+		<@pageHeader title=form.title! breadcrumb=bc>
+		<#if form.active>
+			<@aButton href='jsp/admin/plugins/forms/ManageFormResponse.jsp?view=stepView&id_form=${form.id}&init=true' target='_blank' buttonIcon='eye' title='#i18n{forms.form_builder.action.preview}' color='light' />
+		</#if>
+		<@formActionsMenu form=form />
+		</@pageHeader>
+		<@messages infos=infos![] errors=errors![] warnings=warnings![] />
+		<@formTabs tab='builder'>
+			<@tabContent>
+				<@tabPanel id='form-builder-panel' active=true>
+					<@row id='form-builder' class='g-3' params=builderParams>
+						<@columns md=3 lg=3 xl=2>
+							<@div class="position-sticky fb-sticky">
+								<@box>
+									<@boxHeader title='#i18n{forms.modify_form.tab.labelSteps}' titleLevel='h3' titleActions=true>
+										<@button type='button' id='fb-step-order' size='sm' color='ghost-secondary' buttonIcon='arrows-split' title='#i18n{forms.form_builder.step.order.transitions}' hideTitle=['all'] params={"aria-pressed": "false", "data-bs-toggle": "tooltip", "data-title-on": "#i18n{forms.form_builder.step.order.creation}", "data-title-off": "#i18n{forms.form_builder.step.order.transitions}"} />
+									</@boxHeader>
+									<@div id="fb-steps"><#noautoesc>${steps_html?no_esc}</#noautoesc></@div>
+									<@boxBody>
+										<@button type='button' class='w-100 text-wrap' color='outline-primary' buttonIcon='plus' title='#i18n{forms.manage_steps.buttonAdd}' params={"data-fb-action": "panel", "data-fb-url": "jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}", "data-fb-title": "#i18n{forms.manage_steps.buttonAdd}"} />
+										<@button type='button' class='w-100 mt-2 text-wrap' color='outline-secondary' buttonIcon='file-import' title='#i18n{forms.manage_steps.buttonImport}' params={"data-fb-action": "importStep", "data-step-after": "0"} />
+										<#if template_provider>
+											<@button type='button' class='w-100 mt-2 text-wrap' color='outline-secondary' buttonIcon='new-section' title='#i18n{forms.manage_steps.buttonImportTemplate}' params={"data-fb-action": "importTemplate"} />
+										</#if>
+									</@boxBody>
+								</@box>
+							</@div>
+						</@columns>
+						<@columns md=6 lg=6 xl=8 class='fb-col-canvas'>
+							<@div id="fb-canvas" params={"aria-live": "polite"}><#noautoesc>${canvas_html?no_esc}</#noautoesc></@div>
+						</@columns>
+						<@columns md=3 lg=3 xl=2 class='fb-col-panel'>
+							<@div class="position-sticky fb-sticky">
+								<@box id='fb-panel'>
+									<@div class="card-header">
+										<@h level=3 id='fb-panel-title' class='card-title'>#i18n{forms.form_builder.palette.title}</@h>
+										<@div class="card-actions">
+											<@button type='button' id='fb-panel-close' class='d-none' color='light' size='sm' buttonIcon='x' title='#i18n{portal.util.labelClose}' hideTitle=['all'] />
+										</@div>
+									</@div>
+									<@div id="fb-palette">
+										<@boxBody>
+											<label for="fb-palette-search" class="visually-hidden">#i18n{forms.form_builder.palette.search}</label>
+											<@input type='text' id='fb-palette-search' name='fb_palette_search' placeHolder='#i18n{forms.form_builder.palette.search}' params={"autocomplete": "off"} />
+											<@p class="text-secondary small mt-2 mb-0">#i18n{forms.form_builder.palette.help}</@p>
+										</@boxBody>
+										<@listGroup id='fb-palette-list' class='list-group-flush'>
+											<#list entry_type_list as entryType>
+												<#assign paletteParams = {"data-type-id": "${entryType.idType}", "data-group": "${entryType.group?c}", "data-title": "${entryType.title!}", "tabindex": "0", "role": "button", "title": "#i18n{forms.form_builder.palette.add} ${entryType.title!}"} />
+												<@listGroupItem class='fb-palette-item d-flex align-items-center gap-2' params=paletteParams>
+													<@icon style='grip-vertical' class='text-secondary fb-handle' />
+													<@icon style='${(entryType.iconName!"forms")?keep_before(" ")}' />
+													<@span class='text-truncate'>${entryType.title!}</@span>
+													<#if entryType.group><@tag color='azure-lt' class='ms-auto'>#i18n{forms.form_builder.palette.layout}</@tag></#if>
+												</@listGroupItem>
+											</#list>
+										</@listGroup>
+									</@div>
+									<@div id="fb-editor" class="d-none">
+										<iframe id="fb-editor-frame" name="fbEditorFrame" class="w-100 border-0 fb-editor-frame" title="#i18n{forms.form_builder.properties.title}"></iframe>
+									</@div>
+								</@box>
+							</@div>
+						</@columns>
+					</@row>
+				</@tabPanel>
+			</@tabContent>
+		</@formTabs>
+	</@pageColumn>
+</@pageContainer>
+<@modal id='fb-import-modal'>
+	<@modalHeader modalTitle='#i18n{forms.manage_steps.buttonImport}' id='fb-import-title' />
+	<@modalBody>
+		<@p id="fb-import-after" class="text-secondary d-none" params={"data-label": "#i18n{forms.form_builder.import.after}"}></@p>
+		<@formGroup labelFor='fb-import-file' labelKey='#i18n{forms.form_builder.import.file}' helpKey='#i18n{forms.form_builder.import.file.help}' rows=2>
+			<@input type='file' id='fb-import-file' name='fb_import_file' params={"accept": ".json,application/json"} />
+		</@formGroup>
+		<@p id="fb-import-error" class="text-danger small mb-0 d-none" params={"role": "alert"}>#i18n{forms.form_builder.import.missing}</@p>
+	</@modalBody>
+	<@modalFooter>
+		<@button type='button' color='light' title='#i18n{portal.util.labelCancel}' params={"data-bs-dismiss": "modal"} />
+		<@button type='button' id='fb-import-ok' color='primary' buttonIcon='file-import' title='#i18n{forms.form_builder.import.submit}' />
+	</@modalFooter>
+</@modal>
+<#if template_provider>
+	<@modal id='fb-template-modal' size='lg'>
+		<@modalHeader modalTitle='#i18n{forms.manage_steps.buttonImportTemplate}' />
+		<@modalBody>
+			<#if step_templates?has_content>
+				<@row class='g-2'>
+					<#list step_templates as item>
+						<@columns xs=6 md=4>
+							<label class="form-imagecheck mb-0 w-100">
+								<input name="fb_template" type="radio" value="${item.code}" class="form-imagecheck-input" />
+								<span class="form-imagecheck-figure d-flex flex-column align-items-center gap-2 p-3">
+									<@icon style='list-details' class='fs-1 text-secondary' />
+									<span class="text-center fw-bold text-wrap">${item.name!}</span>
+								</span>
+							</label>
+						</@columns>
+					</#list>
+				</@row>
+			<#else>
+				<@empty title='#i18n{portal.util.labelNoItem}' iconName='new-section' />
+			</#if>
+		</@modalBody>
+		<@modalFooter>
+			<@button type='button' color='light' title='#i18n{portal.util.labelCancel}' params={"data-bs-dismiss": "modal"} />
+			<@button type='button' id='fb-template-ok' buttonIcon='check' title='#i18n{portal.admin.message.buttonValidate}' color='primary' disabled=true />
+		</@modalFooter>
+	</@modal>
+</#if>
+<@modal id='fb-confirm-modal'>
+	<@modalHeader modalTitle='#i18n{portal.util.labelDelete}' />
+	<@modalBody><@p id="fb-confirm-message" class="mb-0"></@p></@modalBody>
+	<@modalFooter>
+		<@button type='button' color='light' title='#i18n{portal.util.labelCancel}' params={"data-bs-dismiss": "modal"} />
+		<@button type='button' id='fb-confirm-ok' color='danger' buttonIcon='trash' title='#i18n{portal.util.labelDelete}' />
+	</@modalFooter>
+</@modal>
+<@div id="fb-toasts" class="toast-container position-fixed bottom-0 end-0 p-3"></@div>
+<script type="module" src="themes/admin/shared/plugins/forms/js/builder/form-builder.js"></script>

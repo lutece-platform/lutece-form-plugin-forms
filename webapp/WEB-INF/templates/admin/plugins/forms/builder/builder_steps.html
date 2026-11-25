@@ -1,0 +1,41 @@
+<#if step_list?has_content>
+<@listGroup class='list-group-flush fb-steps'>
+	<#list step_list as stepItem>
+		<#assign isCurrent=step?? && step.id == stepItem.id />
+		<#assign stepParams = {"data-step-id": "${stepItem.id}"} + isCurrent?then({"aria-current": "step"}, {}) />
+		<@listGroupItem class='fb-step p-0' active=isCurrent params=stepParams>
+			<@div class="d-flex align-items-center pe-2">
+				<a class="d-flex align-items-center gap-2 ps-3 py-2 flex-fill overflow-hidden text-reset text-decoration-none fb-step-link" href="jsp/admin/plugins/forms/ManageFormBuilder.jsp?view=builder&id_form=${form.id}&id_step=${stepItem.id}" data-step-id="${stepItem.id}">
+					<@span class='badge bg-secondary-lt'>${stepItem?counter}</@span>
+					<@span class='text-truncate flex-fill'>${stepItem.title!?replace('- hidden','')}</@span>
+					<#if stepItem.initial><@tag color='green-lt' title='#i18n{forms.manage_steps.columnInitial}'>#i18n{forms.form_builder.step.initialShort}</@tag></#if>
+					<#if stepItem.final><@tag color='orange-lt' title='#i18n{forms.manage_steps.columnFinal}'>#i18n{forms.form_builder.step.finalShort}</@tag></#if>
+				</a>
+				<@aButton href='jsp/admin/plugins/forms/export/DoExportStepJson.jsp?id_step=${stepItem.id}' size='sm' color='ghost-secondary' class='btn-icon ms-1' buttonIcon='file-export' title='#i18n{forms.manage_steps.action.exportStep} ${stepItem.title!?replace("- hidden","")}' hideTitle=['all'] />
+			</@div>
+			<#if transition_order>
+				<#assign nextTransitions=transitions_by_step[stepItem.id?c]![] />
+				<#if unreachable_steps?seq_contains(stepItem.id) || nextTransitions?has_content>
+					<@div class="d-flex flex-column gap-1 px-3 pb-2 small fb-step-next">
+						<#if unreachable_steps?seq_contains(stepItem.id)>
+							<@span><@tag color='warning-lt' tagIcon='alert-triangle' title='#i18n{forms.form_builder.step.unreachable.help}'>#i18n{forms.form_builder.step.unreachable}</@tag></@span>
+						</#if>
+						<#list nextTransitions as transition>
+							<a class="fb-step-link d-inline-flex align-items-center gap-1 text-truncate" href="jsp/admin/plugins/forms/ManageFormBuilder.jsp?view=builder&id_form=${form.id}&id_step=${transition.nextStep}" data-step-id="${transition.nextStep}">
+								<@icon style='corner-down-right' class='text-secondary' />
+								<@span class='text-truncate'>${transition.nextStepTitle!?replace('- hidden','')}</@span>
+								<#if conditional_transitions?seq_contains(transition.id)><@icon style='eye-question' class='text-purple' title='#i18n{forms.form_builder.badge.conditional}' /></#if>
+							</a>
+						</#list>
+					</@div>
+				</#if>
+			</#if>
+			<#if !isCurrent>
+				<@div class='fb-step-dropzone' params={"data-step-target": "${stepItem.id}", "aria-hidden": "true"}></@div>
+			</#if>
+		</@listGroupItem>
+	</#list>
+</@listGroup>
+<#else>
+<@empty title='#i18n{forms.form_builder.noStep}' iconName='step-forward' />
+</#if>

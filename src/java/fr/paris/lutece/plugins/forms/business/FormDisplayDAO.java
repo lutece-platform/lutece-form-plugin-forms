@@ -61,6 +61,7 @@ public final class FormDisplayDAO implements IFormDisplayDAO
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_display WHERE id_display = ? ";
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_display SET id_display = ?, id_form = ?, id_step = ?, id_composite = ?, id_parent = ?, display_order = ?, composite_type = ?, display_depth = ?, display_column = ? WHERE id_display = ?";
     private static final String SQL_QUERY_NEXT_POSITION_BY_PARENT = "SELECT MAX(display_order) from forms_display WHERE id_step = ? AND id_parent = ?";
+    private static final String SQL_QUERY_MAX_ID_BY_FORM = "SELECT MAX(id_display) FROM forms_display WHERE id_form = ?";
     private static final String SQL_QUERY_SELECTALL_GROUP_DISPLAY_BY_STEP = "SELECT d.id_display, g.title, d.id_form, d.id_step, d.id_composite, d.id_parent, d.display_order, d.composite_type, d.display_depth "
             + "FROM forms_display d INNER JOIN forms_group g ON d.id_composite = g.id_group "
             + "WHERE d.id_step = ? AND d.composite_type = ? order by d.id_parent, d.display_order";
@@ -275,6 +276,25 @@ public final class FormDisplayDAO implements IFormDisplayDAO
         mapExportOrder.put( formDisplay.getId( ), nExportOrder );
 
         return nExportOrder;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int selectMaxIdDisplayByForm( int nIdForm, Plugin plugin )
+    {
+        int nMaxId = 0;
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_MAX_ID_BY_FORM, plugin ) )
+        {
+            daoUtil.setInt( 1, nIdForm );
+            daoUtil.executeQuery( );
+            if ( daoUtil.next( ) )
+            {
+                nMaxId = daoUtil.getInt( 1 );
+            }
+        }
+        return nMaxId;
     }
 
     /**

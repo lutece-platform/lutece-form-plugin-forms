@@ -563,15 +563,13 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     @Action( value = ACTION_DUPLICATE_QUESTION )
     public String doDuplicateQuestion( HttpServletRequest request )
     {
-        String strReturnUrl = processQuestionDuplication( request );
-
-        if ( strReturnUrl != null )
-        {
-            return redirect( request, strReturnUrl );
-        }
-        else
+        if ( processQuestionDuplication( request ) )
         {
             addInfo( INFO_QUESTION_DUPLICATED, getLocale( ) );
+        }
+        if ( _step == null )
+        {
+            return redirectToViewManageForm( request );
         }
         return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
     }

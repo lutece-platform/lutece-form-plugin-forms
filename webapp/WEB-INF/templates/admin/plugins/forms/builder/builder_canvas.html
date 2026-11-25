@@ -1,0 +1,149 @@
+<#macro fbBadgeLink url panelTitle color iconName>
+<button type="button" class="fb-badge-link p-0 border-0 bg-transparent align-baseline" data-fb-action="panel" data-fb-url="${url}" data-fb-title="${panelTitle}" title="${panelTitle}"><@tag color=color tagIcon=iconName><#nested></@tag></button>
+</#macro>
+<#macro fbMoveToStep display>
+<#if step_list?size gt 1>
+<@button type='button' size='sm' color='light' buttonIcon='arrow-right' title='#i18n{forms.form_builder.action.moveTo}' hideTitle=['all'] dropdownMenu=true>
+<#list step_list as stepItem>
+	<#if stepItem.id != step.id>
+	<@li><button type="button" class="dropdown-item" data-fb-action="moveToStep" data-step-target="${stepItem.id}">${stepItem.title!?replace('- hidden','')}</button></@li>
+	</#if>
+</#list>
+</@button>
+</#if>
+</#macro>
+<#-- Moves a node to another column of its step or group: the keyboard alternative to a drag from one column to the other -->
+<#macro fbMoveToColumn columnCount column>
+<#list 1..columnCount as columnTarget>
+	<#if columnTarget != column>
+	<@button type='button' size='sm' color='light' buttonIcon=( columnTarget gt column )?then( 'arrow-bar-to-right', 'arrow-bar-to-left' ) title='#i18n{forms.form_builder.action.moveToColumn} ${columnTarget}' hideTitle=['all'] params={"data-fb-action": "moveToColumn", "data-column-target": "${columnTarget}"} />
+	</#if>
+</#list>
+</#macro>
+<#macro fbCommonActions display columnCount column>
+<@button type='button' size='sm' color='light' buttonIcon='arrow-up' title='#i18n{forms.form_builder.action.moveUp}' hideTitle=['all'] params={"data-fb-action": "moveUp"} />
+<@button type='button' size='sm' color='light' buttonIcon='arrow-down' title='#i18n{forms.form_builder.action.moveDown}' hideTitle=['all'] params={"data-fb-action": "moveDown"} />
+<#if columnCount gt 1><@fbMoveToColumn columnCount=columnCount column=column /></#if>
+<@fbMoveToStep display=display />
+</#macro>
+<#-- The drop zones of a step or of a group: one per column of its layout, side by side when there are several -->
+<#macro fbZones parentId columns emptyLabel>
+<#if columns?size gt 1>
+	<@div class='row g-2 fb-columns'>
+	<#list columns as column>
+		<@div class='col-12 col-md-${( 12 / columns?size )?int} d-flex flex-column'>
+			<@div class='fb-column-label small text-secondary mb-1'>#i18n{forms.form_builder.column} ${column?index + 1}</@div>
+			<@div class='fb-dropzone flex-grow-1' params={"data-parent-id": "${parentId?c}", "data-column": "${column?index + 1}", "data-empty-label": emptyLabel}><@fbNodes nodes=column columnCount=columns?size column=column?index + 1 /></@div>
+		</@div>
+	</#list>
+	</@div>
+<#else>
+	<@div class='fb-dropzone' params={"data-parent-id": "${parentId?c}", "data-column": "1", "data-empty-label": emptyLabel}><@fbNodes nodes=( columns?has_content )?then( columns[0], [] ) columnCount=1 column=1 /></@div>
+</#if>
+</#macro>
+<#macro fbNodes nodes columnCount column>
+<#list nodes as node>
+<#local display=node.display />
+<#if node.groupNode>
+	<#local groupEditUrl>jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyGroup&id_step=${step.id}&id_group=${node.group.id}</#local><#local groupEditUrl = groupEditUrl?markup_string />
+	<#local groupParams = {"data-display-id": "${display.id}", "data-edit-url": "${groupEditUrl}", "data-title": "${node.group.title!}"} />
+	<@div class='card fb-node fb-group mb-3' params=groupParams>
+		<@div class="card-header gap-2">
+			<@icon style='grip-vertical' class='fb-handle text-secondary' title='#i18n{forms.form_builder.action.drag}' />
+			<@icon style='box-multiple' class='text-azure' />
+			<@h level=3 class='card-title text-truncate mb-0'>${node.group.title!?replace('- hidden','')}</@h>
+			<#if node.group.iterationMax != 1>
+				<@tag color='azure-lt' title='#i18n{forms.form_builder.badge.iterations}'>${node.group.iterationMin} – <#if node.group.iterationMax == 0>∞<#else>${node.group.iterationMax}</#if></@tag>
+			</#if>
+			<#if node.conditional>
+				<#local groupConditionUrl>jsp/admin/plugins/forms/ManageControls.jsp?view=manageConditionControl&id_step=${step.id}&id_target=${display.id}&control_type=CONDITIONAL</#local><#local groupConditionUrl = groupConditionUrl?markup_string />
+				<@fbBadgeLink url=groupConditionUrl panelTitle='#i18n{forms.manage_questions.action.condition}' color='purple-lt' iconName='eye-question'>#i18n{forms.form_builder.badge.conditional}</@fbBadgeLink>
+			</#if>
+			<@div class="card-actions btn-list flex-nowrap">
+				<@button type='button' size='sm' color='light' buttonIcon='pencil' title='#i18n{forms.manage_questions.action.updategroup.label}' hideTitle=['all'] params={"data-fb-action": "edit"} />
+				<@fbCommonActions display=display columnCount=columnCount column=column />
+				<@button type='button' size='sm' color='ghost-danger' buttonIcon='trash' title='#i18n{portal.util.labelDelete}' hideTitle=['all'] params={"data-fb-action": "remove"} />
+			</@div>
+		</@div>
+		<@div class="card-body p-2"> 
+			<@fbZones parentId=display.id columns=node.columns emptyLabel='#i18n{forms.form_builder.dropHere}' />
+		</@div>
+	</@div>
+<#else>
+	<#local question=node.question />
+	<#local questionEditUrl>jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyQuestion&id_step=${step.id}&id_question=${question.id}</#local><#local questionEditUrl = questionEditUrl?markup_string />
+	<#local conditionUrl>jsp/admin/plugins/forms/ManageControls.jsp?view=manageConditionControl&id_step=${step.id}&id_target=${display.id}&control_type=CONDITIONAL</#local><#local conditionUrl = conditionUrl?markup_string />
+	<#local validationUrl>jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${question.id}&control_type=VALIDATION</#local><#local validationUrl = validationUrl?markup_string />
+	<#local questionParams = {"data-display-id": "${display.id}", "data-edit-url": "${questionEditUrl}", "data-title": "${question.title!}"} />
+	<@div class='card card-sm fb-node fb-question mb-2${node.disabled?then(" fb-disabled","")}' params=questionParams>
+		<@div class="card-body">
+			<@div class='d-flex align-items-center gap-2 mb-2'>
+				<@icon style='grip-vertical' class='fb-handle text-secondary' title='#i18n{forms.form_builder.action.drag}' />
+				<#if node.entryType??>
+					<@tag color='secondary-lt' tagIcon='${(node.entryType.iconName!"forms")?keep_before(" ")}'>${node.entryType.title!}</@tag>
+				</#if>
+				<#if node.mandatory><@tag color='red-lt'>#i18n{forms.form_builder.badge.mandatory}</@tag></#if>
+				<#if node.disabled><@tag color='dark-lt'>#i18n{forms.form_builder.badge.disabled}</@tag></#if>
+				<#if node.conditional><@fbBadgeLink url=conditionUrl panelTitle='#i18n{forms.manage_questions.action.condition}' color='purple-lt' iconName='eye-question'>#i18n{forms.form_builder.badge.conditional}</@fbBadgeLink></#if>
+				<#if node.validated><@fbBadgeLink url=validationUrl panelTitle='#i18n{forms.manage_questions.action.control}' color='teal-lt' iconName='checks'>#i18n{forms.form_builder.badge.validated}</@fbBadgeLink></#if>
+				<@div class="ms-auto btn-list flex-nowrap">
+					<@button type='button' size='sm' color='light' buttonIcon='pencil' title='#i18n{forms.manage_questions.action.modifyQuestion}' hideTitle=['all'] params={"data-fb-action": "edit"} />
+					<@button type='button' size='sm' color='light' buttonIcon='dots-vertical' title='#i18n{portal.util.labelActions}' hideTitle=['all'] dropdownMenu=true>
+						<@li><button type="button" class="dropdown-item" data-fb-action="panel" data-fb-url="${conditionUrl}" data-fb-title="#i18n{forms.manage_questions.action.condition}"><@icon style='eye-question' class='me-2' />#i18n{forms.manage_questions.action.condition}</button></@li>
+						<@li><button type="button" class="dropdown-item" data-fb-action="panel" data-fb-url="${validationUrl}" data-fb-title="#i18n{forms.manage_questions.action.control}"><@icon style='checks' class='me-2' />#i18n{forms.manage_questions.action.control}</button></@li>
+						<@li><button type="button" class="dropdown-item" data-fb-action="duplicate"><@icon style='copy' class='me-2' />#i18n{forms.manage_questions.action.copy}</button></@li>
+					</@button>
+					<@fbCommonActions display=display columnCount=columnCount column=column />
+				</@div>
+			</@div>
+		</@div>
+		<fieldset class="fb-preview" disabled tabindex="-1"><#noautoesc>${(node.contentHtml!)?no_esc}</#noautoesc></fieldset>
+	</@div>
+</#if>
+</#list>
+</#macro>
+<#if step??>
+<@div class="fb-canvas" params={"data-step-id": "${step.id}"}>
+	<@box>
+		<@div class="card-header gap-2 flex-wrap">
+			<@h level=2 class='card-title mb-0'>${step.title!?replace('- hidden','')}</@h>
+			<#if step.initial><@tag color='green-lt'>#i18n{forms.manage_steps.columnInitial}</@tag></#if>
+			<#if step.final><@tag color='orange-lt'>#i18n{forms.manage_steps.columnFinal}</@tag></#if>
+			<@div class="card-actions btn-list flex-nowrap">
+				<@button type='button' size='sm' color='light' buttonIcon='pencil' title='#i18n{forms.manage_steps.action.modifyStep}' hideTitle=['xs','sm','md'] params={"data-fb-action": "panel", "data-fb-url": "jsp/admin/plugins/forms/ManageSteps.jsp?view=modifyStep&id_step=${step.id}", "data-fb-title": "#i18n{forms.manage_steps.action.modifyStep}"} />
+				<@button type='button' size='sm' color='light' buttonIcon='dots-vertical' title='#i18n{portal.util.labelActions}' hideTitle=['all'] dropdownMenu=true>
+					<li><button type="button" class="dropdown-item" data-fb-action="panel" data-fb-url="jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=${step.id}" data-fb-title="#i18n{forms.form_builder.action.transitions}"><@icon style='arrows-split' class='me-2' />#i18n{forms.form_builder.action.transitions}</button></li>
+					<li><button type="button" class="dropdown-item" data-fb-action="duplicateStep" data-step-target="${step.id}"><@icon style='copy' class='me-2' />#i18n{forms.manage_steps.action.copyStep}</button></li>
+					<#if !step.initial>
+						<li><button type="button" class="dropdown-item text-danger" data-fb-action="removeStep" data-step-target="${step.id}" data-title="${step.title!}"><@icon style='trash' class='me-2' />#i18n{forms.manage_steps.action.removeStep}</button></li>
+					</#if>
+				</@button>
+			</@div>
+			<@div class="w-100 d-flex flex-wrap align-items-center gap-2 small fb-next-steps">
+				<@icon style='arrow-right' class='text-secondary' />
+				<#if transition_list?has_content>
+					<@span class='text-secondary'>#i18n{forms.form_builder.step.next}</@span>
+					<#list transition_list as transition>
+						<a class="fb-step-link d-inline-flex align-items-center gap-1" href="jsp/admin/plugins/forms/ManageFormBuilder.jsp?view=builder&id_form=${form.id}&id_step=${transition.nextStep}" data-step-id="${transition.nextStep}">${transition.nextStepTitle!?replace('- hidden','')}</a>
+						<#if conditional_transitions?seq_contains(transition.id)>
+							<#assign transitionControlUrl>jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${transition.id}&control_type=TRANSITION</#assign><#assign transitionControlUrl = transitionControlUrl?markup_string />
+							<@fbBadgeLink url=transitionControlUrl panelTitle='#i18n{forms.manage_questions.action.condition}' color='purple-lt' iconName='eye-question'>#i18n{forms.form_builder.badge.conditional}</@fbBadgeLink>
+						</#if>
+						<#sep><@span class='text-secondary'>·</@span></#sep>
+					</#list>
+				<#elseif step.final>
+					<@span class='text-secondary'>#i18n{forms.form_builder.step.endOfForm}</@span>
+				<#else>
+					<@tag color='warning-lt' tagIcon='alert-triangle'>#i18n{forms.form_builder.step.noNext}</@tag>
+				</#if>
+			</@div>
+		</@div>
+		<@boxBody>
+			<#if step.description?has_content><@div class="text-secondary mb-3"><#noautoesc>${step.description}</#noautoesc></@div></#if>
+			<@fbZones parentId=0 columns=column_list emptyLabel='#i18n{forms.form_builder.emptyStep}' />
+		</@boxBody>
+	</@box>
+</@div>
+<#else>
+<@empty title='#i18n{forms.form_builder.noStep}' iconName='step-forward' />
+</#if>
