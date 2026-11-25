@@ -130,7 +130,7 @@
                                 <@h level=2>#i18n{forms.manage_questions.type.step.label} "${stepTitle?replace('- hidden','')}" </@h> 
                                 <#list entry_type_list as item>
                                     <#if item.group>
-                                        <@aButton href="jsp/admin/plugins/forms/ManageQuestions.jsp?view=createGroup&id_step=${step.id}" color="primary" title="#i18n{forms.manage_questions.action.creategroup.label}" buttonIcon=item.iconName hideTitle=['xs','sm'] />
+                                        <@aButton href="jsp/admin/plugins/forms/ManageQuestions.jsp?view=createGroup&id_step=${step.id}" color="primary" title="#i18n{forms.manage_questions.action.creategroup.label}" buttonIcon="stack-2" hideTitle=['xs','sm'] />
                                     </#if>
                                 </#list>
                                 </@div>

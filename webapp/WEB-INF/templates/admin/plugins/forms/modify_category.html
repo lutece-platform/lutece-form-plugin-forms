@@ -1,19 +1,18 @@
 <@pageContainer>
 	<@pageColumn>
-		<@pageHeader title='#i18n{forms.modify_form_category.title}' />
-		<@tform class='form' method='post' name='modify_category' action='jsp/admin/plugins/forms/ManageFormsCategories.jsp'  params={"target": "_top"}>
-		<@input type='hidden' name='id_category' value='${category.id}' />
-		<@formGroup labelFor='title' labelKey='#i18n{forms.modify_form_category.labelName}' mandatory=true>
-			<@input type='text' name='name' id='name' value=category.name!'' maxlength=100 />
-		</@formGroup>
-		<@formGroup labelFor='title' labelKey='#i18n{forms.modify_form_category.labelCode}' mandatory=true>
-			<@input type='text' name='code' id='code' value=category.code!'' maxlength=100 />
-		</@formGroup>
-		<@formGroup rows=2>
-			<@formsButton okAction='modifyCategory' viewAction='' />
-		</@formGroup>
+		<@pageHeader title='#i18n{forms.modify_form_category.title}'>
+			<@aButton href='jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=manageCategories' buttonIcon='arrow-left' title='#i18n{portal.util.labelBack}' color='light' />
+		</@pageHeader>
+		<@tform method='post' name='modify_category' id='modify_category' action='jsp/admin/plugins/forms/ManageFormsCategories.jsp' boxed=true>
+			<@input type='hidden' name='id_category' value='${category.id}' />
+			<@formGroup labelFor='name' labelKey='#i18n{forms.modify_form_category.labelName}' mandatory=true rows=2>
+				<@input type='text' name='name' id='name' value=category.name!'' maxlength=100 />
+			</@formGroup>
+			<@formGroup labelFor='code' labelKey='#i18n{forms.modify_form_category.labelCode}' mandatory=true rows=2>
+				<@input type='text' name='code' id='code' value=category.code!'' maxlength=100 />
+			</@formGroup>
+			<@formsButton okAction='modifyCategory' viewAction='manageCategories' />
 		</@tform>
 	</@pageColumn>
 </@pageContainer>
-<@formEditor /> 
 <@formsToastr infos=infos warnings=warnings errors=errors />

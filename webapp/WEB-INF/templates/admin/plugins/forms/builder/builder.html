@@ -48,16 +48,16 @@
 									<@div id="fb-palette">
 										<@boxBody>
 											<label for="fb-palette-search" class="visually-hidden">#i18n{forms.form_builder.palette.search}</label>
-											<@input type='text' id='fb-palette-search' name='fb_palette_search' placeHolder='#i18n{forms.form_builder.palette.search}' params={"autocomplete": "off"} />
+											<@input type='text' id='fb-palette-search' name='fb_palette_search' placeHolder='#i18n{portal.util.labelSearch}' params={"autocomplete": "off"} />
 											<@p class="text-secondary small mt-2 mb-0">#i18n{forms.form_builder.palette.help}</@p>
 										</@boxBody>
 										<@listGroup id='fb-palette-list' class='list-group-flush'>
 											<#list entry_type_list as entryType>
 												<#assign paletteParams = {"data-type-id": "${entryType.idType}", "data-group": "${entryType.group?c}", "data-title": "${entryType.title!}", "tabindex": "0", "role": "button", "title": "#i18n{forms.form_builder.palette.add} ${entryType.title!}"} />
-												<@listGroupItem class='fb-palette-item d-flex align-items-center gap-2' params=paletteParams>
+												<@listGroupItem class='fb-palette-item d-flex flex-wrap align-items-center gap-2' params=paletteParams>
 													<@icon style='grip-vertical' class='text-secondary fb-handle' />
 													<@icon style='${(entryType.iconName!"forms")?keep_before(" ")}' />
-													<@span class='text-truncate'>${entryType.title!}</@span>
+													<@span class='flex-fill text-break'>${entryType.title!}</@span>
 													<#if entryType.group><@tag color='azure-lt' class='ms-auto'>#i18n{forms.form_builder.palette.layout}</@tag></#if>
 												</@listGroupItem>
 											</#list>

@@ -37,10 +37,10 @@
 										<@formSection title=stepQuestions[0].step.title!?replace("- hidden","") subtitle='#i18n{forms.modify_form.section.multiviewDisplay.subtitle}' bodyClass='p-0'>
 											<@table class='card-table table-vcenter' hover=true>
 												<@tr>
-													<@th>#i18n{forms.manage_question_response.columnTitle}</@th>
+													<@th class='w-25'>#i18n{forms.manage_question_response.columnTitle}</@th>
 													<@th class='w-1 text-nowrap'><@helpHeader label='#i18n{forms.modify_question.globalView}' help='#i18n{forms.modify_question.labelDisplayMultiviewGlobal}' /></@th>
 													<@th class='w-1 text-nowrap'><@helpHeader label='#i18n{forms.modify_question.formSelectedView}' help='#i18n{forms.modify_question.labelDisplayMultiviewFormSelected}' /></@th>
-													<@th>#i18n{forms.modify_question.labelColumnTitle}</@th>
+													<@th class='w-25'>#i18n{forms.modify_question.labelColumnTitle}</@th>
 													<@th class='text-nowrap'><@helpHeader label='#i18n{forms.modify_form.labelOrder}' help='#i18n{forms.modify_question.labelColumnOrderTitle}' /></@th>
 												</@tr>
 												<#list stepQuestions as question>
@@ -98,7 +98,7 @@
 										<@formSection title=stepQuestions[0].step.title!?replace("- hidden","") subtitle='#i18n{forms.modify_form.section.multiviewFilter.subtitle}' bodyClass='p-0'>
 											<@table class='card-table table-vcenter' hover=true>
 												<@tr>
-													<@th>#i18n{forms.manage_question_response.columnTitle}</@th>
+													<@th class='w-25'>#i18n{forms.manage_question_response.columnTitle}</@th>
 													<@th class='w-1 text-nowrap'><@helpHeader label='#i18n{forms.modify_question.globalView}' help='#i18n{forms.modify_question.labelFilterableMultiviewGlobal}' /></@th>
 													<@th class='w-1 text-nowrap'><@helpHeader label='#i18n{forms.modify_question.formSelectedView}' help='#i18n{forms.modify_question.labelFilterableMultiviewFormSelected}' /></@th>
 												</@tr>

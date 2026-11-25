@@ -143,17 +143,17 @@ table.table-hover tbody tr:hover {
 }
 #steps-content .card-body > legend:first-child,
 #steps-content .fieldset-group:first-child > legend { margin-top: 0; }
-#steps-content .list-group-item { padding: .5rem 0; background: transparent; }
-#steps-content .list-group-item > .row { --tblr-gutter-y: .25rem; }
-#steps-content .list-group-item > .row > .col-sm-3 p,
-#steps-content .list-group-item > .row > .col-sm-3 label {
+:is(#steps-content, #form-response-summary) .list-group-item { padding: .5rem 0; background: transparent; }
+:is(#steps-content, #form-response-summary) .list-group-item > .row { --tblr-gutter-y: .25rem; }
+:is(#steps-content, #form-response-summary) .list-group-item > .row > .col-sm-3 p,
+:is(#steps-content, #form-response-summary) .list-group-item > .row > .col-sm-3 label {
 	text-align: start;
 	font-weight: 400;
 	color: var(--tblr-secondary);
 	margin-bottom: 0;
 }
-#steps-content .list-group-item > .row > .col-sm-9 p:last-child { margin-bottom: 0; }
-#steps-content .list-group-item.is-empty > .row > .col-sm-9::before {
+:is(#steps-content, #form-response-summary) .list-group-item > .row > .col-sm-9 p:last-child { margin-bottom: 0; }
+:is(#steps-content, #form-response-summary) .list-group-item.is-empty > .row > .col-sm-9::before {
 	content: "\2014";
 	color: var(--tblr-secondary);
 }

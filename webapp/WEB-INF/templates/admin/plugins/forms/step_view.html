@@ -1,10 +1,12 @@
 <@pageContainer>
     <@pageColumn>
-		<@pageHeader title=form.title! />
+		<#assign bc>
 		<@formBreadCrumb>
 			<@breadcrumbItem><@link href='jsp/admin/plugins/forms/MultiviewForms.jsp?current_selected_panel=forms&id_form=${form.id}' label='#i18n{forms.multiviewForms.boxTitle}' /></@breadcrumbItem>
 			<@breadcrumbItem>${form.title!}</@breadcrumbItem>
 		</@formBreadCrumb>
+		</#assign>
+		<@pageHeader title=form.title! breadcrumb=bc />
 		<@box>
 			<@boxBody class='container'>
 				<!-- #current_step : Add for breadcrumbs -->

@@ -1,6 +1,10 @@
 <#assign stepTitle=step.title!?replace("- hidden","") />
+<#assign bc>
 <@formBreadCrumb>
-	<@breadcrumbItem><@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}' title='Liste des étapes'>${form.title}</@link></@breadcrumbItem> 
-	<@breadcrumbItem><@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='Liste des questions'>${stepTitle}</@link></@breadcrumbItem>
+	<@breadcrumbItem><@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}' title='#i18n{forms.create_form.button.backForm}'>${form.title}</@link></@breadcrumbItem>
+	<@breadcrumbItem><@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='#i18n{forms.create_form.button.backStep}'>${stepTitle}</@link></@breadcrumbItem>
 	<@breadcrumbItem class='active is-active'>${entry.entryType.title}</@breadcrumbItem>
 </@formBreadCrumb>
+</#assign>
+<#assign questionPageTitle><#if ( entry.idEntry!0 ) gt 0>#i18n{forms.modify_entry.titleQuestion}<#else>#i18n{forms.create_Question.titleQuestion}</#if></#assign>
+<@pageHeader title=questionPageTitle breadcrumb=bc />
