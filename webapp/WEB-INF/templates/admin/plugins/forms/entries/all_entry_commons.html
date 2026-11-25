@@ -94,7 +94,9 @@ ${breadcrumb_template}
 </#if>
 <@row>
     <@columns xs=xs md=md lg=lg xl=xl>
+		<#assign fieldTitle><#if entry.title??>"${entry.title!}" <@tag color='info'>${entry.entryType.title!} </@tag><#else><@tag color='info'>${entry.entryType.title!}</@tag></#if></#assign>
 		<@box>
+		<@boxHeader id='entry-title' title=fieldTitle />
 		<@boxBody id='entry-parameters' params={"data-fb-toggle-label": "#i18n{forms.modify_entry.labelParameters}"}>
 			<@fieldSet legend='#i18n{forms.modify_entry.titleQuestion} : "${form.title}"' hideLegend=['all']>
 				<@input type='hidden' name='id_type' value='${entry.entryType.idType!}' />

@@ -490,6 +490,8 @@ export default class FormBuilder {
             removeAll('.page > :not(.page-wrapper):not(script)');
         }
         removeAll('.page-header, #page-header, .breadcrumb');
+        // the header naming the question on its standalone edition screen: the builder shows the question next to the panel
+        removeAll('#entry-title');
         frameDocument.querySelectorAll('.card-header-tabs').forEach(tabList => {
             if (!tabList.querySelector('[data-bs-toggle="tab"], [data-bs-toggle="pill"]')) {
                 (tabList.closest('.card-header') || tabList).remove();
