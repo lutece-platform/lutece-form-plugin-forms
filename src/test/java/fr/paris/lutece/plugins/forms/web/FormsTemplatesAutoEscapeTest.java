@@ -97,8 +97,13 @@ public class FormsTemplatesAutoEscapeTest
 
     };
 
-    /** An HTML start tag; FreeMarker tags and quoted values are read as a whole. */
-    private static final Pattern HTML_TAG = Pattern.compile( "<[a-zA-Z][\\w:-]*((?:[^<>\"']|\"[^\"]*\"|'[^']*'|<#[^>]*>|</#[^>]*>|\\$\\{[^}]*\\})*)>" );
+    /**
+     * An HTML start tag; FreeMarker tags and quoted values are read as a whole. The quantifiers are possessive and the
+     * alternatives start with different characters: a long tag (the form builder writes some) no longer overflows the
+     * stack of the regular expression engine, which recursed once per character.
+     */
+    private static final Pattern HTML_TAG = Pattern.compile(
+            "<[a-zA-Z][\\w:-]*((?:\\$\\{[^}]*+\\}|<#[^>]*+>|</#[^>]*+>|\"[^\"]*+\"|'[^']*+'|[^<>\"'$]++|\\$)*+)>" );
 
     /** An attribute whose value is an interpolation without quotes, outside any quoted value. */
     private static final Pattern UNQUOTED_VALUE = Pattern.compile( "(?<![\\w:-])[\\w:-]+=\\$\\{(?![^}]*\\?c\\})" );
@@ -120,6 +125,8 @@ public class FormsTemplatesAutoEscapeTest
             Pattern.compile( "point\\?replace\\(.*\\)" ),
             // HTML rendered by other plugins: workflow task information, forms-extend, OCR provider
             Pattern.compile( "\\(?\\s*(task_information|comment|rating|follow|feedback|ocr_mapping_template)!''\\s*\\)?" ),
+            // HTML of the extension modules (comment, rating, follow, feedback) passed to the macro extensionStep of the response view
+            Pattern.compile( "\\(\\s*content!''\\s*\\)" ),
     };
 
     /**

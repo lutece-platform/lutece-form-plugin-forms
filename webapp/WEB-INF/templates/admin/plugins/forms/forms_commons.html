@@ -286,7 +286,7 @@
 <#-- Actions menu of a form, in the header of its edition screens (steps, builder) -->
 <#macro formActionsMenu form>
 <#if form.active>
-	<#if extendableResourceActionsHtml?? && extendableResourceActionsHtml?has_content>${(extendableResourceActionsHtml!)?no_esc}</#if>
+	<#if extendableResourceActionsHtml?? && extendableResourceActionsHtml?has_content>${extendableResourceActionsHtml!}</#if>
 	<@button type='button' id='forms-action' class='ms-2' color='light' title='#i18n{forms.dashboard.row_actions}' buttonIcon='cog' dropdownMenu=true>
 		<@link href='${prod_url!}jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' class='dropdown-item' params={"target": "_blank"}><@icon style='external-link' class='me-2' />#i18n{forms.manageForm.FOLink.label} ${form.title}</@link>
 		<@link href='jsp/admin/plugins/forms/ManageFormResponse.jsp?view=stepView&id_form=${form.id}&init=true' class='dropdown-item'><@icon style='text-plus' class='me-2' />#i18n{forms.manageForm.BOLink.label} ${form.title}</@link>

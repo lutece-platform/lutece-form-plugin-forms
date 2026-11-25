@@ -3,7 +3,7 @@ ${multiviewmap!''}
 <@tr>
 <#if form_response_column_header_template_list?has_content>
 	<#list form_response_column_header_template_list as form_response_column_header_template>
-		${form_response_column_header_template?no_esc}
+		${form_response_column_header_template}
 	</#list>
 	<@th><@span class='visually-hidden'>#i18n{portal.util.labelActions}</@span></@th>
 </#if>

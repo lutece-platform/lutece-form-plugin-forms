@@ -6,7 +6,7 @@
 		<@button type='submit' name='view_modifyControl' value='validateValidator' hideTitle=['all'] buttonIcon='check'/>
 	</@inputGroup>
 </@formGroup>
-${control_template?no_esc}
+${control_template}
 <@formGroup labelKey='#i18n{forms.modify_control.labelErrorMessage}' helpKey='#i18n{forms.modify_control.labelErrorMessage.help}' rows=2>
 	<@input type='text' name='errorMessage' value='${control.errorMessage!}' />
 </@formGroup>

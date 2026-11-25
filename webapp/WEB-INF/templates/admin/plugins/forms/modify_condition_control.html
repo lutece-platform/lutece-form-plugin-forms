@@ -18,7 +18,7 @@
 		<@button type='submit' name='view_modifyConditionControl' value='validateValidator' hideTitle=['all'] buttonIcon='check'/>
 	</@inputGroup>
 </@formGroup>
-${control_template?no_esc}
+${control_template}
 <#if control.id gt 0>
 	<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${control.id}' title='#i18n{forms.manage_controls.action.removeControl}' buttonIcon='trash' color='danger' />
 </#if>

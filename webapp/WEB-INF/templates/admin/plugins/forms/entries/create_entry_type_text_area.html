@@ -1,5 +1,5 @@
 <#include "all_entry_commons.html" />
-${breadcrumb_template?no_esc}
+${breadcrumb_template}
 <@row>
 	<@columns>
 		<@box>
@@ -67,7 +67,7 @@ ${breadcrumb_template?no_esc}
 						<@formGroup labelFor='disabled' helpKey='#i18n{forms.create_entry.labelDisableQuestionHelp}'>
 							<@checkBox orientation='switch' name='disabled' id='disabled' labelKey='#i18n{forms.create_entry.labelDisableQuestion}' value='1'/>
 						</@formGroup>
-						${(question_create_template!)?no_esc}
+						${question_create_template!}
 						<@formGroup>
 							<@button type='submit' name='action_createQuestion' buttonIcon='device-floppy' title='#i18n{forms.modify_entry.buttonSave}' hideTitle=['xs'] />
 							<@button type='cancel' name='view_manageQuestions' buttonIcon='x' title='#i18n{forms.create_entry.buttonCancel}' hideTitle=['xs'] color='light' cancel=true />
