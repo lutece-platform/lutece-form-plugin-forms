@@ -97,7 +97,7 @@
 				</@div>
 			</@div>
 		</@div>
-		<fieldset class="fb-preview" disabled tabindex="-1"><#noautoesc>${(node.contentHtml!)?no_esc}</#noautoesc></fieldset>
+		<fieldset class="fb-preview" disabled tabindex="-1">${(node.contentHtml!)?no_esc}</fieldset>
 	</@div>
 </#if>
 </#list>
@@ -139,7 +139,7 @@
 			</@div>
 		</@div>
 		<@boxBody>
-			<#if step.description?has_content><@div class="text-secondary mb-3"><#noautoesc>${step.description}</#noautoesc></@div></#if>
+			<#if step.description?has_content><@div class="text-secondary mb-3">${step.description}</@div></#if>
 			<@fbZones parentId=0 columns=column_list emptyLabel='#i18n{forms.form_builder.emptyStep}' />
 		</@boxBody>
 	</@box>

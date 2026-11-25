@@ -22,7 +22,7 @@
 									<@boxHeader title='#i18n{forms.modify_form.tab.labelSteps}' titleLevel='h3' titleActions=true>
 										<@button type='button' id='fb-step-order' size='sm' color='ghost-secondary' buttonIcon='arrows-split' title='#i18n{forms.form_builder.step.order.transitions}' hideTitle=['all'] params={"aria-pressed": "false", "data-bs-toggle": "tooltip", "data-title-on": "#i18n{forms.form_builder.step.order.creation}", "data-title-off": "#i18n{forms.form_builder.step.order.transitions}"} />
 									</@boxHeader>
-									<@div id="fb-steps"><#noautoesc>${steps_html?no_esc}</#noautoesc></@div>
+									<@div id="fb-steps">${steps_html}</@div>
 									<@boxBody>
 										<@button type='button' class='w-100 text-wrap' color='outline-primary' buttonIcon='plus' title='#i18n{forms.manage_steps.buttonAdd}' params={"data-fb-action": "panel", "data-fb-url": "jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}", "data-fb-title": "#i18n{forms.manage_steps.buttonAdd}"} />
 										<@button type='button' class='w-100 mt-2 text-wrap' color='outline-secondary' buttonIcon='file-import' title='#i18n{forms.manage_steps.buttonImport}' params={"data-fb-action": "importStep", "data-step-after": "0"} />
@@ -34,7 +34,7 @@
 							</@div>
 						</@columns>
 						<@columns md=6 lg=6 xl=8 class='fb-col-canvas'>
-							<@div id="fb-canvas" params={"aria-live": "polite"}><#noautoesc>${canvas_html?no_esc}</#noautoesc></@div>
+							<@div id="fb-canvas" params={"aria-live": "polite"}>${canvas_html}</@div>
 						</@columns>
 						<@columns md=3 lg=3 xl=2 class='fb-col-panel'>
 							<@div class="position-sticky fb-sticky">

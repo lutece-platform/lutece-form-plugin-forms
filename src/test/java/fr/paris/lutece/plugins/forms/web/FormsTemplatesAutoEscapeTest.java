@@ -127,6 +127,8 @@ public class FormsTemplatesAutoEscapeTest
             Pattern.compile( "\\(?\\s*(task_information|comment|rating|follow|feedback|ocr_mapping_template)!''\\s*\\)?" ),
             // HTML of the extension modules (comment, rating, follow, feedback) passed to the macro extensionStep of the response view
             Pattern.compile( "\\(\\s*content!''\\s*\\)" ),
+            // preview of a question in the form builder: HTML rendered by the templates of its entry type (FormBuilderRenderer.renderWidget)
+            Pattern.compile( "\\(node\\.contentHtml!\\)" ),
     };
 
     /**

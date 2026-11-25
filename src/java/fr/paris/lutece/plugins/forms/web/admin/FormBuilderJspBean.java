@@ -60,6 +60,7 @@ import fr.paris.lutece.plugins.forms.util.FormsEntryUtils;
 import fr.paris.lutece.plugins.forms.web.builder.FormBuilderRenderer;
 import fr.paris.lutece.plugins.forms.web.builder.FormBuilderResult;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
+import fr.paris.lutece.portal.service.template.HtmlMarkup;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.security.SecurityTokenHandler;
 import fr.paris.lutece.portal.service.util.AppLogService;
@@ -187,8 +188,8 @@ public class FormBuilderJspBean extends AbstractJspBean
 
         model.put( FormsConstants.MARK_FORM, form );
         model.put( FormsConstants.MARK_STEP, step );
-        model.put( MARK_STEPS_HTML, _formBuilderRenderer.renderSteps( form, step, isTransitionOrder( request ), locale ) );
-        model.put( MARK_CANVAS_HTML, _formBuilderRenderer.renderCanvas( request, form, step, locale ) );
+        model.put( MARK_STEPS_HTML, HtmlMarkup.of( _formBuilderRenderer.renderSteps( form, step, isTransitionOrder( request ), locale ) ) );
+        model.put( MARK_CANVAS_HTML, HtmlMarkup.of( _formBuilderRenderer.renderCanvas( request, form, step, locale ) ) );
         model.put( FormsConstants.MARK_ENTRY_TYPE_REF_LIST, FormsEntryUtils.initListEntryType( ) );
         model.put( MARK_MAX_ID_DISPLAY, _formBuilderService.getMaxIdDisplay( nIdForm ) );
         model.put( MARK_BUILDER_TOKEN, _securityTokenHandler.resolveTokenValue( request ) );
