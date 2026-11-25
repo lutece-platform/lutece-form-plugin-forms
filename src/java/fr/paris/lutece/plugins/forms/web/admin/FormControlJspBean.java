@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.forms.web.admin;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -52,6 +53,7 @@ import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -235,7 +237,7 @@ public class FormControlJspBean extends AbstractJspBean
         _step = StepHome.findByPrimaryKey( nIdStep );
 
         String strControlType = request.getParameter( FormsConstants.PARAMETER_CONTROL_TYPE );
-        _controlType = ControlType.valueOf( strControlType );
+        _controlType = EnumUtils.getEnum( ControlType.class, strControlType );
 
         _nIdTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_TARGET ), FormsConstants.DEFAULT_ID_VALUE );
     }
@@ -307,7 +309,7 @@ public class FormControlJspBean extends AbstractJspBean
      *            The HTTP request
      * @return The page
      */
-    @View( value = VIEW_MANAGE_CONDITION_CONTROL, defaultView = true, securityTokenAction = ACTION_MODIFY_LOGICAL_OPERATOR )
+    @View( value = VIEW_MANAGE_CONDITION_CONTROL, securityTokenAction = ACTION_MODIFY_LOGICAL_OPERATOR )
     public String getManageConditionControl( HttpServletRequest request )
     {
         clearAttributes( );
@@ -483,6 +485,23 @@ public class FormControlJspBean extends AbstractJspBean
     @View( VIEW_MODIFY_CONTROL )
     public String getModifyControl( HttpServletRequest request )
     {
+        // A control named by the request and not the one of the session (a bookmark, another tab): its context is read from the control
+        int nIdControl = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_CONTROL ), FormsConstants.DEFAULT_ID_VALUE );
+        if ( nIdControl != FormsConstants.DEFAULT_ID_VALUE && ( _control == null || _control.getId( ) != nIdControl ) )
+        {
+            Control control = ControlHome.findByPrimaryKey( nIdControl );
+            if ( control == null || !restoreContextFromControl( control ) )
+            {
+                return redirectToViewManageForm( request );
+            }
+        }
+
+        // No control in the request and no list of controls opened before: nothing tells what the control applies to
+        if ( _controlType == null )
+        {
+            return redirectToViewManageForm( request );
+        }
+
         if ( _step == null )
         {
             int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
@@ -727,9 +746,10 @@ public class FormControlJspBean extends AbstractJspBean
 
         int nIdControlToRemove = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_CONTROL ), FormsConstants.DEFAULT_ID_VALUE );
 
-        _control = ControlHome.findByPrimaryKey( nIdControlToRemove );
+        Control controlToRemove = ControlHome.findByPrimaryKey( nIdControlToRemove );
 
-        if ( _control != null )
+        // The context of the return is the one of the removed control, whatever the session holds
+        if ( controlToRemove != null && restoreContextFromControl( controlToRemove ) )
         {
             ControlHome.remove( _control.getId( ) );
             if (ControlType.CONDITIONAL.getLabel().equals(_control.getControlType())
@@ -844,6 +864,66 @@ public class FormControlJspBean extends AbstractJspBean
         _control.setListIdQuestion( listIdQuestion );
 
         return validateBean( _control, CONTROL_VALIDATION_ATTRIBUTES_PREFIX );
+    }
+
+    /**
+     * Set the attributes of the bean from a stored control: its type, its target, its step and its template
+     *
+     * @param control
+     *            the stored control
+     * @return false if the control does not lead to a step of a form any more
+     */
+    private boolean restoreContextFromControl( Control control )
+    {
+        ControlType controlType = Arrays.stream( ControlType.values( ) ).filter( type -> type.getLabel( ).equals( control.getControlType( ) ) ).findFirst( )
+                .orElse( null );
+        if ( controlType == null )
+        {
+            return false;
+        }
+
+        Step step = null;
+        Question question = null;
+        switch( controlType )
+        {
+            case TRANSITION:
+                Transition transition = TransitionHome.findByPrimaryKey( control.getIdControlTarget( ) );
+                step = ( transition != null ) ? StepHome.findByPrimaryKey( transition.getFromStep( ) ) : null;
+                break;
+            case CONDITIONAL:
+                FormDisplay formDisplay = FormDisplayHome.findByPrimaryKey( control.getIdControlTarget( ) );
+                question = ( formDisplay != null ) ? QuestionHome.findByPrimaryKey( formDisplay.getCompositeId( ) ) : null;
+                step = ( question != null ) ? StepHome.findByPrimaryKey( question.getIdStep( ) ) : null;
+                break;
+            default:
+                question = QuestionHome.findByPrimaryKey( control.getIdControlTarget( ) );
+                step = ( question != null ) ? StepHome.findByPrimaryKey( question.getIdStep( ) ) : null;
+                break;
+        }
+        if ( step == null )
+        {
+            return false;
+        }
+
+        clearAttributes( );
+        _control = control;
+        _controlType = controlType;
+        _nIdTarget = control.getIdControlTarget( );
+        _step = step;
+        _question = question;
+        switch( controlType )
+        {
+            case TRANSITION:
+                _strControlTemplate = TEMPLATE_MODIFY_TRANSITION_CONTROL;
+                break;
+            case CONDITIONAL:
+                _strControlTemplate = TEMPLATE_MODIFY_CONDITION_CONTROL;
+                break;
+            default:
+                _strControlTemplate = TEMPLATE_MODIFY_QUESTION_CONTROL;
+                break;
+        }
+        return true;
     }
 
     /**
