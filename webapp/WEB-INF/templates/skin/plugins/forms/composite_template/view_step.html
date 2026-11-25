@@ -51,10 +51,10 @@
 	<#assign current_step_index=0 />
 </#if>
 <@cStepCurrent step=current_step_index title=step.title showTitle=showTitle actionNextStep=doNextAction labelNextStep=labelNextAction actionPrevStep=doPrevAction labelPrevStep=labelPrevAction actionSaveStep=doSaveAction labelSaveStep=labelSaveAction actionSaveForBackUpStep=doSaveForBackUpAction labelForBackUpStep=labelForBackUpAction actionResetBackUpStep=doResetBackUpAction labelResetBackUpStep=labelResetBackUpAction showPrevStep=false hasSteps=hasSteps >
-${stepContent}
+<@cRow>${stepContent}</@cRow>
 <#if display_captcha>
-<@cCol class='12' class='step-group'>
-	<@input type='hidden' name='validate_captcha' value='1' />
+<@cCol class='step-group'>
+	<@cInput type='hidden' name='validate_captcha' value='1' />
 	<@cRow>
 		<@cCol class='col-12 col-sm-10 offset-sm-1 col-md-6 offset-md-3'>	
 			${captcha}

@@ -3,7 +3,7 @@
 <#assign isShownTitle = !group.title?ends_with('hidden') />
 <#assign groupTitle = group.title?replace('hidden','') />
 <#assign hasDescription = group.description?? && group.description != '' />
-<@cBlock class='step-group'>
+<@cBlock class='col-12 step-group'>
 <#if nbBaseChildren gt 0 && groupContent?has_content>
 <#assign nbTotalIteration = ( groupContent?size / nbBaseChildren )?int />
 <#list 0..<( groupContent?size / nbBaseChildren )?ceiling as indexIteration>

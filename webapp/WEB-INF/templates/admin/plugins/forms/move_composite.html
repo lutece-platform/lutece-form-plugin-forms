@@ -15,6 +15,16 @@
 		<@button type='submit' name="view_moveComposite" value="validateGroup" hideTitle=['all'] buttonIcon='check'/>
 	</@inputGroup>
 </@formGroup>
+<#if groupValidated && ( list_columns![] )?size gt 1>
+<@formGroup labelKey='#i18n{forms.moveComposite.column.label}' helpKey='#i18n{forms.moveComposite.column.label.help}' rows=2>
+	<@inputGroup>
+		<@select name='display_column' items=list_columns default_value='${display_column!1}' />
+		<@button type='submit' name="view_moveComposite" value="validateColumn" hideTitle=['all'] buttonIcon='check'/>
+	</@inputGroup>
+</@formGroup>
+<#else>
+<@input type='hidden' name='display_column' value='${display_column!1}' />
+</#if>
 <@formGroup labelKey='#i18n{forms.moveComposite.displayOrder.label}' helpKey='#i18n{forms.moveComposite.displayOrder.label.help}' rows=2>
 	<#if groupValidated==true>
 		<@inputGroup>

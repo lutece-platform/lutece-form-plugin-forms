@@ -187,18 +187,40 @@ table.table-hover tbody tr:hover {
 	padding-left: 1.25rem;
 	margin: 0;
 }
-
-.layout-fluid #form-response-details{
-	display: grid;
-	grid-template-columns: 15vw 84vw;
+.timeline-form:before {
+	content: '';
+	position: absolute;
+	left: .3rem;
+	top: .25rem;
+	bottom: .25rem;
+	width: 2px;
+	background: var(--tblr-border-color);
+	background: var(--tblr-border-color);
 }
-
-.layout-fluid #form-response-details:has( #toc[style="display: none;"]) {
-	grid-template-columns: 1fr;
+.timeline-form > li { position: relative; margin-bottom: 1rem; }
+.timeline-form > li:last-child { margin-bottom: 0; }
+.timeline-form > li:before {
+	content: '';
+.timeline-form > li { position: relative; margin-bottom: 1rem; }
+.timeline-form > li:last-child { margin-bottom: 0; }
+.timeline-form > li:before {
+	content: '';
+	position: absolute;
+	left: -1.25rem;
+	top: .3rem;
+	width: .75rem;
+	height: .75rem;
+	left: -1.25rem;
+	top: .3rem;
+	width: .75rem;
+	height: .75rem;
+	border-radius: 50%;
+	background: var(--tblr-bg-surface);
+	border: 2px solid var(--tblr-primary);
 }
-
-.layout-fluid #form-response-details #toc-side-toggle {
-	display: none;
+.timeline-form p { margin-bottom: .25rem; }
+	background: var(--tblr-bg-surface);
+	border: 2px solid var(--tblr-primary);
 }
 .timeline-form p { margin-bottom: .25rem; }
 
@@ -370,12 +392,9 @@ table.table-hover tbody tr:hover {
 		position: initial;
 	}
 
-	.layout-fluid #form-response-details {
-		display: block;
-	}
-	
-	#toc{
-		display: none
+	/* The filters of the responses list fill the screen of a phone: they scroll with the list */
+	.forms-multiview #multiview-toolbar{
+		position: initial;
 	}
 
 	/* A quarter of a phone is too narrow for the step titles */

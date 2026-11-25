@@ -1,0 +1,10 @@
+<@cTpl>
+<#-- The questions and groups of a step or of a group laid out in columns: side by side on large screens, the first column above the second on a phone -->
+<#list columns_html as column>
+<@cCol default='' class='col-12 col-md-${( 12 / columns_html?size )?int} forms-column'>
+	<@cRow>
+	<#list column as childHtml>${childHtml}</#list>
+	</@cRow>
+</@cCol>
+</#list>
+</@cTpl>

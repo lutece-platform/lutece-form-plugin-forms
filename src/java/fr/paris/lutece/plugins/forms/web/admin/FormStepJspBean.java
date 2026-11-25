@@ -57,6 +57,7 @@ import fr.paris.lutece.plugins.forms.business.ControlHome;
 import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
+import fr.paris.lutece.plugins.forms.business.FormLayout;
 import fr.paris.lutece.plugins.forms.business.FormResponseStepHome;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
@@ -392,6 +393,7 @@ public class FormStepJspBean extends AbstractJspBean
             _step = new Step( );
         }
         populate( _step, request, request.getLocale( ) );
+        _step.setLayout( FormLayout.normalize( _step.getLayout( ) ) );
 
         if ( !validateStep( _step ) )
         {
@@ -699,6 +701,7 @@ public class FormStepJspBean extends AbstractJspBean
         final int stepsCount = StepHome.getStepsListByForm( nIdForm ).size( );
 
         populate( _step, request, request.getLocale( ) );
+        _step.setLayout( FormLayout.normalize( _step.getLayout( ) ) );
 
         if ( stepsCount == 1 && wasInitial && !_step.isInitial( ) )
         {

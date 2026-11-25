@@ -1,0 +1,8 @@
+<#-- The questions and groups of a step or of a group laid out in columns, in the back office entry of a response: side by side on large screens -->
+<@row class='forms-columns'>
+<#list columns_html as column>
+	<@columns xs=12 md=( 12 / columns_html?size )?int class='forms-column'>
+	<#list column as childHtml>${childHtml}</#list>
+	</@columns>
+</#list>
+</@row>

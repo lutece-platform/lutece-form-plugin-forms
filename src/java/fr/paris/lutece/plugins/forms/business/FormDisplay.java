@@ -61,6 +61,8 @@ public class FormDisplay implements Serializable
 
     private int _nDepth;
 
+    private int _nDisplayColumn = FormLayout.FIRST_COLUMN;
+
     private Control _displayControl;
 
     private List<Control> _validationControlList = new ArrayList<>( );
@@ -201,6 +203,27 @@ public class FormDisplay implements Serializable
     public void setDepth( int nDepth )
     {
         _nDepth = nDepth;
+    }
+
+    /**
+     * Returns the column of the parent step or group where the display is placed, starting at 1
+     *
+     * @return the column
+     */
+    public int getDisplayColumn( )
+    {
+        return _nDisplayColumn;
+    }
+
+    /**
+     * Sets the column of the parent step or group where the display is placed, starting at 1
+     *
+     * @param nDisplayColumn
+     *            the column
+     */
+    public void setDisplayColumn( int nDisplayColumn )
+    {
+        _nDisplayColumn = nDisplayColumn;
     }
 
     /**

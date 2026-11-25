@@ -2,7 +2,7 @@
 <#assign classDisp = ( question?? )?then( 'display_field_' + ( question.id )?string + '_' + ( question.iterationNumber )?string, '' ) />
 <#assign displayFieldId = 'df_' + ( question.id )?string + '_' + ( question.iterationNumber )?string />
 <#assign param = { 'data-display-control': '${question.id}_${question.iterationNumber}', 'id': displayFieldId } />
-<#assign entryCSSClass = ( question.entry.CSSClass?? )?then( ( question.entry.CSSClass?trim?starts_with('col-') )?then( ( question.entry.CSSClass )?string, 'col-12' ), '' ) + ' ' + ( classDisp )?string />
+<#assign entryCSSClass = ( question.entry.CSSClass?? && question.entry.CSSClass?trim?starts_with('col-') )?then( question.entry.CSSClass?trim, 'col-12' ) + ' ' + ( classDisp )?string />
 <#if questionContent?? && questionContent?has_content>
 <@cCol class=entryCSSClass params=param>${questionContent!}</@cCol>
 <#if list_validator??>

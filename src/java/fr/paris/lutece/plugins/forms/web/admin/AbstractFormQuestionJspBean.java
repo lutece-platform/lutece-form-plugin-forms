@@ -54,6 +54,8 @@ import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
+import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
+import fr.paris.lutece.plugins.forms.business.FormLayout;
 import fr.paris.lutece.plugins.forms.business.Group;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.Step;
@@ -159,6 +161,11 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
     private static final String PROPERTY_MODIFY_QUESTION_TITLE = "forms.modify_entry.titleQuestion";
     private static final String PROPERTY_MOVE_GROUP_TITLE = "forms.moveComposite.group.title";
     private static final String PROPERTY_MOVE_QUESTION_TITLE = "forms.moveComposite.question.title";
+    private static final String PROPERTY_COLUMN_LABEL = "forms.form_builder.column";
+
+    protected static final String PARAMETER_DISPLAY_COLUMN = "display_column";
+    private static final String MARK_LIST_COLUMNS = "list_columns";
+    private static final String MARK_DISPLAY_COLUMN = "display_column";
 
     private static final String GROUP_VALIDATION_ATTRIBUTES_PREFIX = "forms.model.entity.group.attribute.";
     private static final String ENTRY_COMMENT_TITLE = "forms.manage_questions.type.comment.title";
@@ -282,6 +289,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
             formDisplay.setCompositeType( CompositeDisplayType.QUESTION.getLabel( ) );
             formDisplay.setDepth( nDisplayDepth );
             getFormDatabaseService( ).createFormDisplay( formDisplay );
+            applyColumnChoice( request, formDisplay );
         }
         return null;
     }
@@ -364,6 +372,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         int nStoredMultiviewOrder = ( storedQuestion != null ) ? storedQuestion.getMultiviewColumnOrder( ) : _question.getMultiviewColumnOrder( );
         _question.setMultiviewColumnOrder( NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_ORDER ), nStoredMultiviewOrder ) );
         getFormDatabaseService( ).updateQuestion( _question );
+        applyColumnChoice( request, findDisplayOfComposite( _step.getIdForm( ), _question.getId( ), CompositeDisplayType.QUESTION ) );
         return null;
 
     }
@@ -399,6 +408,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
 
         _group = ( _group != null ) ? _group : new Group( );
         populate( _group, request );
+        _group.setLayout( FormLayout.normalize( _group.getLayout( ) ) );
 
         if ( !validateGroup( ) )
         {
@@ -423,6 +433,10 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
             if ( templateDisplay.getId( ) == INTEGER_MINUS_ONE )
             {
                 addError( ERROR_GROUP_NOT_CREATED, getLocale( ) );
+            }
+            else
+            {
+                applyColumnChoice( request, templateDisplay );
             }
         }
         else
@@ -460,6 +474,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
 
         _group = groupPosted;
         populate( _group, request );
+        _group.setLayout( FormLayout.normalize( _group.getLayout( ) ) );
         _group.setId( nIdGroup );
         _group.setIdStep( _step.getId( ) );
 
@@ -476,6 +491,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         }
         else
         {
+            applyColumnChoice( request, findDisplayOfComposite( _step.getIdForm( ), _group.getId( ), CompositeDisplayType.GROUP ) );
             addInfo( INFO_GROUP_UPDATED, getLocale( ) );
         }
 
@@ -505,6 +521,8 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( FormsConstants.MARK_GROUP, _group );
         model.put( FormsConstants.MARK_ID_PARENT, _nIdParentSelected );
+        putColumnChoice( model, _step.getId( ), _nIdParentSelected,
+                NumberUtils.toInt( request.getParameter( PARAMETER_DISPLAY_COLUMN ), FormLayout.FIRST_COLUMN ) );
 
         return model;
     }
@@ -532,6 +550,10 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         Models model = getRequestModel( );
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( FormsConstants.MARK_GROUP, _group );
+        if ( _group != null )
+        {
+            putColumnChoice( model, findDisplayOfComposite( _step.getIdForm( ), _group.getId( ), CompositeDisplayType.GROUP ) );
+        }
 
         return model;
     }
@@ -576,6 +598,8 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         model.put( MARK_LOCALE, AdminUserService.getLocale( request ).getLanguage( ) );
         model.put( MARK_LIST_PARAM_DEFAULT_VALUES, listParamDefaultValues );
         model.put( MARK_ENTRY_TYPE_SERVICE, entryTypeService );
+        putColumnChoice( model, _step.getId( ), _nIdParentSelected,
+                NumberUtils.toInt( request.getParameter( PARAMETER_DISPLAY_COLUMN ), FormLayout.FIRST_COLUMN ) );
 
         if ( Boolean.TRUE.equals( _entry.getEntryType( ).getComment( ) ) )
         {
@@ -643,6 +667,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         model.put( MARK_LOCALE, AdminUserService.getLocale( request ).getLanguage( ) );
         model.put( MARK_ENTRY_TYPE_SERVICE, EntryTypeServiceManager.getEntryTypeService( _entry ) );
         model.put( MARK_FIELD_TOKEN, getSecurityToken( request, ModifyEntryJspBean.TOKEN_ACTION_MOVE_FIELD ) );
+        putColumnChoice( model, findDisplayOfComposite( _step.getIdForm( ), _question.getId( ), CompositeDisplayType.QUESTION ) );
 
         if ( Boolean.TRUE.equals( _entry.getEntryType( ).getComment( ) ) )
         {
@@ -774,13 +799,24 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         ReferenceList listStepGroups = getFormDisplayService( ).getTargetGroupDisplayListByStep( nIdStepTarget, _formDisplay, getLocale( ) );
 
         boolean bMoveToDifferentGroup = ( ( _formDisplay.getParentId( ) != nIdParentTarget ) || ( _formDisplay.getStepId( ) != nIdStepTarget ) );
-        ReferenceList listAvailablePositionsInParentGroup = getFormDisplayService( ).getlistAvailablePositionsInGroup( nIdStepTarget, nIdParentTarget,
-                bMoveToDifferentGroup, getLocale( ) );
+        int nLayout = getFormDisplayService( ).getContainerLayout( nIdStepTarget, nIdParentTarget );
+        int nColumnTarget = FormLayout.normalizeColumn(
+                NumberUtils.toInt( request.getParameter( PARAMETER_DISPLAY_COLUMN ), bMoveToDifferentGroup ? FormLayout.FIRST_COLUMN : _formDisplay.getDisplayColumn( ) ),
+                nLayout );
+        ReferenceList listAvailablePositionsInParentGroup = getFormDisplayService( ).getListAvailablePositionsInColumn( nIdStepTarget, nIdParentTarget,
+                nColumnTarget, _formDisplay, getLocale( ) );
 
         if ( bIsValidationButtonUsed )
         {
             nTargetPosition = listAvailablePositionsInParentGroup.size( );
         }
+        else
+        {
+            nTargetPosition = getFormDisplayService( ).getPositionInColumn( _formDisplay );
+        }
+
+        model.put( MARK_LIST_COLUMNS, getColumnReferenceList( nLayout ) );
+        model.put( MARK_DISPLAY_COLUMN, nColumnTarget );
 
         model.put( FormsConstants.MARK_ID_STEP, bStepValidated ? nIdStepTarget : _formDisplay.getStepId( ) );
         model.put( FormsConstants.MARK_LIST_GROUPS, listStepGroups );
@@ -818,8 +854,105 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
     }
 
     /**
-     * Tell whether a position can receive the FormDisplay to move: the positions offered by the move screen, from 1 to the number of elements of the target
-     * group, plus one when the element comes from another group or step
+     * Returns the columns of a layout, labelled for the select or the radio buttons of the column
+     *
+     * @param nLayout
+     *            the layout of the step or of the group
+     * @return the columns, from 1 to the number of columns of the layout
+     */
+    private ReferenceList getColumnReferenceList( int nLayout )
+    {
+        ReferenceList listColumns = new ReferenceList( );
+        for ( int nColumn = FormLayout.FIRST_COLUMN; nColumn <= FormLayout.getColumnCount( nLayout ); nColumn++ )
+        {
+            listColumns.addItem( nColumn, I18nService.getLocalizedString( PROPERTY_COLUMN_LABEL, getLocale( ) ) + " " + nColumn );
+        }
+        return listColumns;
+    }
+
+    /**
+     * Puts in the model the columns of the step or group that holds a question or a group, and the column it is in, for the column choice of its
+     * creation or modification screen. The screen shows the choice only when there are several columns.
+     *
+     * @param model
+     *            the model
+     * @param nIdStep
+     *            the step
+     * @param nIdParent
+     *            the parent display, 0 for the root of the step
+     * @param nColumn
+     *            the column of the question or of the group, starting at 1
+     */
+    private void putColumnChoice( Models model, int nIdStep, int nIdParent, int nColumn )
+    {
+        int nLayout = getFormDisplayService( ).getContainerLayout( nIdStep, nIdParent );
+        model.put( MARK_LIST_COLUMNS, getColumnReferenceList( nLayout ) );
+        model.put( MARK_DISPLAY_COLUMN, FormLayout.normalizeColumn( nColumn, nLayout ) );
+    }
+
+    /**
+     * Puts in the model the column choice of an existing question or group
+     *
+     * @param model
+     *            the model
+     * @param display
+     *            the display of the question or of the group, may be null
+     */
+    private void putColumnChoice( Models model, FormDisplay display )
+    {
+        if ( display != null )
+        {
+            putColumnChoice( model, display.getStepId( ), display.getParentId( ), display.getDisplayColumn( ) );
+        }
+    }
+
+    /**
+     * Moves a question or a group to the end of the column chosen on its creation or modification screen, when that column is not the one it is in.
+     * Nothing changes when the screen posted no column (its step or group has one column).
+     *
+     * @param request
+     *            the request
+     * @param display
+     *            the display of the question or of the group, may be null
+     */
+    private void applyColumnChoice( HttpServletRequest request, FormDisplay display )
+    {
+        String strColumn = request.getParameter( PARAMETER_DISPLAY_COLUMN );
+        if ( display == null || StringUtils.isBlank( strColumn ) )
+        {
+            return;
+        }
+
+        int nLayout = getFormDisplayService( ).getContainerLayout( display.getStepId( ), display.getParentId( ) );
+        int nColumn = FormLayout.normalizeColumn( NumberUtils.toInt( strColumn, FormLayout.FIRST_COLUMN ), nLayout );
+        if ( nColumn != FormLayout.normalizeColumn( display.getDisplayColumn( ), nLayout ) )
+        {
+            FormDisplay displayStored = getFormDatabaseService( ).findDisplayByPrimaryKey( display.getId( ) );
+            moveDisplay( displayStored, displayStored.getStepId( ), displayStored.getParentId( ), nColumn, Integer.MAX_VALUE );
+        }
+    }
+
+    /**
+     * Returns the display of a question or of a group of a form. The type is checked because a question and a group may share an identifier.
+     *
+     * @param nIdForm
+     *            the form
+     * @param nIdComposite
+     *            the identifier of the question or of the group
+     * @param type
+     *            the type of the composite
+     * @return the display, null if none
+     */
+    private FormDisplay findDisplayOfComposite( int nIdForm, int nIdComposite, CompositeDisplayType type )
+    {
+        return FormDisplayHome.getFormDisplayByForm( nIdForm ).stream( )
+                .filter( display -> display.getCompositeId( ) == nIdComposite && type.getLabel( ).equalsIgnoreCase( display.getCompositeType( ) ) ).findFirst( )
+                .orElse( null );
+    }
+
+    /**
+     * Tell whether a position can receive the FormDisplay to move: the positions offered by the move screen, from 1 to the number of the other elements
+     * of the target column, plus one
      * 
      * @param formDisplayToMove
      *            the FormDisplay to be moved
@@ -827,15 +960,17 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
      *            the target Step identifier
      * @param nIdParentTarget
      *            the target Parent Display identifier (0 if root level of the step )
+     * @param nColumnTarget
+     *            the target column of the parent, starting at 1
      * @param nDisplayOrderTarget
-     *            the target position within parent
+     *            the target position within the column
      * @return true if the position exists in the target group, false otherwise
      */
-    protected boolean isValidDisplayOrderTarget( FormDisplay formDisplayToMove, int nIdStepTarget, int nIdParentTarget, int nDisplayOrderTarget )
+    protected boolean isValidDisplayOrderTarget( FormDisplay formDisplayToMove, int nIdStepTarget, int nIdParentTarget, int nColumnTarget,
+            int nDisplayOrderTarget )
     {
-        int nNbDisplayInTargetGroup = getFormDatabaseService( ).getFormDisplayListByParent( nIdStepTarget, nIdParentTarget ).size( );
-        boolean bMoveToDifferentGroup = ( formDisplayToMove.getParentId( ) != nIdParentTarget ) || ( formDisplayToMove.getStepId( ) != nIdStepTarget );
-        int nMaxDisplayOrder = bMoveToDifferentGroup ? nNbDisplayInTargetGroup + 1 : nNbDisplayInTargetGroup;
+        int nMaxDisplayOrder = getFormDisplayService( )
+                .getListAvailablePositionsInColumn( nIdStepTarget, nIdParentTarget, nColumnTarget, formDisplayToMove, getLocale( ) ).size( );
 
         return ( nDisplayOrderTarget >= 1 ) && ( nDisplayOrderTarget <= nMaxDisplayOrder );
     }
@@ -853,10 +988,13 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
      * @param nIdParentTarget
      *            the target Parent Display identifier (0 if root level of the step )
      * 
+     * @param nColumnTarget
+     *            the target column of the parent, starting at 1
+     *
      * @param nDisplayOrderTarget
-     *            the target position within parent
+     *            the target position within the column
      */
-    protected void moveDisplay( FormDisplay formDisplayToMove, int nIdStepTarget, int nIdParentTarget, int nDisplayOrderTarget )
+    protected void moveDisplay( FormDisplay formDisplayToMove, int nIdStepTarget, int nIdParentTarget, int nColumnTarget, int nDisplayOrderTarget )
     {
         int nIdOriginStep = _formDisplay.getStepId( );
         int nIdOriginParent = _formDisplay.getParentId( );
