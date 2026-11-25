@@ -51,6 +51,7 @@ id_form int default '0' NOT NULL,
 is_initial SMALLINT default 0 NOT NULL,
 is_final SMALLINT default 0 NOT NULL,
 is_title_displayed SMALLINT default 1 NOT NULL,
+layout SMALLINT default 1 NOT NULL,
 PRIMARY KEY (id_step)
 );
 
@@ -107,6 +108,7 @@ iteration_max int default '1',
 iteration_add_label varchar(255) default '',
 iteration_remove_label varchar(255) default '',
 is_title_displayed SMALLINT default 1 NOT NULL,
+layout SMALLINT default 1 NOT NULL,
 PRIMARY KEY (id_group)
 );
 CREATE INDEX index_fg_id_step ON forms_question ( id_step );
@@ -157,6 +159,7 @@ id_parent int default '0',
 display_order int default '0',
 composite_type varchar(255) default '',
 display_depth int default '0',
+display_column SMALLINT default 1 NOT NULL,
 PRIMARY KEY (id_display)
 );
 CREATE INDEX index_fd_id_form ON forms_display ( id_form );

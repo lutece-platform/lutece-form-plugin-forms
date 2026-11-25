@@ -65,7 +65,17 @@ changeVisibilityDateValue();
 document.getElementById("default_today_date").addEventListener("change", changeVisibilityDateValue);
 </script>
 </#macro>
-<#macro editFields options=false hasTitle=true required=true onlyInBack=true autocomplete=false datalist=[] comments=true helpMessage=true labelErrorMessage=false image=false editor=false confirm=false anonym=false exportable=false exportablePdf=false refList='' placeholder='' maxSize=0 defaultValue='' multipart=false >
+<#-- The column of the step or group where the question or group is displayed, offered when it has several columns -->
+<#macro columnField labelKey='#i18n{forms.create_entry.labelColumn}' helpKey='#i18n{forms.create_entry.labelColumn.help}'>
+<#if ( list_columns![] )?size gt 1>
+<@formGroup labelKey=labelKey helpKey=helpKey rows=2>
+	<#list list_columns as columnItem>
+	<@radioButton orientation='horizontal' name='display_column' id='display-column-${columnItem.code}' labelFor='display-column-${columnItem.code}' value='${columnItem.code}' labelKey='${columnItem.name}' checked=( columnItem.code == ( display_column!1 )?c ) />
+	</#list>
+</@formGroup>
+</#if>
+</#macro>
+<#macro editFields options=false hasTitle=true required=true onlyInBack=true autocomplete=false datalist=[] comments=true helpMessage=true labelErrorMessage=false image=false editor=false confirm=false anonym=false exportable=false exportablePdf=false refList='' placeholder=false maxSize=0 defaultValue=false multipart=false >
 <#if editor>
 <#include "/admin/util/editor/editor.html" />
 </#if>

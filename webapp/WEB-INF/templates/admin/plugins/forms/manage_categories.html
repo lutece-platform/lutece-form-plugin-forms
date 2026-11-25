@@ -11,28 +11,36 @@
 					</@inputGroup>
 				</@formGroup>
 			</@tform>
-            <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=createCategory" id="create_category" useIframe=true targetElement="#create_category" btnIcon="plus" btnTitle="#i18n{forms.manageFormCategory.buttonAdd}" title="#i18n{forms.createFormCategory.title}" />
-            <#-- <@aButton href='jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=createCategory' buttonIcon='plus' title='#i18n{forms.manageFormCategory.buttonAdd}' hideTitle=['xs','sm'] color='primary' hideTitle=['xs','sm','md','lg'] params='data-bs-toggle="offcanvas" data-bs-target="#modify_category" data-bs-scroll="true" data-bs-backdrop="false" data-url="jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=createCategory"' /> -->
-        </@pageHeader>
-        <@messages errors=errors infos=infos />
-        <@manageFeature>
-        <#if form_category_list?size != 0>
-            <#list form_category_list as category>
-                <@manageFeatureItem>
-                    <@manageFeatureItemColumn class='searchable'>#i18n{forms.manageFormCategory.columnCode} : <@span class='fw-bold mx-2'>${category.code}</@span> - #i18n{forms.manageFormCategory.columnName} : <@span class='fw-bold ms-2'>${category.name}</@span></@manageFeatureItemColumn>
-                    <@manageFeatureItemColumn class='form-actions' align='end' >
-                        <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=modifyCategory&id_category=${category.id}" useIframe=true targetElement="#modify_category" id="cat_${category.id}" title="#i18n{portal.util.labelModify}" btnTitle="#i18n{portal.util.labelModify}" btnIcon="pencil" position="end" />
-						<@aButton href='jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=confirmRemoveCategory&id_category=${category.id}' title='#i18n{portal.util.labelDelete}' buttonIcon='trash' color='danger' hideTitle=['xs','sm','md','lg']/>
-                    </@manageFeatureItemColumn>
-                </@manageFeatureItem>
-            </#list>
-        <#else>
-            <@box>
-                <@empty />
-            </@box> 
-          </#if>  
-        </@manageFeature>
-    </@pageColumn>
+			</#if>
+			<@aButton href='jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=createCategory' buttonIcon='plus' title='#i18n{forms.manageFormCategory.buttonAdd}' hideTitle=['xs','sm','md'] color='primary' />
+		</@pageHeader>
+		<@messages errors=errors![] infos=infos![] warnings=warnings![] />
+		<#if form_category_list?has_content>
+			<@manageFeature layout='list' id='categories-list'>
+			<#list form_category_list as category>
+				<@manageFeatureItem id='category_${category.id}'>
+					<@manageFeatureItemColumn class='d-flex align-items-center gap-2 text-truncate'>
+						<span class="avatar avatar-xs bg-purple-lt" aria-hidden="true"><@icon style='category' /></span>
+						<div class="text-truncate">
+							<a href="jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=modifyCategory&id_category=${category.id}" class="text-reset fw-semibold searchable" title="#i18n{portal.util.labelModify} ${category.name}">${category.name}</a>
+							<div class="text-secondary small text-truncate">#i18n{forms.manageFormCategory.columnCode} <code class="searchable">${category.code}</code></div>
+						</div>
+					</@manageFeatureItemColumn>
+					<@manageFeatureItemColumn auto=true align='end' class='d-flex align-items-center gap-2'>
+						<div class="btn-actions">
+							<a href="jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=modifyCategory&id_category=${category.id}" class="btn-action" title="#i18n{portal.util.labelModify} ${category.name}"><@icon style='pencil' /><span class="visually-hidden">#i18n{portal.util.labelModify} ${category.name}</span></a>
+							<a href="jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=confirmRemoveCategory&id_category=${category.id}" class="btn-action text-danger" title="#i18n{portal.util.labelDelete} ${category.name}"><@icon style='trash' /><span class="visually-hidden">#i18n{portal.util.labelDelete} ${category.name}</span></a>
+						</div>
+					</@manageFeatureItemColumn>
+				</@manageFeatureItem>
+			</#list>
+			</@manageFeature>
+		<#else>
+			<@card>
+				<@empty iconName='category' subtitle='#i18n{forms.manageFormCategory.buttonAdd}' actionTitle='#i18n{forms.manageFormCategory.buttonAdd}' actionUrl='jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=createCategory' />
+			</@card>
+		</#if>
+	</@pageColumn>
 </@pageContainer>
 <#if form_category_list?has_content>
 <script type="module">

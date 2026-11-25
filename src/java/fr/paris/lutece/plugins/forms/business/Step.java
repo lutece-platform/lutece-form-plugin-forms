@@ -62,6 +62,8 @@ public class Step implements Serializable
 
     private boolean _bIsTitleDisplayed;
 
+    private int _nLayout = FormLayout.ONE_COLUMN;
+
     /**
      * Returns the Id
      * 
@@ -203,6 +205,27 @@ public class Step implements Serializable
     public void setTitleDisplayed( boolean bIsTitleDisplayed )
     {
         _bIsTitleDisplayed = bIsTitleDisplayed;
+    }
+
+    /**
+     * Returns the layout of the questions in the front office
+     *
+     * @return the layout, one of the {@link FormLayout} values
+     */
+    public int getLayout( )
+    {
+        return _nLayout;
+    }
+
+    /**
+     * Sets the layout of the questions in the front office
+     *
+     * @param nLayout
+     *            the layout, one of the {@link FormLayout} values
+     */
+    public void setLayout( int nLayout )
+    {
+        _nLayout = nLayout;
     }
 
 }

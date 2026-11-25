@@ -276,14 +276,14 @@ public class StepDisplayTree implements Serializable
     {
         LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
 
-        StringBuilder strBuilder = new StringBuilder( );
+        List<String> listChildrenHtml = new ArrayList<>( );
 
         boolean isStepVisible = false;
 
         for ( ICompositeDisplay child : _listChildren )
         {
             child.addModel( _model );
-            strBuilder.append( child.getCompositeHtml( request, listFormQuestionResponse, locale, displayType ) );
+            listChildrenHtml.add( child.getCompositeHtml( request, listFormQuestionResponse, locale, displayType ) );
 
             if ( child.isVisible( ) )
             {
@@ -298,7 +298,9 @@ public class StepDisplayTree implements Serializable
 
         _model.put( FormsConstants.MARK_FORM, _form );
         _model.put( FormsConstants.MARK_STEP, _step );
-        _model.put( MARK_STEP_CONTENT, strBuilder.toString( ) );
+        _model.put( MARK_STEP_CONTENT, CompositeColumnsRenderer.isLaidOutInColumns( displayType, _step.getLayout( ) )
+                ? CompositeColumnsRenderer.render( _listChildren, listChildrenHtml, _step.getLayout( ), displayType, locale )
+                : String.join( StringUtils.EMPTY, listChildrenHtml ) );
 
         if ( displayType == DisplayType.EDITION_FRONTOFFICE )
         {

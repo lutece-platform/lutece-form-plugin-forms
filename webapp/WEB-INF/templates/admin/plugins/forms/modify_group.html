@@ -21,7 +21,18 @@
 				<@input type='text' name='title' id='group-title' value='${group.title!}' />
 			</@formGroup>
 			<@formGroup helpKey='#i18n{forms.modify_group.labelTitleDisplayed.help}' rows=2>
-				<@checkBox orientation="switch" labelKey='#i18n{forms.modify_group.labelTitleDisplayed}' labelFor='titleDisplayed' name='titleDisplayed' id='titleDisplayed' value='1' checked=(group?has_content && group.titleDisplayed) />
+				<@checkBox orientation="switch" labelKey='#i18n{forms.modify_group.labelTitleDisplayed}' name='titleDisplayed' id='titleDisplayed' value='1' checked=(group?has_content && group.titleDisplayed) />
+			</@formGroup>
+			<#if ( list_columns![] )?size gt 1>
+			<@formGroup labelKey='#i18n{forms.modify_group.labelColumn}' helpKey='#i18n{forms.modify_group.labelColumn.help}' rows=2>
+				<#list list_columns as columnItem>
+				<@radioButton orientation='horizontal' name='display_column' id='display-column-${columnItem.code}' labelFor='display-column-${columnItem.code}' value='${columnItem.code}' labelKey='${columnItem.name}' checked=( columnItem.code == ( display_column!1 )?c ) />
+				</#list>
+			</@formGroup>
+			</#if>
+			<@formGroup labelKey='#i18n{forms.modify_group.labelLayout}' helpKey='#i18n{forms.modify_group.labelLayout.help}' rows=2>
+				<@radioButton orientation='horizontal' name='layout' id='group-layout-1' labelFor='group-layout-1' value='1' labelKey='#i18n{forms.layout.oneColumn}' checked=!( group?? && group.layout == 2 ) />
+				<@radioButton orientation='horizontal' name='layout' id='group-layout-2' labelFor='group-layout-2' value='2' labelKey='#i18n{forms.layout.twoColumns}' checked=( group?? && group.layout == 2 ) />
 			</@formGroup>
 			<@formGroup labelKey='#i18n{forms.modify_group.labelDescription}' helpKey='#i18n{forms.modify_group.labelDescription.help}' rows=2>
 				<@input type='textarea' name='description' class='richtext'>${group.description!}</@input>

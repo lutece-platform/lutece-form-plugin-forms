@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.forms.service;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -41,8 +43,10 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
+import fr.paris.lutece.plugins.forms.business.FormLayout;
 import fr.paris.lutece.plugins.forms.business.Group;
 import fr.paris.lutece.plugins.forms.business.Question;
+import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.util.ReferenceItem;
 import fr.paris.lutece.util.ReferenceList;
@@ -216,6 +220,83 @@ public abstract class AbstractFormDisplayService implements IFormDisplayService
             displayToUpdate.setDisplayOrder( nUpdatedPosition );
             getFormDatabaseService( ).updateFormDisplay( displayToUpdate );
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getContainerLayout( int nIdStep, int nIdParent )
+    {
+        if ( nIdParent > 0 )
+        {
+            FormDisplay displayParent = getFormDatabaseService( ).findDisplayByPrimaryKey( nIdParent );
+            Group group = ( displayParent != null ) ? getFormDatabaseService( ).findGroupByPrimaryKey( displayParent.getCompositeId( ) ) : null;
+            return ( group != null ) ? FormLayout.normalize( group.getLayout( ) ) : FormLayout.ONE_COLUMN;
+        }
+        Step step = getFormDatabaseService( ).findStepByPrimaryKey( nIdStep );
+        return ( step != null ) ? FormLayout.normalize( step.getLayout( ) ) : FormLayout.ONE_COLUMN;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<FormDisplay> placeInColumn( List<FormDisplay> listSiblings, FormDisplay display, int nColumn, int nPosition, int nLayout )
+    {
+        int nTargetColumn = FormLayout.normalizeColumn( nColumn, nLayout );
+        List<FormDisplay> listOrdered = new ArrayList<>( listSiblings );
+        listOrdered.sort( Comparator.comparingInt( sibling -> FormLayout.normalizeColumn( sibling.getDisplayColumn( ), nLayout ) ) );
+
+        int nBefore = (int) listOrdered.stream( ).filter( sibling -> FormLayout.normalizeColumn( sibling.getDisplayColumn( ), nLayout ) < nTargetColumn ).count( );
+        int nInColumn = (int) listOrdered.stream( ).filter( sibling -> FormLayout.normalizeColumn( sibling.getDisplayColumn( ), nLayout ) == nTargetColumn ).count( );
+
+        display.setDisplayColumn( nTargetColumn );
+        listOrdered.add( nBefore + Math.max( 0, Math.min( nPosition - 1, nInColumn ) ), display );
+        return listOrdered;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getPositionInColumn( FormDisplay display )
+    {
+        int nLayout = getContainerLayout( display.getStepId( ), display.getParentId( ) );
+        int nColumn = FormLayout.normalizeColumn( display.getDisplayColumn( ), nLayout );
+        int nPosition = 1;
+        for ( FormDisplay sibling : getFormDisplayListByParent( display.getStepId( ), display.getParentId( ) ) )
+        {
+            if ( sibling.getId( ) == display.getId( ) )
+            {
+                return nPosition;
+            }
+            if ( FormLayout.normalizeColumn( sibling.getDisplayColumn( ), nLayout ) == nColumn )
+            {
+                nPosition++;
+            }
+        }
+        return nPosition;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ReferenceList getListAvailablePositionsInColumn( int nIdStep, int nIdParent, int nColumn, FormDisplay displayToMove, Locale locale )
+    {
+        int nLayout = getContainerLayout( nIdStep, nIdParent );
+        int nTargetColumn = FormLayout.normalizeColumn( nColumn, nLayout );
+        long lNbSiblings = getFormDisplayListByParent( nIdStep, nIdParent ).stream( )
+                .filter( sibling -> sibling.getId( ) != displayToMove.getId( ) && FormLayout.normalizeColumn( sibling.getDisplayColumn( ), nLayout ) == nTargetColumn )
+                .count( );
+
+        ReferenceList listAvailablePositions = new ReferenceList( );
+        for ( int i = 1; i <= lNbSiblings + 1; i++ )
+        {
+            listAvailablePositions.addItem( i, I18nService.getLocalizedString( PROPERTY_POSITION_LABEL, locale ) + i );
+        }
+        return listAvailablePositions;
     }
 
     /**

@@ -118,6 +118,61 @@ public interface IFormDisplayService
     void rebuildDisplayPositionSequence( List<FormDisplay> listDisplay );
 
     /**
+     * Returns the layout of the step or of the group that holds the children of a parent display
+     *
+     * @param nIdStep
+     *            the step
+     * @param nIdParent
+     *            the parent display, 0 for the root of the step
+     * @return the layout of the group of the parent display, or of the step for the root; one column when it does not exist
+     */
+    int getContainerLayout( int nIdStep, int nIdParent );
+
+    /**
+     * Orders a list of sibling displays column after column, keeping their order inside each column, and moves the given display to the given position
+     * of the given column. The column of the display is set; a column the layout does not have is read as its last column.
+     *
+     * @param listSiblings
+     *            the siblings, in display order, without the display to place
+     * @param display
+     *            the display to place
+     * @param nColumn
+     *            the target column, starting at 1
+     * @param nPosition
+     *            the target position within the column, starting at 1, clamped to the available positions
+     * @param nLayout
+     *            the layout of the step or of the group that holds the siblings
+     * @return the new ordered list of the siblings, the display included
+     */
+    List<FormDisplay> placeInColumn( List<FormDisplay> listSiblings, FormDisplay display, int nColumn, int nPosition, int nLayout );
+
+    /**
+     * Returns the position of a display within its column of its parent, the siblings of a column being in display order
+     *
+     * @param display
+     *            the display
+     * @return the position within the column, starting at 1
+     */
+    int getPositionInColumn( FormDisplay display );
+
+    /**
+     * Returns the positions a display can be moved to within a column of a parent: one per sibling of that column, plus one at the end
+     *
+     * @param nIdStep
+     *            the target step
+     * @param nIdParent
+     *            the target parent display, 0 for the root of the step
+     * @param nColumn
+     *            the target column, starting at 1
+     * @param displayToMove
+     *            the display to move, not counted among the siblings
+     * @param locale
+     *            the locale
+     * @return the available positions, starting at 1
+     */
+    ReferenceList getListAvailablePositionsInColumn( int nIdStep, int nIdParent, int nColumn, FormDisplay displayToMove, Locale locale );
+
+    /**
      * Remove the formDisplay whose identifier is specified in parameter. The responses, group/question associated to this display will be deleted. All the
      * descendants of the display will also be removed
      * 

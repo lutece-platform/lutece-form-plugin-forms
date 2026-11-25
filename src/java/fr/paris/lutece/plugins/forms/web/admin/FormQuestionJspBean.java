@@ -58,6 +58,9 @@ import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
 import fr.paris.lutece.plugins.forms.business.FormHome;
+import fr.paris.lutece.plugins.forms.business.FormLayout;
+import fr.paris.lutece.plugins.forms.business.Group;
+import fr.paris.lutece.plugins.forms.business.GroupHome;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.service.FormDatabaseService;
@@ -138,6 +141,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     // Markers
     private static final String MARK_FIELDS_LIST_BY_ID_ENTRIES = "fields_list_by_id_entries";
     private static final String MARK_DEPENDENT_QUESTIONS_WARNING = "dependent_questions_warning";
+    private static final String MARK_DISPLAY_COLUMNS = "display_columns";
 
     // Constants
     private static final String PUBLIC_IMAGE_RESOURCE = "public_image_resource";
@@ -200,6 +204,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         List<ICompositeDisplay> listICompositeDisplay = _formService.getStepCompositeList( nIdStep );
 
         model.put( FormsConstants.MARK_COMPOSITE_LIST, listICompositeDisplay );
+        model.put( MARK_DISPLAY_COLUMNS, getDisplayColumns( listICompositeDisplay ) );
         model.put( FormsConstants.MARK_ENTRY_TYPE_REF_LIST, FormsEntryUtils.initListEntryType( ) );
         model.put( FormsConstants.MARK_ID_PARENT, _nIdParentSelected );
         model.put( FormsConstants.MARK_PROD_URL, AppPathService.getProdUrl( request ) );
@@ -771,6 +776,40 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     }
 
     /**
+     * Returns the column of each question or group placed in a step or a group of several columns
+     *
+     * @param listCompositeDisplay
+     *            the questions and groups of the step
+     * @return the column, starting at 1, keyed by display identifier; a display whose step or group has one column is not listed
+     */
+    private Map<String, Integer> getDisplayColumns( List<ICompositeDisplay> listCompositeDisplay )
+    {
+        Map<Integer, Integer> mapLayoutByDisplay = new HashMap<>( );
+        mapLayoutByDisplay.put( 0, FormLayout.normalize( _step.getLayout( ) ) );
+        for ( ICompositeDisplay composite : listCompositeDisplay )
+        {
+            FormDisplay display = composite.getFormDisplay( );
+            if ( display != null && CompositeDisplayType.GROUP.getLabel( ).equalsIgnoreCase( display.getCompositeType( ) ) )
+            {
+                Group group = GroupHome.findByPrimaryKey( display.getCompositeId( ) );
+                mapLayoutByDisplay.put( display.getId( ), ( group != null ) ? FormLayout.normalize( group.getLayout( ) ) : FormLayout.ONE_COLUMN );
+            }
+        }
+
+        Map<String, Integer> mapColumns = new HashMap<>( );
+        for ( ICompositeDisplay composite : listCompositeDisplay )
+        {
+            FormDisplay display = composite.getFormDisplay( );
+            int nLayout = ( display != null ) ? mapLayoutByDisplay.getOrDefault( display.getParentId( ), FormLayout.ONE_COLUMN ) : FormLayout.ONE_COLUMN;
+            if ( FormLayout.getColumnCount( nLayout ) > 1 )
+            {
+                mapColumns.put( String.valueOf( display.getId( ) ), FormLayout.normalizeColumn( display.getDisplayColumn( ), nLayout ) );
+            }
+        }
+        return mapColumns;
+    }
+
+    /**
      * Gets the Move component page
      * 
      * @param request
@@ -835,6 +874,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         int nIdStepTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), INTEGER_MINUS_ONE );
         int nIdParentTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_PARENT ), INTEGER_MINUS_ONE );
         int nDisplayOrderTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_DISPLAY_ORDER ), INTEGER_MINUS_ONE );
+        int nColumnTarget = NumberUtils.toInt( request.getParameter( PARAMETER_DISPLAY_COLUMN ), FormLayout.FIRST_COLUMN );
 
         if ( ( nIdStepTarget == INTEGER_MINUS_ONE ) || ( nIdParentTarget == INTEGER_MINUS_ONE ) )
         {
@@ -858,13 +898,13 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
             return redirect( request, VIEW_MOVE_COMPOSITE, FormsConstants.PARAMETER_ID_DISPLAY, nIdDisplay );
         }
 
-        if ( !isValidDisplayOrderTarget( _formDisplay, nIdStepTarget, nIdParentTarget, nDisplayOrderTarget ) )
+        if ( !isValidDisplayOrderTarget( _formDisplay, nIdStepTarget, nIdParentTarget, nColumnTarget, nDisplayOrderTarget ) )
         {
             addError( ERROR_DISPLAY_ORDER_NOT_VALID, getLocale( ) );
             return redirect( request, VIEW_MOVE_COMPOSITE, FormsConstants.PARAMETER_ID_DISPLAY, nIdDisplay );
         }
 
-        moveDisplay( _formDisplay, nIdStepTarget, nIdParentTarget, nDisplayOrderTarget );
+        moveDisplay( _formDisplay, nIdStepTarget, nIdParentTarget, nColumnTarget, nDisplayOrderTarget );
 
         addInfo( INFO_MOVE_COMPOSITE_SUCCESSFUL, getLocale( ) );
 

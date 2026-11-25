@@ -2,8 +2,8 @@
 <#if visible>
 <#assign fieldsetClass = ''>
 <#if id_display??><#assign fieldsetClass = 'display_field_' + id_display + ' d-none position-relative'></#if>
-<@cBlock class='row step-group' id='step-group-${id_group}'>
-	<@cBlock class='col-12'>
+<@cBlock class='col-12 step-group' id='step-group-${id_group}'>
+	<@cBlock>
 		<#list groupContentByIteration as iterationNumber, groupContent>
 			<#if groupContent?size != 0>
 				<@cFieldset id='group_${group.id!}_${iterationNumber}' class=fieldsetClass>
@@ -24,9 +24,11 @@
 						</#if>
 					</#assign>
 					<@cLegend label=legend showLabel=true id='legend-group_${group.id!}_${iterationNumber}' />
+					<@cRow>
 					<#list groupContent as childrenHtml>
 						${childrenHtml}
 					</#list>
+					</@cRow>
 				</@cFieldset>
 			</#if>
 		</#list>

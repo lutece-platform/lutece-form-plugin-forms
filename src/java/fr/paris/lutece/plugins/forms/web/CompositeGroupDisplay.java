@@ -55,6 +55,7 @@ import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseStep;
+import fr.paris.lutece.plugins.forms.business.FormLayout;
 import fr.paris.lutece.plugins.forms.business.Group;
 import fr.paris.lutece.plugins.forms.business.GroupHome;
 import fr.paris.lutece.plugins.forms.business.Question;
@@ -251,13 +252,21 @@ public class CompositeGroupDisplay implements ICompositeDisplay, Serializable
             }
         }
 
+        int nLayout = ( _group != null ) ? _group.getLayout( ) : FormLayout.ONE_COLUMN;
+        int nNbBaseChildren = _nNbBaseChildren;
+        if ( _nNbBaseChildren > 0 && CompositeColumnsRenderer.isLaidOutInColumns( displayType, nLayout ) )
+        {
+            listChildrenHtml = renderIterationsInColumns( listChildrenHtml, listChildrenHtmlByIteration, nLayout, displayType, locale );
+            nNbBaseChildren = 1;
+        }
+
         _model.put( MARK_VISIBLE, this.isVisible() || displayType == DisplayType.RESUBMIT_FRONTOFFICE || displayType == DisplayType.COMPLETE_FRONTOFFICE );
         _model.put( MARK_GROUP, _group );
         _model.put( MARK_GROUP_CONTENT, listChildrenHtml );
         _model.put( MARK_GROUP_CONTENT_BY_ITERATION, listChildrenHtmlByIteration );
         _model.put( FormsConstants.PARAMETER_ID_GROUP, _formDisplay.getId( ) );
         _model.put( MARK_IS_ITERABLE, isIterable( ) );
-        _model.put( MARK_NB_BASE_CHILDREN, _nNbBaseChildren );
+        _model.put( MARK_NB_BASE_CHILDREN, nNbBaseChildren );
 
         if ( _formDisplay.getDisplayControl( ) != null )
         {
@@ -267,6 +276,45 @@ public class CompositeGroupDisplay implements ICompositeDisplay, Serializable
         String strTemplate = findTemplateFor( displayType );
 
         return AppTemplateService.getTemplate( strTemplate, locale, FormsUtils.withHtmlMarkup( _model, MARK_GROUP_CONTENT, MARK_GROUP_CONTENT_BY_ITERATION ) ).getHtml( );
+    }
+
+    /**
+     * Lays out the children of each iteration of the group in the columns of its layout. Each iteration then gives one HTML block, so the templates see
+     * one base child per iteration.
+     *
+     * @param listChildrenHtml
+     *            the HTML of each child, iteration after iteration
+     * @param listChildrenHtmlByIteration
+     *            the HTML of the children by iteration number, replaced by the HTML of the columns of each iteration
+     * @param nLayout
+     *            the layout of the group
+     * @param displayType
+     *            the display type
+     * @param locale
+     *            the locale
+     * @return the HTML of the columns of each iteration
+     */
+    private List<String> renderIterationsInColumns( List<String> listChildrenHtml, Map<Integer, List<String>> listChildrenHtmlByIteration, int nLayout,
+            DisplayType displayType, Locale locale )
+    {
+        List<String> listIterationsHtml = new ArrayList<>( );
+        listChildrenHtmlByIteration.clear( );
+
+        for ( int nStart = 0; nStart < _listChildren.size( ); nStart += _nNbBaseChildren )
+        {
+            int nEnd = Math.min( nStart + _nNbBaseChildren, _listChildren.size( ) );
+            String strIterationHtml = CompositeColumnsRenderer.render( _listChildren.subList( nStart, nEnd ), listChildrenHtml.subList( nStart, nEnd ), nLayout,
+                    displayType, locale );
+            listIterationsHtml.add( strIterationHtml );
+
+            Integer nIterationNumber = _listChildren.get( nStart ).getIterationNumber( );
+            if ( nIterationNumber != null )
+            {
+                listChildrenHtmlByIteration.computeIfAbsent( nIterationNumber, key -> new ArrayList<>( ) ).add( strIterationHtml );
+            }
+        }
+
+        return listIterationsHtml;
     }
 
     /**

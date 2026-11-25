@@ -71,11 +71,13 @@ public class StepBusinessTest extends LuteceTestCase
         assertEquals( stepStored.getIdForm( ), step.getIdForm( ) );
         assertEquals( stepStored.isFinal( ), step.isFinal( ) );
         assertEquals( stepStored.isInitial( ), step.isInitial( ) );
+        assertEquals( FormLayout.ONE_COLUMN, stepStored.getLayout( ) );
 
         // Update test
         step.setTitle( TITLE2 );
         step.setDescription( DESCRIPTION2 );
         step.setIdForm( IDFORM2 );
+        step.setLayout( FormLayout.TWO_COLUMNS );
         StepHome.update( step );
         stepStored = StepHome.findByPrimaryKey( step.getId( ) );
         assertEquals( stepStored.getTitle( ), step.getTitle( ) );
@@ -83,6 +85,7 @@ public class StepBusinessTest extends LuteceTestCase
         assertEquals( stepStored.getIdForm( ), step.getIdForm( ) );
         assertEquals( stepStored.isFinal( ), step.isFinal( ) );
         assertEquals( stepStored.isInitial( ), step.isInitial( ) );
+        assertEquals( FormLayout.TWO_COLUMNS, stepStored.getLayout( ) );
 
         // List test
         StepHome.getStepsList( );

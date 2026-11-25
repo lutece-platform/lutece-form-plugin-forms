@@ -21,7 +21,11 @@
 						<@input type='text' name='title' id='step-title' value='${step.title!}' />
 					</@formGroup>
 					<@formGroup helpKey='#i18n{forms.modify_step.labelTitleDisplayed.help}' rows=2>
-						<@checkBox orientation='switch' labelKey='#i18n{forms.modify_step.labelTitleDisplayed}' labelFor='titleDisplayed' name='titleDisplayed' id='titleDisplayed' value='1' checked=(step?has_content && step.titleDisplayed) />
+						<@checkBox orientation='switch' labelKey='#i18n{forms.modify_step.labelTitleDisplayed}' name='titleDisplayed' id='titleDisplayed' value='1' checked=(step?has_content && step.titleDisplayed) />
+					</@formGroup>
+					<@formGroup labelKey='#i18n{forms.modify_step.labelLayout}' helpKey='#i18n{forms.modify_step.labelLayout.help}' rows=2>
+						<@radioButton orientation='horizontal' name='layout' id='step-layout-1' labelFor='step-layout-1' value='1' labelKey='#i18n{forms.layout.oneColumn}' checked=!( step?? && step.layout == 2 ) />
+						<@radioButton orientation='horizontal' name='layout' id='step-layout-2' labelFor='step-layout-2' value='2' labelKey='#i18n{forms.layout.twoColumns}' checked=( step?? && step.layout == 2 ) />
 					</@formGroup>
 					<@formGroup labelKey='#i18n{forms.modify_step.labelDescription}' helpKey='#i18n{forms.modify_step.labelDescription.help}' rows=2>
 						<@input type='textarea' name='description'>${step.description!}</@input>

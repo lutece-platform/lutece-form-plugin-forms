@@ -8,7 +8,7 @@
 				<@messages errors=errors />
 				<@row>
 					<@columns xs=12 sm=4>
-						<@formGroup  labelKey='#i18n{forms.multiview_config.labelDisplayColumnCsvSeparator}' helpKey='#i18n{forms.multiview_config.labelDisplayColumnCsvSeparator.help}' >
+						<@formGroup labelKey='#i18n{forms.multiview_config.labelDisplayColumnCsvSeparator}' helpKey='#i18n{forms.multiview_config.labelDisplayColumnCsvSeparator.help}' >
 							<@row>
 								<@columns xs=12 md=4>
 									<@input type='text' name='csv_separator' id='csv_separator' value=multiview_config.csvSeparator />
@@ -17,21 +17,21 @@
 						</@formGroup>
 					</@columns>
 					<@columns xs=12 sm=4>
-						<@formGroup  labelFor='display_forms_title_column' helpKey='#i18n{forms.multiview_config.labelDisplayColumnFormTitle.help}' >
-							<@checkBox orientation='switch' labelFor='display_forms_title_column' labelKey='#i18n{forms.multiview_config.labelDisplayColumnFormTitle}' name='display_forms_title_column' id='display_forms_title_column' value='1' checked=multiview_config.displayFormsTitleColumn />
+						<@formGroup labelFor='display_forms_title_column' helpKey='#i18n{forms.multiview_config.labelDisplayColumnFormTitle.help}' >
+							<@checkBox orientation='switch' labelKey='#i18n{forms.multiview_config.labelDisplayColumnFormTitle}' name='display_forms_title_column' id='display_forms_title_column' value='1' checked=multiview_config.displayFormsTitleColumn />
 						</@formGroup>
 					</@columns>
 					<#if userassignment_enabled>	
 						<@columns xs=12 sm=3>
-							<@formGroup  helpKey='#i18n{forms.multiview_config.labelDisplayColumnAssignee.help}' >
-								<@checkBox orientation='switch' labelFor='display_assignee_column' labelKey='#i18n{forms.multiview_config.labelDisplayColumnAssignee}' name='display_assignee_column' id='display_assignee_column' value='1' checked=multiview_config.displayFormsAssigneeColumn />
+							<@formGroup helpKey='#i18n{forms.multiview_config.labelDisplayColumnAssignee.help}' >
+								<@checkBox orientation='switch' labelKey='#i18n{forms.multiview_config.labelDisplayColumnAssignee}' name='display_assignee_column' id='display_assignee_column' value='1' checked=multiview_config.displayFormsAssigneeColumn />
 							</@formGroup>
 						</@columns>
 					</#if>
 				</@row>
 				<@row>
 					<@columns xs=12 sm=4>
-						<@formGroup labelFor='pdf_number_of_response_per_file' labelKey='#i18n{forms.multiview_config.labelDisplayColumnPdfNumberOfResponsesPerFile}'  helpKey='#i18n{forms.multiview_config.labelDisplayColumnPdfNumberOfResponsesPerFile.help}'>
+						<@formGroup labelFor='pdf_number_of_response_per_file' labelKey='#i18n{forms.multiview_config.labelDisplayColumnPdfNumberOfResponsesPerFile}' helpKey='#i18n{forms.multiview_config.labelDisplayColumnPdfNumberOfResponsesPerFile.help}'>
 						<@row>
 							<@columns xs=12 md=4>
 								<@input type='number' name='pdf_number_of_response_per_file' id='pdf_number_of_response_per_file' value=multiview_config.numberOfFormResponsesPerPdf min=1 mandatory=true />

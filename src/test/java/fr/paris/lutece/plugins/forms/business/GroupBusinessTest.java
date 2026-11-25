@@ -74,18 +74,21 @@ public class GroupBusinessTest extends LuteceTestCase
         assertEquals( groupStored.getDescription( ), group.getDescription( ) );
         assertEquals( groupStored.getIdStep( ), group.getIdStep( ) );
         assertEquals( groupStored.getIterationMin( ), group.getIterationMin( ) );
+        assertEquals( FormLayout.ONE_COLUMN, groupStored.getLayout( ) );
 
         // Update test
         group.setTitle( TITLE2 );
         group.setDescription( DESCRIPTION2 );
         group.setIdStep( IDSTEP2 );
         group.setIterationMin( ITERATIONNUMBER2 );
+        group.setLayout( FormLayout.TWO_COLUMNS );
         GroupHome.update( group );
         groupStored = GroupHome.findByPrimaryKey( group.getId( ) );
         assertEquals( groupStored.getTitle( ), group.getTitle( ) );
         assertEquals( groupStored.getDescription( ), group.getDescription( ) );
         assertEquals( groupStored.getIdStep( ), group.getIdStep( ) );
         assertEquals( groupStored.getIterationMin( ), group.getIterationMin( ) );
+        assertEquals( FormLayout.TWO_COLUMNS, groupStored.getLayout( ) );
 
         // List test
         List<Group> list = GroupHome.getGroupsList( );
