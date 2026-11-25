@@ -33,6 +33,9 @@
  */
 package fr.paris.lutece.plugins.forms.service.json;
 
+import java.util.Collections;
+import java.util.Map;
+
 import fr.paris.lutece.util.ReferenceList;
 
 /**
@@ -47,6 +50,16 @@ public interface IStepTemplateProvider
      * @return
      */
     ReferenceList getStepTemplateList( );
+
+    /**
+     * Get the descriptions of the available Step Templates, shown under their name in the import dialog
+     * 
+     * @return the descriptions keyed by the code of the template in {@link #getStepTemplateList()}; an empty map when the provider has none
+     */
+    default Map<String, String> getStepTemplateDescriptions( )
+    {
+        return Collections.emptyMap( );
+    }
 
     /**
      * Get the step template data.
