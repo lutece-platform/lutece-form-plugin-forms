@@ -147,6 +147,17 @@ public interface IFormDisplayDAO
     List<FormDisplay> selectFormDisplayListByForm( int nIdForm, Plugin plugin );
 
     /**
+     * Returns the highest display identifier of a form
+     * 
+     * @param nIdForm
+     *            the form id
+     * @param plugin
+     *            the plugin to use
+     * @return the highest display identifier, 0 if the form has no display
+     */
+    int selectMaxIdDisplayByForm( int nIdForm, Plugin plugin );
+
+    /**
      * Loads the displays of a parent display of a step, in the export order: a question display by the export_display_order of its question, a
      * group display by the lowest export_display_order of the questions it holds; equal orders by display_order, a group without question last.
      *

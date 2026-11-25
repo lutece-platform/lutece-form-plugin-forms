@@ -4,6 +4,8 @@
 <#if type='form'>
 <#if tab='steps'><#assign active = true /><#else><#assign active = false /></#if>
 <@tabLink active=active href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}' tabIcon='step-forward' title='#i18n{forms.modify_form.tab.labelSteps}' />
+<#if tab='builder'><#assign active = true /><#else><#assign active = false /></#if>
+<@tabLink active=active href='jsp/admin/plugins/forms/ManageFormBuilder.jsp?view=builder&id_form=${form.id}' tabIcon='layout-board-split' title='#i18n{forms.form_builder.tabLabel}' />
 <#if tab='general'><#assign active = true /><#else><#assign active = false /></#if>
 <@tabLink active=active href='jsp/admin/plugins/forms/ManageForms.jsp?view=modifyForm&id_form=${form.id}' tabIcon='cog' title='#i18n{forms.modify_form.tab.labelGeneral}' />
 <#if tab='export'><#assign active = true /><#else><#assign active = false /></#if>

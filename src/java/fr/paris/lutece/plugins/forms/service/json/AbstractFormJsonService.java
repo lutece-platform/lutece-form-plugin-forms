@@ -207,6 +207,34 @@ public abstract class AbstractFormJsonService
     }
 
     /**
+     * Reads a step exported as JSON, without importing it
+     * 
+     * @param json
+     *            the JSON of the step, as written by {@link #jsonExportStep(int, int)}
+     * @return the step data
+     * @throws JsonProcessingException
+     *             if the JSON is not a valid step export
+     */
+    public StepJsonData readStepJson( String json ) throws JsonProcessingException
+    {
+        return _objectMapper.readValue( json, StepJsonData.class );
+    }
+
+    /**
+     * Returns an independent copy of step data, so that importing it never changes the original (a step template kept by its provider, for instance)
+     * 
+     * @param stepData
+     *            the step data
+     * @return the copy
+     * @throws JsonProcessingException
+     *             if the step data cannot be serialized
+     */
+    public StepJsonData copyStepData( StepJsonData stepData ) throws JsonProcessingException
+    {
+        return readStepJson( _objectMapper.writeValueAsString( stepData ) );
+    }
+
+    /**
      * Import the step from a Json Object.
      * 
      * @return

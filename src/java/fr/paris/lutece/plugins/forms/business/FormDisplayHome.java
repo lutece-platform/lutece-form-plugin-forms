@@ -262,4 +262,16 @@ public final class FormDisplayHome
     {
         return _dao.selectFormDisplayListByForm( nIdForm, _plugin );
     }
+
+    /**
+     * Returns the highest display identifier of a form
+     * 
+     * @param nIdForm
+     *            The identifier of the form
+     * @return the highest display identifier, 0 if the form has no display
+     */
+    public static int getMaxIdDisplayByForm( int nIdForm )
+    {
+        return _dao.selectMaxIdDisplayByForm( nIdForm, _plugin );
+    }
 }
