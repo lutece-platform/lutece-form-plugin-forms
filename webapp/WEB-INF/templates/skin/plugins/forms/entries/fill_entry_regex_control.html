@@ -7,18 +7,18 @@
 <#if !entryRegexMessage?has_content><#assign entryRegexMessage = i18n( 'genericattributes.message.errorRegexField', entry.title! ) /></#if>
 <script>
 document.addEventListener( 'DOMContentLoaded', function( ) {
-	const input = document.getElementById( '${idName?js_string}' );
+	const input = document.getElementById( '${idName?js_string?no_esc}' );
 	if ( !input || !input.form ) {
 		return;
 	}
 	let regex;
 	try {
-		regex = new RegExp( '^(?:' + '${entryRegex?js_string}' + ')$', 'u' );
+		regex = new RegExp( '^(?:' + '${entryRegex?js_string?no_esc}' + ')$', 'u' );
 	} catch ( e ) {
 		return;
 	}
 	const form = input.form;
-	const message = '${entryRegexMessage?js_string}';
+	const message = '${entryRegexMessage?js_string?no_esc}';
 	// Same id as the error the server renders (cFormError): one message at a time, and aria-describedby stays right
 	const errorId = 'error_' + input.id;
 	let edited = false;
