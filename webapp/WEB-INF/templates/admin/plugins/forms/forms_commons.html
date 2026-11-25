@@ -264,9 +264,9 @@
 		<#assign typeToast='info'>
 		<#assign first = infos[0] />
 		 <#if first?is_string>
-			<#list infos as info ><#assign messageToast='${info!"#i18n{portal.util.labelInfo} "}'></#list>
+			<#list infos as info ><#assign messageToast='${info!"#i18n{portal.util.message.titleInfo} "}'></#list>
 		<#else>
-			<#list infos as info ><#if info.message??><#assign messageToast='${info.message!"#i18n{portal.util.labelInfo} "}'></#if></#list>
+			<#list infos as info ><#if info.message??><#assign messageToast='${info.message!"#i18n{portal.util.message.titleInfo} "}'></#if></#list>
 		</#if>
 	</#if>
 </#if>
