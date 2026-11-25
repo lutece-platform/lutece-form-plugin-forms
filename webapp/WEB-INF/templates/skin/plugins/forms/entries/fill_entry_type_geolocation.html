@@ -121,6 +121,16 @@
 						if (fb && fb.classList.contains('invalid-feedback')) { fb.remove(); }
 					}
 				});
+				// the coordinates belong to the picked address: typing another text or erasing the field drops them
+				var clearPoi = function( ){
+					jAdresseGeometry.value = '';
+					jAdresseY.value = '';
+					jAdresseX.value = '';
+					jAdresseId.value = '';
+				};
+				jAdresse.addEventListener( 'input', clearPoi );
+				var jAdresseRemove = jAdresseContainer.querySelector('.lutece-autocomplete-remove');
+				if ( jAdresseRemove ) { jAdresseRemove.addEventListener( 'click', clearPoi ); }
 
 				if ( hasCheckAdr ){
 					// If the value has been already set
