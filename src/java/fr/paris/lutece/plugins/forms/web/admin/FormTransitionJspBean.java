@@ -60,7 +60,6 @@ import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
-import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
@@ -105,7 +104,6 @@ public class FormTransitionJspBean extends AbstractJspBean
 
     // Actions
     public static final String ACTION_CREATE_TRANSITION = "createTransition";
-    private static final String ACTION_CREATE_TRANSITION_AND_CONTROL = "createTransitionAndControl";
     private static final String ACTION_MODIFY_TRANSITION = "modifyTransition";
     private static final String ACTION_REMOVE_TRANSITION = "removeTransition";
 
@@ -306,34 +304,6 @@ public class FormTransitionJspBean extends AbstractJspBean
         addInfo( INFO_TRANSITION_CREATED, getLocale( ) );
 
         return redirect( request, VIEW_MANAGE_TRANSITIONS, FormsConstants.PARAMETER_ID_STEP, _transition.getFromStep( ) );
-    }
-
-    /**
-     * Process the data capture of a new transition and redirect to control creation
-     *
-     * @param request
-     *            The Http Request
-     * @return The Jsp URL of the process result
-     */
-    @Action( ACTION_CREATE_TRANSITION_AND_CONTROL )
-    public String doCreateTransitionAndControl( HttpServletRequest request )
-    {
-
-        if ( !createTransition( request ) )
-        {
-            return redirect( request, VIEW_CREATE_TRANSITION, FormsConstants.PARAMETER_ID_STEP, _transition.getFromStep( ) );
-        }
-
-        addInfo( INFO_TRANSITION_CREATED, getLocale( ) );
-
-        UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + FormsConstants.JSP_MANAGE_CONTROLS );
-        url.addParameter( FormsConstants.PARAMETER_ID_TRANSITION, _transition.getId( ) );
-        url.addParameter( FormsConstants.PARAMETER_TARGET_VIEW, "modifyTransitionControl" );
-        url.addParameter( FormsConstants.PARAMETER_ID_STEP, _transition.getFromStep( ) );
-        url.addParameter( FormsConstants.PARAMETER_CONTROL_TYPE, ControlType.TRANSITION.toString( ) );
-        url.addParameter( FormsConstants.PARAMETER_ID_TARGET, _transition.getId( ) );
-
-        return redirect( request, url.getUrl( ) );
     }
 
     /**
