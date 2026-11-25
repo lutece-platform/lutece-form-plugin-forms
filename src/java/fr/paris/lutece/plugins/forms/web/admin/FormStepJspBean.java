@@ -393,7 +393,7 @@ public class FormStepJspBean extends AbstractJspBean
 
         if ( !validateStep( _step ) )
         {
-            return redirectView( request, VIEW_CREATE_STEP );
+            return redirect( request, VIEW_CREATE_STEP, FormsConstants.PARAMETER_ID_FORM, _step.getIdForm( ) );
         }
 
         Step initialStep = StepHome.getInitialStep( _step.getIdForm( ) );
