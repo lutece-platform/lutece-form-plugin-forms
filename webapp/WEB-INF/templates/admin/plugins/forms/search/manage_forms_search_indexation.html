@@ -11,6 +11,9 @@
 		<#if logs??>
 		<@alert color='info' iconTitle='info-circle' dismissible=true title=logs />
 		</#if>
+		<#if ( indexed_count!0 ) gt ( responses_count!0 ) && !( full_scheduled!false )>
+		<@alert color='warning' iconTitle='alert-triangle' title='#i18n{forms.adminFeature.manageSearchIndexation.status.staleDocuments}' />
+		</#if>
 		<#if full_scheduled!false>
 		<@alert color='warning' iconTitle='clock' title='#i18n{forms.adminFeature.manageSearchIndexation.status.fullScheduled}' />
 		</#if>
