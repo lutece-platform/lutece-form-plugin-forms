@@ -3,10 +3,29 @@
 -- preconditions onFail:MARK_RAN onError:WARN
 UPDATE forms_action SET action_url = 'jsp/admin/plugins/forms/export/DoExportFormJson.jsp' WHERE name_key = 'forms.action.json.download.name';
 
--- changeset forms:update_db_forms-4.0.1-4.0.2.sql-lucene-lock
+-- changeset forms:update_db_forms-4.0.1-4.0.2.sql-lucene-lock dbms:mariadb,mysql
 -- preconditions onFail:MARK_RAN onError:WARN
 -- comment Moved from update_db_forms-4.0.2-4.0.3.sql (this table belongs to the 4.0.2 release): skipped where the 4.0.2 betas created it, so the lock held by an indexing instance is kept
 -- precondition-sql-check expectedResult:0 SELECT COUNT(1) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA=database() AND TABLE_NAME='forms_lucene_lock';
+CREATE TABLE forms_lucene_lock
+(
+    index_name    varchar(50),
+    instance_name varchar(50),
+    is_locked     smallint,
+    date_begin    timestamp,
+    expired_date  timestamp,
+    uuid          varchar(50),
+    PRIMARY KEY (index_name)
+);
+
+INSERT INTO forms_lucene_lock
+    (index_name, instance_name, is_locked, date_begin, expired_date, uuid)
+VALUES ('forms.lucene.lock', NULL, 0, NULL, NULL, NULL);
+
+-- changeset forms:update_db_forms-4.0.1-4.0.2.sql-lucene-lock-postgreSQL dbms:postgresql
+-- preconditions onFail:MARK_RAN onError:WARN
+-- comment PostgreSQL twin (database() does not exist there, LUT-35591): Moved from update_db_forms-4.0.2-4.0.3.sql (this table belongs to the 4.0.2 release): skipped where the 4.0.2 betas created it, so the lock held by an indexing instance is kept
+-- precondition-sql-check expectedResult:0 SELECT COUNT(1) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA=current_schema() AND TABLE_NAME='forms_lucene_lock';
 CREATE TABLE forms_lucene_lock
 (
     index_name    varchar(50),
