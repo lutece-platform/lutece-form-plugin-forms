@@ -84,6 +84,16 @@
 			<artifactId>jaxb-runtime</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.hibernate.validator</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.expressly</groupId>
+			<artifactId>expressly</artifactId>
+			<scope>test</scope>
+		</dependency>
     </dependencies>
     <scm>
         <connection>scm:git:https://github.com/lutece-platform/lutece-form-plugin-forms.git</connection>

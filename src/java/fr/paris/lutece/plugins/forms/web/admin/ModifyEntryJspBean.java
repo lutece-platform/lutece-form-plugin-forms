@@ -78,6 +78,7 @@ import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
+import fr.paris.lutece.portal.web.cdi.mvc.Models;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.utils.MVCUtils;
@@ -204,7 +205,7 @@ public class ModifyEntryJspBean extends AbstractJspBean
         Field field = new Field( );
         field.setParentEntry( entry );
 
-        Map<String, Object> model = getModel( );
+        Models model = getRequestModel( );
         Locale locale = getLocale( );
         model.put( MARK_OPTION_NO_DISPLAY_TITLE, request.getParameter( PARAMETER_OPTION_NO_DISPLAY_TITLE ) != null );
 
@@ -213,7 +214,7 @@ public class ModifyEntryJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_ID_ENTRY, _nIdEntry );
         model.put( SecurityTokenService.MARK_TOKEN, _securityTokenService.getToken( request, ACTION_CREATE_FIELD ) );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_CREATE_FIELD, locale, model );
+        HtmlTemplate template = getTemplateWithPageToken( TEMPLATE_CREATE_FIELD, locale, request );
         setPageTitleProperty( PROPERTY_CREATE_FIELD_TITLE );
 
         return getAdminPage( template.getHtml( ) );
@@ -247,7 +248,7 @@ public class ModifyEntryJspBean extends AbstractJspBean
 
         field.setParentEntry( entry );
         
-        Map<String, Object> model = getModel( );
+        Models model = getRequestModel( );
         Locale locale = getLocale( );
         model.put( MARK_OPTION_NO_DISPLAY_TITLE, request.getParameter( PARAMETER_OPTION_NO_DISPLAY_TITLE ) != null );
 
@@ -256,7 +257,7 @@ public class ModifyEntryJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_ID_ENTRY, _nIdEntry );
         model.put( SecurityTokenService.MARK_TOKEN, _securityTokenService.getToken( request, ACTION_MODIFY_FIELD ) );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MODIFY_FIELD, locale, model );
+        HtmlTemplate template = getTemplateWithPageToken( TEMPLATE_MODIFY_FIELD, locale, request );
 
         setPageTitleProperty( PROPERTY_MODIFY_FIELD_TITLE );
 

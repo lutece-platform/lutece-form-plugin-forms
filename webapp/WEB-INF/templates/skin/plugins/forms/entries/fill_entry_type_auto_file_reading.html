@@ -9,7 +9,7 @@
 <#assign entryCSSClass = ( entry.CSSClass?split(' ') )?map( ecc -> ( !ecc?contains('col') )?then( ' ' + ( ecc )?string + ' ', '' ) )?join( '' ) />
 <#if entry.helpMessage?exists&&entry.helpMessage!=''><#assign helpMsg = ( entry.helpMessage )?string /></#if>
 <@cField class=entryCSSClass!?trim label=entry.title! for=idName! required=entry.mandatory! >
-	<@cInput type='file' name=idName! class='form-control custom-file-input' helpMessage=helpMessage! errorMsg=errorMsg! required=entry.mandatory! />
+	<@cInput type='file' name=idName! class='form-control custom-file-input' helpMsg=helpMsg! errorMsg=errorMsg! required=entry.mandatory! />
 </@cField>		
 <@cRow>
 	<@cCol cols='12 col-sm-6'>

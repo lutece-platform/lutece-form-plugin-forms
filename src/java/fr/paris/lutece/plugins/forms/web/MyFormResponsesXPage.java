@@ -48,6 +48,7 @@ import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
+import fr.paris.lutece.portal.web.cdi.mvc.Models;
 import fr.paris.lutece.portal.util.mvc.xpage.annotations.Controller;
 import fr.paris.lutece.portal.web.xpages.XPage;
 
@@ -81,6 +82,8 @@ public class MyFormResponsesXPage extends MVCApplication
     private static final String TEMPLATE_VIEW_FORMRESPONSES_LIST = "/skin/plugins/forms/list_formresponses.html";
 
     @Inject
+    private Models _models;
+    @Inject
     private FormResponseService _formResponseService;
 
     /**
@@ -100,11 +103,11 @@ public class MyFormResponsesXPage extends MVCApplication
             throw new UserNotSignedException( );
         }
 
-        Map<String, Object> model = getModel( );
+        Models model = _models;
         Locale locale = getLocale( request );
         model.put( MARK_RESPONSE_LIST, _formResponseService.getFormResponseListForUser( user ) );
 
-        XPage xPage = getXPage( TEMPLATE_VIEW_FORMRESPONSES_LIST, locale, model );
+        XPage xPage = getXPage( TEMPLATE_VIEW_FORMRESPONSES_LIST, locale );
         xPage.setTitle( I18nService.getLocalizedString( MESSAGE_LIST_FORMRESPONSES_PAGETITLE, locale ) );
         xPage.setPathLabel( I18nService.getLocalizedString( MESSAGE_LIST_FORMRESPONSES_PATHLABEL, locale ) );
 

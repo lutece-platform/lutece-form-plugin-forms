@@ -89,6 +89,7 @@ import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
+import fr.paris.lutece.portal.web.cdi.mvc.Models;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.utils.MVCUtils;
@@ -192,7 +193,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         checkUserAuthorizedOnFormResponse( request, formResponse );
 
         // Build the base model for the page of the details of a FormResponse
-        Map<String, Object> model = buildFormResponseDetailsModel( request, formResponse );
+        Models model = buildFormResponseDetailsModel( request, formResponse );
         putLinkTokens( request, model, ACTION_PROCESS_ACTION );
 
         // Build the model of all ModelProcessors
@@ -202,10 +203,13 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         if ( !CollectionUtils.isEmpty( listFormResponseViewModelProcesor ) )
         {
             Locale locale = getLocale( );
+            // The processors work on a map (public extension point): they get a copy of the model, their entries are put back in it
+            Map<String, Object> mapProcessorsModel = new HashMap<>( model.asMap( ) );
             for ( IFormResponseViewModelProcessor formResponseViewModelProcessor : listFormResponseViewModelProcesor )
             {
-                formResponseViewModelProcessor.populateModel( request, model, nIdFormResponse, locale );
+                formResponseViewModelProcessor.populateModel( request, mapProcessorsModel, nIdFormResponse, locale );
             }
+            mapProcessorsModel.forEach( model::put );
         }
 
         // Fill the map which store the values of all filters and search previously selected if we are not coming from an action
@@ -215,7 +219,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         }
         populateModelWithFilterValues( _mapFilterValues, model );
 
-        return getPage( MESSAGE_MULTIVIEW_FORM_RESPONSE_TITLE, TEMPLATE_VIEW_FORM_RESPONSE, model );
+        return getPage( MESSAGE_MULTIVIEW_FORM_RESPONSE_TITLE, TEMPLATE_VIEW_FORM_RESPONSE );
     }
 
     /**
@@ -227,11 +231,11 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
      *            The FormResponse on which the model must be built
      * @return the model associate for the details of the given FormResponse
      */
-    private Map<String, Object> buildFormResponseDetailsModel( HttpServletRequest request, FormResponse formResponse )
+    private Models buildFormResponseDetailsModel( HttpServletRequest request, FormResponse formResponse )
     {
         Form form = FormHome.findByPrimaryKey( formResponse.getFormId( ) );
 
-        Map<String, Object> mapFormResponseDetailsModel = getModel( );
+        Models mapFormResponseDetailsModel = getRequestModel( );
         mapFormResponseDetailsModel.put( MARK_FORM_RESPONSE, formResponse );
         mapFormResponseDetailsModel.put( MARK_FORM, form );
 
@@ -282,7 +286,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
             mapFormResponseDetailsModel.put( MARK_RESOURCE_ACTIONS, resourceActions );
             mapFormResponseDetailsModel.put( MARK_HISTORY_WORKFLOW_ENABLED, bHistoryEnabled );
             mapFormResponseDetailsModel.put( MARK_RESOURCE_HISTORY, HtmlMarkup.of( _workflowService.getDisplayDocumentHistory( formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ), request, getLocale( ),
-                            mapFormResponseDetailsModel, TEMPLATE_FORM_RESPONSE_HISTORY, null ) ) );
+                            mapFormResponseDetailsModel.asMap( ), TEMPLATE_FORM_RESPONSE_HISTORY, null ) ) );
         }
 
         return mapFormResponseDetailsModel;
@@ -390,7 +394,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
      * @param model
      *            The given model to populate
      */
-    private void populateModelWithFilterValues( Map<String, String> mapFilterNameValues, Map<String, Object> model )
+    private void populateModelWithFilterValues( Map<String, String> mapFilterNameValues, Models model )
     {
         if ( !MapUtils.isEmpty( mapFilterNameValues ) )
         {
@@ -472,12 +476,12 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         String strHtmlTasksForm = _workflowService.getDisplayTasksForm( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, request,
                 getLocale( ), null );
 
-        Map<String, Object> model = getModel( );
+        Models model = getRequestModel( );
         model.put( MARK_ID_FORM_RESPONSE, nIdFormResponse );
         model.put( MARK_ID_ACTION, nIdAction );
         model.put( MARK_TASK_FORM, HtmlMarkup.of( strHtmlTasksForm ) );
 
-        return getPage( MESSAGE_MULTIVIEW_FORM_RESPONSE_TITLE, TEMPLATE_TASK_FORM, model );
+        return getPage( MESSAGE_MULTIVIEW_FORM_RESPONSE_TITLE, TEMPLATE_TASK_FORM );
     }
 
     /**
@@ -519,7 +523,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
             }
             else
             {
-                AppLogService.error( "Error processing action for form response '" + nIdFormResponse + "' - cause : the response doesn't exist " );
+                AppLogService.error( "Error processing action for form response '{}' - cause : the response doesn't exist", nIdFormResponse );
             }
         }
         catch( AppException e )
@@ -531,7 +535,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
             }
             else
             {
-                AppLogService.error( "Error processing action for id response '" + nIdFormResponse + "' - cause : " + e.getMessage( ), e );
+                AppLogService.error( "Error processing action for id response '{}' - cause : {}", nIdFormResponse, e.getMessage( ), e );
                 addError( MESSAGE_ACTION_ERROR, locale );
             }
         }
@@ -577,7 +581,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
                 }
                 else
                 {
-                    AppLogService.error( "Error processing action for record " + nIdFormResponse, e );
+                    AppLogService.error( "Error processing action for record {}", nIdFormResponse, e );
                     addError( MESSAGE_ACTION_ERROR, getLocale( ) );
                 }
             }

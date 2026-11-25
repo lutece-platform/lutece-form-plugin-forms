@@ -250,8 +250,6 @@ public final class ControlGroupDAO implements IControlGroupDAO
 		            controlGroupList.add( controlGroup );
 		        }
 		
-		        daoUtil.free( );
-		        
 	        }
 	    }
 		return controlGroupList;

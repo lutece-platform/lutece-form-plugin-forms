@@ -114,6 +114,25 @@ public final class FormsDownloadFile
     }
 
     /**
+     * Writes the file of a response in the HttpServletResponse for the back office, or redirects to the error message when it is not written
+     * 
+     * @param request
+     *            The HttpServletRequest to use to retrieve the parameter values from
+     * @param response
+     *            The HttpServletResponse to set the file to download
+     * @throws IOException
+     *             if the redirection fails
+     */
+    public static void downloadFileOrRedirect( HttpServletRequest request, HttpServletResponse response ) throws IOException
+    {
+        String strResult = doDownloadFile( request, response );
+        if ( !response.isCommitted( ) )
+        {
+            response.sendRedirect( strResult );
+        }
+    }
+
+    /**
      * Write in the HttpServletResponse the file to download
      * 
      * @param request

@@ -310,11 +310,11 @@ CREATE TABLE forms_list_portlet (
 
 DROP TABLE IF EXISTS forms_lucene_lock;
 CREATE TABLE IF NOT EXISTS forms_lucene_lock (
-  index_name varchar(50),
-  instance_name varchar(50),
+  index_name varchar(255),
+  instance_name varchar(255),
   is_locked smallint,
   date_begin timestamp,
   expired_date timestamp,
-  uuid varchar(50),
+  uuid varchar(255),
   PRIMARY KEY (index_name)
 );

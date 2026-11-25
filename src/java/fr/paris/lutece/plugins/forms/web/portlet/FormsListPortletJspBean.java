@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import jakarta.enterprise.context.SessionScoped;
+import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -82,6 +83,9 @@ public class FormsListPortletJspBean extends PortletJspBean
     
     // Variables
     private FormsListPortlet _portlet;
+
+    @Inject
+    private FormsListPortletHome _formsListPortletHome;
 
     /**
      * Returns the FormsListPortlet form of creation
@@ -130,7 +134,7 @@ public class FormsListPortletJspBean extends PortletJspBean
 
         _portlet.setPageId( nPageId );
 
-        FormsListPortletHome.getInstance( ).create( _portlet );
+        _formsListPortletHome.create( _portlet );
 
         return getPageUrl( nPageId );    
     }

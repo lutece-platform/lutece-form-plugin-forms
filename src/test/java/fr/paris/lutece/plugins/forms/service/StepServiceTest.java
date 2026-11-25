@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.service;
 
+import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +45,7 @@ import fr.paris.lutece.test.LuteceTestCase;
 public class StepServiceTest extends LuteceTestCase
 {
 
+    @Test
     public void testSortStepsWithTransitions( )
     {
         List<Step> listSteps = new ArrayList<>( );
@@ -94,6 +96,7 @@ public class StepServiceTest extends LuteceTestCase
         assertEquals( 3, orderedList.get( 3 ).getId( ) );
     }
 
+    @Test
     public void testSortStepsWithTransitionsNoInitial( )
     {
         List<Step> listSteps = new ArrayList<>( );

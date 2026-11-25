@@ -51,6 +51,7 @@ import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
+import fr.paris.lutece.portal.web.cdi.mvc.Models;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.util.html.HtmlTemplate;
@@ -121,13 +122,13 @@ public class FormCategoriesJspBean extends AbstractJspBean
     public String getManageCategories( HttpServletRequest request )
     {
         Locale locale = getLocale( );
-        Map<String, Object> model = getModel( );
+        Models model = getRequestModel( );
 
         List<FormCategory> listFormCategories = FormCategoryHome.getFormCategoryList( );
 
         model.put( MARK_CATEGORY_LIST, listFormCategories );
 
-        HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_MANAGE_CATEGORIES, locale, model );
+        HtmlTemplate templateList = getTemplateWithPageToken( TEMPLATE_MANAGE_CATEGORIES, locale, request );
 
         return getAdminPage( templateList.getHtml( ) );
     }
@@ -142,7 +143,7 @@ public class FormCategoriesJspBean extends AbstractJspBean
     @View( VIEW_CREATE_CATEGORY )
     public String getCreateCategory( HttpServletRequest request )
     {
-        Map<String, Object> model = getModel( );
+        Models model = getRequestModel( );
 
         _uploadHandler.removeSessionFiles( request.getSession( ) );
         FormCategory formCategory = new FormCategory( );
@@ -150,7 +151,7 @@ public class FormCategoriesJspBean extends AbstractJspBean
         model.put( MARK_UPLOAD_HANDLER, _uploadHandler );
         model.put( MARK_CATEGORY, formCategory );
 
-        return getPage( PROPERTY_PAGE_TITLE_CREATE_CATEGORY, TEMPLATE_CREATE_CATEGORY, model );
+        return getPage( PROPERTY_PAGE_TITLE_CREATE_CATEGORY, TEMPLATE_CREATE_CATEGORY );
     }
 
     /**
@@ -235,9 +236,9 @@ public class FormCategoriesJspBean extends AbstractJspBean
         {
             return redirectView( request, VIEW_MANAGE_CATEGORY );
         }
-        Map<String, Object> model = getModel( );
+        Models model = getRequestModel( );
         model.put( MARK_CATEGORY, formCategory );
-        return getPage( PROPERTY_PAGE_TITLE_MODIFY_CATEGORY, TEMPLATE_MODIFY_CATEGORY, model );
+        return getPage( PROPERTY_PAGE_TITLE_MODIFY_CATEGORY, TEMPLATE_MODIFY_CATEGORY );
     }
 
     /**

@@ -81,6 +81,7 @@ import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
+import fr.paris.lutece.portal.web.cdi.mvc.Models;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
@@ -233,7 +234,7 @@ public class FormStepJspBean extends AbstractJspBean
         // No step being edited: the next creation starts from a new step (see getCreateStep)
         _step = null;
 
-        Map<String, Object> model = getModel( );
+        Models model = getRequestModel( );
         model.put( FormsConstants.MARK_FORM, formParent );
 
         _strCurrentPageIndex = AbstractPaginator.getPageIndex( request, AbstractPaginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
@@ -270,7 +271,7 @@ public class FormStepJspBean extends AbstractJspBean
         setPageTitleProperty( EMPTY_STRING );
 
         Locale locale = getLocale( );
-        HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_MANAGE_STEPS, locale, model );
+        HtmlTemplate templateList = getTemplateWithPageToken( TEMPLATE_MANAGE_STEPS, locale, request );
 
         return getAdminPage( templateList.getHtml( ) );
     }
@@ -306,12 +307,12 @@ public class FormStepJspBean extends AbstractJspBean
         // No step being edited: the next creation starts from a new step (see getCreateStep)
         _step = null;
 
-        Map<String, Object> model = getModel( );
+        Models model = getRequestModel( );
         model.put( FormsConstants.MARK_FORM, form );
         
         model.put( MARK_MDGRAPH, _formGraphExportService.generate( form, AppPathService.getBaseUrl( request ) ) );
         
-        HtmlTemplate template =  AppTemplateService.getTemplate( TEMPLATE_GRAPHICAL_VIEW, getLocale(), model );
+        HtmlTemplate template = getTemplateWithPageToken( TEMPLATE_GRAPHICAL_VIEW, getLocale( ), request );
 
         return getAdminPage( template.getHtml( ) );
     }
@@ -354,7 +355,7 @@ public class FormStepJspBean extends AbstractJspBean
             }
         }
 
-        Map<String, Object> model = getModel( );
+        Models model = getRequestModel( );
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( MARK_LOCALE, request.getLocale( ).getLanguage( ) );
 
@@ -371,7 +372,7 @@ public class FormStepJspBean extends AbstractJspBean
         }
         model.put( MARK_IS_NOT_FIRST_STEP, stepList.size( ) > 0 );
         model.put( MARK_STEP_LIST, stepRefList );
-        return getPage( PROPERTY_PAGE_TITLE_CREATE_STEP, TEMPLATE_CREATE_STEP, model );
+        return getPage( PROPERTY_PAGE_TITLE_CREATE_STEP, TEMPLATE_CREATE_STEP );
     }
 
     /**
@@ -637,12 +638,12 @@ public class FormStepJspBean extends AbstractJspBean
                 _form = FormHome.findByPrimaryKey( nIdForm );
             }
 
-            Map<String, Object> model = getModel( );
+            Models model = getRequestModel( );
             model.put( FormsConstants.MARK_STEP, _step );
             model.put( FormsConstants.MARK_FORM, _form );
             model.put( MARK_LOCALE, request.getLocale( ) );
 
-            return getPage( PROPERTY_PAGE_TITLE_MODIFY_STEP, TEMPLATE_MODIFY_STEP, model );
+            return getPage( PROPERTY_PAGE_TITLE_MODIFY_STEP, TEMPLATE_MODIFY_STEP );
         }
 
         return redirectView( request, VIEW_MANAGE_STEPS );

@@ -82,6 +82,7 @@ import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
+import fr.paris.lutece.portal.web.cdi.mvc.Models;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.web.util.LocalizedPaginator;
@@ -205,7 +206,7 @@ public class FormControlJspBean extends AbstractJspBean
 
         _strCurrentPageIndex = AbstractPaginator.getPageIndex( request, AbstractPaginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
         _nItemsPerPage = AbstractPaginator.getItemsPerPage( request, AbstractPaginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage, _nDefaultItemsPerPage );
-        Map<String, Object> model = getModel( );
+        Models model = getRequestModel( );
         if(_controlType == ControlType.TRANSITION) {
             Transition transition = TransitionHome.findByPrimaryKey( _nIdTarget );
             model.put( "nextStepTitle", StepHome.findByPrimaryKey( transition.getNextStep() ).getTitle( ) );
@@ -218,7 +219,7 @@ public class FormControlJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( MARK_LIST_CONTROL, listControl );
         Locale locale = getLocale( );
-        HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_MANAGE_CONTROL, locale, model );
+        HtmlTemplate templateList = getTemplateWithPageToken( TEMPLATE_MANAGE_CONTROL, locale, request );
 
         return getAdminPage( templateList.getHtml( ) );
     }
@@ -337,7 +338,7 @@ public class FormControlJspBean extends AbstractJspBean
         _strCurrentPageIndex = AbstractPaginator.getPageIndex( request, AbstractPaginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
         _nItemsPerPage = AbstractPaginator.getItemsPerPage( request, AbstractPaginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage, _nDefaultItemsPerPage );
 
-        Map<String, Object> model = getModel( );
+        Models model = getRequestModel( );
         model.put( MARK_PAGINATOR, paginator );
         model.put( MARK_NB_ITEMS_PER_PAGE, StringUtils.EMPTY + _nItemsPerPage );
 
@@ -356,7 +357,7 @@ public class FormControlJspBean extends AbstractJspBean
         model.put( MARK_LIST_CONDITION_CONTROL, listConditionControl );
 
         Locale locale = getLocale( );
-        HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_MANAGE_CONDITION_CONTROL, locale, model );
+        HtmlTemplate templateList = getTemplateWithPageToken( TEMPLATE_MANAGE_CONDITION_CONTROL, locale, request );
 
         return getAdminPage( templateList.getHtml( ) );
     }
@@ -457,7 +458,7 @@ public class FormControlJspBean extends AbstractJspBean
             return redirectToViewManageForm( request );
         }
 
-        Map<String, Object> model = getModel( );
+        Models model = getRequestModel( );
         _strControlTitle = I18nService.getLocalizedString( INFO_CONDITION_TITLE, request.getLocale( ) );
 
         if ( _control != null )
@@ -470,7 +471,7 @@ public class FormControlJspBean extends AbstractJspBean
         }
 
         _strControlTemplate = TEMPLATE_MODIFY_CONDITION_CONTROL;
-        return getPage( INFO_CONDITION_TITLE, _strControlTemplate, model );
+        return getPage( INFO_CONDITION_TITLE, _strControlTemplate );
     }
 
     /**
@@ -499,7 +500,7 @@ public class FormControlJspBean extends AbstractJspBean
             return redirectToViewManageForm( request );
         }
 
-        Map<String, Object> model = getModel( );
+        Models model = getRequestModel( );
 
         if ( _control != null )
         {
@@ -510,7 +511,7 @@ public class FormControlJspBean extends AbstractJspBean
             redirectToViewManageForm( request );
         }
 
-        return getPage( PROPERTY_PAGE_TITLE_MODIFY_CONTROL, _strControlTemplate, model );
+        return getPage( PROPERTY_PAGE_TITLE_MODIFY_CONTROL, _strControlTemplate );
     }
 
     /**
@@ -521,7 +522,7 @@ public class FormControlJspBean extends AbstractJspBean
      * @param model
      *            the Model
      */
-    private void buildControlModel( HttpServletRequest request, Map<String, Object> model )
+    private void buildControlModel( HttpServletRequest request, Models model )
     {
         String strValidatorName = request.getParameter( FormsConstants.PARAMETER_VALIDATOR_NAME );
 

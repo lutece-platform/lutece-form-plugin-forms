@@ -31,6 +31,16 @@ DELETE FROM core_datastore WHERE entity_key IN ( 'core.cache.status.formsCacheSe
 INSERT INTO core_datastore (entity_key, entity_value) SELECT 'core.cache.status.formsCacheService.maxElementsInMemory', '20000' FROM core_datastore
     WHERE entity_key = 'core.cache.status.formsCacheService.maxElementsInMemory' HAVING COUNT(*) = 0;
 
+-- changeset forms:update_db_forms-4.0.1-4.0.2.sql-lucene-lock-columns
+-- preconditions onFail:MARK_RAN onError:WARN
+ALTER TABLE forms_lucene_lock MODIFY instance_name VARCHAR(255);
+ALTER TABLE forms_lucene_lock MODIFY index_name VARCHAR(255);
+ALTER TABLE forms_lucene_lock MODIFY uuid VARCHAR(255);
+
+-- changeset forms:update_db_forms-4.0.1-4.0.2.sql-admin-right-group
+-- preconditions onFail:MARK_RAN onError:WARN
+UPDATE core_admin_right SET id_feature_group = 'APPLICATIONS' WHERE id_right IN ( 'FORMS_MANAGEMENT', 'FORMS_MULTIVIEW', 'FORMS_CATEGORIES', 'FORMS_SEARCH_INDEXATION' );
+
 -- changeset forms:update_db_forms-4.0.1-4.0.2.sql-decode-entities
 -- preconditions onFail:MARK_RAN onError:WARN
 -- comment LUT-34111 : decodes, once, the HTML entities the removed input filter of lutece-core 8 (sanitizeFilterMode, LUT-34109) wrote into the plain text values of the forms. The values typed with the rich text editor (unavailable and end messages, group description) are left as they are.

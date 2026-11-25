@@ -86,6 +86,7 @@ import fr.paris.lutece.portal.service.security.SecurityTokenHandler;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
+import fr.paris.lutece.portal.web.cdi.mvc.Models;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.utils.MVCUtils;
@@ -191,7 +192,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
             addInfo( strInfoKey, getLocale( ) );
         }
 
-        Map<String, Object> model = getModel( );
+        Models model = getRequestModel( );
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( FormsConstants.MARK_FORM, _form );
 
@@ -204,7 +205,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         putLinkTokens( request, model, ACTION_DUPLICATE_QUESTION );
 
         setPageTitleProperty( StringUtils.EMPTY );
-        HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_MANAGE_QUESTIONS, locale, model );
+        HtmlTemplate templateList = getTemplateWithPageToken( TEMPLATE_MANAGE_QUESTIONS, locale, request );
 
         return getAdminPage( templateList.getHtml( ) );
     }
@@ -219,7 +220,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     @View( VIEW_CREATE_QUESTION )
     public String getCreateQuestion( HttpServletRequest request )
     {
-        Map<String, Object> model = initCreateQuestionModel( request );
+        Models model = initCreateQuestionModel( request );
         if ( model == null )
         {
             return redirectToViewManageForm( request );
@@ -232,7 +233,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         model.put( FormsConstants.MARK_BREADCRUMBS, HtmlMarkup.of( AppTemplateService.getTemplate( TEMPLATE_BREADCRUMBS, request.getLocale( ), model ).getHtml( ) ) );
 
         IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( _entry );
-        HtmlTemplate template = AppTemplateService.getTemplate( entryTypeService.getTemplateCreate( _entry, false ), getLocale( ), model );
+        HtmlTemplate template = getTemplateWithPageToken( entryTypeService.getTemplateCreate( _entry, false ), getLocale( ), request );
         return getAdminPage( template.getHtml( ) );
     }
 
@@ -247,7 +248,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     public String getCreateGroup( HttpServletRequest request )
     {
 
-        Map<String, Object> model = initCreateGroupModel( request );
+        Models model = initCreateGroupModel( request );
         if ( model == null )
         {
             return redirectToViewManageForm( request );
@@ -256,7 +257,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         model.put( FormsConstants.MARK_FORM, _form );
 
         setPageTitleProperty( PROPERTY_CREATE_GROUP_TITLE );
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_CREATE_GROUP, getLocale( ), model );
+        HtmlTemplate template = getTemplateWithPageToken( TEMPLATE_CREATE_GROUP, getLocale( ), request );
         return getAdminPage( template.getHtml( ) );
     }
 
@@ -283,7 +284,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     @View( value = VIEW_MODIFY_GROUP )
     public String getModifyGroup( HttpServletRequest request )
     {
-        Map<String, Object> model = initModifyGroupModel( request );
+        Models model = initModifyGroupModel( request );
         if ( model == null )
         {
             return redirectToViewManageForm( request );
@@ -293,7 +294,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         model.put( FormsConstants.MARK_FORM, _form );
 
         setPageTitleProperty( PROPERTY_CREATE_GROUP_TITLE );
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MODIFY_GROUP, getLocale( ), model );
+        HtmlTemplate template = getTemplateWithPageToken( TEMPLATE_MODIFY_GROUP, getLocale( ), request );
         return getAdminPage( template.getHtml( ) );
     }
 
@@ -335,7 +336,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         }
         catch( CodeAlreadyExistsException e )
         {
-            AppLogService.error( ERROR_CODE_EXISTS + e.getCode( ), e );
+            AppLogService.error( "{}{}", ERROR_CODE_EXISTS, e.getCode( ), e );
             addError( ERROR_QUESTION_CODE_ALREADY_EXISTS, getLocale( ) );
         }
         return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
@@ -420,7 +421,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     @View( value = VIEW_MODIFY_QUESTION )
     public String getModifyQuestion( HttpServletRequest request )
     {
-        Map<String, Object> model = initModifyQuestionModel( request );
+        Models model = initModifyQuestionModel( request );
         if ( model == null )
         {
             return redirectToViewManageForm( request );
@@ -455,7 +456,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         }
 
         IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( _entry );
-        HtmlTemplate template = AppTemplateService.getTemplate( entryTypeService.getTemplateModify( _entry, false ), getLocale( ), model );
+        HtmlTemplate template = getTemplateWithPageToken( entryTypeService.getTemplateModify( _entry, false ), getLocale( ), request );
         return getAdminPage( template.getHtml( ) );
     }
 
@@ -484,7 +485,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         }
         catch( CodeAlreadyExistsException e )
         {
-            AppLogService.error( ERROR_CODE_EXISTS + e.getCode( ), e );
+            AppLogService.error( "{}{}", ERROR_CODE_EXISTS, e.getCode( ), e );
             addError( ERROR_QUESTION_CODE_ALREADY_EXISTS, getLocale( ) );
         }
         return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
@@ -774,7 +775,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     @View( value = VIEW_MOVE_COMPOSITE )
     public String getMoveComposite( HttpServletRequest request )
     {
-        Map<String, Object> model = initMoveCompositeModel( request );
+        Models model = initMoveCompositeModel( request );
         if ( model == null )
         {
             return redirectToViewManageForm( request );
@@ -784,7 +785,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         ReferenceList listFormSteps = StepHome.getStepReferenceListByForm( stepTarget.getIdForm( ) );
         model.put( FormsConstants.MARK_LIST_STEPS, listFormSteps );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MOVE_COMPOSITE, getLocale( ), model );
+        HtmlTemplate template = getTemplateWithPageToken( TEMPLATE_MOVE_COMPOSITE, getLocale( ), request );
         return getAdminPage( template.getHtml( ) );
     }
 

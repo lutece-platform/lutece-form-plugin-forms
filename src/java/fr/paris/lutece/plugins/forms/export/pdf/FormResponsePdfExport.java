@@ -99,7 +99,7 @@ public class FormResponsePdfExport
         }
         catch( IOException e )
         {
-            AppLogService.error( "Error generating pdf for response " + formResponse.getId( ), e );
+            AppLogService.error( "Error generating pdf for response {}", formResponse.getId( ), e );
         }
     }
 
@@ -114,7 +114,7 @@ public class FormResponsePdfExport
         }
         catch( IOException e )
         {
-            AppLogService.error( "Error generating pdf for step " + formResponseStep.getId( ) + " of response " + formResponseStep.getFormResponseId( ), e );
+            AppLogService.error( "Error generating pdf for step {} of response {}", formResponseStep.getId( ), formResponseStep.getFormResponseId( ), e );
         }
     }
 

@@ -65,6 +65,7 @@ import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeSer
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
+import fr.paris.lutece.portal.web.cdi.mvc.Models;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 
@@ -147,14 +148,14 @@ public class FormMultiviewConfigJspBean extends AbstractJspBean
             }
         }
         
-        Map<String, Object> model = getModel( );
+        Models model = getRequestModel( );
         model.put( MARK_FORM, formToBeModified );
         model.put( MARK_QUESTIONLIST, questionList );
         model.put( MARK_FILTERABLE_QUESTIONLIST, filterableQuestionList );
         model.put( MARK_NON_DISPLAYABLE_QUESTIONLIST, nonDisplayableQuestionList );
         model.put( SecurityTokenService.MARK_TOKEN, _securityTokenService.getToken( request, ACTION_MANAGE_MULTIVIEW ) );
 
-        return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MANAGE_MULTIVIEW_CONFIG, model );
+        return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MANAGE_MULTIVIEW_CONFIG );
     }
     
     @Action( value = ACTION_MODIFY_FILTERABLE_QUESTIONS, securityTokenDisabled = true )

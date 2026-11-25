@@ -152,8 +152,7 @@ public class LuceneLockManagerDB implements LuceneLockManager
             int released = releaseOwnInstanceLocks( );
             if ( released > 0 )
             {
-                AppLogService.info( "[forms] released " + released + " lock(s) owned by instance "
-                        + FormsInstanceId.VALUE + " on shutdown" );
+                AppLogService.info( "[forms] released {} lock(s) owned by instance {} on shutdown", released, FormsInstanceId.VALUE );
             }
         }
         catch ( Exception e )

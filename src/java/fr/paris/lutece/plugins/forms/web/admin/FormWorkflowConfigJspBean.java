@@ -54,6 +54,7 @@ import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
+import fr.paris.lutece.portal.web.cdi.mvc.Models;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 
@@ -108,11 +109,11 @@ public class FormWorkflowConfigJspBean extends AbstractJspBean
         
         List<Question> questionList = QuestionHome.getQuestionListByIdFormInQuestionOrder( formToBeModified.getId( ) );
         
-        Map<String, Object> model = getModel( );
+        Models model = getRequestModel( );
         model.put( MARK_FORM, formToBeModified );
         model.put( MARK_QUESTIONLIST, questionList );
 
-        return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MANAGE_MULTIVIEW_CONFIG, model );
+        return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MANAGE_MULTIVIEW_CONFIG );
     }
     
     @Action( ACTION_MODIFY_WORKFLOW )

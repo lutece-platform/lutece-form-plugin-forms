@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.util;
 
+import org.junit.jupiter.api.Test;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.EntryType;
@@ -55,6 +56,7 @@ public class FormsEntryUtilsTest extends LuteceTestCase {
     private static final String BEAN_NAME_ENTRY_TYPE_TEXT = "forms.entryTypeText";
 
 
+    @Test
     public void testCreateEntryByType() {
         List<EntryType> entryTypes = FormsEntryUtils.initListEntryType();
         EntryType entryTypeNumber = entryTypes.stream().filter( type -> BEAN_NAME_ENTRY_TYPE_NUMBER.equals( type.getBeanName( ) ) ).findFirst( ).orElse( null );
@@ -72,6 +74,7 @@ public class FormsEntryUtilsTest extends LuteceTestCase {
 
     }
 
+    @Test
     public void testGetIndexFieldInTheFieldList() {
         int idx = FormsEntryUtils.getIndexFieldInTheFieldList(10, Collections.emptyList());
         assertEquals(0, idx);
@@ -81,17 +84,20 @@ public class FormsEntryUtilsTest extends LuteceTestCase {
 
     }
 
+    @Test
     public void testInitRefListEntryType() {
         ReferenceList referenceItems = FormsEntryUtils.initRefListEntryType();
         assertEquals(22, referenceItems.size());
     }
 
+    @Test
     public void testInitListEntryType() {
 
         List<EntryType> entryTypes = FormsEntryUtils.initListEntryType();
         assertFalse(entryTypes.isEmpty());
     }
 
+    @Test
     public void testFindFieldByCode() {
 
         final Question q = createQuestion();

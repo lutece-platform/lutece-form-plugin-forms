@@ -36,29 +36,27 @@ package fr.paris.lutece.plugins.forms.business.portlet;
 import fr.paris.lutece.portal.business.portlet.IPortletInterfaceDAO;
 import fr.paris.lutece.portal.business.portlet.PortletHome;
 import fr.paris.lutece.portal.business.portlet.PortletTypeHome;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.spi.CDI;
 
 /**
  * This class provides instances management methods for FormsListPortlet objects
  */
+@ApplicationScoped
 public class FormsListPortletHome extends PortletHome
 {
     private static IFormsListPortletDAO _dao = CDI.current( ).select( IFormsListPortletDAO.class ).get( );
-    private static FormsListPortletHome _instance = null;
 
     /**
      * Returns the instance of FormsListPortletHome
      *
      * @return the FormsListPortletHome instance
+     * @deprecated inject FormsListPortletHome, or CDI.current( ).select( FormsListPortletHome.class ).get( ) outside a bean
      */
+    @Deprecated( forRemoval = true )
     public static PortletHome getInstance( )
     {
-        if ( _instance == null )
-        {
-        	_instance = new FormsListPortletHome( );
-        }
-
-        return _instance;
+        return CDI.current( ).select( FormsListPortletHome.class ).get( );
     }
 
     /**

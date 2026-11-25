@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.forms.web.search;
 
 
 import fr.paris.lutece.plugins.forms.service.search.FormsSearchIndexerDaemon;
+import fr.paris.lutece.plugins.forms.service.search.LuceneFormSearchFactory;
 import fr.paris.lutece.portal.service.daemon.AppDaemonService;
 import fr.paris.lutece.portal.service.datastore.DatastoreService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
@@ -66,6 +67,9 @@ public class ManageFormsSearchIndexationBean extends AdminFeaturesPageJspBean
 
     @Inject
     private SecurityTokenService _securityTokenService;
+
+    @Inject
+    private LuceneFormSearchFactory _luceneFormSearchFactory;
 
     /**
      * Displays the indexing info
@@ -116,7 +120,7 @@ public class ManageFormsSearchIndexationBean extends AdminFeaturesPageJspBean
 
 
         model.put( SecurityTokenService.MARK_TOKEN, _securityTokenService.getToken( request, TEMPLATE_MANAGE_INDEXER ) );
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_INDEXER, null, model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_INDEXER, getLocale( ), model );
 
         return getAdminPage( template.getHtml( ) );
     }

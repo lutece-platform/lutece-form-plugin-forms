@@ -5,7 +5,7 @@
 <#if mylutece_user_login?? && mylutece_user_infos_list?has_content>
 <@chItem class=entryCSSClass!?trim>
     <@cInline type='strong'>#i18n{forms.entryType.myLuteceUser.labelLogin} :</@cInline>  ${mylutece_user_login}
-    <#list mylutece_user_infos_list as user_info><@cInline class='font-weight-bold'>#i18n{portal.security.${user_info.code}} :</@cInline> ${user_info.name}</#list>
+    <#list mylutece_user_infos_list as user_info><@cInline class='fw-bold'>#i18n{portal.security.${user_info.code}} :</@cInline> ${user_info.name}</#list>
 </@chItem>
 <#else>
 <@chItem class=entryCSSClass!?trim>

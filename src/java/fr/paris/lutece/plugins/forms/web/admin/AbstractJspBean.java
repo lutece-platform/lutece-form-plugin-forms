@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.forms.web.admin;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import jakarta.inject.Inject;
@@ -51,13 +52,17 @@ import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
+import fr.paris.lutece.portal.service.security.SecurityTokenHandler;
 import fr.paris.lutece.portal.service.security.SecurityTokenService;
+import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 import fr.paris.lutece.portal.util.mvc.admin.MVCAdminJspBean;
+import fr.paris.lutece.portal.web.cdi.mvc.Models;
 import fr.paris.lutece.portal.web.util.LocalizedDelegatePaginator;
 import fr.paris.lutece.util.html.AbstractPaginator;
+import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.url.UrlItem;
 
 /**
@@ -96,6 +101,43 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
 
     @Inject
     private SecurityTokenService _securityTokenService;
+    @Inject
+    private SecurityTokenHandler _securityTokenHandler;
+    @Inject
+    private Models _models;
+
+    /**
+     * The model of the current request, shared with the views of the controller: getPage( strTitle, strTemplate ) renders it
+     * 
+     * @return the model of the request
+     */
+    protected Models getRequestModel( )
+    {
+        return _models;
+    }
+
+    /**
+     * Render a template with the model of the request, for a page that wraps its content itself (getAdminPage). The token of the view is put in
+     * the model at render time, as getPage does: SecurityTokenService.getToken writes the token of each action it creates into the model, the
+     * forms of the page must carry the token of the view.
+     * 
+     * @param strTemplate
+     *            the template
+     * @param locale
+     *            the locale
+     * @param request
+     *            the request
+     * @return the rendered template
+     */
+    protected HtmlTemplate getTemplateWithPageToken( String strTemplate, Locale locale, HttpServletRequest request )
+    {
+        String strToken = _securityTokenHandler.resolveTokenValue( request );
+        if ( strToken != null )
+        {
+            _models.put( SecurityTokenHandler.MARK_CSRF_TOKEN, strToken );
+        }
+        return AppTemplateService.getTemplate( strTemplate, locale, _models );
+    }
 
     protected void initiatePaginatorProperties( HttpServletRequest request )
     {
@@ -120,7 +162,7 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
      *            The url to used for the pagination
      * @return the model populated with informations of the paginator
      */
-    protected Map<String, Object> getPaginatedListModel( HttpServletRequest request, String strBookmark, List<Integer> list, String strUrl, int nbTotalItems )
+    protected Models getPaginatedListModel( HttpServletRequest request, String strBookmark, List<Integer> list, String strUrl, int nbTotalItems )
     {
         _strCurrentPageIndex = AbstractPaginator.getPageIndex( request, AbstractPaginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
         // A page index that is not a positive number (page_index=0, typed or bookmarked) is the first page: it must not stay in the session
@@ -129,7 +171,7 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
         // Paginator
         _paginator = new LocalizedDelegatePaginator<>( list, _nItemsPerPage, strUrl, PARAMETER_PAGE_INDEX, _strCurrentPageIndex, nbTotalItems, getLocale( ) );
 
-        Map<String, Object> model = getModel( );
+        Models model = getRequestModel( );
         model.put( MARK_NB_ITEMS_PER_PAGE, String.valueOf( _nItemsPerPage ) );
         model.put( MARK_PAGINATOR, _paginator );
         model.put( strBookmark, _paginator.getPageItems( ) );
@@ -279,7 +321,7 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
 
     /**
      * Put in the model a security token for each action called by a link of the page (GET). The core checks the token of an action whatever the HTTP
-     * method: the link carries it as the parameter _csrftoken. Call it after getModel( ), which copies the token of the page.
+     * method: the link carries it as the parameter _csrftoken. The page puts its own token back at render time (getPage, getTemplateWithPageToken).
      * 
      * @param request
      *            the request
@@ -288,7 +330,7 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
      * @param actions
      *            the actions called by a link of the page (the securityTokenAction of the action when it declares one)
      */
-    protected void putLinkTokens( HttpServletRequest request, Map<String, Object> model, String... actions )
+    protected void putLinkTokens( HttpServletRequest request, Models model, String... actions )
     {
         Map<String, String> mapLinkTokens = new HashMap<>( );
         for ( String strAction : actions )

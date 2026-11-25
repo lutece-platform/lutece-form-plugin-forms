@@ -62,6 +62,7 @@ import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
+import fr.paris.lutece.portal.web.cdi.mvc.Models;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.util.ReferenceItem;
@@ -184,7 +185,7 @@ public class FormTransitionJspBean extends AbstractJspBean
             addInfo( strInfoKey, getLocale( ) );
         }
 
-        Map<String, Object> model = getModel( );
+        Models model = getRequestModel( );
 
         List<Transition> listTransition = TransitionHome.getTransitionsListFromStep( nIdStep );
         for ( Transition transition : listTransition )
@@ -200,7 +201,7 @@ public class FormTransitionJspBean extends AbstractJspBean
 
         setPageTitleProperty( EMPTY_STRING );
 
-        HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_MANAGE_TRANSITIONS, locale, model );
+        HtmlTemplate templateList = getTemplateWithPageToken( TEMPLATE_MANAGE_TRANSITIONS, locale, request );
 
         return getAdminPage( templateList.getHtml( ) );
     }
@@ -222,7 +223,7 @@ public class FormTransitionJspBean extends AbstractJspBean
 
         _transition = ( _transition != null ) ? _transition : new Transition( );
 
-        Map<String, Object> model = getModel( );
+        Models model = getRequestModel( );
 
         if ( _step != null )
         {
@@ -233,7 +234,7 @@ public class FormTransitionJspBean extends AbstractJspBean
             redirectToViewManageForm( request );
         }
 
-        return getPage( PROPERTY_PAGE_TITLE_CREATE_TRANSITION, TEMPLATE_CREATE_TRANSITION, model );
+        return getPage( PROPERTY_PAGE_TITLE_CREATE_TRANSITION, TEMPLATE_CREATE_TRANSITION );
     }
 
     /**
@@ -257,7 +258,7 @@ public class FormTransitionJspBean extends AbstractJspBean
             return redirectToViewManageForm( request );
         }
 
-        Map<String, Object> model = getModel( );
+        Models model = getRequestModel( );
 
         if ( _transition != null && _step != null )
         {
@@ -268,7 +269,7 @@ public class FormTransitionJspBean extends AbstractJspBean
             redirectToViewManageForm( request );
         }
 
-        return getPage( PROPERTY_PAGE_TITLE_MODIFY_TRANSITION, TEMPLATE_MODIFY_TRANSITION, model );
+        return getPage( PROPERTY_PAGE_TITLE_MODIFY_TRANSITION, TEMPLATE_MODIFY_TRANSITION );
     }
 
     /**
@@ -277,7 +278,7 @@ public class FormTransitionJspBean extends AbstractJspBean
      * @param model
      *            the Model
      */
-    private void buildTransitionModel( Map<String, Object> model )
+    private void buildTransitionModel( Models model )
     {
         ReferenceList listTransitionTargetSteps = getTransitionTargetStepReferenceList( _step.getIdForm( ), _step.getId( ) );
 

@@ -6,7 +6,7 @@
 <@cInline type='strong'>${entry.title!''} :</@cInline>
 <#if list_responses?has_content>
 	<#if list_responses?size gt 0>
-		<#list list_responses?sort_by('sortOrder') as response><@cInline class='font-weight-bold ms-xs'>${response.sortOrder}</@cInline> : <@cInline class='ms-xs'><#if entryTypeService.getResponseValueForRecap(null, null, response, null)??>${entryTypeService.getResponseValueForRecap(null, null, response, null)}<#else>${response.toStringValueResponse!''}</#if></@cInline><#sep>, </#sep></#list>
+		<#list list_responses?sort_by('sortOrder') as response><@cInline class='fw-bold ms-xs'>${response.sortOrder}</@cInline> : <@cInline class='ms-xs'><#if entryTypeService.getResponseValueForRecap(null, null, response, null)??>${entryTypeService.getResponseValueForRecap(null, null, response, null)}<#else>${response.toStringValueResponse!''}</#if></@cInline><#sep>, </#sep></#list>
 	<#else>
 		<@cInline type='em' class='ms-xs'>#i18n{portal.theme.labelNoDataProvided}</@cInline>
 	</#if>

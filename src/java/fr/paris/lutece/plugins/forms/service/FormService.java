@@ -277,7 +277,7 @@ public class FormService
         }
         catch ( LockException e )
         {
-            AppLogService.error( "Failed to release quota lock " + lockResult.getNameLock( ), e );
+            AppLogService.error( "Failed to release quota lock {}", lockResult.getNameLock( ), e );
         }
     }
     /**

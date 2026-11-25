@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.export.csv;
 
+import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import fr.paris.lutece.plugins.forms.business.Question;
@@ -41,6 +42,7 @@ import fr.paris.lutece.test.LuteceTestCase;
 public class CSVHeaderTest extends LuteceTestCase
 {
 
+    @Test
     public void testAddHeader( )
     {
         Question q1 = getQuestion( 3, 0 );
@@ -62,6 +64,7 @@ public class CSVHeaderTest extends LuteceTestCase
         assertEquals( q3, questions.get( 2 ) );
     }
 
+    @Test
     public void testAddHeaderSameQuestion( )
     {
         Question q1 = getQuestion( 1, 0 );
@@ -79,6 +82,7 @@ public class CSVHeaderTest extends LuteceTestCase
         assertEquals( q1, questions.get( 0 ) );
     }
 
+    @Test
     public void testAddHeaderIteration( )
     {
         Question q1 = getQuestion( 1, 0 );
@@ -100,6 +104,7 @@ public class CSVHeaderTest extends LuteceTestCase
         assertEquals( q2, questions.get( 2 ) );
     }
 
+    @Test
     public void testAddHeaderIterationWithHole( )
     {
         Question q1 = getQuestion( 1, 0 );

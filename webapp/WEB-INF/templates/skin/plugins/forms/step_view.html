@@ -10,7 +10,7 @@
 <@cForm id='form-validate' action='jsp/site/Portal.jsp?page=forms' enctype="multipart/form-data">
 <#if warnings??>
 <@cContainer>
-	<#if warnings?size gt 0 >
+	<#if (warnings![])?size gt 0 >
 	<#assign first = warnings[0] />
 	<#assign messageWarning = '\n	' + ( first?is_string )?then( '\n		' + ( warnings )?map( warning -> ( warning!' #i18n{portal.util.message.titleWarning} ' )?string )?join( '' ) + '\n	', '\n		' + ( warnings )?map( warning -> ( warning.message?? )?then( ( warning.message!' #i18n{portal.util.message.titleWarning} ' )?string, '' ) )?join( '' ) + '\n	' ) + '\n	' />
 		<@cAlert type='warning' class='mb-m' id='messages_warnings_div' title=messageWarning! dismissible=true />
@@ -41,8 +41,13 @@ ${formBottomBreadcrumb!}
 </@cForm>
 <#include "/skin/plugins/asynchronousupload/upload_commons.html" />
 <@addRequiredJsFiles />
-<script src="jsp/site/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=formsAsynchronousUploadHandler" ></script>
 <script>
+document.addEventListener( 'click', function( event ) {
+	var button = event.target.closest( '[data-iteration-anchor]' );
+	if ( button && button.form ) {
+		button.formAction = button.form.action.split( '#' )[0] + '#' + button.dataset.iterationAnchor;
+	}
+}, true );
 function getInputElement( displayControl ){
 	const types = ['input','select','textarea'];
 	let elm = null;

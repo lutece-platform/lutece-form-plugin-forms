@@ -139,7 +139,7 @@ public class EntryTypeSlot extends AbstractEntryTypeSlot implements IResponseCom
     public String getResponseValueForExport(Entry entry, HttpServletRequest request, Response response, Locale locale )
     {
         StringBuilder str = new StringBuilder();
-        if ( response.getField() != null )
+        if ( response.getField() != null && locale != null )
         {
             if( FIELD_BEGIN_HOUR.equals(response.getField().getCode()) )
             {
