@@ -137,7 +137,7 @@
         <#else>
             <@card>
             <#if permission_create_forms>
-                <@empty title='#i18n{forms.multiviewForms.view_record_history.history_empty}' iconName='file-off' subtitle='#i18n{forms.manageForm.buttonAdd}' actionTitle='#i18n{forms.manageForm.buttonAdd}' actionUrl='jsp/admin/plugins/forms/ManageForms.jsp?view=createForm' />
+                <@empty title='#i18n{forms.manageForm.noForm}' iconName='file-off' subtitle='#i18n{forms.manageForm.buttonAdd}' actionTitle='#i18n{forms.manageForm.buttonAdd}' actionUrl='jsp/admin/plugins/forms/ManageForms.jsp?view=createForm' />
                 <#if (form_creation_actions![])?has_content>
                 <@div class='text-center pb-4'>
                     <#list form_creation_actions as creation_action>
@@ -146,7 +146,7 @@
                 </@div>
                 </#if>
             <#else>
-                <@empty title='#i18n{forms.multiviewForms.view_record_history.history_empty}' iconName='file-off' subtitle=' ' />
+                <@empty title='#i18n{forms.manageForm.noForm}' iconName='file-off' subtitle=' ' />
             </#if>
             </@card>
         </#if>
