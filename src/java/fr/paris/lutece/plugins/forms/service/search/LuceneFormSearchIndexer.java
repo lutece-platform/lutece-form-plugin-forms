@@ -97,6 +97,7 @@ import fr.paris.lutece.plugins.workflowcore.service.state.IStateService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.search.SearchItem;
+import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
@@ -107,6 +108,12 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 public class LuceneFormSearchIndexer implements IFormSearchIndexer
 {
     public static final String BEAN_SERVICE = "forms.luceneFormsSearchIndexer";
+    private static final String LOG_FULL = "forms.adminFeature.manageSearchIndexation.log.full";
+    private static final String LOG_INCREMENTAL = "forms.adminFeature.manageSearchIndexation.log.incremental";
+    private static final String LOG_ABORTED_BEFORE_SWAP = "forms.adminFeature.manageSearchIndexation.log.abortedBeforeSwap";
+    private static final String LOG_ABORTED_MID_RUN = "forms.adminFeature.manageSearchIndexation.log.abortedMidRun";
+    private static final String LOG_ERROR = "forms.adminFeature.manageSearchIndexation.log.error";
+    private static final String LOG_ALREADY_RUNNING = "forms.adminFeature.manageSearchIndexation.log.alreadyRunning";
     private static final String LOCKNAME = "forms.lucene.lock";
     private static final String FILTER_DATE_FORMAT = AppPropertiesService.getProperty( "forms.index.date.format", "dd/MM/yyyy" );
     private static final int TAILLE_LOT = AppPropertiesService.getPropertyInt( "forms.index.writer.commit.size", 100 );
@@ -193,7 +200,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         try
         {
             LockResult lockResult = _lockManager.acquireLock( LOCKNAME, MS_TIMEOUT_LOCK );
-            log.append("Full indexing launch");
+            log.append( localize( LOG_FULL ) );
 
             beginRun( );
             ScheduledExecutorService heartbeat = startLockHeartbeat( lockResult );
@@ -209,7 +216,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
 
                 if ( shouldAbort( ) )
                 {
-                    log.append( "; aborted before swap (" + abortReason( ) + "), partial index discarded" );
+                    log.append( "; " ).append( localize( LOG_ABORTED_BEFORE_SWAP, abortReason( ) ) );
                 }
                 else
                 {
@@ -230,7 +237,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
 
         }
         catch (LockException e) {
-            log.append("Indexing already in progress, Full indexing Aborted");
+            log.append( localize( LOG_ALREADY_RUNNING ) );
         }
 
         return log.toString();
@@ -246,7 +253,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         try {
             LockResult lockResult = _lockManager.acquireLock(LOCKNAME, MS_TIMEOUT_LOCK);
 
-            log.append("Incremental indexing launch");
+            log.append( localize( LOG_INCREMENTAL ) );
             beginRun( );
             ScheduledExecutorService heartbeat = startLockHeartbeat( lockResult );
             try {
@@ -254,11 +261,11 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
                 processIndexing();
                 if ( shouldAbort( ) )
                 {
-                    log.append( "; aborted mid-run (" + abortReason( ) + ")" );
+                    log.append( "; " ).append( localize( LOG_ABORTED_MID_RUN, abortReason( ) ) );
                 }
             } catch (Exception e) {
                 AppLogService.error(e.getMessage(), e);
-                log.append("Incremental indexing with error");
+                log.append( "; " ).append( localize( LOG_ERROR ) );
             } finally {
                 stopLockHeartbeat( heartbeat );
                 closeIndexing();
@@ -266,7 +273,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
             }
 
         } catch (LockException e) {
-            log.append("Indexing already in progress, Incremental indexing Aborted");
+            log.append( localize( LOG_ALREADY_RUNNING ) );
         }
 
         return log.toString();
@@ -343,6 +350,22 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
             _abortReason = reason;
             AppLogService.error( "[forms] indexing aborted: {} — partial writes will be dropped to keep the shared index consistent", reason );
         }
+    }
+
+    /**
+     * Localize a line of the run log, shown on the indexing screen: the daemon has no request, the default locale of the site is used
+     *
+     * @param strKey
+     *            the i18n key
+     * @param args
+     *            the arguments of the message
+     * @return the localized line
+     */
+    private static String localize( String strKey, Object... args )
+    {
+        // Without argument the message is not a MessageFormat pattern: its apostrophes are kept as they are
+        return ( args.length == 0 ) ? I18nService.getLocalizedString( strKey, I18nService.getDefaultLocale( ) )
+                : I18nService.getLocalizedString( strKey, args, I18nService.getDefaultLocale( ) );
     }
 
     private String abortReason( )
@@ -506,7 +529,8 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
 
         List<IndexerAction> listComputingAction = new ArrayList<>();
 
-        //Create document
+        // Create document: written as an update (the documents of the response are replaced), so a response already indexed by a full
+        // indexing run, or whose creation was queued twice, is never indexed twice
         List<FormResponse> listFormResponses = new ArrayList<>( TAILLE_LOT );
         for ( IndexerAction actionAdd : listActionAdd )
         {
@@ -522,7 +546,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
             }
             if ( listFormResponses.size( ) == TAILLE_LOT )
             {
-                indexFormResponseList( listFormResponses, listComputingAction, false, plugin );
+                indexFormResponseList( listFormResponses, listComputingAction, true, plugin );
                 listFormResponses.clear( );
                 listComputingAction.clear();
             }
@@ -531,7 +555,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         {
             return;
         }
-        indexFormResponseList( listFormResponses, listComputingAction, false, plugin );
+        indexFormResponseList( listFormResponses, listComputingAction, true, plugin );
         listComputingAction.clear();
 
         //Update document
