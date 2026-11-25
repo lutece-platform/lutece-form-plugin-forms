@@ -58,6 +58,7 @@ public class IndexerActionDAO implements IIndexerActionDAO
     private static final String SQL_QUERY_DELETE_IN = SQL_QUERY_DELETE + " WHERE id_action IN (";
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_indexer_action SET id_action=?,id_form_response=?,id_task=? WHERE id_action = ? ";
     private static final String SQL_QUERY_SELECT = "SELECT id_action,id_form_response,id_task" + " FROM forms_indexer_action  ";
+    private static final String SQL_QUERY_COUNT = "SELECT COUNT(*) FROM forms_indexer_action";
     private static final String SQL_FILTER_ID_TASK = " WHERE id_task = ? ";
 
     /**
@@ -250,4 +251,17 @@ public class IndexerActionDAO implements IIndexerActionDAO
         return indexerAction;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int count( Plugin plugin )
+    {
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_COUNT, plugin ) )
+        {
+            daoUtil.executeQuery( );
+
+            return daoUtil.next( ) ? daoUtil.getInt( 1 ) : 0;
+        }
+    }
 }

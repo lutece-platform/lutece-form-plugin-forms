@@ -126,4 +126,36 @@ public class IndexerActionHomeTest extends LuteceTestCase
         List<IndexerAction> listActions = IndexerActionHome.getList( _plugin );
         return listActions.stream( ).filter( a -> a.getIdFormResponse( ) == nIdFormResponse ).count( );
     }
+
+    /**
+     * count gives the number of pending indexer actions without loading them (indexing screen, LUT-35541)
+     */
+    @Test
+    public void testCountIsTheNumberOfPendingActions( )
+    {
+        int nBefore = IndexerActionHome.getList( _plugin ).size( );
+        IndexerAction action1 = createIndexerAction( ID_FORM_RESPONSE_TO_DELETE, IndexerAction.TASK_CREATE );
+        IndexerAction action2 = createIndexerAction( ID_FORM_RESPONSE_TO_KEEP, IndexerAction.TASK_MODIFY );
+
+        try
+        {
+            assertEquals( nBefore + 2, IndexerActionHome.count( _plugin ) );
+            assertEquals( IndexerActionHome.getList( _plugin ).size( ), IndexerActionHome.count( _plugin ) );
+        }
+        finally
+        {
+            IndexerActionHome.remove( action1.getIdAction( ), _plugin );
+            IndexerActionHome.remove( action2.getIdAction( ), _plugin );
+        }
+    }
+
+    /**
+     * countAllFormResponses gives the number of form responses without loading their ids (indexing screen, LUT-35541)
+     */
+    @Test
+    public void testCountAllFormResponsesIsTheNumberOfResponses( )
+    {
+        assertEquals( fr.paris.lutece.plugins.forms.business.FormResponseHome.selectAllFormResponsesId( ).size( ),
+                fr.paris.lutece.plugins.forms.business.FormResponseHome.countAllFormResponses( ) );
+    }
 }

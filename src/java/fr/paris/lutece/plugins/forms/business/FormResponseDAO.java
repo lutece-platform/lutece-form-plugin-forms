@@ -53,6 +53,7 @@ public final class FormResponseDAO implements IFormResponseDAO
     // Constants
     private static final String SQL_QUERY_SELECTALL = "SELECT id_response, id_form, guid, creation_date, update_date, from_save, status,role, admin, update_date_status FROM forms_response";
     private static final String SQL_QUERY_SELECT_ID = "SELECT id_response FROM forms_response";
+    private static final String SQL_QUERY_COUNT_ALL = "SELECT COUNT(*) FROM forms_response";
     private static final String SQL_QUERY_SELECTALL_BY_ID_FORM = SQL_QUERY_SELECTALL + " WHERE id_form = ? ";
     private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE id_response = ?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_response ( id_form, guid, creation_date, update_date, from_save, status, role, admin, update_date_status ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ? ) ";
@@ -223,6 +224,20 @@ public final class FormResponseDAO implements IFormResponseDAO
             }
         }
         return formResponseList;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int countAllFormResponses( Plugin plugin )
+    {
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_COUNT_ALL, plugin ) )
+        {
+            daoUtil.executeQuery( );
+
+            return daoUtil.next( ) ? daoUtil.getInt( 1 ) : 0;
+        }
     }
 
     /**

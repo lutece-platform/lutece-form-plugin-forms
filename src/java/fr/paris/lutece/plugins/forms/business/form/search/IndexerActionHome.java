@@ -170,4 +170,16 @@ public final class IndexerActionHome
     {
         return _dao.selectList( plugin );
     }
+
+    /**
+     * Counts the IndexerAction waiting for the next incremental indexing, without loading them
+     *
+     * @param plugin
+     *            the Plugin
+     * @return the number of indexer actions
+     */
+    public static int count( Plugin plugin )
+    {
+        return _dao.count( plugin );
+    }
 }

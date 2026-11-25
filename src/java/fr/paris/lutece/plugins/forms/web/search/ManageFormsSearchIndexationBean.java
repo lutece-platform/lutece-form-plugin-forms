@@ -162,8 +162,9 @@ public class ManageFormsSearchIndexationBean extends AdminFeaturesPageJspBean
         int nIndexedCount = _luceneFormSearchFactory.getIndexedDocumentCount( );
         model.put( MARK_INDEX_EXISTS, nIndexedCount >= 0 );
         model.put( MARK_INDEXED_COUNT, Math.max( nIndexedCount, 0 ) );
-        model.put( MARK_RESPONSES_COUNT, FormResponseHome.selectAllFormResponsesId( ).size( ) );
-        model.put( MARK_PENDING_COUNT, IndexerActionHome.getList( PluginService.getPlugin( FormsPlugin.PLUGIN_NAME ) ).size( ) );
+        // counted by the database: the screen no longer loads every response id and every pending action
+        model.put( MARK_RESPONSES_COUNT, FormResponseHome.countAllFormResponses( ) );
+        model.put( MARK_PENDING_COUNT, IndexerActionHome.count( PluginService.getPlugin( FormsPlugin.PLUGIN_NAME ) ) );
         model.put( MARK_FULL_SCHEDULED, FormsSearchIndexerDaemon.DATASTORE_DAEMON_MODE_FULL
                 .equals( DatastoreService.getDataValue( FormsSearchIndexerDaemon.DATASTORE_DAEMON_MODE, FormsSearchIndexerDaemon.DATASTORE_DAEMON_MODE_INCREMENTAL ) ) );
         AppDaemonService.getDaemonEntries( ).stream( )

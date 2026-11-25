@@ -239,9 +239,19 @@ public final class FormResponseHome
     }
 
     /**
-     * Returns all the formResponse ids
-     * 
-     * @return all the formResponse ids
+     * Counts all the form responses, without loading them
+     *
+     * @return the number of form responses
+     */
+    public static int countAllFormResponses( )
+    {
+        return _dao.countAllFormResponses( _plugin );
+    }
+
+    /**
+     * Load the primary keys of all the FormResponse objects and returns them as a list
+     *
+     * @return the list of the primary keys of all the form responses
      */
     public static List<Integer> selectAllFormResponsesId( )
     {

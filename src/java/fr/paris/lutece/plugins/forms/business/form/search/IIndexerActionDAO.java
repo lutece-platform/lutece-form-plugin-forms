@@ -130,4 +130,13 @@ public interface IIndexerActionDAO
      */
     public List<IndexerAction> selectList( Plugin plugin );
 
+    /**
+     * Counts the indexer actions waiting for the next incremental indexing, without loading them
+     *
+     * @param plugin
+     *            the plugin
+     * @return the number of indexer actions
+     */
+    int count( Plugin plugin );
+
 }

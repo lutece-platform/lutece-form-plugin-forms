@@ -125,6 +125,15 @@ public interface IFormResponseDAO
     List<Integer> selectAllFormResponsesId( Plugin plugin );
 
     /**
+     * Counts all the form responses, without loading them
+     *
+     * @param plugin
+     *            the plugin
+     * @return the number of form responses
+     */
+    int countAllFormResponses( Plugin plugin );
+
+    /**
      * Load the data of all the FormResponse objects and returns them as a list
      * 
      * @param nIdForm
