@@ -234,6 +234,37 @@ public class LuceneFormSearchFactory
     }
 
     /**
+     * Count the documents of the main index, as seen by the current searcher.
+     *
+     * @return the number of documents, or -1 when the index does not exist yet or cannot be read
+     */
+    public int getIndexedDocumentCount( )
+    {
+        IndexSearcher searcher = null;
+        try
+        {
+            searcher = acquireSearcher( );
+            return searcher == null ? -1 : searcher.getIndexReader( ).numDocs( );
+        }
+        catch ( IOException e )
+        {
+            AppLogService.error( "Unable to read the forms Lucene index", e );
+            return -1;
+        }
+        finally
+        {
+            try
+            {
+                releaseSearcher( searcher );
+            }
+            catch ( IOException e )
+            {
+                AppLogService.error( "Unable to release the forms Lucene searcher", e );
+            }
+        }
+    }
+
+    /**
      * Swap the freshly built temporary directory onto the main location.
      * Holds the factory lock for the whole operation so neither writers nor
      * the {@link SearcherManager} observe a partially-moved directory; both

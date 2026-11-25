@@ -34,11 +34,15 @@
 package fr.paris.lutece.plugins.forms.web.search;
 
 
+import fr.paris.lutece.plugins.forms.business.FormResponseHome;
+import fr.paris.lutece.plugins.forms.business.form.search.IndexerActionHome;
+import fr.paris.lutece.plugins.forms.service.FormsPlugin;
 import fr.paris.lutece.plugins.forms.service.search.FormsSearchIndexerDaemon;
 import fr.paris.lutece.plugins.forms.service.search.LuceneFormSearchFactory;
 import fr.paris.lutece.portal.service.daemon.AppDaemonService;
 import fr.paris.lutece.portal.service.datastore.DatastoreService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.web.admin.AdminFeaturesPageJspBean;
@@ -60,6 +64,12 @@ public class ManageFormsSearchIndexationBean extends AdminFeaturesPageJspBean
     public static final String RIGHT_FORMS_INDEXER = "FORMS_SEARCH_INDEXATION";
     private static final String TEMPLATE_MANAGE_INDEXER = "admin/plugins/forms/search/manage_forms_search_indexation.html";
     private static final String MARK_LOGS = "logs";
+    private static final String MARK_INDEX_EXISTS = "index_exists";
+    private static final String MARK_INDEXED_COUNT = "indexed_count";
+    private static final String MARK_RESPONSES_COUNT = "responses_count";
+    private static final String MARK_PENDING_COUNT = "pending_count";
+    private static final String MARK_FULL_SCHEDULED = "full_scheduled";
+    private static final String MARK_DAEMON = "daemon";
 
     private static final String LABEL_FULL_LAUNCH = "forms.adminFeature.manageSearchIndexation.info.full.launch";
     private static final String LABEL_INCREMENTAL_LAUNCH = "forms.adminFeature.manageSearchIndexation.info.incremental.launch";
@@ -83,6 +93,7 @@ public class ManageFormsSearchIndexationBean extends AdminFeaturesPageJspBean
         HashMap<String, Object> model = new HashMap<>( );
 
         addInfo(model);
+        addIndexStatus( model );
         model.put( SecurityTokenService.MARK_TOKEN, _securityTokenService.getToken( request, TEMPLATE_MANAGE_INDEXER ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_INDEXER, getLocale( ), model );
@@ -119,6 +130,7 @@ public class ManageFormsSearchIndexationBean extends AdminFeaturesPageJspBean
         AppDaemonService.signalDaemon( FormsSearchIndexerDaemon.DAEMON_ID );
 
 
+        addIndexStatus( model );
         model.put( SecurityTokenService.MARK_TOKEN, _securityTokenService.getToken( request, TEMPLATE_MANAGE_INDEXER ) );
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_INDEXER, getLocale( ), model );
 
@@ -136,6 +148,28 @@ public class ManageFormsSearchIndexationBean extends AdminFeaturesPageJspBean
         {
             model.put(MARK_LOGS ,I18nService.getLocalizedString(LABEL_FULL_INPROGRESS, getLocale()));
         }
+    }
+
+    /**
+     * Add the state of the forms index to the model: whether it exists, its document count against the number of
+     * responses, the changes waiting for the next incremental run, a pending full indexing and the indexer daemon.
+     *
+     * @param model
+     *            the model
+     */
+    private void addIndexStatus( HashMap<String, Object> model )
+    {
+        int nIndexedCount = _luceneFormSearchFactory.getIndexedDocumentCount( );
+        model.put( MARK_INDEX_EXISTS, nIndexedCount >= 0 );
+        model.put( MARK_INDEXED_COUNT, Math.max( nIndexedCount, 0 ) );
+        model.put( MARK_RESPONSES_COUNT, FormResponseHome.selectAllFormResponsesId( ).size( ) );
+        model.put( MARK_PENDING_COUNT, IndexerActionHome.getList( PluginService.getPlugin( FormsPlugin.PLUGIN_NAME ) ).size( ) );
+        model.put( MARK_FULL_SCHEDULED, FormsSearchIndexerDaemon.DATASTORE_DAEMON_MODE_FULL
+                .equals( DatastoreService.getDataValue( FormsSearchIndexerDaemon.DATASTORE_DAEMON_MODE, FormsSearchIndexerDaemon.DATASTORE_DAEMON_MODE_INCREMENTAL ) ) );
+        AppDaemonService.getDaemonEntries( ).stream( )
+                .filter( entry -> FormsSearchIndexerDaemon.DAEMON_ID.equals( entry.getId( ) ) )
+                .findFirst( )
+                .ifPresent( entry -> model.put( MARK_DAEMON, entry ) );
     }
 
 }
