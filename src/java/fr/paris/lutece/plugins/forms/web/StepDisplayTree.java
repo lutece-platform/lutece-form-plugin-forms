@@ -291,7 +291,9 @@ public class StepDisplayTree implements Serializable
             }
         }
 
-        if ( !isStepVisible )
+        // A step with nothing to show is left out of a read-only display; a step being answered keeps its title and its buttons, the user
+        // would be stuck on it otherwise (a final step without question, a step whose questions are all conditioned)
+        if ( !isStepVisible && displayType != DisplayType.EDITION_FRONTOFFICE && displayType != DisplayType.EDITION_BACKOFFICE )
         {
             return "";
         }
