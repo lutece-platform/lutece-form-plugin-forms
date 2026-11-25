@@ -20,6 +20,7 @@
 <@cField label=entry.title! for=idName! required=entry.mandatory! class=entryCSSClass!?trim >
 <@cTextArea name=idName class=richtext?then('form-control richtext','form-control') placeholder=placeholder! required=entry.mandatory! html5Required=false rows=fieldRows maxlength=field_max_size_number! helpMsg=helpMsg! errorMsg=errorMsg! params=fieldParams>${field_content!}</@cTextArea>
 </@cField>
+<#if !entry.fieldInLine><#include "/skin/plugins/forms/entries/fill_entry_regex_control.html" /></#if>
 <#if richtext>
 <#include "/util/editor/editor.html" />
 <@initEditor />

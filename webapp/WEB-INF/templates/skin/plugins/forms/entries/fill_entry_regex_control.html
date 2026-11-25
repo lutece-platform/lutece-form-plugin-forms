@@ -1,0 +1,92 @@
+<#-- Front office control of the regular expression an entry type carries (genericattributes derived entry types).
+     Expects idName and entry. The server checks the same expression on submit: this script only spares a round trip.
+     A Java expression the browser cannot compile is skipped silently and left to the server. -->
+<#assign entryRegex = (entry.entryType.regexPattern)!'' />
+<#if entryRegex?has_content>
+<#assign entryRegexMessage = (entry.entryType.regexErrorMessage)!'' />
+<#if !entryRegexMessage?has_content><#assign entryRegexMessage = i18n( 'genericattributes.message.errorRegexField', entry.title! ) /></#if>
+<script>
+document.addEventListener( 'DOMContentLoaded', function( ) {
+	const input = document.getElementById( '${idName?js_string}' );
+	if ( !input || !input.form ) {
+		return;
+	}
+	let regex;
+	try {
+		regex = new RegExp( '^(?:' + '${entryRegex?js_string}' + ')$', 'u' );
+	} catch ( e ) {
+		return;
+	}
+	const form = input.form;
+	const message = '${entryRegexMessage?js_string}';
+	// Same id as the error the server renders (cFormError): one message at a time, and aria-describedby stays right
+	const errorId = 'error_' + input.id;
+	let edited = false;
+	let lastSubmitter = null;
+	const isVisible = ( ) => input.offsetParent !== null;
+	const isValid = ( ) => input.value.trim( ) === '' || regex.test( input.value.trim( ) );
+	const removeError = ( ) => {
+		const feedback = document.getElementById( errorId );
+		if ( feedback ) {
+			feedback.remove( );
+		}
+		input.classList.remove( 'is-invalid' );
+		input.removeAttribute( 'aria-invalid' );
+		if ( input.getAttribute( 'aria-describedby' ) === errorId ) {
+			input.removeAttribute( 'aria-describedby' );
+		}
+	};
+	const showError = ( ) => {
+		removeError( );
+		const feedback = document.createElement( 'p' );
+		feedback.id = errorId;
+		feedback.className = 'invalid-feedback d-block';
+		feedback.setAttribute( 'role', 'status' );
+		feedback.textContent = message;
+		input.insertAdjacentElement( 'afterend', feedback );
+		input.classList.add( 'is-invalid' );
+		input.setAttribute( 'aria-invalid', 'true' );
+		input.setAttribute( 'aria-describedby', errorId );
+	};
+	const check = ( ) => {
+		if ( isValid( ) ) {
+			removeError( );
+			return true;
+		}
+		showError( );
+		return false;
+	};
+	// The error the server rendered stays until the user changes the value: it may be about something else than the expression
+	input.addEventListener( 'input', ( ) => {
+		edited = true;
+		if ( input.getAttribute( 'aria-invalid' ) === 'true' ) {
+			check( );
+		}
+	} );
+	input.addEventListener( 'blur', ( ) => {
+		if ( edited ) {
+			check( );
+		}
+	} );
+	// SubmitEvent.submitter is missing on older browsers: remember the button that was clicked
+	form.addEventListener( 'click', ( e ) => {
+		const button = e.target.closest( 'button, input[type=submit]' );
+		if ( button ) {
+			lastSubmitter = button;
+		}
+	} );
+	form.addEventListener( 'submit', function( e ) {
+		const submitter = e.submitter || lastSubmitter;
+		lastSubmitter = null;
+		if ( submitter && submitter.hasAttribute( 'formnovalidate' ) ) {
+			return;
+		}
+		if ( isVisible( ) && !isValid( ) ) {
+			showError( );
+			e.preventDefault( );
+			input.focus( );
+		}
+	} );
+} );
+</script>
+</#if>
