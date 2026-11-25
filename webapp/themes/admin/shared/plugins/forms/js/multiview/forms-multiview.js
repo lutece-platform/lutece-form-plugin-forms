@@ -16,8 +16,15 @@ function initMultiviewColumnDragAndDrop( reorderUrl ){
 
 	const headerRow = table.tHead.rows[0];
 	let draggedIndex = null;
+	// The calls are sent one after the other: each one carries the token returned by the previous one (a token is
+	// used once, two quick drags sending the same token made the second one refused and the page stuck until reload)
+	let pendingCall = Promise.resolve();
 
 	function persistColumnOrder(){
+		pendingCall = pendingCall.then(sendColumnOrder);
+	}
+
+	function sendColumnOrder(){
 		const params = new URLSearchParams();
 		params.append('action_doReorderMultiviewColumns', '1');
 		const tokenHolder = document.getElementById('multi-form-list');
@@ -32,7 +39,7 @@ function initMultiviewColumnDragAndDrop( reorderUrl ){
 			}
 		});
 
-		fetch(reorderUrl, {
+		return fetch(reorderUrl, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
 			body: params.toString()
