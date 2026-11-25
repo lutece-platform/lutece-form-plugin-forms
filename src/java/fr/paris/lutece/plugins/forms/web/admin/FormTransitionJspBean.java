@@ -120,6 +120,7 @@ public class FormTransitionJspBean extends AbstractJspBean
     private static final String WARNING_NO_TRANSITION_STEP_FINAL = "forms.warning.transition.cannotAdd.finalStep";
     // Errors
     private static final String ERROR_TRANSITION_REMOVED = "forms.error.deleteTransition";
+    private static final String ERROR_TRANSITION_CIRCULAR = "forms.error.transition.circular";
 
     private static final String ACTION_DO_MOVE_PRIORITY_UP = "moveUpPriority";
 
@@ -222,7 +223,8 @@ public class FormTransitionJspBean extends AbstractJspBean
             return redirectToViewManageForm( request );
         }
 
-        _transition = ( _transition != null ) ? _transition : new Transition( );
+        // A transition left by a failed creation is displayed again; one left by the modification of another transition is not reused
+        _transition = ( _transition != null && _transition.getId( ) == 0 ) ? _transition : new Transition( );
 
         Models model = getRequestModel( );
 
@@ -281,7 +283,7 @@ public class FormTransitionJspBean extends AbstractJspBean
      */
     private void buildTransitionModel( Models model )
     {
-        ReferenceList listTransitionTargetSteps = getTransitionTargetStepReferenceList( _step.getIdForm( ), _step.getId( ) );
+        ReferenceList listTransitionTargetSteps = getTransitionTargetStepReferenceList( _step.getIdForm( ), _step.getId( ), _transition.getNextStep( ) );
 
         model.put( FormsConstants.MARK_TRANSITION, _transition );
         model.put( FormsConstants.MARK_AVAILABLE_STEPS, listTransitionTargetSteps );
@@ -347,13 +349,13 @@ public class FormTransitionJspBean extends AbstractJspBean
      */
     private boolean createTransition( HttpServletRequest request )
     {
-        if ( _transition == null )
+        if ( _transition == null || _transition.getId( ) != 0 )
         {
             _transition = new Transition( );
         }
         populate( _transition, request, getLocale( ) );
 
-        if ( !validateTransition( _transition ) || !isTransitionInOneForm( _transition ) || detectCircularTransition( _transition ) )
+        if ( !validateTransition( _transition ) || !isTransitionInOneForm( _transition ) || isCircularTransition( _transition ) )
         {
             return false;
         }
@@ -383,7 +385,7 @@ public class FormTransitionJspBean extends AbstractJspBean
         populate( _transition, request, getLocale( ) );
         _transition.setId( nIdTransition );
 
-        if ( !validateTransition( _transition ) || !isTransitionInOneForm( _transition ) || detectCircularTransition( _transition ) )
+        if ( !validateTransition( _transition ) || !isTransitionInOneForm( _transition ) || isCircularTransition( _transition ) )
         {
             return redirect( request, VIEW_MODIFY_TRANSITION, FormsConstants.PARAMETER_ID_STEP, _transition.getFromStep( ),
                     FormsConstants.PARAMETER_ID_TRANSITION, _transition.getId( ) );
@@ -396,11 +398,30 @@ public class FormTransitionJspBean extends AbstractJspBean
         return redirect( request, VIEW_MANAGE_TRANSITIONS, FormsConstants.PARAMETER_ID_STEP, _transition.getFromStep( ) );
     }
 
+    /**
+     * Tells whether the transition would close a cycle between the steps of its form, and says so to the user
+     *
+     * @param newTransition
+     *            the transition created or modified
+     * @return true if the transition closes a cycle
+     */
+    private boolean isCircularTransition( Transition newTransition )
+    {
+        if ( detectCircularTransition( newTransition ) )
+        {
+            addError( ERROR_TRANSITION_CIRCULAR, getLocale( ) );
+            return true;
+        }
+        return false;
+    }
+
     private boolean detectCircularTransition( Transition newTransition )
     {
         // The form of the transition, not the one of the session that may not be set (transition created from a fresh session)
         Step stepFrom = StepHome.findByPrimaryKey( newTransition.getFromStep( ) );
         List<Transition> listTransitions = TransitionHome.getTransitionsListFromForm( stepFrom.getIdForm( ) );
+        // A modified transition replaces its stored version in the graph
+        listTransitions.removeIf( t -> newTransition.getId( ) != 0 && t.getId( ) == newTransition.getId( ) );
         listTransitions.add( newTransition );
 
         DetectCycleGraphBuilder builder = DetectCycleGraphBuilder.builder( );
@@ -621,18 +642,21 @@ public class FormTransitionJspBean extends AbstractJspBean
      * 
      * @param nIdStep
      *            the identifier of the transition origin step
+     * @param nIdCurrentTarget
+     *            the target of the transition being modified, kept in the list (0 for a new transition)
      * 
      * @return a referenceList with all the target Steps
      */
-    private ReferenceList getTransitionTargetStepReferenceList( int nIdForm, int nIdStep )
+    private ReferenceList getTransitionTargetStepReferenceList( int nIdForm, int nIdStep, int nIdCurrentTarget )
     {
         ReferenceList listTransitionTargetSteps = new ReferenceList( );
         List<Transition> listCurrentTransitions = TransitionHome.getTransitionsListFromStep( nIdStep );
 
         for ( ReferenceItem step : StepHome.getStepReferenceListByForm( nIdForm ) )
         {
-            if ( NumberUtils.toInt( step.getCode( ) ) != nIdStep
-                    && listCurrentTransitions.stream( ).allMatch( t -> NumberUtils.toInt( step.getCode( ) ) != t.getNextStep( ) ) )
+            int nIdTarget = NumberUtils.toInt( step.getCode( ) );
+            if ( nIdTarget != nIdStep
+                    && ( nIdTarget == nIdCurrentTarget || listCurrentTransitions.stream( ).allMatch( t -> nIdTarget != t.getNextStep( ) ) ) )
             {
                 listTransitionTargetSteps.add( step );
             }

@@ -1,13 +1,17 @@
-<!-- title='#i18n{forms.modify_transition.title}' -->
-<@tform class='p-3' method='post' id='modify_transition' name='modify_transition' action='jsp/admin/plugins/forms/ManageTransitions.jsp'>
+<@pageContainer>
+<@pageColumn>
+<@pageHeader title='#i18n{forms.modify_transition.title}'>
+    <@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=${step.id}' buttonIcon='arrow-left' title='#i18n{portal.util.labelBack}' color='light' />
+</@pageHeader>
 <@messages errors=errors![] />
+<@tform method='post' id='modify_transition' name='modify_transition' action='jsp/admin/plugins/forms/ManageTransitions.jsp' boxed=true>
 <@input type='hidden' id='id_step' name='id_step' value='${step.id}' />
 <@input type='hidden' id='fromStep' name='fromStep' value='${step.id}' />
 <@input type='hidden' id='id_transition' name='id_transition' value='${transition.id}' />
-<@formGroup labelKey='#i18n{forms.modify_transition.labelNextStep}' helpKey='#i18n{forms.modify_transition.labelNextStep.help}' mandatory=true rows=2>
-    <@inputGroup>
-        <@select name='nextStep' items=availableSteps default_value='${transition.nextStep}' />
-        <@button type='submit' id='action_modifyTransition' name='action_modifyTransition' class='form-validation' buttonIcon='check' title='#i18n{portal.admin.message.buttonValidate}' hideTitle=['all'] />
-    </@inputGroup>
+<@formGroup labelFor='nextStep' labelKey='#i18n{forms.modify_transition.labelNextStep}' helpKey='#i18n{forms.modify_transition.labelNextStep.help}' mandatory=true rows=2>
+    <@select name='nextStep' items=availableSteps default_value='${transition.nextStep}' />
 </@formGroup>
+<@formsButton okAction='modifyTransition' viewAction='manageTransitions' rows=2 />
 </@tform>
+</@pageColumn>
+</@pageContainer>
