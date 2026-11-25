@@ -1,10 +1,20 @@
-<!-- title='#i18n{forms.create_transition.title}' -->
-<@tform class='p-3' method='post' id='create_transition' name='create_transition' action='jsp/admin/plugins/forms/ManageTransitions.jsp'>
+<@pageContainer>
+<@pageColumn>
+<@pageHeader title='#i18n{forms.create_transition.title} ${step.title!}'>
+    <@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=${step.id}' buttonIcon='arrow-left' title='#i18n{portal.util.labelBack}' color='light' />
+</@pageHeader>
 <@messages errors=errors![] />
+<#if availableSteps?has_content>
+<@tform method='post' id='create_transition' name='create_transition' action='jsp/admin/plugins/forms/ManageTransitions.jsp' boxed=true>
 <@input type='hidden' id='id_step' name='id_step' value='${step.id}' />
 <@input type='hidden' id='fromStep' name='fromStep' value='${step.id}' />
 <@formGroup labelFor='nextStep' labelKey='#i18n{forms.create_transition.labelNextStep}' helpKey='#i18n{forms.create_transition.labelNextStep.help}' mandatory=true rows=2>
 	<@select name='nextStep' items=availableSteps default_value='' />
 </@formGroup>
-<@formsButton okAction='createTransition' viewAction='' rows=2 />
+<@formsButton okAction='createTransition' viewAction='manageTransitions' rows=2 />
 </@tform>
+<#else>
+<@box><@empty title='#i18n{forms.create_transition.labelNoAvailableStep}' subtitle='#i18n{forms.create_transition.labelNoAvailableStep.help}' iconName='route-off' actionTitle='#i18n{portal.util.labelBack}' actionIcon='arrow-left' actionBtn='light' actionUrl='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=${step.id}' /></@box>
+</#if>
+</@pageColumn>
+</@pageContainer>
