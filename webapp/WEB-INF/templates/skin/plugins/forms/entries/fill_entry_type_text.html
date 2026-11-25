@@ -44,11 +44,3 @@
 </#if>
 </#if>
 </@cTpl>
-<#if !formsWidthScript??><#global formsWidthScript = true />
-<#-- The width of a text field is carried by data-forms-width (htmlAttributes refuses a style in params) and set here -->
-<script>
-( ( apply ) => { if ( document.readyState === 'loading' ) { document.addEventListener( 'DOMContentLoaded', apply ); } else { apply( ); } } )( ( ) => {
-	document.querySelectorAll( '[data-forms-width]' ).forEach( ( e ) => { e.style.width = e.dataset.formsWidth + 'px'; } );
-} );
-</script>
-</#if>
