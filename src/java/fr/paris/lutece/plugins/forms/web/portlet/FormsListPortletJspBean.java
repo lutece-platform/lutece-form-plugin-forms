@@ -52,10 +52,13 @@ import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.portlet.FormsListPortlet;
 import fr.paris.lutece.plugins.forms.business.portlet.FormsListPortletHome;
+import fr.paris.lutece.portal.business.portlet.Portlet;
+import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.business.portlet.PortletHome;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 import fr.paris.lutece.portal.web.portlet.PortletJspBean;
 import fr.paris.lutece.util.html.HtmlTemplate;
+import fr.paris.lutece.util.json.ErrorJsonResponse;
 import fr.paris.lutece.util.json.JsonResponse;
 import fr.paris.lutece.util.json.JsonUtil;
 
@@ -80,6 +83,8 @@ public class FormsListPortletJspBean extends PortletJspBean
 
     // Constants
     private static final String RESPONSE_SUCCESS = "SUCCESS";
+    private static final String RESPONSE_ERROR = "ERROR";
+    private static final String MESSAGE_PORTLET_NOT_FOUND = "forms.message.error.portlet.notFound";
     
     // Variables
     private FormsListPortlet _portlet;
@@ -100,10 +105,9 @@ public class FormsListPortletJspBean extends PortletJspBean
         HashMap<String, Object> model = new HashMap<>( );
         String strPageId = request.getParameter( PARAMETER_PAGE_ID );
         String strPortletTypeId = request.getParameter( PARAMETER_PORTLET_TYPE_ID );
-        if ( _portlet == null )
-        {
-            _portlet = new FormsListPortlet( ); 
-        }
+        // Always a new portlet: the one kept in session may be a portlet opened for modification, whose identifier and forms the
+        // creation would take over while this screen shows an empty list of published forms
+        _portlet = new FormsListPortlet( );
 
         model.put( MARK_AVAILABLE_FORMS_LIST, getActiveForms( ) );
         model.put( MARK_PUBLISHED_FORMS_LIST, new ArrayList<>( ) );
@@ -124,6 +128,12 @@ public class FormsListPortletJspBean extends PortletJspBean
     {
         String strPageId = request.getParameter( PARAMETER_PAGE_ID );
         int nPageId = NumberUtils.toInt( strPageId, NumberUtils.INTEGER_MINUS_ONE );
+
+        if ( _portlet == null )
+        {
+            // Session expired since the creation screen: the portlet is created without form
+            _portlet = new FormsListPortlet( );
+        }
 
         String strErrorUrl = setPortletCommonData( request, _portlet );
 
@@ -154,7 +164,14 @@ public class FormsListPortletJspBean extends PortletJspBean
         List<Form> publishedFormsList = new ArrayList<>( );
         String strPortletId = request.getParameter( PARAMETER_PORTLET_ID );
         int nPortletId = NumberUtils.toInt( strPortletId, NumberUtils.INTEGER_MINUS_ONE );
-        _portlet = (FormsListPortlet) PortletHome.findByPrimaryKey( nPortletId );
+        Portlet portlet = PortletHome.findByPrimaryKey( nPortletId );
+        if ( !( portlet instanceof FormsListPortlet ) )
+        {
+            // Unknown portlet, or a portlet of another type: a message rather than an internal error
+            return "<div class=\"alert alert-danger\" role=\"alert\">" + I18nService.getLocalizedString( MESSAGE_PORTLET_NOT_FOUND, getLocale( ) )
+                    + "</div>";
+        }
+        _portlet = (FormsListPortlet) portlet;
 
         availableFormsList = getActiveForms( );
         if ( CollectionUtils.isNotEmpty( _portlet.getFormsIdList( ) ) )
@@ -181,6 +198,17 @@ public class FormsListPortletJspBean extends PortletJspBean
     @Override
     public String doModify( HttpServletRequest request ) 
     {
+        int nPortletId = NumberUtils.toInt( request.getParameter( PARAMETER_PORTLET_ID ), NumberUtils.INTEGER_MINUS_ONE );
+        if ( _portlet == null || _portlet.getId( ) != nPortletId )
+        {
+            // Session expired, or another portlet opened since: the portlet of the request, with its stored forms
+            Portlet portlet = PortletHome.findByPrimaryKey( nPortletId );
+            if ( !( portlet instanceof FormsListPortlet ) )
+            {
+                return getPageUrl( NumberUtils.toInt( request.getParameter( PARAMETER_PAGE_ID ), NumberUtils.INTEGER_MINUS_ONE ) );
+            }
+            _portlet = (FormsListPortlet) portlet;
+        }
         String strErrorUrl = setPortletCommonData( request, _portlet );
 
         if ( strErrorUrl != null )
@@ -203,6 +231,10 @@ public class FormsListPortletJspBean extends PortletJspBean
      */
     public String updatePortletForm( HttpServletRequest request ) 
     {
+        if ( _portlet == null )
+        {
+            return JsonUtil.buildJsonResponse( new ErrorJsonResponse( RESPONSE_ERROR ) );
+        }
         String strAction = request.getParameter( PARAMETER_ACTION_PORTLET );
         String strFormId = request.getParameter( PARAMETER_FROM_ID );
 
