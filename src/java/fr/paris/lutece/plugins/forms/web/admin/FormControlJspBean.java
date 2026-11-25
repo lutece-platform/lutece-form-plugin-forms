@@ -129,7 +129,6 @@ public class FormControlJspBean extends AbstractJspBean
     // Actions
     private static final String ACTION_MODIFY_CONTROL = "modifyControl";
     private static final String ACTION_REMOVE_CONTROL = "removeControl";
-    private static final String ACTION_CANCEL_AND_RETURN = "cancelAndReturn";
     private static final String ACTION_MODIFY_LOGICAL_OPERATOR = "modifyLogicalOperator";
 
     // Infos
@@ -769,19 +768,6 @@ public class FormControlJspBean extends AbstractJspBean
             return redirectToViewManageForm( request );
         }
 
-        return redirect( request, getControlReturnUrl( request ) );
-    }
-
-    /**
-     * Manages the removal form of a Control whose identifier is in the http request
-     *
-     * @param request
-     *            The Http request
-     * @return the html code to confirm
-     */
-    @Action( ACTION_CANCEL_AND_RETURN )
-    public String getReturnUrl( HttpServletRequest request )
-    {
         return redirect( request, getControlReturnUrl( request ) );
     }
 
