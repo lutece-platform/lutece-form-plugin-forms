@@ -37,6 +37,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -57,6 +58,7 @@ import fr.paris.lutece.portal.service.message.SiteMessageService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
+import fr.paris.lutece.portal.web.cdi.mvc.Models;
 import fr.paris.lutece.portal.util.mvc.xpage.annotations.Controller;
 import fr.paris.lutece.portal.web.xpages.XPage;
 import fr.paris.lutece.util.html.HtmlTemplate;
@@ -70,6 +72,8 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 @Controller( xpageName = TermsOfServiceXPage.XPAGE_NAME, pageTitleI18nKey = TermsOfServiceXPage.MESSAGE_PAGE_TITLE, pagePathI18nKey = TermsOfServiceXPage.MESSAGE_PATH )
 public class TermsOfServiceXPage extends MVCApplication
 {
+    @Inject
+    private Models _models;
     protected static final String XPAGE_NAME = "formsTermsOfService";
 
     // Messages
@@ -160,7 +164,7 @@ public class TermsOfServiceXPage extends MVCApplication
      */
     private HtmlTemplate generateTermsOfService( String strTermsOfService, Locale locale )
     {
-        Map<String, Object> model = getModel( );
+        Models model = _models;
 
         model.put( MARK_TERMS_OF_SERVICE, strTermsOfService );
 

@@ -537,7 +537,7 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
         }
         catch(PdfConverterServiceException | IOException e)
         {
-            AppLogService.error( "Error generating pdf for file " + fileName, e );
+            AppLogService.error( "Error generating pdf for file {}", fileName, e );
             throw e;
         }
     }

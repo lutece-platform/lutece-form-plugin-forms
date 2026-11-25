@@ -38,8 +38,9 @@ import java.util.List;
 import java.util.Map;
 
 import jakarta.enterprise.context.SessionScoped;
+import jakarta.enterprise.inject.Any;
+import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.literal.NamedLiteral;
-import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
@@ -75,7 +76,9 @@ import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.portal.web.constants.Messages;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
+import fr.paris.lutece.portal.web.cdi.mvc.Models;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.service.template.HtmlMarkup;
@@ -136,6 +139,9 @@ public class FormResponseJspBean extends AbstractJspBean
     private Step _currentStep;
     private StepDisplayTree _stepDisplayTree;
     private IBreadcrumb _breadcrumb;
+    @Inject
+    @Any
+    private Instance<IBreadcrumb> _breadcrumbInstance;
 	
     /**
      * Get the step view
@@ -174,13 +180,13 @@ public class FormResponseJspBean extends AbstractJspBean
            	addError( FormsConstants.MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM, getLocale( ) );
            	return redirectView(request, VIEW_ERROR );
         }        
-        Map<String, Object> model = getModel( );
+        Models model = getRequestModel( );
         
         if ( form.isActive( ) )
         {
             if ( _breadcrumb == null )
             {
-                _breadcrumb = CDI.current( ).select( IBreadcrumb.class, NamedLiteral.of( form.getBreadcrumbName( ) ) ).get( );
+                _breadcrumb = _breadcrumbInstance.select( NamedLiteral.of( form.getBreadcrumbName( ) ) ).get( );
             }
             initFormResponseManager( form, getUser().getAccessCode( ) );
 
@@ -240,7 +246,7 @@ public class FormResponseJspBean extends AbstractJspBean
         	return redirectView(request, VIEW_ERROR );
         }
         
-        return getPage( PROPERTY_PAGE_TITLE_CREATE_FORM_RESPONSE, TEMPLATE_VIEW_STEP, model );
+        return getPage( PROPERTY_PAGE_TITLE_CREATE_FORM_RESPONSE, TEMPLATE_VIEW_STEP );
     }
     
     /**
@@ -253,9 +259,9 @@ public class FormResponseJspBean extends AbstractJspBean
     @View( value = VIEW_ERROR )
     public String getErrorView( HttpServletRequest request )
     {
-    	Map<String, Object> model = getModel( );
+    	Models model = getRequestModel( );
         
-        return getPage( PROPERTY_PAGE_TITLE_ERROR_FORM_RESPONSE, TEMPLATE_VIEW_ERROR_PAGE, model );
+        return getPage( PROPERTY_PAGE_TITLE_ERROR_FORM_RESPONSE, TEMPLATE_VIEW_ERROR_PAGE );
     }
     
     /**
@@ -458,11 +464,11 @@ public class FormResponseJspBean extends AbstractJspBean
             form.setCurrentNumberResponse( FormHome.getNumberOfResponseForms( form.getId( ) ) );
         }
 
-        Map<String, Object> model = buildModelForSummary( request );
+        Models model = buildModelForSummary( request );
         model.put( FormsConstants.MARK_ID_FORM, form.getId( ) );
         model.put( FormsConstants.MARK_FORM, form );
         
-        return getPage( form.getTitle( ), TEMPLATE_VIEW_FORM_RESPONSE_SUMMARY, model );
+        return getPage( form.getTitle( ), TEMPLATE_VIEW_FORM_RESPONSE_SUMMARY );
     }
     
     /**
@@ -656,7 +662,7 @@ public class FormResponseJspBean extends AbstractJspBean
         
         _formService.processFormAction( form, _formResponseManager.getFormResponse( ) );
 
-        Map<String, Object> model = getModel( );
+        Models model = getRequestModel( );
 
         model.put( FormsConstants.PARAMETER_ID_FORM, form.getId( ) );
 
@@ -680,9 +686,8 @@ public class FormResponseJspBean extends AbstractJspBean
         }
 
         model.put( FormsConstants.PARAMETER_BACK_URL, strBackUrl );
-        fillCommons( model );
 
-        return getPage( form.getTitle( ), TEMPLATE_FORM_SUBMITTED, model );
+        return getPage( form.getTitle( ), TEMPLATE_FORM_SUBMITTED );
     }
     
     /**
@@ -693,15 +698,13 @@ public class FormResponseJspBean extends AbstractJspBean
      * @param model
      *            The model for view
      */
-    private void getFormStepModel( Form form, HttpServletRequest request, Map<String, Object> model )
+    private void getFormStepModel( Form form, HttpServletRequest request, Models model )
     {
         FormsResponseUtils.populateFormWithLogoAndNumberResponse(form);
         model.put( FormsConstants.MARK_FORM, form );
         model.put( FormsConstants.MARK_FORM_TOP_BREADCRUMB, HtmlMarkup.of( _breadcrumb.getTopHtml( request, _formResponseManager ) ) );
         model.put( FormsConstants.MARK_FORM_BOTTOM_BREADCRUMB, HtmlMarkup.of( _breadcrumb.getBottomHtml( request, _formResponseManager ) ) );
         model.put( STEP_HTML_MARKER, HtmlMarkup.of( _stepDisplayTree.getCompositeHtml( request, _formResponseManager.findAllResponses( ), getLocale( ), DisplayType.SUBMIT_BACKOFFICE ) ) );
-        
-        fillCommons( model );
     }
     /**
      * Builds the model for the summary page
@@ -710,15 +713,14 @@ public class FormResponseJspBean extends AbstractJspBean
      *            the request
      * @return the model
      */
-    private Map<String, Object> buildModelForSummary( HttpServletRequest request )
+    private Models buildModelForSummary( HttpServletRequest request )
     {
-        Map<String, Object> mapFormResponseSummaryModel = getModel( );
+        Models mapFormResponseSummaryModel = getRequestModel( );
 
         List<Step> listValidatedStep = _formResponseManager.getValidatedSteps( );
 
         List<String> listStepHtml = FormsResponseUtils.buildStepsHtml( request, listValidatedStep, _formResponseManager, false );
         mapFormResponseSummaryModel.put( MARK_LIST_SUMMARY_STEP_DISPLAY, HtmlMarkup.ofAll( listStepHtml ) );
-        fillCommons( mapFormResponseSummaryModel );
         return mapFormResponseSummaryModel;
     }
     

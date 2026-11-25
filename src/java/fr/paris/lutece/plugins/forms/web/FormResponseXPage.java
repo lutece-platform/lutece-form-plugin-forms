@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.forms.web;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -86,6 +87,7 @@ import fr.paris.lutece.portal.service.workflow.WorkflowService;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.utils.MVCUtils;
 import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
+import fr.paris.lutece.portal.web.cdi.mvc.Models;
 import fr.paris.lutece.portal.util.mvc.xpage.annotations.Controller;
 import fr.paris.lutece.portal.web.xpages.XPage;
 import fr.paris.lutece.util.url.UrlItem;
@@ -149,6 +151,8 @@ public class FormResponseXPage extends MVCApplication
     private static final String PARAMETER_ID_ACTION = "id_action";
 
     @Inject
+    private Models _models;
+    @Inject
     private FormsAsynchronousUploadHandler _formsAsynchronousUploadHandler;
     @Inject
     private WorkflowService _workflowService;
@@ -164,7 +168,7 @@ public class FormResponseXPage extends MVCApplication
         FormResponse formResponse = findFormResponseFrom( request );
 
         Collection<Action> actionsList = getActionsForUser( request, formResponse );
-        Map<String, Object> model = getModel( );
+        Models model = _models;
         model.put( FormsConstants.MARK_FORM_RESPONSE, formResponse );
         model.put( MARK_LIST_STEP_DISPLAY, buildStepsHtml( request, formResponse ) );
         boolean bActionSuccess = "true".equals( request.getParameter( FormsConstants.PARAMETER_ACTION_SUCCESS ) );
@@ -173,7 +177,7 @@ public class FormResponseXPage extends MVCApplication
         model.put( MARK_WORKFLOW_ACTION_LIST, actionsList );
         model.put( SecurityTokenService.MARK_TOKEN, _securityTokenService.getToken( request, ACTION_PROCESS_ACTION ) );
 
-        XPage xPage = getXPage( TEMPLATE_VIEW_FORM_RESPONSE, getLocale( request ), FormsUtils.withHtmlMarkup( model, MARK_LIST_STEP_DISPLAY ) );
+        XPage xPage = getXPage( TEMPLATE_VIEW_FORM_RESPONSE, getLocale( request ), FormsUtils.withHtmlMarkup( model.asMap( ), MARK_LIST_STEP_DISPLAY ) );
         xPage.setTitle( I18nService.getLocalizedString( MESSAGE_FORM_RESPONSE_PAGETITLE, locale ) );
         xPage.setPathLabel( I18nService.getLocalizedString( MESSAGE_FORM_RESPONSE_PATHLABEL, locale ) );
 
@@ -190,7 +194,7 @@ public class FormResponseXPage extends MVCApplication
         {
             addInfo( MESSAGE_ACTION_SUCCESS,getLocale(request) );
         }
-        Map<String, Object> model = getModel( );
+        Models model = _models;
         model.put( FormsConstants.MARK_FORM_RESPONSE, formResponse );
         model.put( SecurityTokenService.MARK_TOKEN, _securityTokenService.getToken( request, ACTION_PROCESS_ACTION ) );
         for (FormResponseStep step: formResponse.getSteps() ){
@@ -198,15 +202,18 @@ public class FormResponseXPage extends MVCApplication
         }
         model.put( FormsConstants.MARK_QUESTION_LIST_RESPONSES, listResponse );
 
+        // The display services work on a map: they get a copy of the model, their entries are put back in it
+        Map<String, Object> mapDisplayModel = new HashMap<>( model.asMap( ) );
         formResponse.getSteps().stream()
                 .flatMap(step -> step.getQuestions().stream())
                 .forEach(fqr -> {
                     IEntryDisplayService displayService = _entryServiceManager
                             .getEntryDisplayService(fqr.getQuestion().getEntry().getEntryType());
                     if (displayService instanceof EntryTypeFileDisplayService) {
-                        displayService.getEntryTemplateDisplay(request, fqr.getQuestion().getEntry(), locale, model, DisplayType.READONLY_FRONTOFFICE);
+                        displayService.getEntryTemplateDisplay(request, fqr.getQuestion().getEntry(), locale, mapDisplayModel, DisplayType.READONLY_FRONTOFFICE);
                     }
                 });
+        mapDisplayModel.forEach( model::put );
 
         List<File> listFiles = formResponse.getSteps().stream()
                 .flatMap(step -> step.getQuestions().stream())
@@ -217,7 +224,7 @@ public class FormResponseXPage extends MVCApplication
                 .collect(Collectors.toList());
 
         model.put( MARK_LIST_FILE, listFiles );
-        XPage xPage = getXPage( TEMPLATE_VIEW_FORM_FILE, getLocale( request ), model );
+        XPage xPage = getXPage( TEMPLATE_VIEW_FORM_FILE, getLocale( request ) );
         xPage.setTitle( I18nService.getLocalizedString( MESSAGE_FORM_RESPONSE_PAGETITLE, locale ) );
         xPage.setPathLabel( I18nService.getLocalizedString( MESSAGE_FORM_RESPONSE_PATHLABEL, locale ) );
 
@@ -273,7 +280,7 @@ public class FormResponseXPage extends MVCApplication
             }
             else
             {
-                AppLogService.error( "Error processing action for id response '" + nIdFormResponse + "' - cause : " + e.getMessage( ), e );
+                AppLogService.error( "Error processing action for id response '{}' - cause : {}", nIdFormResponse, e.getMessage( ), e );
                 addError( MESSAGE_ACTION_ERROR, locale );
             }
         }
@@ -331,7 +338,7 @@ public class FormResponseXPage extends MVCApplication
                 }
                 else
                 {
-                    AppLogService.error( "Error processing action for record " + nIdFormResponse, e );
+                    AppLogService.error( "Error processing action for record {}", nIdFormResponse, e );
                     addError( MESSAGE_ACTION_ERROR, locale );
                 }
             }

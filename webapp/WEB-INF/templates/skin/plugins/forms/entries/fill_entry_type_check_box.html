@@ -15,6 +15,7 @@
 <@cFormCheckGroup legend=entry.title id=idName legendClass=legendClass class=entryCSSClass!?trim required=entry.mandatory helpMsg=helpMsg errorMsg=errorMsg >
 	<#list entry.fields as field>
 		<#assign isChecked=false >
+		<#assign idxCheckbox=1>
 		<#if field.code == 'answer_choice'>
 			<#if list_responses?? && list_responses?has_content>
 				<#list list_responses as response>
@@ -34,6 +35,7 @@
 			<@cFormCheck type='checkbox' name=idName label=optionLabel id=optionId value='${field.idField!}' inline=inLine! checked=isChecked required=entry.mandatory! html5Required=false showRequiredLabel=false params=optionParams><#if hasImage><@cImg src=field.fileImage.url alt='' params={'width': 80, 'height': 80} /></#if></@cFormCheck>
 			<#if hasComment><@cText type='span' id='comment_${optionId}' class=( inLine )?then( 'helptext font-s me-m', 'd-block helptext font-s ms-l' )>${field.comment}</@cText></#if>
 		</#if>
+		<#assign idxCheckbox=idxCheckbox+1>
 	</#list>
 	<#if inLine><#if list_entry_children??><#list list_entry_children as children><#if children.conditionalEntries??>${children.conditionalEntries}</#if></#list></#if></#if>
 </@cFormCheckGroup>

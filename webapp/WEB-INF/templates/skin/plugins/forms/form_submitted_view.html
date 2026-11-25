@@ -3,7 +3,7 @@
 <#assign alertTitle = richText( ( messageInfo!'' )?replace('<p>','')?replace('</p>','') ) />
 <#assign alertText='' />
 <#if warnings??>
-	<#if warnings?size gt 0 >
+	<#if (warnings![])?size gt 0 >
 		<#assign alertClass='warning' />
 		<#assign alertTitle='#i18n{portal.util.message.titleWarning}' />
 		<#assign alertText><#list warnings as warning ><#if warning.message??>${warning.message!' #i18n{portal.util.message.titleWarning} '}<br></#if></#list></#assign>

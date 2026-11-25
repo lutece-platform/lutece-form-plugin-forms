@@ -36,7 +36,6 @@ package fr.paris.lutece.plugins.forms.service;
 import java.io.File;
 import java.io.Serializable;
 
-import fr.paris.lutece.plugins.forms.web.file.FormsFileImageService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginDefaultImplementation;
 import fr.paris.lutece.portal.service.plugin.PluginService;
@@ -66,9 +65,6 @@ public final class FormsPlugin extends PluginDefaultImplementation implements Se
     @Override
     public void init( )
     {
-        // ImageResourceManager
-        FormsFileImageService.getInstance( ).register( );
-
         warnIfIndexPathIsNodeLocal( );
         logClusterDeploymentEvidence( );
     }
@@ -178,9 +174,7 @@ public final class FormsPlugin extends PluginDefaultImplementation implements Se
         Plugin quartzPlugin = PluginService.getPlugin( QUARTZ_PLUGIN_NAME );
         boolean quartzAvailable = quartzPlugin != null && quartzPlugin.isInstalled( );
 
-        AppLogService.info( "[forms] startup audit: " + PROPERTY_SITE_NAME + "="
-                + ( siteName.isEmpty( ) ? "<unset>" : siteName )
-                + ", instanceId=" + FormsInstanceId.VALUE
-                + ", plugin-" + QUARTZ_PLUGIN_NAME + "=" + ( quartzAvailable ? "available" : "absent" ) );
+        AppLogService.info( "[forms] startup audit: {}={}, instanceId={}, plugin-{}={}", PROPERTY_SITE_NAME, siteName.isEmpty( ) ? "<unset>" : siteName,
+                FormsInstanceId.VALUE, QUARTZ_PLUGIN_NAME, quartzAvailable ? "available" : "absent" );
     }
 }

@@ -100,7 +100,7 @@ public class EntryServiceManager
      *         in CDI-managed classes. This bridge is retained for static
      *         utilities and non-CDI callers during the migration window.
      */
-    @Deprecated( since = "4.0.3" )
+    @Deprecated( since = "4.0.3", forRemoval = true )
     public static EntryServiceManager getInstance( )
     {
         return CDI.current( ).select( EntryServiceManager.class ).get( );

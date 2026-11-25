@@ -293,7 +293,7 @@ public class FormsResponseUtils
                         .filter( q -> transitionControl.getListIdQuestion( ).stream( ).anyMatch( t -> t.equals( q.getQuestion( ).getId( ) ) ) )
                         .collect( Collectors.toList( ) );
 
-                IValidator validator = EntryServiceManager.getInstance( ).getValidator( transitionControl.getValidatorName( ) );
+                IValidator validator = CDI.current( ).select( EntryServiceManager.class ).get( ).getValidator( transitionControl.getValidatorName( ) );
                 if ( validator != null && !validator.validate( listQuestionResponse, transitionControl ) )
                 {
                     controlsValidated = false;
@@ -364,7 +364,7 @@ public class FormsResponseUtils
 
             question.setIsVisible( isQuestionConditionallyVisible( question, listConditionContext, nIdForm ) );
 
-            IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
+            IEntryDataService entryDataService = CDI.current( ).select( EntryServiceManager.class ).get( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
             if ( question.getEntry( ).isOnlyDisplayInBack( ) )
             {
             	if ( displayInBO )
@@ -403,7 +403,7 @@ public class FormsResponseUtils
 	        	
 	        	for ( Control control : listControl )
 	            {
-	                IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
+	                IValidator validator = CDI.current( ).select( EntryServiceManager.class ).get( ).getValidator( control.getValidatorName( ) );
 	                if ( !validator.validate( filterListResponse(listResponsesTemp,formQuestionResponse) , control ) )
 	                {
 	                	GenericAttributeError error = new GenericAttributeError( );
@@ -473,7 +473,7 @@ public class FormsResponseUtils
                 continue;
             }
 
-            IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
+            IValidator validator = CDI.current( ).select( EntryServiceManager.class ).get( ).getValidator( control.getValidatorName( ) );
 
             if ( validator != null )
             {

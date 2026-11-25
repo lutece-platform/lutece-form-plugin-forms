@@ -205,7 +205,7 @@ public class FormFilterDisplayFormResponseDate extends AbstractFormFilterDisplay
             }
             catch( Exception e )
             {
-                AppLogService.error( "Unable to parse date range and extract date_from and date_to in " + strDateRange + ". Please check date formats.", e );
+                AppLogService.error( "Unable to parse date range and extract date_from and date_to in {}. Please check date formats.", strDateRange, e );
             }
         }
         return null;

@@ -76,10 +76,14 @@ import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.IMapProvider;
 import fr.paris.lutece.plugins.referencelist.business.ReferenceItemHome;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 public abstract class AbstractFormJsonService
 {
+    @Inject
+    private EntryServiceManager _entryServiceManager;
+
     private static final String PROPERTY_COPY_STEP_TITLE = "forms.copyStep.title";
     private static final String QUESTION_CODE_PREFIX = "question_";
 
@@ -497,7 +501,7 @@ public abstract class AbstractFormJsonService
             }
 
             if ( StringUtils.isNotEmpty( control.getValidatorName( ) ) ) {
-                IValidator validator = EntryServiceManager.getInstance().getValidator( control.getValidatorName() );
+                IValidator validator = _entryServiceManager.getValidator( control.getValidatorName() );
                 if ( validator != null )
                 {
                     control.setValue( validator.getNewValidatorValue( control, mapIdFields ) );

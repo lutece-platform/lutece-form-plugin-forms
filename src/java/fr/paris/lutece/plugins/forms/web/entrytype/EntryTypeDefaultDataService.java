@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.web.entrytype;
 
+import jakarta.enterprise.inject.spi.CDI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -130,7 +131,7 @@ public class EntryTypeDefaultDataService implements IEntryDataService
 	
 	            for ( Control control : listControl )
 	            {
-	                IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
+	                IValidator validator = CDI.current( ).select( EntryServiceManager.class ).get( ).getValidator( control.getValidatorName( ) );
 	                if ( !validator.validate( formQuestionResponse, control ) )
 	                {
 	                    error = new GenericAttributeError( );

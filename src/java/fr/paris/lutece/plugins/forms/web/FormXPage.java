@@ -39,9 +39,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import jakarta.enterprise.context.SessionScoped;
+import jakarta.enterprise.inject.Any;
 import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.literal.NamedLiteral;
-import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
@@ -91,6 +91,7 @@ import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.utils.MVCUtils;
 import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
+import fr.paris.lutece.portal.web.cdi.mvc.Models;
 import fr.paris.lutece.portal.util.mvc.xpage.annotations.Controller;
 import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 import fr.paris.lutece.portal.web.xpages.XPage;
@@ -164,6 +165,8 @@ public class FormXPage extends MVCApplication
 
     // Other
     @Inject
+    private Models _models;
+    @Inject
     private FormService _formService;
     @Inject
     private AccessControlService _accessControlService;
@@ -179,6 +182,9 @@ public class FormXPage extends MVCApplication
     private Step _currentStep;
     private StepDisplayTree _stepDisplayTree;
     private IBreadcrumb _breadcrumb;
+    @Inject
+    @Any
+    private Instance<IBreadcrumb> _breadcrumbInstance;
     // The form whose inactive state has been bypassed (link of the back office): the bypass applies to this form only
     private int _nIdFormInactiveStateBypassed = FormsConstants.INCORRECT_ID;
     private boolean IsRequestComingFromAction = false;
@@ -200,9 +206,9 @@ public class FormXPage extends MVCApplication
             FormsResponseUtils.populateFormWithLogoAndNumberResponse( form );
         }
 
-        Map<String, Object> model = getModel( );
+        Models model = _models;
         model.put( MARK_FORM_LIST, listFormsAll );
-        XPage xPage = getXPage( TEMPLATE_LIST_FORMS, locale, model );
+        XPage xPage = getXPage( TEMPLATE_LIST_FORMS, locale );
         xPage.setTitle( I18nService.getLocalizedString( MESSAGE_LIST_FORMS_PAGETITLE, locale ) );
         xPage.setPathLabel( I18nService.getLocalizedString( MESSAGE_LIST_FORMS_PATHLABEL, locale ) );
         return xPage;
@@ -329,12 +335,12 @@ public class FormXPage extends MVCApplication
         {
             addWarning( MESSAGE_WARNING_INACTIVE_STATE_BYPASSED, getLocale( request ) );
         }
-        Map<String, Object> model = getModel( );
+        Models model = _models;
         if ( form.isActive( ) || bypassInactiveState( form, request ) )
         {
             if ( _breadcrumb == null )
             {
-                _breadcrumb = CDI.current( ).select( IBreadcrumb.class, NamedLiteral.of( form.getBreadcrumbName( ) )).get( );
+                _breadcrumb = _breadcrumbInstance.select( NamedLiteral.of( form.getBreadcrumbName( ) ) ).get( );
             }
             if(_formResponseManager != null && !_formResponseManager.getIsBackupResponseAlreadyInitiated() && _formResponseManager.getIsResponseLoadedFromBackup()) {
                 _formResponseManager.setBackupResponseAlreadyInitiated(true);
@@ -407,7 +413,7 @@ public class FormXPage extends MVCApplication
             }
         }
         IsRequestComingFromAction = true;
-        XPage xPage = getXPage( TEMPLATE_VIEW_STEP, getLocale( request ), model );
+        XPage xPage = getXPage( TEMPLATE_VIEW_STEP, getLocale( request ) );
         xPage.setTitle( strTitleForm );
         xPage.setPathLabel( strPathForm );
         return xPage;
@@ -464,7 +470,7 @@ public class FormXPage extends MVCApplication
      * @param model
      *            The model for XPage
      */
-    private void getFormStepModel( Form form, HttpServletRequest request, Map<String, Object> model )
+    private void getFormStepModel( Form form, HttpServletRequest request, Models model )
     {
         Map<String, Object> modelForStep = _breadcrumb.getModelForCurrentStep( request, _formResponseManager );
         modelForStep.put( SecurityTokenService.MARK_TOKEN, _securityTokenService.getToken( request, ACTION_SAVE_FORM_RESPONSE ) );
@@ -650,7 +656,7 @@ public class FormXPage extends MVCApplication
             form.setCurrentNumberResponse( FormHome.getNumberOfResponseForms( form.getId( ) ) );
         }
 
-        Map<String, Object> model = buildModelForSummary( form, request );
+        Models model = buildModelForSummary( form, request );
         model.put( FormsConstants.MARK_ID_FORM, form.getId( ) );
         model.put( FormsConstants.MARK_FORM, form );
 
@@ -666,7 +672,7 @@ public class FormXPage extends MVCApplication
                 form.getTitle( )
         }, getLocale( request ) );
 
-        XPage xPage = getXPage( TEMPLATE_VIEW_FORM_RESPONSE_SUMMARY, getLocale( request ), model );
+        XPage xPage = getXPage( TEMPLATE_VIEW_FORM_RESPONSE_SUMMARY, getLocale( request ) );
         xPage.setTitle( strTitleForm );
         xPage.setPathLabel( form.getTitle( ) );
 
@@ -680,13 +686,13 @@ public class FormXPage extends MVCApplication
      *            the request
      * @return the model
      */
-    private Map<String, Object> buildModelForSummary( Form form, HttpServletRequest request )
+    private Models buildModelForSummary( Form form, HttpServletRequest request )
     {
         if ( bypassInactiveState( form, request ) )
         {
             addWarning( MESSAGE_WARNING_INACTIVE_STATE_BYPASSED, getLocale( request ) );
         }
-        Map<String, Object> mapFormResponseSummaryModel = getModel( );
+        Models mapFormResponseSummaryModel = _models;
 
         List<Step> listValidatedStep = _formResponseManager.getValidatedSteps( );
 
@@ -815,7 +821,7 @@ public class FormXPage extends MVCApplication
      */
     private XPage getStepViewOnInvalidToken( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
-        AppLogService.info( "FormXPage: " + MESSAGE_ERROR_TOKEN );
+        AppLogService.info( "FormXPage: {}", MESSAGE_ERROR_TOKEN );
         addWarning( MESSAGE_WARNING_INVALID_TOKEN, getLocale( request ) );
 
         return getStepView( request );
@@ -842,7 +848,7 @@ public class FormXPage extends MVCApplication
         {
             addWarning( MESSAGE_WARNING_INACTIVE_STATE_BYPASSED, getLocale( request ) );
         }
-        Map<String, Object> model = getModel( );
+        Models model = _models;
 
         model.put( FormsConstants.PARAMETER_ID_FORM, form.getId( ) );
 
@@ -866,9 +872,8 @@ public class FormXPage extends MVCApplication
         }
 
         model.put( FormsConstants.PARAMETER_BACK_URL, strBackUrl );
-        fillCommons( model );
 
-        XPage xPage = getXPage( TEMPLATE_FORM_SUBMITTED, getLocale( request ), model );
+        XPage xPage = getXPage( TEMPLATE_FORM_SUBMITTED, getLocale( request ) );
         xPage.setTitle( form.getTitle( ) );
         xPage.setPathLabel( form.getTitle( ) );
         return xPage;
@@ -1052,7 +1057,7 @@ public class FormXPage extends MVCApplication
         {
             // if you go to step 2, then you log in (as you didn't save any backup), the token is invalided
             // why are we here as we didn't try to save any backup ? So instead of throwing the error, we redirect.
-            AppLogService.error("FormXPage l 897 : " + MESSAGE_ERROR_TOKEN );
+            AppLogService.error( "FormXPage l 897 : {}", MESSAGE_ERROR_TOKEN );
             _currentStep = null;
             return getStepView(  request );
         }

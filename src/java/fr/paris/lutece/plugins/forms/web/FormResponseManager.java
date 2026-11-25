@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.web;
 
+import jakarta.enterprise.inject.spi.CDI;
 import java.io.Serial;
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -447,7 +448,7 @@ public class FormResponseManager implements Serializable
 
                     for ( Control control : listControl )
                     {
-                        IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
+                        IValidator validator = CDI.current( ).select( EntryServiceManager.class ).get( ).getValidator( control.getValidatorName( ) );
 
                         if ( !validator.validate( formQuestionResponse, control ) )
                         {

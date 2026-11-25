@@ -107,6 +107,7 @@ import fr.paris.lutece.portal.service.util.BeanUtils;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
+import fr.paris.lutece.portal.web.cdi.mvc.Models;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.web.resource.ExtendableResourcePluginActionManager;
@@ -278,7 +279,7 @@ public class FormJspBean extends AbstractJspBean
             formsWithFinalStep.put( Integer.toString( f.getId( ) ), n > 0 );
         }
 
-        Map<String, Object> model = getModel( );
+        Models model = getRequestModel( );
         LocalizedPaginator<Form> paginator = new LocalizedPaginator<>( listForms, _nItemsPerPage, getJspManageForm( request ), PARAMETER_PAGE_INDEX,
                 _strCurrentPageIndex, getLocale( ) );
 
@@ -312,7 +313,7 @@ public class FormJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_PROD_URL, AppPathService.getProdUrl( request ) );
         setPageTitleProperty( EMPTY_STRING );
 
-        HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_MANAGE_FORMS, locale, model );
+        HtmlTemplate templateList = getTemplateWithPageToken( TEMPLATE_MANAGE_FORMS, locale, request );
 
         return getAdminPage( templateList.getHtml( ) );
     }
@@ -337,7 +338,7 @@ public class FormJspBean extends AbstractJspBean
 
         _formMessage.setEndMessage( I18nService.getLocalizedString( FormsConstants.FORM_DEFAULT_END_MESSAGE, getLocale( ) ) );
 
-        Map<String, Object> model = getModel( );
+        Models model = getRequestModel( );
 
         if ( _workflowService.isAvailable( ) )
         {
@@ -376,7 +377,7 @@ public class FormJspBean extends AbstractJspBean
         model.put( MARK_UPLOAD_HANDLER, _uploadHandler );
         model.put( MARK_FORM_CATEGORY_LIST, formCategoryList );
 
-        return getPage( PROPERTY_PAGE_TITLE_CREATE_FORM, TEMPLATE_CREATE_FORM, model );
+        return getPage( PROPERTY_PAGE_TITLE_CREATE_FORM, TEMPLATE_CREATE_FORM );
     }
 
     /**
@@ -579,7 +580,7 @@ public class FormJspBean extends AbstractJspBean
             AdminUser adminUser = getUser( );
             ReferenceList formCategoryList = _formCategoryService.getFormCategoryReferenceList( );
 
-            Map<String, Object> model = getModel( );
+            Models model = getRequestModel( );
             model.put( MARK_FORM, formToBeModified );
             model.put( MARK_FORM_MESSAGE, _formMessage );
             model.put( MARK_LOCALE, request.getLocale( ).getLanguage( ) );
@@ -625,7 +626,7 @@ public class FormJspBean extends AbstractJspBean
             model.put( FormsConstants.MARK_PROD_URL, AppPathService.getProdUrl( request ) );
             ExtendableResourcePluginActionManager.fillModel( request, getUser( ), model, "*", FormResponse.RESOURCE_TYPE + "_" + nId );
 
-            return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MODIFY_FORM, model );
+            return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MODIFY_FORM );
         }
 
         return redirectView( request, VIEW_MANAGE_FORMS );
@@ -654,13 +655,13 @@ public class FormJspBean extends AbstractJspBean
 
         List<Question> questionList = QuestionHome.getQuestionListByIdFormInQuestionOrder( formToBeModified.getId( ) );
 
-        Map<String, Object> model = getModel( );
+        Models model = getRequestModel( );
         model.put( MARK_FORM, formToBeModified );
         model.put( MARK_QUESTIONLIST, questionList );
         model.put( MARK_FORM_MESSAGE, _formMessage );
         model.put( FormsConstants.MARK_PROD_URL, AppPathService.getProdUrl( request ) );
 
-        return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MANAGE_QUESTION_PUBLICATION, model );
+        return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MANAGE_QUESTION_PUBLICATION );
     }
 
     /**
@@ -705,7 +706,7 @@ public class FormJspBean extends AbstractJspBean
 
         if ( formToBeModified != null )
         {
-            Map<String, Object> model = getModel( );
+            Models model = getRequestModel( );
 
             setFormResponseMessage( formToBeModified.getId( ) );
 
@@ -713,7 +714,7 @@ public class FormJspBean extends AbstractJspBean
             model.put( MARK_FORM, formToBeModified );
             model.put( MARK_LOCALE, request.getLocale( ).getLanguage( ) );
 
-            return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MODIFY_FORM_PUBLICATION, model );
+            return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MODIFY_FORM_PUBLICATION );
         }
 
         return redirectView( request, VIEW_MANAGE_FORMS );

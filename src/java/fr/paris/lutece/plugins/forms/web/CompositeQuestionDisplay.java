@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.web;
 
+import jakarta.enterprise.inject.spi.CDI;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -217,7 +218,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay, Serializable
             return strQuestionTemplate;
         }
 
-        IEntryDisplayService displayService = EntryServiceManager.getInstance( ).getEntryDisplayService( entry.getEntryType( ) );
+        IEntryDisplayService displayService = CDI.current( ).select( EntryServiceManager.class ).get( ).getEntryDisplayService( entry.getEntryType( ) );
 
         if ( displayService != null && isQuestionEnabled( entry, listFormQuestionResponse, displayType ) )
         {
@@ -269,7 +270,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay, Serializable
                         listOtherStepControl.add( control );
                         continue;
                     }
-                    final IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
+                    final IValidator validator = CDI.current( ).select( EntryServiceManager.class ).get( ).getValidator( control.getValidatorName( ) );
                     if ( validator != null )
                     {
                         mapControlValidator.put( control, validator );
@@ -277,8 +278,8 @@ public class CompositeQuestionDisplay implements ICompositeDisplay, Serializable
                     }
                     else
                     {
-                        AppLogService.error( "Forms: validator '" + control.getValidatorName( ) + "' not found for control " + control.getId( )
-                                + " (question " + _question.getId( ) + ") : conditional control ignored on client side" );
+                        AppLogService.error( "Forms: validator '{}' not found for control {} (question {}) : conditional control ignored on client side",
+                                control.getValidatorName( ), control.getId( ), _question.getId( ) );
                     }
                     if ( CollectionUtils.isNotEmpty( control.getListIdQuestion( ) ) && CollectionUtils.isNotEmpty( listFormQuestionResponse ) )
                     {
@@ -624,7 +625,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay, Serializable
         if ( formDisplayParent != null && FormsConstants.COMPOSITE_GROUP_TYPE.equals( formDisplayParent.getCompositeType( ) )
                 && formDisplayParent.getCompositeId( ) == nIdGroupParent )
         {
-            IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService( _question.getEntry( ).getEntryType( ) );
+            IEntryDataService entryDataService = CDI.current( ).select( EntryServiceManager.class ).get( ).getEntryDataService( _question.getEntry( ).getEntryType( ) );
 
             if ( entryDataService != null )
             {

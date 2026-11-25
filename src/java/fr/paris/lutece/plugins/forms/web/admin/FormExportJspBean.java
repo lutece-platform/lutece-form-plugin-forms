@@ -52,6 +52,7 @@ import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
+import fr.paris.lutece.portal.web.cdi.mvc.Models;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.util.url.UrlItem;
@@ -140,7 +141,7 @@ public class FormExportJspBean extends AbstractJspBean
                 break;
             }
         }
-        Map<String, Object> model = getModel( );
+        Models model = getRequestModel( );
         model.put( MARK_FORM, formToBeModified );
         model.put( MARK_QUESTIONLIST, listQuestions );
         model.put( MARK_EXPORT_LIST, ExportServiceManager.getInstance( ).createReferenceListExportConfigOption( formToBeModified, getLocale( ) ) );
@@ -156,7 +157,7 @@ public class FormExportJspBean extends AbstractJspBean
         }
         model.put( MARK_EXPORT_ALL, exportAll);
 
-        return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MANAGE_EXPORT, model );
+        return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MANAGE_EXPORT );
     }
 
     @Action( ACTION_MODIFY_EXPORT_DISPLAY_ORDER )

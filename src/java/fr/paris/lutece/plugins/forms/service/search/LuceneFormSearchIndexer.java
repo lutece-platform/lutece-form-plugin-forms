@@ -341,8 +341,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         if ( _abortCurrentRun.compareAndSet( false, true ) )
         {
             _abortReason = reason;
-            AppLogService.error( "[forms] indexing aborted: " + reason
-                    + " — partial writes will be dropped to keep the shared index consistent" );
+            AppLogService.error( "[forms] indexing aborted: {} — partial writes will be dropped to keep the shared index consistent", reason );
         }
     }
 
@@ -589,42 +588,50 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
 
         Map<Integer, Form> mapForms = FormHome.getFormList( ).stream( ).collect( Collectors.toMap( Form::getId, form -> form ) );
         List<Document> documentList = new ArrayList<>( );
-        for ( FormResponse formResponse : listFormResponse )
+        try
         {
-            Document doc = null;
-            Form form = mapForms.get( formResponse.getFormId( ) );
-            if ( form == null )
+            for ( FormResponse formResponse : listFormResponse )
             {
-                AppLogService.error( "Skipping indexation of form response {}: associated form {} not found", formResponse.getId( ),
-                        formResponse.getFormId( ) );
-                continue;
-            }
+                Document doc = null;
+                Form form = mapForms.get( formResponse.getFormId( ) );
+                if ( form == null )
+                {
+                    AppLogService.error( "Skipping indexation of form response {}: associated form {} not found", formResponse.getId( ),
+                            formResponse.getFormId( ) );
+                    continue;
+                }
 
-            State formResponseState = null;
-            if ( !_stateServiceInstance.isUnsatisfied( ) )
-            {
-                formResponseState = _stateServiceInstance.get( ).findByResource( formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ) );
-            }
-            else
-            {
-                formResponseState = new State( );
-                formResponseState.setId( -1 );
-                formResponseState.setName( StringUtils.EMPTY );
-            }
+                State formResponseState = null;
+                if ( !_stateServiceInstance.isUnsatisfied( ) )
+                {
+                    formResponseState = _stateServiceInstance.get( ).findByResource( formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ) );
+                }
+                else
+                {
+                    formResponseState = new State( );
+                    formResponseState.setId( -1 );
+                    formResponseState.setName( StringUtils.EMPTY );
+                }
 
-            try
-            {
-                doc = getDocument( formResponse, form, formResponseState );
-            }
-            catch( Exception e )
-            {
-                AppLogService.error(e.getMessage(), e);
-            }
+                try
+                {
+                    doc = getDocument( formResponse, form, formResponseState );
+                }
+                catch( Exception e )
+                {
+                    AppLogService.error(e.getMessage(), e);
+                }
 
-            if ( doc != null )
-            {
-                documentList.add( doc );
+                if ( doc != null )
+                {
+                    documentList.add( doc );
+                }
             }
+        }
+        finally
+        {
+            // The builder is reused within a batch, never kept on the pooled thread after it
+            SORT_KEY_BUILDER.remove( );
         }
 
         if( update )
@@ -951,7 +958,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
                                 }
                                 catch( Exception e )
                                 {
-                                    AppLogService.error( "Unable to parse " + response.getResponseValue( ) + " with date formatter " + FILTER_DATE_FORMAT, e );
+                                    AppLogService.error( "Unable to parse {} with date formatter {}", response.getResponseValue( ), FILTER_DATE_FORMAT, e );
                                 }
                             }
                             else
@@ -966,7 +973,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
                                     }
                                     catch( NumberFormatException e )
                                     {
-                                        AppLogService.error( "Unable to parse " + response.getResponseValue( ) + " to integer ", e );
+                                        AppLogService.error( "Unable to parse {} to integer", response.getResponseValue( ), e );
                                     }
                                 }
                                 else
@@ -994,9 +1001,8 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
                         }
                         else
                         {
-                            AppLogService.error( " FieldNameBuilder " + fieldNameBuilder.toString( ) + "  already used for formResponse.getId( )  "
-                                    + formResponse.getId( ) + "  formQuestionResponse.getId( )  " + formQuestionResponse.getId( )
-                                    + " response.getIdResponse( ) " + response.getIdResponse( ) + " formResponseStep" + formResponseStep.getId( ) );
+                            AppLogService.error( " FieldNameBuilder {}  already used for formResponse.getId( )  {}  formQuestionResponse.getId( )  {} response.getIdResponse( ) {} formResponseStep{}",
+                                    fieldNameBuilder, formResponse.getId( ), formQuestionResponse.getId( ), response.getIdResponse( ), formResponseStep.getId( ) );
 
                         }
 

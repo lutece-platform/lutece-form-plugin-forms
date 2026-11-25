@@ -31,8 +31,8 @@
                                 <@cInput type='hidden' name='id_action' value='${action.id!}' />
                                 <@cInput type='hidden' name='id_response' value='${formResponse.id!}' />
                                 <@cInput type='hidden' name='token' value='${token!}' />
-                                <@cBtn label=action.name! class='default btn-block'>
-                                    <@img class='img-circle img-action' url='image?resource_type=workflow_icon_img&id=${action.icon.id!}' title='' alt='' />
+                                <@cBtn label=action.name! class='default w-100'>
+                                    <@cImg src='image?resource_type=workflow_icon_img&id=${action.icon.id!}' alt='' class='rounded-circle img-action' />
                                 </@cBtn>
                             </@cForm>
                         </@cListItem>

@@ -33,7 +33,11 @@
  */
 package fr.paris.lutece.plugins.forms.web.file;
 
-import jakarta.enterprise.inject.spi.CDI;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.Initialized;
+import jakarta.enterprise.event.Observes;
+import jakarta.inject.Inject;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.math.NumberUtils;
@@ -55,34 +59,23 @@ import fr.paris.lutece.util.file.FileUtil;
 /**
  * Image Resource Service for the plugin Forms
  */
-public final class FormsFileImageService implements ImageResourceProvider
+@ApplicationScoped
+public class FormsFileImageService implements ImageResourceProvider
 {
     // Constants
     private static final String IMAGE_RESOURCE_TYPE_ID = "forms_entry_img";
     private static final int ID_RESPONSE_NOT_FOUND = NumberUtils.INTEGER_MINUS_ONE;
 
-    /**
-     * Constructor
-     */
-    private FormsFileImageService( )
-    {
-
-    }
+    @Inject
+    private FormService _formService;
 
     /**
-     * Get the unique instance of the service
+     * Registers the service as an image provider when the application starts
      *
-     * @return the unique instance of the FormsFileImageService service
+     * @param context
+     *            the servlet context
      */
-    public static FormsFileImageService getInstance( )
-    {
-        return FormsFileImageServiceHolder._singleton;
-    }
-
-    /**
-     * Initializes the service
-     */
-    public void register( )
+    public void register( @Observes @Initialized( ApplicationScoped.class ) ServletContext context )
     {
         ImageResourceManager.registerProvider( this );
     }
@@ -115,10 +108,9 @@ public final class FormsFileImageService implements ImageResourceProvider
         File file = FileHome.findByPrimaryKey( nIdResource );
         if ( file != null && file.getPhysicalFile( ) != null && FileUtil.hasImageExtension( file.getTitle( ) ) && request != null )
         {
-            FormService formService = CDI.current( ).select( FormService.class ).get( );
             int nIdResponse = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_RESPONSE ), ID_RESPONSE_NOT_FOUND );
 
-            if ( formService.isFileAccessAuthorized( request, nIdResponse, nIdResource ) )
+            if ( _formService.isFileAccessAuthorized( request, nIdResponse, nIdResource ) )
             {
                 imageResource = createImageResource( file );
             }
@@ -161,15 +153,6 @@ public final class FormsFileImageService implements ImageResourceProvider
     public String getResourceTypeId( )
     {
         return IMAGE_RESOURCE_TYPE_ID;
-    }
-
-    /**
-     * Class holder for the singleton of the FormsFileImageService service
-     */
-    private static class FormsFileImageServiceHolder
-    {
-        // Variables
-        private static final FormsFileImageService _singleton = new FormsFileImageService( );
     }
 
 	@Override

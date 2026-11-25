@@ -298,7 +298,7 @@ public final class MultiviewFormService
 
                 if ( !mapColumns.keySet( ).contains( question.getColumnTitle( ) ) )
                 {
-                    IEntryDisplayService displayService = EntryServiceManager.getInstance( ).getEntryDisplayService( question.getEntry( ).getEntryType( ) );
+                    IEntryDisplayService displayService = CDI.current( ).select( EntryServiceManager.class ).get( ).getEntryDisplayService( question.getEntry( ).getEntryType( ) );
                     IFormColumn column = displayService.getFormColumn( ++nPosition, question.getColumnTitle( ) );
                     if (column != null)
                     {
@@ -358,7 +358,7 @@ public final class MultiviewFormService
                 continue;
             }
 
-            IEntryDisplayService displayService = EntryServiceManager.getInstance( ).getEntryDisplayService( currentQuestion.getEntry( ).getEntryType( ) );
+            IEntryDisplayService displayService = CDI.current( ).select( EntryServiceManager.class ).get( ).getEntryDisplayService( currentQuestion.getEntry( ).getEntryType( ) );
 
             if ( ENTRY_TYPE_DATE.equals( displayService.getDisplayServiceName( ) ) )
             {

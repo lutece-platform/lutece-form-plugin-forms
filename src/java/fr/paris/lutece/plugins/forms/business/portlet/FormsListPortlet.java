@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.business.portlet;
 
+import jakarta.enterprise.inject.spi.CDI;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,7 +71,7 @@ public class FormsListPortlet extends PortletHtmlContent implements Serializable
      */
     public FormsListPortlet( )
     {
-        setPortletTypeId( FormsListPortletHome.getInstance( ).getPortletTypeId( ) );
+        setPortletTypeId( CDI.current( ).select( FormsListPortletHome.class ).get( ).getPortletTypeId( ) );
     }
 
     /**
@@ -105,7 +106,7 @@ public class FormsListPortlet extends PortletHtmlContent implements Serializable
     @Override
     public void remove( )
     {
-        FormsListPortletHome.getInstance( ).remove( this );
+        CDI.current( ).select( FormsListPortletHome.class ).get( ).remove( this );
     }
 
     /**
@@ -113,7 +114,7 @@ public class FormsListPortlet extends PortletHtmlContent implements Serializable
      */
     public void update( )
     {
-    	FormsListPortletHome.getInstance( ).update( this );
+    	CDI.current( ).select( FormsListPortletHome.class ).get( ).update( this );
     }
 
 	/**

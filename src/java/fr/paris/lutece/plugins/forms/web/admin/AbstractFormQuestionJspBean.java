@@ -79,6 +79,7 @@ import fr.paris.lutece.portal.service.file.IFileStoreServiceProvider;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
+import fr.paris.lutece.portal.web.cdi.mvc.Models;
 import fr.paris.lutece.util.ReferenceList;
 
 public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
@@ -481,7 +482,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         return redirect( request, viewReturnOk, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
     }
 
-    protected Map<String, Object> initCreateGroupModel( HttpServletRequest request )
+    protected Models initCreateGroupModel( HttpServletRequest request )
     {
         int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
         _nIdParentSelected = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ), 0 );
@@ -500,7 +501,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         _group.setIterationMin( NumberUtils.INTEGER_ONE );
         _group.setIterationMax( NumberUtils.INTEGER_ONE );
 
-        Map<String, Object> model = getModel( );
+        Models model = getRequestModel( );
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( FormsConstants.MARK_GROUP, _group );
         model.put( FormsConstants.MARK_ID_PARENT, _nIdParentSelected );
@@ -508,7 +509,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         return model;
     }
 
-    protected Map<String, Object> initModifyGroupModel( HttpServletRequest request )
+    protected Models initModifyGroupModel( HttpServletRequest request )
     {
         int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
         int nIdGroup = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_GROUP ), FormsConstants.DEFAULT_ID_VALUE );
@@ -528,14 +529,14 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
             _group = getFormDatabaseService( ).findGroupByPrimaryKey( nIdGroup );
         }
 
-        Map<String, Object> model = getModel( );
+        Models model = getRequestModel( );
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( FormsConstants.MARK_GROUP, _group );
 
         return model;
     }
 
-    protected Map<String, Object> initCreateQuestionModel( HttpServletRequest request )
+    protected Models initCreateQuestionModel( HttpServletRequest request )
     {
         int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), INTEGER_MINUS_ONE );
         int nIdTypeEntry = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_BUTTON_TYPE_ENTRY ), INTEGER_MINUS_ONE );
@@ -567,7 +568,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
 
         IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( _entry );
 
-        Map<String, Object> model = getModel();
+        Models model = getRequestModel( );
         model.put( FormsConstants.MARK_ENTRY, _entry );
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( FormsConstants.MARK_ID_PARENT, _nIdParentSelected );
@@ -594,7 +595,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         return model;
     }
 
-    protected Map<String, Object> initModifyQuestionModel( HttpServletRequest request )
+    protected Models initModifyQuestionModel( HttpServletRequest request )
     {
         String strIdStep = request.getParameter( FormsConstants.PARAMETER_ID_STEP );
 
@@ -632,7 +633,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
 
         IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( _entry );
 
-        Map<String, Object> model = getModel( );
+        Models model = getRequestModel( );
         model.put( FormsConstants.MARK_ENTRY, _entry );
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( FormsConstants.MARK_QUESTION, _question );
@@ -678,9 +679,9 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         return model;
     }
 
-    protected Map<String, Object> initMoveCompositeModel( HttpServletRequest request )
+    protected Models initMoveCompositeModel( HttpServletRequest request )
     {
-        Map<String, Object> model = getModel( );
+        Models model = getRequestModel( );
 
         int nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), INTEGER_MINUS_ONE );
         if ( nIdDisplay == INTEGER_MINUS_ONE )

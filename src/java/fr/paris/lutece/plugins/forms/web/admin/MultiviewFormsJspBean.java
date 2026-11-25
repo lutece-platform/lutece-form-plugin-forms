@@ -104,6 +104,7 @@ import fr.paris.lutece.portal.service.rbac.RBACResource;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.upload.MultipartItem;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
+import fr.paris.lutece.portal.web.cdi.mvc.Models;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.ResponseBody;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
@@ -272,7 +273,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
             _formPanelDisplayActive = _listAuthorizedFormPanelDisplay.get( 0 );
             _formPanelDisplayActive.setActive( true );
         }
-        Map<String, Object> model = getPaginatedListModel( request, AbstractPaginator.PARAMETER_PAGE_INDEX, listIdFormResponse, buildPaginatorUrl( ),
+        Models model = getPaginatedListModel( request, AbstractPaginator.PARAMETER_PAGE_INDEX, listIdFormResponse, buildPaginatorUrl( ),
                 _formPanelDisplayActive.getFormPanel( ).getTotalFormResponseItemCount( ) );
 
         // Get the config multiview action if the current admin user is authorized
@@ -320,7 +321,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
             model.put(MARK_EXPORT_SUCCESS ,true );
         }
 
-        return getPage( PROPERTY_FORMS_MULTIVIEW_PAGE_TITLE, TEMPLATE_FORMS_MULTIVIEW, model );
+        return getPage( PROPERTY_FORMS_MULTIVIEW_PAGE_TITLE, TEMPLATE_FORMS_MULTIVIEW );
     }
 
     /**
@@ -416,13 +417,13 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         	}
         }
 
-        Map<String, Object> model = getModel( );
+        Models model = getRequestModel( );
         model.put( FormsConstants.MARK_MULTIVIEW_CONFIG, config );
         model.put( FormsConstants.MARK_FORM_USERASSIGNMENT_ENABLED, PluginService.isPluginEnable( "forms-userassignment" ) );
         model.put( FormsConstants.MARK_UPLOAD_HANDLER, _uploadHandler );
     	model.put( MARK_LIST_UNIQUE_FILE, listUniquefileItem );
 
-        return getPage( PROPERTY_FORMS_MULTIVIEW_PAGE_TITLE, TEMPLATE_FORMS_MULTIVIEW_CONFIG, model );
+        return getPage( PROPERTY_FORMS_MULTIVIEW_PAGE_TITLE, TEMPLATE_FORMS_MULTIVIEW_CONFIG );
     }
 
     /**
