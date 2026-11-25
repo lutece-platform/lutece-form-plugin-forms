@@ -149,7 +149,7 @@ public class FormTransitionJspBean extends AbstractJspBean
      * @return The page
      */
     @View( value = VIEW_MANAGE_TRANSITIONS, defaultView = true, securityTokenAction = FormStepJspBean.ACTION_MODIFY_STEP )
-    public String getManageTransition( HttpServletRequest request )
+    public String getManageTransition( HttpServletRequest request ) throws AccessDeniedException
     {
         _transition = null;
 
@@ -170,6 +170,7 @@ public class FormTransitionJspBean extends AbstractJspBean
             {
                 _form = FormHome.findByPrimaryKey( nIdForm );
             }
+            checkWorkgroupPermission( nIdForm, request );
         }
 
         Locale locale = getLocale( );

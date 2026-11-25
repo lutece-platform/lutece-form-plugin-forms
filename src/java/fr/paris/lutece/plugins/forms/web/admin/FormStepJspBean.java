@@ -84,6 +84,7 @@ import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.web.cdi.mvc.Models;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
+import fr.paris.lutece.portal.web.LocalVariables;
 import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 import fr.paris.lutece.portal.web.util.LocalizedPaginator;
 import fr.paris.lutece.util.ReferenceList;
@@ -457,7 +458,7 @@ public class FormStepJspBean extends AbstractJspBean
      * @return the html code to confirm
      */
     @View( value = VIEW_CONFIRM_REMOVE_STEP, securityTokenAction = ACTION_REMOVE_STEP )
-    public String getConfirmRemoveStep( HttpServletRequest request )
+    public String getConfirmRemoveStep( HttpServletRequest request ) throws AccessDeniedException
     {
         int nId = -1;
 
@@ -475,6 +476,7 @@ public class FormStepJspBean extends AbstractJspBean
         _step = StepHome.findByPrimaryKey( nId );
 
         _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
+        checkWorkgroupPermission( _step.getIdForm( ), request );
 
         if ( _step.isInitial() )
         {
@@ -613,7 +615,7 @@ public class FormStepJspBean extends AbstractJspBean
      * @return The HTML form to update info
      */
     @View( VIEW_MODIFY_STEP )
-    public String getModifyStep( HttpServletRequest request )
+    public String getModifyStep( HttpServletRequest request ) throws AccessDeniedException
     {
         int nIdStep = -1;
         try
@@ -637,6 +639,7 @@ public class FormStepJspBean extends AbstractJspBean
             {
                 _form = FormHome.findByPrimaryKey( nIdForm );
             }
+            checkWorkgroupPermission( nIdForm, request );
 
             Models model = getRequestModel( );
             model.put( FormsConstants.MARK_STEP, _step );
@@ -755,8 +758,33 @@ public class FormStepJspBean extends AbstractJspBean
 
     }
 
+    /**
+     * Downloads a step as a JSON file, when reached through the controller (action doExportJson). The response is taken from the request context: the
+     * MVC parameter binder only provides the request to the controller methods.
+     *
+     * @param request
+     *            The HTTP request
+     * @throws AccessDeniedException
+     *             if the user cannot modify the form of the step
+     */
     @Action( ACTION_EXPORT_STEP )
-    public void doExportJson( HttpServletRequest request, HttpServletResponse response )
+    public void doExportJson( HttpServletRequest request ) throws AccessDeniedException
+    {
+        doExportJson( request, LocalVariables.getResponse( ) );
+    }
+
+    /**
+     * Downloads a step as a JSON file, for a user allowed to modify its form (RBAC permission and workgroup). Called directly by
+     * export/DoExportStepJson.jsp.
+     *
+     * @param request
+     *            The HTTP request
+     * @param response
+     *            The HTTP response the file is written to
+     * @throws AccessDeniedException
+     *             if the user cannot modify the form of the step
+     */
+    public void doExportJson( HttpServletRequest request, HttpServletResponse response ) throws AccessDeniedException
     {
         int nIdStep = -1;
         try
@@ -776,6 +804,8 @@ public class FormStepJspBean extends AbstractJspBean
             {
                 return;
             }
+            checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( step.getIdForm( ) ), FormsResourceIdService.PERMISSION_MODIFY, request, null );
+            checkWorkgroupPermission( step.getIdForm( ), request );
             String content = _formJsonService.jsonExportStep( step.getIdForm( ), step.getId( ) );
             MVCUtils.addDownloadHeaderToResponse( response, FileUtil.normalizeFileName( step.getTitle( ) ) + ".json", "application/json" );
             try ( PrintWriter writer = response.getWriter( ) )

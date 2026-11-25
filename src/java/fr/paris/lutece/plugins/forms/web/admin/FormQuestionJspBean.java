@@ -173,7 +173,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
      * @return The page
      */
     @View( value = VIEW_MANAGE_QUESTIONS, defaultView = true )
-    public String getManageQuestions( HttpServletRequest request )
+    public String getManageQuestions( HttpServletRequest request ) throws AccessDeniedException
     {
         Locale locale = getLocale( );
 
@@ -185,6 +185,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
             return redirectToViewManageForm( request );
         }
         _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
+        checkWorkgroupPermission( _step.getIdForm( ), request );
 
         String strInfoKey = request.getParameter( FormsConstants.PARAMETER_INFO_KEY );
         if ( StringUtils.isNotEmpty( strInfoKey ) )
@@ -218,7 +219,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
      * @return The entry creation page
      */
     @View( VIEW_CREATE_QUESTION )
-    public String getCreateQuestion( HttpServletRequest request )
+    public String getCreateQuestion( HttpServletRequest request ) throws AccessDeniedException
     {
         Models model = initCreateQuestionModel( request );
         if ( model == null )
@@ -227,6 +228,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         }
 
         _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
+        checkWorkgroupPermission( _step.getIdForm( ), request );
         model.put( FormsConstants.MARK_FORM, _form );
         model.put( MARK_ADD_FILE_COMMENT, true );
         model.put( MARK_ACTION, JSP_MANAGE_QUESTIONS );
@@ -245,7 +247,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
      * @return The entry creation page
      */
     @View( value = VIEW_CREATE_GROUP )
-    public String getCreateGroup( HttpServletRequest request )
+    public String getCreateGroup( HttpServletRequest request ) throws AccessDeniedException
     {
 
         Models model = initCreateGroupModel( request );
@@ -254,6 +256,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
             return redirectToViewManageForm( request );
         }
         _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
+        checkWorkgroupPermission( _step.getIdForm( ), request );
         model.put( FormsConstants.MARK_FORM, _form );
 
         setPageTitleProperty( PROPERTY_CREATE_GROUP_TITLE );
@@ -282,7 +285,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
      * @return The entry creation page
      */
     @View( value = VIEW_MODIFY_GROUP )
-    public String getModifyGroup( HttpServletRequest request )
+    public String getModifyGroup( HttpServletRequest request ) throws AccessDeniedException
     {
         Models model = initModifyGroupModel( request );
         if ( model == null )
@@ -291,6 +294,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         }
 
         _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
+        checkWorkgroupPermission( _step.getIdForm( ), request );
         model.put( FormsConstants.MARK_FORM, _form );
 
         setPageTitleProperty( PROPERTY_CREATE_GROUP_TITLE );
@@ -419,7 +423,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
      * @return The entry modification page
      */
     @View( value = VIEW_MODIFY_QUESTION )
-    public String getModifyQuestion( HttpServletRequest request )
+    public String getModifyQuestion( HttpServletRequest request ) throws AccessDeniedException
     {
         Models model = initModifyQuestionModel( request );
         if ( model == null )
@@ -432,6 +436,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         {
             _form = FormHome.findByPrimaryKey( _entry.getIdResource( ) );
         }
+        checkWorkgroupPermission( _entry.getIdResource( ), request );
         model.put( FormsConstants.MARK_FORM, _form );
         model.put( MARK_ADD_FILE_COMMENT, true );
         model.put( MARK_ACTION, JSP_MANAGE_QUESTIONS );

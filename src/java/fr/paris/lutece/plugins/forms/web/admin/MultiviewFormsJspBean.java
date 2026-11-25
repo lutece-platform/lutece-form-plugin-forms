@@ -36,6 +36,9 @@ package fr.paris.lutece.plugins.forms.web.admin;
 import static fr.paris.lutece.plugins.forms.util.FormsConstants.MARK_ID_FORM;
 import static fr.paris.lutece.plugins.forms.util.FormsConstants.PARAMETER_ID_FORM;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -49,6 +52,7 @@ import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import org.apache.commons.collections.CollectionUtils;
@@ -102,11 +106,13 @@ import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.rbac.RBACResource;
 import fr.paris.lutece.portal.service.rbac.RBACService;
+import fr.paris.lutece.portal.service.security.ISecurityTokenService;
+import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.portal.web.LocalVariables;
 import fr.paris.lutece.portal.service.upload.MultipartItem;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.web.cdi.mvc.Models;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
-import fr.paris.lutece.portal.util.mvc.commons.annotations.ResponseBody;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.service.template.HtmlMarkup;
 import fr.paris.lutece.util.filesystem.FileSystemUtil;
@@ -135,6 +141,8 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     // Json responses
     private static final String RESPONSE_SUCCESS = "SUCCESS";
     private static final String RESPONSE_ERROR = "ERROR";
+    private static final String JSON_KEY_STATUS = "status";
+    private static final String JSON_KEY_TOKEN = "token";
 
     // Templates
     private static final String TEMPLATE_FORMS_MULTIVIEW = "admin/plugins/forms/multiview/forms_multiview.html";
@@ -175,6 +183,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     private static final String MARK_LIST_FORMAT_EXPORT = "format_export_list";
     private static final String MARK_LIST_UNIQUE_FILE = "listUniqueFile";
     private static final String MARK_EXPORT_SUCCESS = "export_success";
+    private static final String MARK_REORDER_COLUMNS_TOKEN = "reorder_columns_token";
     // Session variables: shared by the concurrent requests of a session (several tabs, parallel loads), the views and
     // actions that read or rebuild them are synchronized
     private String _strSelectedPanelTechnicalCode = StringUtils.EMPTY;
@@ -193,6 +202,8 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     private FormColumnFactory _formColumnFactory;
     @Inject
     private TemporaryFileGeneratorService _temporaryFileGeneratorService;
+    @Inject
+    private ISecurityTokenService _securityTokenService;
 
     /**
      * Return the view with the responses of all the forms
@@ -314,6 +325,8 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         model.put( MARK_FORM_PANEL_LIST, _listAuthorizedFormPanelDisplay );
         model.put( MARK_CURRENT_SELECTED_PANEL, _strSelectedPanelTechnicalCode );
         model.put( MARK_LIST_FORMAT_EXPORT, ExportServiceManager.getInstance( ).getRefListFormatExport( ) );
+        // CSRF token of the drag and drop reordering of the columns, sent back by the AJAX call
+        model.put( MARK_REORDER_COLUMNS_TOKEN, _securityTokenService.getToken( request, ACTION_REORDER_COLUMNS ) );
 
         if (request.getParameter( FormsConstants.PARAMETER_ACTION_PREFIX + ACTION_EXPORT_RESPONSES )!=null
             && model.get(MVCUtils.MARK_ERRORS)==null)
@@ -743,18 +756,34 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     }
 
     /**
-     * Persists the multiview column order sent by the drag and drop reordering of the response table columns. Called through AJAX : the request holds one
-     * {@code multiview_column_order_<idQuestion>} parameter per question backing a reordered column, whose value is the new order of the column. After
-     * persisting, the cached column list is rebuilt so the new order is reflected on the next reload of the page.
+     * Persists the multiview column order sent by the drag and drop reordering of the response table columns. Called through AJAX (POST on
+     * MultiviewForms.jsp) : the request holds one {@code multiview_column_order_<idQuestion>} parameter per question backing a reordered column, whose value
+     * is the new order of the column, and the CSRF token issued by the multiview view. After persisting, the cached column list is rebuilt so the new order is
+     * reflected on the next reload of the page.
+     * <p>
+     * This controller is not handled by the core CSRF filter (no {@code securityTokenEnabled}), so the token is checked here. A token can be used once : the
+     * response carries a new one, which the page sends with the next reordering.
+     * </p>
+     *
+     * <p>
+     * The JSON is written here and the writer closed, instead of using {@code @ResponseBody} : MultiviewForms.jsp includes the admin header and footer after
+     * the controller, which would append the HTML of the page to the JSON.
+     * </p>
      *
      * @param request
      *         The Http request
-     * @return a JSON response ( SUCCESS or ERROR )
+     * @return null, the JSON response is written to the HTTP response : its result holds the status ( SUCCESS or ERROR ) and, when the request token was
+     *         valid, the token of the next call
      */
     @Action( value = ACTION_REORDER_COLUMNS, securityTokenDisabled = true )
-    @ResponseBody
     public String doReorderMultiviewColumns( HttpServletRequest request )
     {
+        if ( !_securityTokenService.validate( request, ACTION_REORDER_COLUMNS ) )
+        {
+            return writeJson( Map.of( JSON_KEY_STATUS, RESPONSE_ERROR ) );
+        }
+        String strNextToken = _securityTokenService.getToken( request, ACTION_REORDER_COLUMNS );
+
         User user = (User) AdminUserService.getAdminUser( request );
         Map<Integer, Boolean> mapCheckedForms = new HashMap<>( );
 
@@ -794,7 +823,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         }
         catch( AccessDeniedException e )
         {
-            return JsonUtil.buildJsonResponse( new JsonResponse( RESPONSE_ERROR ) );
+            return writeJson( Map.of( JSON_KEY_STATUS, RESPONSE_ERROR, JSON_KEY_TOKEN, strNextToken ) );
         }
 
         // Rebuild the cached column list so the new order is reflected on the next reload of the page, without resetting the active filters. The bean is
@@ -804,7 +833,30 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         _listFormColumn = _formColumnFactory.buildFormColumnList( nIdForm, getLocale( ), user );
         _listFormColumnDisplay = FormDisplayFactory.createFormColumnDisplayList( _listFormColumn );
 
-        return JsonUtil.buildJsonResponse( new JsonResponse( RESPONSE_SUCCESS ) );
+        return writeJson( Map.of( JSON_KEY_STATUS, RESPONSE_SUCCESS, JSON_KEY_TOKEN, strNextToken ) );
+    }
+
+    /**
+     * Writes a JSON response and closes the writer, so that nothing can be added after it
+     *
+     * @param result
+     *         The result of the JSON response
+     * @return null, the response being written
+     */
+    private String writeJson( Map<String, String> result )
+    {
+        HttpServletResponse response = LocalVariables.getResponse( );
+        response.setContentType( JsonUtil.CONTENT_TYPE_JSON );
+        response.setCharacterEncoding( StandardCharsets.UTF_8.name( ) );
+        try ( PrintWriter writer = response.getWriter( ) )
+        {
+            writer.write( JsonUtil.buildJsonResponse( new JsonResponse( result ) ) );
+        }
+        catch( IOException e )
+        {
+            AppLogService.error( "Unable to write the response of the column reordering", e );
+        }
+        return null;
     }
 
     /**
