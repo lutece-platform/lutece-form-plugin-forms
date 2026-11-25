@@ -1,16 +1,84 @@
 <@pageContainer>
 	<@pageColumn>
-		<@pageHeader title='#i18n{forms.adminFeature.manageSearchIndexation.title}'>
+		<#assign pageTitle><span class="avatar avatar-sm bg-purple-lt me-2"><@icon style='file-search' /></span>#i18n{forms.adminFeature.manageSearchIndexation.title}</#assign>
+		<@pageHeader title=pageTitle >
 			<@tform method='get' name='doIndexing' action='jsp/admin/plugins/forms/DoFormsIndexing.jsp'>
 				<@input type='hidden' name='token' value='${token}' />
 				<@button type='submit' buttonIcon='redo' title='#i18n{forms.adminFeature.manageSearchIndexation.buttonDoIndex}' name='total' />
 				<@button type='submit' buttonIcon='sync' title='#i18n{forms.adminFeature.manageSearchIndexation.buttonDoIncrementalIndex}' name='incremental' />
 			</@tform>
 		</@pageHeader>
-
 		<#if logs??>
-			<@pre class="index-logs">${logs}</@pre>
+		<@alert color='info' iconTitle='info-circle' dismissible=true title=logs />
 		</#if>
-
+		<#if full_scheduled!false>
+		<@alert color='warning' iconTitle='clock' title='#i18n{forms.adminFeature.manageSearchIndexation.status.fullScheduled}' />
+		</#if>
+		<@card headerTitle='#i18n{forms.adminFeature.manageSearchIndexation.status.title}' headerClass='' headerIcon='database-search'>
+			<div class="datagrid">
+				<div class="datagrid-item">
+					<div class="datagrid-title">#i18n{forms.adminFeature.manageSearchIndexation.status.index}</div>
+					<div class="datagrid-content">
+					<#if index_exists!false>
+						<span class="status status-green"><span class="status-dot"></span>#i18n{forms.adminFeature.manageSearchIndexation.status.index.available}</span>
+					<#else>
+						<span class="status status-red"><span class="status-dot"></span>#i18n{forms.adminFeature.manageSearchIndexation.status.index.missing}</span>
+					</#if>
+					</div>
+				</div>
+				<div class="datagrid-item">
+					<div class="datagrid-title">#i18n{forms.adminFeature.manageSearchIndexation.status.documents}</div>
+					<div class="datagrid-content">
+						<span class="fw-semibold">${indexed_count!0}</span> / ${responses_count!0} <span class="text-secondary">#i18n{forms.adminFeature.manageSearchIndexation.status.documents.responses}</span>
+						<#if ( responses_count!0 ) gt 0>
+						<#assign indexedPercent = [ ( ( indexed_count!0 ) * 100 / responses_count )?floor, 100 ]?min />
+						<div class="progress progress-sm mt-2" role="progressbar" aria-valuenow="${indexedPercent?c}" aria-valuemin="0" aria-valuemax="100" aria-label="#i18n{forms.adminFeature.manageSearchIndexation.status.documents}">
+							<div class="progress-bar ${( indexedPercent lt 100 )?then( 'bg-warning', 'bg-green' )}" style="width: ${indexedPercent?c}%"></div>
+						</div>
+						</#if>
+					</div>
+				</div>
+				<div class="datagrid-item">
+					<div class="datagrid-title">#i18n{forms.adminFeature.manageSearchIndexation.status.pending}</div>
+					<div class="datagrid-content">
+						<span class="badge ${( ( pending_count!0 ) gt 0 )?then( 'bg-orange-lt', 'bg-secondary-lt' )}">${pending_count!0}</span>
+						<div class="text-secondary small mt-1">#i18n{forms.adminFeature.manageSearchIndexation.status.pending.help}</div>
+					</div>
+				</div>
+				<div class="datagrid-item">
+					<div class="datagrid-title">#i18n{forms.adminFeature.manageSearchIndexation.status.daemon}</div>
+					<div class="datagrid-content">
+					<#if daemon??>
+						<#if daemon.inProgress>
+						<span class="status status-azure"><span class="status-dot status-dot-animated"></span>#i18n{forms.adminFeature.manageSearchIndexation.status.daemon.inProgress}</span>
+						<#elseif daemon.running>
+						<span class="status status-green"><span class="status-dot"></span>#i18n{forms.adminFeature.manageSearchIndexation.status.daemon.running}</span>
+						<#else>
+						<span class="status status-secondary"><span class="status-dot"></span>#i18n{forms.adminFeature.manageSearchIndexation.status.daemon.stopped}</span>
+						</#if>
+						<div class="text-secondary small mt-1"><#if daemon.cron?has_content><code>${daemon.cron}</code><#else>#i18n{forms.adminFeature.manageSearchIndexation.status.daemon.every} ${daemon.interval?c} s</#if></div>
+					<#else>
+						<span class="status status-secondary"><span class="status-dot"></span>#i18n{forms.adminFeature.manageSearchIndexation.status.daemon.stopped}</span>
+					</#if>
+					</div>
+				</div>
+				<div class="datagrid-item">
+					<div class="datagrid-title">#i18n{forms.adminFeature.manageSearchIndexation.status.lastRun}</div>
+					<div class="datagrid-content">
+					<#if daemon?? && daemon.lastRunDate?has_content>
+						${daemon.lastRunDate}<#if daemon.lastRunEndDate?has_content && daemon.lastRunEndDate != daemon.lastRunDate> &rarr; ${daemon.lastRunEndDate}</#if>
+					<#else>
+						<span class="text-secondary">#i18n{forms.adminFeature.manageSearchIndexation.status.lastRun.never}</span>
+					</#if>
+					</div>
+				</div>
+			</div>
+			<#if daemon?? && daemon.lastRunLogs?has_content>
+			<div class="mt-4">
+				<div class="datagrid-title mb-1">#i18n{forms.adminFeature.manageSearchIndexation.status.lastRunLogs}</div>
+				<@pre class='index-logs mb-0'>${daemon.lastRunLogs}</@pre>
+			</div>
+			</#if>
+		</@card>
 	</@pageColumn>
 </@pageContainer>
