@@ -86,6 +86,8 @@ import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.util.AppException;
+import fr.paris.lutece.portal.service.message.AdminMessage;
+import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
@@ -152,6 +154,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
 
     // Messages
     private static final String MESSAGE_ACCESS_DENIED = "Acces denied";
+    private static final String MESSAGE_FORM_RESPONSE_NOT_FOUND = "forms.message.error.formResponse.notFound";
     private static final String MESSAGE_MULTIVIEW_FORM_RESPONSE_TITLE = "forms.multiviewForms.pageTitle";
     private static final String MESSAGE_ACTION_ERROR = "forms.multiviewForms.action.error";
     private static final String MESSAGE_ACTION_LOCKED = "forms.multiviewForms.action.locked";
@@ -182,7 +185,8 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         FormResponse formResponse = FormResponseHome.findByPrimaryKey( nIdFormResponse );
         if ( formResponse == null )
         {
-            throw new AccessDeniedException( MESSAGE_ACCESS_DENIED );
+            // An unknown or removed response: a message, not an access refusal
+            return redirect( request, AdminMessageService.getMessageUrl( request, MESSAGE_FORM_RESPONSE_NOT_FOUND, AdminMessage.TYPE_STOP ) );
         }
 
         if ( FormResponse.STATUS_DELETING == formResponse.getStatus( ) )
