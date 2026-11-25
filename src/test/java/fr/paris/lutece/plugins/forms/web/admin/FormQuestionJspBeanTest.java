@@ -53,6 +53,7 @@ import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.service.FormDatabaseService;
+import fr.paris.lutece.plugins.forms.service.FormBuilderService;
 import fr.paris.lutece.plugins.forms.service.FormDisplayService;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
@@ -79,6 +80,9 @@ public class FormQuestionJspBeanTest extends LuteceTestCase
     private FormDatabaseService _formDatabaseService;
     @Inject
     private FormDisplayService _formDisplayService;
+    // the move of a question is done by the service shared with the form builder (LUT-33718)
+    @Inject
+    private FormBuilderService _formBuilderService;
 
     @BeforeEach
     protected void createQuestion( )
@@ -231,6 +235,7 @@ public class FormQuestionJspBeanTest extends LuteceTestCase
         setField( AdminFeaturesPageJspBean.class, bean, "_locale", Locale.FRENCH );
         setField( FormQuestionJspBean.class, bean, "_formDatabaseService", _formDatabaseService );
         setField( FormQuestionJspBean.class, bean, "_formDisplayService", _formDisplayService );
+        setField( AbstractFormQuestionJspBean.class, bean, "_formBuilderService", _formBuilderService );
         bean._nIdStepTarget = _step.getId( );
         bean._nIdParentTarget = _groupDisplay.getId( );
         return bean;

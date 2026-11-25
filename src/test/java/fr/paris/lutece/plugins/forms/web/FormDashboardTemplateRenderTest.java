@@ -72,9 +72,11 @@ public class FormDashboardTemplateRenderTest
     private static final String MACROS_COMMON = "<#macro adminDashboardWidget rest...><#nested></#macro>"
             + "<#macro listGroup rest...><#nested></#macro><#macro listGroupItem rest...><#nested></#macro>"
             + "<#macro card rest...><#nested></#macro><#macro row rest...><#nested></#macro><#macro div rest...><#nested></#macro>"
+            + "<#macro columns rest...><#nested></#macro><#macro span rest...><span><#nested></span></#macro>"
             + "<#macro h level=1 rest...><h${level}><#nested></h${level}></#macro><#macro icon rest...><span class=\"ti\"></span></#macro>"
             + "<#macro tag rest...><span><#nested></span></#macro><#macro empty rest...><div class=\"empty\"></div></#macro>"
-            + "<#macro link href='' label='' rest...><a href=\"${href}\">${label}<#nested></a></#macro>"
+            + "<#macro link href='' label='' class='' title='' params={} rest...><a href=\"${href}\"<#if class?has_content> class=\"${class}\"</#if>"
+            + "<#list params as key, value> ${key}=\"${value}\"</#list><#if title?has_content> title=\"${title}\"</#if>>${label}<#nested></a></#macro>"
             + "<#macro aButton href='' title='' rest...><a href=\"${href}\" title=\"${title}\"></a></#macro>"
             + "<#macro tform action='' method='' rest...><form action=\"${action}\" method=\"${method}\"><#nested></form></#macro>"
             + "<#macro button id='' title='' dropdownMenu=false rest...><button<#if id?has_content> id=\"${id}\"</#if><#if title?has_content> title=\"${title}\"</#if>"
@@ -84,7 +86,8 @@ public class FormDashboardTemplateRenderTest
             + "<input type=\"${type}\" id=\"${id?has_content?then( id, name )}\" name=\"${name}\" value=\"${value}\"></#macro>";
     private static final String INPUT_ID_LEFT_OUT = "<#macro input name id='' type='text' value='' rest...>"
             + "<input type=\"${type}\"<#if id?has_content> id=\"${id}\"</#if> name=\"${name}\" value=\"${value}\"></#macro>";
-    private static final Pattern MENU_BUTTON = Pattern.compile( "<button([^>]*)data-bs-toggle=\"dropdown\"[^>]*>(.*?)</button>", Pattern.DOTALL );
+    // the toggle of the actions menu, a link or a button carrying data-bs-toggle="dropdown": group 2 its attributes, group 3 its content
+    private static final Pattern MENU_BUTTON = Pattern.compile( "<(a|button)\\b([^>]*\\bdata-bs-toggle=\"dropdown\"[^>]*)>(.*?)</\\1>", Pattern.DOTALL );
     private static final Pattern TITLE = Pattern.compile( "title=\"([^\"]*)\"" );
     private static final Pattern ID = Pattern.compile( "\\sid=\"([^\"]*)\"" );
     private static final String [ ] TITLES = {
@@ -178,11 +181,11 @@ public class FormDashboardTemplateRenderTest
         int nButtons = 0;
         while ( button.find( ) )
         {
-            Matcher title = TITLE.matcher( button.group( 1 ) );
+            Matcher title = TITLE.matcher( button.group( 2 ) );
             assertTrue( title.find( ), "the actions menu button has a title: " + button.group( ) );
             assertTrue( title.group( 1 ).contains( "#i18n{forms.dashboard.labelFormActions}" ), button.group( ) );
             assertTrue( title.group( 1 ).endsWith( TITLES_ESCAPED [nButtons] ), "the title holds the form title as text: " + button.group( ) );
-            assertTrue( button.group( 2 ).contains( TITLES_ESCAPED [nButtons] ), "the name is also written as text in the button: " + button.group( ) );
+            assertTrue( button.group( 3 ).contains( TITLES_ESCAPED [nButtons] ), "the name is also written as text in the button: " + button.group( ) );
             nButtons++;
         }
         assertEquals( TITLES.length, nButtons, strHtml );

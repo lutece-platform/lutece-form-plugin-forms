@@ -40,7 +40,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import fr.paris.lutece.plugins.forms.business.Form;
+import fr.paris.lutece.plugins.forms.business.FormDisplay;
+import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
 import fr.paris.lutece.plugins.forms.business.FormHome;
+import fr.paris.lutece.plugins.forms.business.Question;
+import fr.paris.lutece.plugins.forms.business.QuestionHome;
+import fr.paris.lutece.plugins.forms.business.Step;
+import fr.paris.lutece.plugins.forms.business.StepHome;
+import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
+import fr.paris.lutece.plugins.genericattributes.business.EntryType;
 import fr.paris.lutece.portal.business.rbac.RBACRole;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
@@ -60,6 +69,10 @@ public class FormJspBeanPublicationTest extends LuteceTestCase
     @Inject
     private FormJspBean _bean;
     private Form _form;
+    private Step _step;
+    private Question _question;
+    private FormDisplay _display;
+    private Entry _entry;
 
     /**
      * Creates a form with a maximum number of responses, the counting of the responses and one response by user
@@ -82,7 +95,52 @@ public class FormJspBeanPublicationTest extends LuteceTestCase
     @AfterEach
     protected void removeForm( )
     {
+        if ( _display != null )
+        {
+            FormDisplayHome.remove( _display.getId( ) );
+            QuestionHome.remove( _question.getId( ) );
+            EntryHome.remove( _entry.getIdEntry( ) );
+            StepHome.remove( _step.getId( ) );
+        }
         FormHome.remove( _form.getId( ) );
+    }
+
+    /**
+     * Adds one question at the root of a step of the form, as the question publication screen lists them
+     */
+    private void addQuestion( )
+    {
+        _step = new Step( );
+        _step.setTitle( "Step" );
+        _step.setDescription( "" );
+        _step.setIdForm( _form.getId( ) );
+        _step.setInitial( true );
+        StepHome.create( _step );
+
+        _entry = new Entry( );
+        EntryType entryType = new EntryType( );
+        entryType.setIdType( 1 );
+        _entry.setEntryType( entryType );
+        _entry.setResourceType( Form.RESOURCE_TYPE );
+        _entry.setIdResource( _form.getId( ) );
+        EntryHome.create( _entry );
+
+        _question = new Question( );
+        _question.setIdEntry( _entry.getIdEntry( ) );
+        _question.setTitle( "Question" );
+        _question.setCode( "question" );
+        _question.setColumnTitle( "Question" );
+        _question.setDescription( "" );
+        _question.setIdStep( _step.getId( ) );
+        QuestionHome.create( _question );
+
+        _display = new FormDisplay( );
+        _display.setFormId( _form.getId( ) );
+        _display.setStepId( _step.getId( ) );
+        _display.setCompositeType( "question" );
+        _display.setCompositeId( _question.getId( ) );
+        _display.setParentId( 0 );
+        FormDisplayHome.create( _display );
     }
 
     /**
@@ -125,11 +183,33 @@ public class FormJspBeanPublicationTest extends LuteceTestCase
         user.setRoles( Map.of( ROLE_FORMS_MANAGER, new RBACRole( ROLE_FORMS_MANAGER, ROLE_FORMS_MANAGER ) ) );
         AdminUserUtils.registerAdminUserWithRight( request, user, ModifyEntryJspBean.RIGHT_MANAGE_FORMS );
 
+        addQuestion( );
         String strHtml = _bean.getManageQuestionPublication( request );
 
         assertFalse( strHtml.contains( "js/admin/lib/table/" ) );
         assertFalse( strHtml.contains( "data-toggle=\"table\"" ) );
         assertTrue( strHtml.contains( "id=\"forms-publication-search\"" ) );
         assertTrue( strHtml.contains( "name=\"action_modifyFormQuestions\"" ) );
+    }
+
+    /**
+     * A form without question shows the empty state of the question publication (LUT-33722), still without the v7 table library
+     *
+     * @throws AccessDeniedException
+     *             if the user is not authorized
+     */
+    @Test
+    public void testQuestionPublicationWithoutQuestionShowsTheEmptyState( ) throws AccessDeniedException
+    {
+        MockHttpServletRequest request = new MockHttpServletRequest( );
+        request.addParameter( "id_form", String.valueOf( _form.getId( ) ) );
+        AdminUser user = new AdminUser( );
+        user.setRoles( Map.of( ROLE_FORMS_MANAGER, new RBACRole( ROLE_FORMS_MANAGER, ROLE_FORMS_MANAGER ) ) );
+        AdminUserUtils.registerAdminUserWithRight( request, user, ModifyEntryJspBean.RIGHT_MANAGE_FORMS );
+
+        String strHtml = _bean.getManageQuestionPublication( request );
+
+        assertFalse( strHtml.contains( "js/admin/lib/table/" ) );
+        assertFalse( strHtml.contains( "name=\"action_modifyFormQuestions\"" ) );
     }
 }

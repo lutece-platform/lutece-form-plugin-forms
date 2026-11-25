@@ -39,6 +39,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.Test;
 
@@ -48,8 +50,10 @@ import org.junit.jupiter.api.Test;
 public class ManageFormsTemplateTest
 {
     private static final Path TEMPLATE = Path.of( "webapp/WEB-INF/templates/admin/plugins/forms/manage_forms.html" );
-    private static final String MESSAGES = "<@messages errors=errors infos=infos />";
-    private static final String LIST_NOT_EMPTY = "<#if form_list?size gt 0>";
+    // the messages macro, with or without default values for the lists (LUT-33722 writes errors=errors![] ...)
+    private static final Pattern MESSAGES = Pattern.compile( "<@messages errors=errors(?:!\\[\\])? infos=infos(?:!\\[\\])?" );
+    // the test on the list, written ?size gt 0 or ?has_content
+    private static final Pattern LIST_NOT_EMPTY = Pattern.compile( "<#if form_list\\?(?:size gt 0|has_content)>" );
 
     /**
      * Removing the last form leads to an empty list: its message must still be shown.
@@ -61,8 +65,10 @@ public class ManageFormsTemplateTest
     public void testMessagesAreShownWhenTheListIsEmpty( ) throws IOException
     {
         String strSource = Files.readString( TEMPLATE, StandardCharsets.UTF_8 );
-        int nMessages = strSource.indexOf( MESSAGES );
-        int nListNotEmpty = strSource.indexOf( LIST_NOT_EMPTY );
+        Matcher messages = MESSAGES.matcher( strSource );
+        Matcher listNotEmpty = LIST_NOT_EMPTY.matcher( strSource );
+        int nMessages = messages.find( ) ? messages.start( ) : -1;
+        int nListNotEmpty = listNotEmpty.find( ) ? listNotEmpty.start( ) : -1;
 
         assertTrue( nMessages >= 0, "manage_forms.html shows the messages" );
         assertTrue( nListNotEmpty >= 0, "manage_forms.html tests whether the list is empty" );
