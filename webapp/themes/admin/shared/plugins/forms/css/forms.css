@@ -180,7 +180,6 @@ table.table-hover tbody tr:hover {
 #step-toc { max-width: 25%; }
 
 /* Multiview - Detail view - history timeline */
-/* Multiview - Detail view - history timeline */
 .timeline-form {
 	list-style: none;
 	position: relative;
@@ -195,12 +194,7 @@ table.table-hover tbody tr:hover {
 	bottom: .25rem;
 	width: 2px;
 	background: var(--tblr-border-color);
-	background: var(--tblr-border-color);
 }
-.timeline-form > li { position: relative; margin-bottom: 1rem; }
-.timeline-form > li:last-child { margin-bottom: 0; }
-.timeline-form > li:before {
-	content: '';
 .timeline-form > li { position: relative; margin-bottom: 1rem; }
 .timeline-form > li:last-child { margin-bottom: 0; }
 .timeline-form > li:before {
@@ -210,15 +204,7 @@ table.table-hover tbody tr:hover {
 	top: .3rem;
 	width: .75rem;
 	height: .75rem;
-	left: -1.25rem;
-	top: .3rem;
-	width: .75rem;
-	height: .75rem;
 	border-radius: 50%;
-	background: var(--tblr-bg-surface);
-	border: 2px solid var(--tblr-primary);
-}
-.timeline-form p { margin-bottom: .25rem; }
 	background: var(--tblr-bg-surface);
 	border: 2px solid var(--tblr-primary);
 }
