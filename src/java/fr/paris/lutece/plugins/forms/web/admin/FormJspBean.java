@@ -110,6 +110,7 @@ import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.web.cdi.mvc.Models;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
+import fr.paris.lutece.portal.web.LocalVariables;
 import fr.paris.lutece.portal.web.resource.ExtendableResourcePluginActionManager;
 import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 import fr.paris.lutece.portal.web.util.LocalizedPaginator;
@@ -901,6 +902,7 @@ public class FormJspBean extends AbstractJspBean
         {
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
+        checkWorkgroupPermission( formToBeModified, request );
 
         List<Question> questionList = QuestionHome.getListQuestionByIdForm( formToBeModified.getId( ) );
 
@@ -972,8 +974,32 @@ public class FormJspBean extends AbstractJspBean
 
     }
 
+    /**
+     * Downloads a form as a JSON file, when reached through the controller (action doExportJson). The response is taken from the request context: the
+     * MVC parameter binder only provides the request to the controller methods.
+     *
+     * @param request
+     *            The HTTP request
+     * @throws AccessDeniedException
+     *             if the user cannot modify the form
+     */
     @Action( ACTION_EXPORT_FORM )
-    public void doExportJson( HttpServletRequest request, HttpServletResponse response )
+    public void doExportJson( HttpServletRequest request ) throws AccessDeniedException
+    {
+        doExportJson( request, LocalVariables.getResponse( ) );
+    }
+
+    /**
+     * Downloads a form as a JSON file, for a user allowed to modify it (RBAC permission and workgroup). Called directly by export/DoExportFormJson.jsp.
+     *
+     * @param request
+     *            The HTTP request
+     * @param response
+     *            The HTTP response the file is written to
+     * @throws AccessDeniedException
+     *             if the user cannot modify the form
+     */
+    public void doExportJson( HttpServletRequest request, HttpServletResponse response ) throws AccessDeniedException
     {
         int nId = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
 
@@ -981,6 +1007,9 @@ public class FormJspBean extends AbstractJspBean
         {
             return;
         }
+
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY, request, null );
+        checkWorkgroupPermission( nId, request );
 
         String content;
         try
