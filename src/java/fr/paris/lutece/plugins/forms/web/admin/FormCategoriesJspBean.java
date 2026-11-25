@@ -42,6 +42,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.asynchronousupload.service.IAsyncUploadHandler;
@@ -104,6 +105,7 @@ public class FormCategoriesJspBean extends AbstractJspBean
 
     // Properties
     private static final String MESSAGE_CONFIRM_REMOVE_CATEGORY = "forms.message.confirmRemoveCategory";
+    private static final String MESSAGE_ERROR_CODE_ALREADY_EXISTS = "forms.message.error.formCategory.codeAlreadyExists";
 
     // Other
     @Inject
@@ -168,6 +170,11 @@ public class FormCategoriesJspBean extends AbstractJspBean
 
         if ( !validateBean( formCategory, VALIDATION_ATTRIBUTES_PREFIX ) )
         {
+            return redirectView( request, VIEW_CREATE_CATEGORY );
+        }
+        if ( isCodeAlreadyUsed( formCategory ) )
+        {
+            addError( MESSAGE_ERROR_CODE_ALREADY_EXISTS, getLocale( ) );
             return redirectView( request, VIEW_CREATE_CATEGORY );
         }
 
@@ -263,8 +270,26 @@ public class FormCategoriesJspBean extends AbstractJspBean
         {
             return redirect( request, VIEW_MODIFY_CATEGORY, PARAMETER_ID_CATEGORY, nIdCategory );
         }
+        if ( isCodeAlreadyUsed( formCategory ) )
+        {
+            addError( MESSAGE_ERROR_CODE_ALREADY_EXISTS, getLocale( ) );
+            return redirect( request, VIEW_MODIFY_CATEGORY, PARAMETER_ID_CATEGORY, nIdCategory );
+        }
         FormCategoryHome.update( formCategory );
         addInfo( INFO_CATEGORY_UPDATED, getLocale( ) );
         return redirectView( request, VIEW_MANAGE_CATEGORY );
+    }
+
+    /**
+     * Tells whether another category already carries the code of the given category
+     *
+     * @param formCategory
+     *            The category to check
+     * @return true if the code is used by another category
+     */
+    private static boolean isCodeAlreadyUsed( FormCategory formCategory )
+    {
+        return FormCategoryHome.getFormCategoryList( ).stream( )
+                .anyMatch( other -> other.getId( ) != formCategory.getId( ) && StringUtils.equalsIgnoreCase( other.getCode( ), formCategory.getCode( ) ) );
     }
 }
