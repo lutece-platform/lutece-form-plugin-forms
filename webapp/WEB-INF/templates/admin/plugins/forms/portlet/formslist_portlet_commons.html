@@ -57,6 +57,9 @@ function moveItem( sourceList, targetList ) {
 }
 
 let alreadySubmitted = false;
+// The selection is kept on the server by the updates below: the form is submitted once they have all been recorded,
+// a quick submit right after a move would otherwise save the previous selection
+const pendingUpdates = new Set( );
 document.addEventListener( "DOMContentLoaded", function(){
     const form = document.getElementById('form-portlet');
     form.addEventListener('submit', (e) => {
@@ -65,6 +68,11 @@ document.addEventListener( "DOMContentLoaded", function(){
         return;
       }
       alreadySubmitted = true;
+      if ( pendingUpdates.size > 0 ) {
+        e.preventDefault();
+        const submitter = e.submitter;
+        Promise.allSettled( [ ...pendingUpdates ] ).then( ( ) => form.requestSubmit ? submitWith( form, submitter ) : form.submit( ) );
+      }
     });
 
     const formAvailable = document.querySelector("#form-available");
@@ -111,12 +119,24 @@ function setFormsListDraggable( formAvailable, formPublished ){
     });
 }
 
+// Submit again once the updates are recorded, with the button first clicked (its name and value are part of the post)
+function submitWith( form, submitter ) {
+  alreadySubmitted = false;
+  form.requestSubmit( submitter && submitter.form === form ? submitter : undefined );
+}
+
+function trackUpdate( url ) {
+  const update = fetch( url ).finally( ( ) => pendingUpdates.delete( update ) );
+  pendingUpdates.add( update );
+  return update;
+}
+
 async function doAddForm( formId ){
-  await fetch(`<#noparse>${baseUrl}jsp/admin/plugins/forms/DoUpdateFormsList.jsp?form_id=${formId}&action=add</#noparse>`)
+  await trackUpdate(`<#noparse>${baseUrl}jsp/admin/plugins/forms/DoUpdateFormsList.jsp?form_id=${formId}&action=add</#noparse>`)
 }
 
 async function doDeleteForm( formId ) {
-  await fetch(`<#noparse>${baseUrl}jsp/admin/plugins/forms/DoUpdateFormsList.jsp?form_id=${formId}&action=remove</#noparse>`)
+  await trackUpdate(`<#noparse>${baseUrl}jsp/admin/plugins/forms/DoUpdateFormsList.jsp?form_id=${formId}&action=remove</#noparse>`)
 }
 </script>
 </#macro>
