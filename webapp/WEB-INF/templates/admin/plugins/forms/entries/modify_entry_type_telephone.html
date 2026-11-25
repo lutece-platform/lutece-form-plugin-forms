@@ -1,5 +1,5 @@
 <#include "all_entry_commons.html" />
-<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
+<#assign placeholder = getFieldValueByCode(entry, "placeholder")!'' >
 <#assign field = getFieldByCode( entry, "autocomplete" ) >
 <@editFields editor=true datalist=['on','off','tel','tel-national'] labelErrorMessage=true image=true exportable=entry.exportable exportablePdf=entry.exportablePdf anonym=true placeholder=placeholder >
 <@formGroup labelFor='defaultRegion' labelKey='#i18n{forms.create_entry.labelDefaultRegion}' helpKey='#i18n{forms.create_entry.labelHelpMessageDefaultRegion}' rows=2>

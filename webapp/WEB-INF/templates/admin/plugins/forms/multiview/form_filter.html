@@ -1,33 +1,26 @@
 <#if filter_list?has_content>
-<@formGroup formStyle='inline' class='forms-filter w-100 order-3' labelKey='${filter_label!}' labelFor=filter_name rows=2>
+<@formGroup labelKey='${filter_label!}' labelFor=filter_name rows=2>
 <#assign filterCodes = filter_list?filter(f -> f.code != '-1')?map(f -> f.code)?join(";") >
-<@div class="dropdown">
-	<button class="btn btn-outline-secondary dropdown-toggle dropdown-select" type="button" id="${filter_name!}_button" data-bs-toggle="dropdown" aria-expanded="false">${filter_label!}</button>
-	<ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton" id="${filter_name!}_checkboxes_group">
+<#assign toggleParams = {"data-bs-toggle": "dropdown", "aria-expanded": "false"} />
+<#assign menuParams = {"aria-labelledby": "${filter_name!}_button"} />
+<@div class='dropdown'>
+	<@button id='${filter_name!}_button' color='outline-secondary' class='dropdown-toggle dropdown-select' title='${filter_label!}' params=toggleParams />
+	<@ul class='dropdown-menu w-100' id='${filter_name!}_checkboxes_group' params=menuParams>
 		<#list filter_list as item>
-			<#assign optSelected=false >
-			<#if filter_list_value?has_content && filter_list_value?split(";")?seq_contains(item.code) ><#assign optSelected=true ></#if>
-			<#if item?index == 0>
-				<li>
-					<div class="dropdown-item">
-						<div class="form-check">
-							<input name="${filter_name!}" class="form-check-input" type="checkbox" id="all_${filter_name!}" <#if optSelected>checked</#if> value="${filterCodes}">
-							<p id="${filter_name!}_select_all_filters" class="form-check-label d-inline">#i18n{forms.multiviewForms.form_filter.select_all}</p>
-						</div>
-					</div>
-				</li>
-			<#else>
-				<li>
-					<div class="dropdown-item">
-						<div class="form-check">
-							<input name="${filter_name!}" class="form-check-input" type="checkbox" value="${item.code}" id="${item.name!}" <#if optSelected>checked</#if> >
-							<label class="form-check-label d-inline" for="${item.name!}">${item.name!}</label>
-						</div>
-					</div>
-				</li>
-			</#if>
+			<#assign optSelected = filter_list_value?has_content && filter_list_value?split(";")?seq_contains(item.code) >
+			<@li>
+				<@div class='dropdown-item'>
+				<#if item?index == 0>
+					<@checkBox orientation='switch' name='${filter_name!}' id='all_${filter_name!}' value='${filterCodes}' checked=optSelected>
+						<@span id='${filter_name!}_select_all_filters'>#i18n{forms.multiviewForms.form_filter.select_all}</@span>
+					</@checkBox>
+				<#else>
+					<@checkBox orientation='switch' name='${filter_name!}' id='${filter_name!}_${item?index}' value='${item.code}' labelKey='${item.name!}' checked=optSelected />
+				</#if>
+				</@div>
+			</@li>
 		</#list>
-	</ul>
+	</@ul>
 </@div>
 </@formGroup>
 </#if>

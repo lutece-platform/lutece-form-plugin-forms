@@ -1,6 +1,5 @@
-<@messages errors=errors />
-<@messages infos=infos />
-<@div class='d-flex justify-content-end mb-3'>
+<@messages errors=errors![] infos=infos![] />
+<@div class='d-flex justify-content-end mb-3 p-3'>
 	<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyConditionControl&id_step=${step.id}&id_target=${id_target?c}&control_type=${control_type}&id_control_group=${id_control_group!}' buttonIcon='plus' title='#i18n{forms.manage_questions.action.addControl}' />
 </@div>
 <#if condition_control_list?size gt 0>
@@ -31,7 +30,5 @@
 		</@tform>
 	</@div>
 <#else>  
-	<@box>
-		<@empty title='#i18n{forms.manage_condition_control.labelNoConditionControl}' />
-	</@box>
+	<@empty title='#i18n{forms.manage_condition_control.labelNoConditionControl}' />
 </#if> 

@@ -1,13 +1,15 @@
+<#assign bc>
+<@formBreadCrumb homeLabel=true  /> 
+</#assign>
 <@tform class='form' method='post' name='create_form' action='jsp/admin/plugins/forms/ManageForms.jsp'  enctype="multipart/form-data">
 <@pageContainer>
 	<@pageColumn>
-		<@pageHeader title='#i18n{forms.create_form.title}' />
-		<@formBreadCrumb homeLabel=true  /> 
+		<@pageHeader title='#i18n{forms.create_form.title}' breadcrumb=bc />
 		<@formModel type='create' />
-		<@bottomFormFixedButtons>
-			<@headerButton name='action_createForm' label='forms.create_form.buttonValidate' /> 
-			<@aButton href='jsp/admin/plugins/forms/ManageForms.jsp' title='#i18n{portal.admin.message.buttonCancel}' color='secondary' buttonIcon='arrow-back' />
-		</@bottomFormFixedButtons>
+		<@formActionsBar>
+			<@aButton href='jsp/admin/plugins/forms/ManageForms.jsp' title='#i18n{portal.util.labelCancel}' color='light' buttonIcon='x' />
+			<@button type='submit' name='action_createForm' buttonIcon='check' title='#i18n{forms.create_form.buttonValidate}' color='primary' />
+		</@formActionsBar>
 	</@pageColumn>
 </@pageContainer>
 </@tform>

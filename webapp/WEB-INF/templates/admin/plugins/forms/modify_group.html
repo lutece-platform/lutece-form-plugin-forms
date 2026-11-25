@@ -1,15 +1,18 @@
 <#include "/admin/util/editor/editor.html" />
 <#assign stepTitle=step.title!?replace("- hidden","") />
 <#assign iterationAccordionCollapsed=( group.iterationMax gt 1  )?then(false,true) />
+<#assign bc>
 <@formBreadCrumb>
 	<@breadcrumbItem><@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${step.idForm}' title='#i18n{forms.create_form.button.backForm}'>${form.title}</@link></@breadcrumbItem>
 	<@breadcrumbItem><@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='#i18n{forms.create_form.button.backStep}'>${stepTitle}</@link></@breadcrumbItem>
 	<@breadcrumbItem class='active'>#i18n{forms.create_group.title}</@breadcrumbItem>
 </@formBreadCrumb>
+</#assign>
 <@pageContainer>
     <@pageColumn>
+		<@pageHeader title='#i18n{forms.modify_group.title}' breadcrumb=bc />
 		<@pageHeader title='#i18n{forms.modify_group.title}' />
-		<@tform method="post" name="modify_group" id="modify_group" action="jsp/admin/plugins/forms/ManageQuestions.jsp">
+		<@tform class='p-3' method="post" name="modify_group" id="modify_group" action="jsp/admin/plugins/forms/ManageQuestions.jsp">
 			<@messages errors=errors />
 			<@input type='hidden' id='id_form' name='id_form' value='${step.idForm}' />
 			<@input type='hidden' id='id_step' name='id_step' value='${step.id}' />
@@ -27,26 +30,26 @@
 				<@accordion id='iterate_group' title='#i18n{forms.create_group.buttonManageIteration}' icon='number' collapsed=iterationAccordionCollapsed>
 					<@row id='iteration_group'>
 						<@columns> 
-							<@formGroup rows=2  labelFor='iterationMin' labelKey='#i18n{forms.create_group.labelIterationMin}' helpKey='#i18n{forms.create_group.labelIterationMin.help}' rows=2>
+							<@formGroup labelFor='iterationMin' labelKey='#i18n{forms.create_group.labelIterationMin}' helpKey='#i18n{forms.create_group.labelIterationMin.help}' rows=2>
 								<@row>
 									<@columns lg=3>
 										<@input type='number' name='iterationMin' value='${group.iterationMin!}' min=1 max=99 />
 									</@columns>
 								</@row>
 							</@formGroup>
-							<@formGroup rows=2  labelFor='iterationAddLabel' labelKey='#i18n{forms.create_group.labelIterationAddLabel}' helpKey='#i18n{forms.create_group.labelIterationAddLabel.help}' rows=2>
+							<@formGroup labelFor='iterationAddLabel' labelKey='#i18n{forms.create_group.labelIterationAddLabel}' helpKey='#i18n{forms.create_group.labelIterationAddLabel.help}' rows=2>
 								<@input type='text' name='iterationAddLabel' value='${group.iterationAddLabel!}' />
 							</@formGroup>
 						</@columns>
 						<@columns>
-							<@formGroup rows=2  labelFor='iterationMax' labelKey='#i18n{forms.create_group.labelIterationMax}' helpKey='#i18n{forms.create_group.labelIterationMax.help}' rows=2>
+							<@formGroup labelFor='iterationMax' labelKey='#i18n{forms.create_group.labelIterationMax}' helpKey='#i18n{forms.create_group.labelIterationMax.help}' rows=2>
 								<@row>
 									<@columns lg=2>
 										<@input type='number' name='iterationMax' value='${group.iterationMax!}' min=0 max=99 />
 									</@columns>
 								</@row>
 							</@formGroup>
-							<@formGroup rows=2  labelFor='iterationRemoveLabel' labelKey='#i18n{forms.create_group.labelIterationRemoveLabel}' helpKey='#i18n{forms.create_group.labelIterationRemoveLabel.help}' rows=2>
+							<@formGroup labelFor='iterationRemoveLabel' labelKey='#i18n{forms.create_group.labelIterationRemoveLabel}' helpKey='#i18n{forms.create_group.labelIterationRemoveLabel.help}' rows=2>
 								<@input type='text' name='iterationRemoveLabel' value='${group.iterationRemoveLabel!}' />
 							</@formGroup> 
 						</@columns>

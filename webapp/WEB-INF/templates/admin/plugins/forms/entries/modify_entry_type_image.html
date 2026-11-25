@@ -7,7 +7,7 @@
 	<@input type='text' name='max_files' id='max_files' value=getMaxFiles(entry) maxlength=2 />
 </@formGroup>
 <@formGroup rows=2>
-	<@checkBox labelFor='export_binary' labelKey='#i18n{forms.create_entry.labelExportBinary}' labelKey='#i18n{forms.create_entry.labelExportBinaryComment}' name='export_binary' id='export_binary' value='1' checked=exportBinary( entry ) />
+	<@checkBox labelKey='#i18n{forms.create_entry.labelExportBinaryComment}' name='export_binary' id='export_binary' value='1' checked=exportBinary( entry ) />
 	<@tag color='warning'>#i18n{forms.create_entry.labelExportBinaryWarning}</@tag>
 </@formGroup>
 </@editFields>

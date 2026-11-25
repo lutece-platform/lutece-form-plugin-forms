@@ -1,9 +1,8 @@
 <#include "all_entry_commons.html" />
-${breadcrumb_template}
+${breadcrumb_template?no_esc}
 <@row>
 	<@columns>
 		<@box color='primary'>
-			<@boxHeader title='#i18n{forms.create_entry.titleQuestion} : "${form.title}"' />
 			<@boxBody>
 				<@tform action="${action}">
 					<@fieldSet legend='#i18n{forms.create_entry.titleQuestion} : "${form.title}"' hideLegend=['all']>
@@ -13,9 +12,7 @@ ${breadcrumb_template}
 							</#if>
 							<@input type='hidden' name='id_parent' value='${id_parent!"0"}' />
 							<@input type='hidden' name='id_step' value='${step.id!"0"}' />
-							<@formGroup labelFor='type' labelKey='#i18n{forms.create_entry.labelType}'>
-								<@staticText><@tag color='info'>${entry.entryType.title}</@tag></@staticText>
-							</@formGroup>
+							<@columnField />
 							<@formGroup labelFor='title' labelKey='#i18n{forms.create_entry.labelTitle}' helpKey='#i18n{forms.create_entry.labelTitleComment}' mandatory=true>
 								<@input type='text' name='title' id='title' value='' maxlength=255 />
 							</@formGroup>
@@ -29,7 +26,7 @@ ${breadcrumb_template}
 								<@input type='textarea' name='comment' id='comment'></@input>
 							</@formGroup>
 							<@formGroup>
-								<@checkBox orientation='switch' labelFor='use_ref_list' labelKey='#i18n{forms.create_entry.labelUseRefList}' name='use_ref_list' id='use_ref_list' value='1' />
+								<@checkBox orientation='switch' labelKey='#i18n{forms.create_entry.labelUseRefList}' name='use_ref_list' id='use_ref_list' value='1' />
 							</@formGroup>
 							<@formGroup labelFor='select_ref_list' id="use_ref_list_group" labelKey='#i18n{forms.create_entry.labelUseRefListSelect}' >
 								<@select name='select_ref_list' items=ref_list_select />
@@ -43,13 +40,13 @@ ${breadcrumb_template}
 								</@select>
 							</@formGroup>
 							<@formGroup>
-								<@checkBox orientation='switch' labelFor='mandatory' labelKey='#i18n{forms.create_entry.labelMandatory}'name='mandatory' id='mandatory' value='1' checked=getChecked('mandatory',list_param_default_values) />
+								<@checkBox orientation='switch' labelKey='#i18n{forms.create_entry.labelMandatory}'name='mandatory' id='mandatory' value='1' checked=isFormsParamChecked('mandatory',list_param_default_values) />
 							</@formGroup>
 							<@formGroup labelFor='errorMessage' labelKey='#i18n{forms.create_entry.labelMandatoryErrorMessage}' helpKey='#i18n{forms.create_entry.labelMandatoryErrorMessageHelp}'>
 								<@input type='textarea' name='errorMessage' id='errorMessage'></@input>
 							</@formGroup>
 							<@formGroup>
-								<@checkBox orientation='switch' labelFor='only_display_in_back' labelKey='#i18n{forms.create_entry.labelOnlyDisplayBack}' name='only_display_in_back' id='only_display_in_back' value='1' />
+								<@checkBox orientation='switch' labelKey='#i18n{forms.create_entry.labelOnlyDisplayBack}' name='only_display_in_back' id='only_display_in_back' value='1' />
 							</@formGroup>
 							<@formGroup labelFor='css_class' labelKey='#i18n{forms.create_entry.labelCSSClass}' helpKey='#i18n{forms.create_entry.labelCSSClassComment}'>
 								<@input type='text' name='css_class' value='' maxlength=255 />
@@ -58,9 +55,9 @@ ${breadcrumb_template}
 								<@checkBox orientation='switch' name='disabled' id='disabled' labelKey='#i18n{forms.create_entry.labelDisableQuestion}' value='1' />
 							</@formGroup>
 							<@formGroup>
-								<@button type='submit' name='action_createQuestion' buttonIcon='save' title='#i18n{forms.modify_entry.buttonSave}' hideTitle=['xs'] />
+								<@button type='submit' name='action_createQuestion' buttonIcon='device-floppy' title='#i18n{forms.modify_entry.buttonSave}' hideTitle=['xs'] />
 								<@button type='submit' name='action_createQuestionAndManageEntries' buttonIcon='check' title='#i18n{forms.create_entry.buttonApplyAndManageResponse}' showTitleXs=false size='' />
-								<@button type='cancel' name='view_manageQuestions' buttonIcon='close' title='#i18n{forms.create_entry.buttonCancel}' hideTitle=['xs'] color='default' cancel=true />
+								<@button type='cancel' name='view_manageQuestions' buttonIcon='x' title='#i18n{forms.create_entry.buttonCancel}' hideTitle=['xs'] color='light' cancel=true />
 							</@formGroup>
 					</@fieldSet>
 				</@tform>

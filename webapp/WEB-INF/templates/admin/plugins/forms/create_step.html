@@ -1,10 +1,15 @@
-<@tform method='post' name='create_step' id='create_step' action='jsp/admin/plugins/forms/ManageSteps.jsp' params={"target": "_top"}>
+<@pageContainer>
+<@pageColumn>
+<@pageHeader title='#i18n{forms.manage_steps.buttonAdd}'>
+    <@aButton href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${step.idForm}' buttonIcon='arrow-left' title='#i18n{portal.util.labelBack}' color='light' />
+</@pageHeader>
+<@tform method='post' name='create_step' id='create_step' action='jsp/admin/plugins/forms/ManageSteps.jsp' boxed=true params={"target": "_top"}>
 <@input type='hidden' id='id_form' name='id_form' value=step.idForm />
-<@formGroup labelFor='title' labelKey='#i18n{forms.create_step.labelTitle}' helpKey='#i18n{forms.create_step.labelTitle.help}' mandatory=true  rows=2 >
+<@formGroup labelFor='title' labelKey='#i18n{forms.create_step.labelTitle}' helpKey='#i18n{forms.create_step.labelTitle.help}' mandatory=true rows=2 >
     <@input type='text' name='title' id='step-title' value='${step.title!}' />
 </@formGroup>
 <@formGroup helpKey='#i18n{forms.modify_step.labelTitleDisplayed.help}' rows=2>
-    <@checkBox orientation='switch' labelKey='#i18n{forms.modify_step.labelTitleDisplayed}' labelFor='titleDisplayed' name='titleDisplayed' id='titleDisplayed' value='1' checked=true />
+    <@checkBox orientation='switch' labelKey='#i18n{forms.modify_step.labelTitleDisplayed}' name='titleDisplayed' id='titleDisplayed' value='1' checked=true />
 </@formGroup>
 <@formGroup labelFor='description' labelKey='#i18n{forms.create_step.labelDescription}' helpKey='#i18n{forms.create_step.labelDescription.help}'  rows=2 >
     <@input type='textarea' name='description'>${step.description!}</@input>
@@ -12,12 +17,12 @@
 <@row>
     <@columns>
         <@formGroup labelFor='initial' labelKey='#i18n{forms.create_step.labelInitial}' helpKey='#i18n{forms.create_step.labelInitial.help}' hideLabel=['all'] rows=2>
-            <@checkBox labelFor='initial'labelKey='#i18n{forms.create_step.labelInitial}' name='initial' id='initial' value='1' checked=(step?has_content && step.initial) />
+            <@checkBox orientation='switch' labelKey='#i18n{forms.create_step.labelInitial}' name='initial' id='initial' value='1' checked=(step?has_content && step.initial) />
         </@formGroup>
     </@columns>
     <@columns>
         <@formGroup labelFor='final' labelKey='#i18n{forms.create_step.labelFinal}' helpKey='#i18n{forms.create_step.labelFinal.help}' hideLabel=['all'] rows=2>
-            <@checkBox labelFor='final' labelKey='#i18n{forms.create_step.labelFinal}' name='final' id='final' value='1' checked=(step?has_content && step.final) />
+            <@checkBox orientation='switch' labelKey='#i18n{forms.create_step.labelFinal}' name='final' id='final' value='1' checked=(step?has_content && step.final) />
         </@formGroup>
     </@columns>
 </@row>
@@ -27,3 +32,5 @@
 </@formGroup>
 <@formsButton okAction='createStep' viewAction='manageSteps' />
 </@tform>
+</@pageColumn>
+</@pageContainer>

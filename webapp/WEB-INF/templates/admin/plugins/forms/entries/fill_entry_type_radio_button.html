@@ -1,4 +1,4 @@
-<@formGroup class='${entry.CSSClass!}' labelFor='form${entry.idEntry}' labelKey='${entry.title}' helpKey=entry.helpMessage!'' id='form${entry.idEntry}' mandatory=entry.mandatory htmlRequired=false  rows=2>
+<@formGroup class='${entry.CSSClass!}' labelFor='form${entry.idEntry}' labelKey='${entry.title}' helpKey=entry.helpMessage!'' id='form${entry.idEntry}' mandatory=entry.mandatory rows=2>
 <#assign inLine = entry.fieldInLine>
 <#list entry.fields as field>
   <#if field.code == 'answer_choice'>

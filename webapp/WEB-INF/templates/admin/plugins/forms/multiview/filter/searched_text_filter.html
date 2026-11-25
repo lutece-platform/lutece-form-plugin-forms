@@ -1,7 +1,7 @@
 <#if searched_text??><#assign previous_searched_text=searched_text><#else><#assign previous_searched_text=''></#if>
-<#-- The help is written under the field and describes it (formGroup helpKey), not shown on hover -->
-<@formGroup formStyle='inline' groupStyle='addons' class='forms-filter  w-100 order-1' id='search-text' labelKey='#i18n{forms.multiviewForms.labelFilter.searchText}' labelFor='searched_text' helpKey='#i18n{forms.multiviewForms.labelFilter.searchText.tooltip}' rows=2>
-    <@inputGroup>
-        <@input name='searched_text' id='searched_text' value=previous_searched_text placeHolder='#i18n{forms.multiviewForms.labelFilter.searchText}' />
-    </@inputGroup>
+<@formGroup id='search-text' labelKey='#i18n{forms.multiviewForms.labelFilter.searchText}' labelFor='searched_text' helpKey='#i18n{forms.multiviewForms.labelFilter.searchText.hint}' rows=2>
+	<@inputGroup>
+		<@inputGroupItem pos='prepend' type='text'><@icon style='search' /></@inputGroupItem>
+		<@input type='search' name='searched_text' id='searched_text' value=previous_searched_text placeHolder='#i18n{forms.multiviewForms.labelFilter.searchText.placeholder}' params={"aria-describedby": "help_searched_text"} />
+	</@inputGroup>
 </@formGroup>

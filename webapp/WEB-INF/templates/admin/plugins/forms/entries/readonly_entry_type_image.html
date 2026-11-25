@@ -4,7 +4,7 @@
 	<@span class='fw-bold' id='label_${idName!}'>${entry.title!''} :</@span>
 	<#if list_responses?has_content>
 		<@p>
-			<@span class='ms-xs font-italic'>#i18n{forms.entry.files.labelNumberOfFiles}</@span> 
+			<@span class='ms-xs fst-italic'>#i18n{forms.entry.files.labelNumberOfFiles}</@span> 
 			<@span class='fw-bold'>${list_responses?size}</@span>
 			<@button title='#i18n{forms.entry.files.labelHideUploadedFiles}' id='btn-${idName!}' class='primary btn-show-files btn-sm ms-3' params={"data-hide": "#i18n{forms.entry.files.labelHideUploadedFiles}", "data-show": "#i18n{forms.entry.files.labelShowUploadedFiles}", "aria-expanded": "true", "aria-controls": "list_${idName!}", "aria-labelledby": "label_${idName}"} />
 		</@p>
@@ -25,7 +25,7 @@
 				</#if>
 			</#if>
 			<@li>
-				<@span class='font-italic'>${response.file.title!} - ${octetNumber?string["0.##"]} ${octetUnit!} ,</@span>
+				<@span class='fst-italic'>${response.file.title!} - ${octetNumber?string["0.##"]} ${octetUnit!} ,</@span>
 				<#if response.file.mimeType?? && response.file.mimeType?contains('image')>
 					<#if response.file.url?? && response.file.url != ''>
 						<@img url='${response.file.url}' alt='${response.file.title}' class='img-fluid img-thumbnail ms-xs forms-mh-200'/>
@@ -49,6 +49,6 @@
 			});
 		</script>
 	<#else>
-		<@span class='ms-xs font-italic'>#i18n{portal.util.labelNoItem}</@span>	
+		<@span class='ms-xs fst-italic'>#i18n{portal.util.labelNoItem}</@span>	
 	</#if>
 </@li>

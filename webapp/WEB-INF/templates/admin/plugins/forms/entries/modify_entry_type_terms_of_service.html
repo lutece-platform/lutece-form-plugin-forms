@@ -2,7 +2,7 @@
 <#assign fieldLink = getFieldByCode( entry, "link" ) >
 <#assign fieldTos = getFieldByCode( entry, "tos" ) >			
 <@editFields editor=true exportable=entry.exportable exportablePdf=entry.exportablePdf helpMessage=false comments=false >
-<@formGroup labelFor='link' labelKey='#i18n{forms.entryType.termsOfService.labelLink}' helpKey='#i18n{forms.entryType.termsOfService.labelLink.help}' mandatory=true  rows=2>
+<@formGroup labelFor='link' labelKey='#i18n{forms.entryType.termsOfService.labelLink}' helpKey='#i18n{forms.entryType.termsOfService.labelLink.help}' mandatory=true rows=2>
 	<@input type='text' name='link' id='link' value='${fieldLink.value}' maxlength=255 />
 </@formGroup>
 <@formGroup labelFor='tos' labelKey='#i18n{forms.entryType.termsOfService.labelTermsOfService}' mandatory=true >

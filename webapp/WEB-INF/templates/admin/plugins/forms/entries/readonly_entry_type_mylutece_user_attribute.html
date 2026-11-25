@@ -1,10 +1,10 @@
 <#if mylutece_user_login?? && mylutece_user_infos_list?has_content>
     <@row>
-		<@columns sm=3><@p class='text-right font-weight-bold'>#i18n{forms.entryType.myLuteceUser.labelLogin}</@p></@columns>
+		<@columns sm=3><@p class='text-end fw-bold'>#i18n{forms.entryType.myLuteceUser.labelLogin}</@p></@columns>
 		<@columns sm=9>
 			<#list mylutece_user_infos_list as user_info>
 				<@row>
-					<@columns sm=3><@p class='text-right font-weight-bold'>#i18n{portal.security.${user_info.code}}</@p></@columns>
+					<@columns sm=3><@p class='text-end fw-bold'>#i18n{portal.security.${user_info.code}}</@p></@columns>
 					<@columns sm=9>
 						<@p>${user_info.name}</@p>
 					</@columns>
@@ -14,7 +14,7 @@
     </@row>
 <#else>
 	<@row>
-		<@columns sm=3><@p class='text-right font-weight-bold'>${entry.title!''}</@p></@columns>
+		<@columns sm=3><@p class='text-end fw-bold'>${entry.title!''}</@p></@columns>
 		<@columns sm=9>
 		<#if list_responses?has_content>
 			<#list list_responses as response>

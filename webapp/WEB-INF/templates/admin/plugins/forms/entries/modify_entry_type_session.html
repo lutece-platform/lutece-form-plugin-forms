@@ -1,2 +1,10 @@
 <#include "all_entry_commons.html" />
-<@editFields required=false onlyInBack=false />
+<@editFields required=false onlyInBack=false>
+<#-- The session attribute: the save refuses a request without it -->
+<@formGroup rows=2 labelFor='mandatory' labelKey='#i18n{forms.create_entry.labelMandatory}' helpKey='#i18n{forms.create_entry.labelMandatoryCommentForEntryTypeSession}'>
+	<@checkBox orientation='switch' name='mandatory' id='mandatory' value='1' checked=entry.mandatory labelKey='#i18n{forms.create_entry.labelMandatory}' />
+</@formGroup>
+<@formGroup rows=2 labelFor='value' labelKey='#i18n{forms.create_entry.labelAttributeName}' helpKey='#i18n{forms.create_entry.labelAttributeNameComment}' mandatory=true>
+	<@input type='text' name='value' id='value' value=( getFieldByCode( entry, 'attribute_name' ).value )!'' maxlength=255 />
+</@formGroup>
+</@editFields>

@@ -1,36 +1,24 @@
-<@h level=2>#i18n{forms.multiviewForms.view_record_history.title}</@h>
+<@h level=3 class='card-title mb-3'>#i18n{forms.multiviewForms.view_record_history.title}</@h>
 <#if resource_actions?has_content && history_information_list?has_content>
-<#assign defaultUserFrontId=5>
-<@ul class="timeline-form">
+<@ul class='timeline-form'>
 <#list history_information_list as history_information>
-  <@li params={"tabindex": "0"}>
-      <@h level=3 class='h5 text-primary'>${history_information.resource_history.action.description!}
-        <small>${history_information.resource_history.creationDate!}</small>
-      </@h>
-      <#if history_information.task_information_list?size gt 0>
-        <#list history_information.task_information_list as task_information>
-        <@p>${( task_information!'' )?no_esc}</@p>
-        </#list>
-      <#else>
-        <@p>#i18n{forms.multiviewForms.view_record_history.no_information}</@p>
-      </#if>
-      <@p class='text-right'>
-        <#if history_information.user_history?exists>
-          <em>${history_information.user_history.firstName!} ${history_information.user_history.lastName!}</em>
-          <#if adminAvatar>
-            <@img class='fa direct-chat-img' url='servlet/plugins/adminavatar/avatar?id_user=${history_information.user_history.userId!}' alt='Avatar' title='Avatar' params={'aria-hidden': 'true'} />
-          <#else>
-            <@icon style='user' />
-          </#if>
-        <#else>
-          #i18n{forms.multiviewForms.view_record_history.admin_user_undefined} <@icon style='user-times' />
-        </#if>
-      </@p>
-  </@li>
+	<@li>
+		<@p class='fw-medium'>${history_information.resource_history.action.description!}</@p>
+		<@p class='small text-secondary'>${history_information.resource_history.creationDate!} ·
+		<#if history_information.user_history?exists>
+			${history_information.user_history.firstName!} ${history_information.user_history.lastName!}
+		<#else>
+			#i18n{forms.multiviewForms.view_record_history.admin_user_undefined}
+		</#if>
+		</@p>
+		<#if history_information.task_information_list?size gt 0>
+			<#list history_information.task_information_list as task_information>
+			<@div class='small'>${( task_information!'' )?no_esc}</@div>
+			</#list>
+		</#if>
+	</@li>
 </#list>
 </@ul>
 <#else>
-  <@alert color='warning' params={"tabindex": "0"}>
-    <@icon style='exclamation-triangle' /> #i18n{forms.multiviewForms.view_record_history.history_empty}
-  </@alert>
+	<@p class='text-secondary mb-0'>#i18n{forms.multiviewForms.view_record_history.history_empty}</@p>
 </#if>

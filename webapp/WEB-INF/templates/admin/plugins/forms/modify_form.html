@@ -1,21 +1,12 @@
 <#include "/admin/plugins/forms/edit_form_tabs.html" />
+<#assign bc>
+<@formBreadCrumb><@breadcrumbItem>${form.title!}</@breadcrumbItem></@formBreadCrumb>
+</#assign>
 <@pageContainer>
     <@pageColumn>
-		<@pageHeader title=form.title!>
-			<#if form.active>
-				<@button type='button' id='forms-action' title='#i18n{forms.dashboard.row_actions}' buttonIcon='cog me-2' dropdownMenu=true >
-					<@aButton color='default dropdown-item justify-content-start' href='jsp/admin/plugins/forms/ManageFormResponse.jsp?view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.BOLink.label} ${form.title}' buttonIcon='text-plus' />
-					<@aButton color='default dropdown-item justify-content-start' href='${prod_url}jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.FOLink.label} ${form.title} [#i18n{portal.site.portal_footer.newWindow}]' target="_blank" buttonIcon='external-link' />
-					<@aButton color='default dropdown-item justify-content-start' href='jsp/admin/plugins/forms/MultiviewForms.jsp?current_selected_panel=forms&id_form=${form.id}' title='#i18n{forms.manageForm.MultiviewLink.label} [#i18n{portal.site.portal_footer.newWindow}]' target="_blank" buttonIcon='list-alt' />
-					<#if form.breadcrumbName=='forms-breadcrumbaccordion.breadcrumbAccordion'>
-					<@aButton color='default dropdown-item justify-content-start' href='jsp/admin/plugins/forms/modules/breadcrumbaccordion/ManageBreadcrumbAccordion.jsp?view=modifyBreadcrumb&id_form=${form.id}' title='#i18n{module.forms.breadcrumbaccordion.manage_breadcrumbAccordion.title}' buttonIcon='stack' />
-					</#if>
-					<@button type='button' class='default dropdown-item justify-content-start' id='toggleMap' title='#i18n{forms.modify_form.tab.graphicShow}' buttonIcon='sitemap' />
-				</@button>
-				<#if extendableResourceActionsHtml?? && extendableResourceActionsHtml?has_content>${extendableResourceActionsHtml!}</#if>
-			</#if>
+		<@pageHeader title=form.title! breadcrumb=bc>
+			<@formActionsMenu form=form />
 		</@pageHeader>
-		<@formBreadCrumb><@breadcrumbItem>${form.title!}</@breadcrumbItem></@formBreadCrumb>
 		<@tform class='form' id='modify_form' method='post' name='modify_form' action='jsp/admin/plugins/forms/ManageForms.jsp'>
 		<@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
 		<@formTabs tab="general" >
@@ -23,9 +14,9 @@
 			<@tabPanel id='' active=true>
 				<@formModel />
 			</@tabPanel>
-			<@bottomFormFixedButtons>
-				<@headerButton name='action_modifyForm' label='forms.modify_form.buttonValidate' /> 
-			</@bottomFormFixedButtons>
+			<@formActionsBar>
+				<@button type='submit' name='action_modifyForm' buttonIcon='device-floppy' title='#i18n{forms.modify_form.buttonValidate}' color='primary' />
+			</@formActionsBar>
 		</@tabContent>
 		</@formTabs>
 		</@tform>

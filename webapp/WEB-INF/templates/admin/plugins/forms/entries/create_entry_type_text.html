@@ -1,9 +1,8 @@
 <#include "all_entry_commons.html" />
-${breadcrumb_template}
+${breadcrumb_template?no_esc}
 <@row>
 	<@columns>
 		<@box>
-			<@boxHeader title='#i18n{forms.create_entry.titleQuestion} : "${form.title}"' />
 			<@boxBody>
 				<@tform method="post" name="manage_entries" action="${action}" enctype="multipart/form-data">
 					<@fieldSet legend='#i18n{forms.create_entry.titleQuestion} : "${form.title}"' hideLegend=['all']>
@@ -14,9 +13,7 @@ ${breadcrumb_template}
 						</#if>
 						<@input type='hidden' name='id_parent' value='${id_parent!"0"}' />
 						<@input type='hidden' name='id_step' value='${step.id!"0"}' />
-						<@formGroup labelFor='type' labelKey='#i18n{forms.create_entry.labelType}'>
-							<@staticText><@tag color='info'>${entry.entryType.title}</@tag></@staticText>
-						</@formGroup>
+						<@columnField />
 						<@formGroup labelFor='title' labelKey='#i18n{forms.create_entry.labelTitle}' helpKey='#i18n{forms.create_entry.labelTitleComment}' mandatory=true>
 							<@input type='text' name='title' id='title' value='' maxlength=255 />
 						</@formGroup>
@@ -40,7 +37,7 @@ ${breadcrumb_template}
 							<@input type='text' name='value' id='value' />
 						</@formGroup>
 						<@formGroup labelFor='mandatory' labelKey='#i18n{forms.create_entry.labelMandatory}'>
-							<@checkBox orientation='switch' name='mandatory' id='mandatory' value='1' checked=getChecked('mandatory',list_param_default_values) />
+							<@checkBox orientation='switch' name='mandatory' id='mandatory' value='1' checked=isFormsParamChecked('mandatory',list_param_default_values) />
 						</@formGroup>
 						<@formGroup labelFor='errorMessage' labelKey='#i18n{forms.create_entry.labelMandatoryErrorMessage}' helpKey='#i18n{forms.create_entry.labelMandatoryErrorMessageHelp}'>
 							<@input type='textarea' name='errorMessage' id='errorMessage' rows=2></@input>
@@ -49,22 +46,22 @@ ${breadcrumb_template}
 							<@input type='text' name='max_size_enter' id='max_size_enter' value=getName('max_size_enter',list_param_default_values) />
 						</@formGroup>
 						<@formGroup>
-							<@checkBox orientation='switch' labelFor='confirm_field' labelKey='#i18n{forms.create_entry.labelConfirmField}' name='confirm_field' id='confirm_field' value='1' />
+							<@checkBox orientation='switch' labelKey='#i18n{forms.create_entry.labelConfirmField}' name='confirm_field' id='confirm_field' value='1' />
 						</@formGroup>
 						<@formGroup labelFor='confirm_field_title' id="confirm_field_title_group" labelKey='#i18n{forms.create_entry.labelConfirmFieldTitle}' >
 							<@input type='text' name='confirm_field_title' id='confirm_field_title' maxlength=255 />
 						</@formGroup>
 						<@formGroup>
-							<@checkBox orientation='switch' labelFor='only_display_in_back' labelKey='#i18n{forms.create_entry.labelOnlyDisplayBack}' name='only_display_in_back' id='only_display_in_back' value='1' />
+							<@checkBox orientation='switch' labelKey='#i18n{forms.create_entry.labelOnlyDisplayBack}' name='only_display_in_back' id='only_display_in_back' value='1' />
 						</@formGroup>
 						<@formGroup labelFor='css_class' labelKey='#i18n{forms.create_entry.labelCSSClass}' helpKey='#i18n{forms.create_entry.labelCSSClassComment}'>
 							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
 						</@formGroup>
 						<@formGroup helpKey='#i18n{forms.create_entry.labelResponsesIndexedComment}'>
-							<@checkBox orientation='switch' labelFor='is_indexed' labelKey='#i18n{forms.create_entry.labelResponsesIndexed}' name='is_indexed' id='is_indexed' value='1' checked=true />
+							<@checkBox orientation='switch' labelKey='#i18n{forms.create_entry.labelResponsesIndexed}' name='is_indexed' id='is_indexed' value='1' checked=true />
 						</@formGroup>
 						<@formGroup>
-							<@checkBox orientation='switch' labelFor='anonymizable' labelKey='#i18n{forms.create_entry.labelAnonymizable}' name='anonymizable' id='anonymizable' value='1' />
+							<@checkBox orientation='switch' labelKey='#i18n{forms.create_entry.labelAnonymizable}' name='anonymizable' id='anonymizable' value='1' />
 						</@formGroup>
 						<@formGroup labelFor='anonymize_pattern' id="anonymize_pattern_group" labelKey='#i18n{forms.create_entry.labelAnonymizePattern}' helpKey='${anonymization_help_message}' >
 							<@input type='text' name='anonymize_pattern' id='anonymize_pattern' maxlength=255 />
@@ -75,10 +72,10 @@ ${breadcrumb_template}
 						<@formGroup labelFor='disable_question' helpKey='#i18n{forms.create_entry.labelDisableQuestionHelp}'>
 						    <@checkBox orientation='switch' name='disabled' id='disabled' labelKey='#i18n{forms.create_entry.labelDisableQuestion}' value='1' />
 						</@formGroup>
-						${question_create_template!}
+						${(question_create_template!)?no_esc}
 						<@formGroup>
-							<@button type='submit' name='action_createQuestion' buttonIcon='save' title='#i18n{forms.modify_entry.buttonSave}' />
-							<@button type='cancel' name='view_manageQuestions' buttonIcon='close' title='#i18n{forms.create_entry.buttonCancel}' hideTitle=['xs'] color='default' cancel=true />
+							<@button type='submit' name='action_createQuestion' buttonIcon='device-floppy' title='#i18n{forms.modify_entry.buttonSave}' />
+							<@button type='cancel' name='view_manageQuestions' buttonIcon='x' title='#i18n{forms.create_entry.buttonCancel}' hideTitle=['xs'] color='light' cancel=true />
 						</@formGroup>
 					</@fieldSet>
 				</@tform>

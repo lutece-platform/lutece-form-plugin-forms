@@ -1,38 +1,47 @@
-<#-- A page of its own, reached by a link from the list of the forms (no offcanvas) -->
+<#-- The publication dates of a form, reached from the calendar action of the forms list: only the two dates are saved -->
+<#assign bc>
+<@formBreadCrumb><@breadcrumbItem>${form.title!}</@breadcrumbItem><@breadcrumbItem>#i18n{forms.action.publish.name}</@breadcrumbItem></@formBreadCrumb>
+</#assign>
+<#assign isScheduled = !form.active && form.availabilityStartDate?? && form.availabilityStartDate gt .now?datetime />
+<#assign formStatus><#if form.active>#i18n{portal.util.labelEnabled}<#else>#i18n{portal.util.labelDisabled}</#if></#assign><#assign formStatus = formStatus?markup_string />
+<#assign startDate = form.availabilityStartDate???then(form.availabilityStartDate?iso_local_nz, '') />
+<#assign endDate = form.availabilityEndDate???then(form.availabilityEndDate?iso_local_nz, '') />
+<#assign formButtons>
+	<@aButton href='jsp/admin/plugins/forms/ManageForms.jsp' title='#i18n{portal.admin.message.buttonCancel}' color='light' />
+	<@button type='submit' name='action_modifyFormPublication' buttonIcon='device-floppy' title='#i18n{portal.admin.message.buttonValidate}' color='primary' />
+</#assign>
 <@pageContainer>
 	<@pageColumn>
-		<@pageHeader title='#i18n{forms.action.publish.name} : ${form.title!}' />
-		<@formBreadCrumb>
-			<@breadcrumbItem>#i18n{forms.action.publish.name}</@breadcrumbItem>
-		</@formBreadCrumb>
-<@tform method='post' name='modify_form' action="jsp/admin/plugins/forms/ManageForms.jsp">
-<@messages errors=errors />
-<@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
-<@div class='container'>
-<@row>
-    <@columns>
-        <@formGroup labelFor='availabilityStartDate' labelKey='#i18n{forms.modify_form.labelStartDate}' helpKey='#i18n{forms.modify_form.labelStartDate.help}' rows=2>
-            <@inputGroup>
-                <@input type='datetime' language=locale name='availabilityStartDate' id='availabilityStartDate'  value=form.availabilityStartDate />
-                <@inputGroupItem type='text'><@icon style='calendar' /></@inputGroupItem>
-            </@inputGroup>
-        </@formGroup>
-    </@columns>
-</@row>
-<@row>
-    <@columns>
-        <@formGroup labelFor='availabilityEndDate' labelKey='#i18n{forms.modify_form.labelEndDate}' helpKey='#i18n{forms.modify_form.labelEndDate.help}' rows=2>
-            <@inputGroup>
-                <@input type='datetime' language=locale name='availabilityEndDate' id='availabilityEndDate' value=form.availabilityEndDate />
-                <@inputGroupItem type='text'>
-                    <@icon style='calendar' />
-                </@inputGroupItem>
-            </@inputGroup>
-        </@formGroup>
-    </@columns>
-</@row>
-<@formsButton okAction='modifyFormPublication' viewAction='manageForms' />
-</@div>
-</@tform>
+		<@pageHeader title=form.title! breadcrumb=bc>
+			<@aButton href='jsp/admin/plugins/forms/ManageForms.jsp' buttonIcon='arrow-left' title='#i18n{portal.util.labelBack}' color='light' />
+		</@pageHeader>
+		<@messages errors=errors![] infos=infos![] warnings=warnings![] />
+		<@tform method='post' name='modify_form' action='jsp/admin/plugins/forms/ManageForms.jsp'>
+			<@input type='hidden' name='id_form' value='${form.id}' />
+			<@formSection title='#i18n{forms.create_form.labelDates}' subtitle='#i18n{forms.modify_form.section.dates.subtitle}' footer=formButtons>
+				<@p class='d-flex align-items-center gap-2 mb-3'>
+					<span class="status-dot ${form.active?then('status-green', isScheduled?then('status-azure', 'status-red'))}" aria-hidden="true"></span>
+					<span>${formStatus}<#if isScheduled> &middot; #i18n{forms.manageForm.columnPeriodDisponibilityFrom} ${form.availabilityStartDate}</#if></span>
+				</@p>
+				<@row>
+					<@columns md=6>
+						<@formGroup labelFor='availabilityStartDate' labelKey='#i18n{forms.modify_form.labelStartDate}' helpKey='#i18n{forms.modify_form.labelStartDate.help}' rows=2 class='mb-md-0'>
+							<@inputGroup>
+								<@input type='datetime' language=locale name='availabilityStartDate' id='availabilityStartDate' value=startDate />
+								<@inputGroupItem type='text'><@icon style='calendar' /></@inputGroupItem>
+							</@inputGroup>
+						</@formGroup>
+					</@columns>
+					<@columns md=6>
+						<@formGroup labelFor='availabilityEndDate' labelKey='#i18n{forms.modify_form.labelEndDate}' helpKey='#i18n{forms.modify_form.labelEndDate.help}' rows=2 class='mb-0'>
+							<@inputGroup>
+								<@input type='datetime' language=locale name='availabilityEndDate' id='availabilityEndDate' value=endDate />
+								<@inputGroupItem type='text'><@icon style='calendar' /></@inputGroupItem>
+							</@inputGroup>
+						</@formGroup>
+					</@columns>
+				</@row>
+			</@formSection>
+		</@tform>
 	</@pageColumn>
 </@pageContainer>

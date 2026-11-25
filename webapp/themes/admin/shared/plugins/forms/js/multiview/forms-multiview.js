@@ -1,8 +1,10 @@
 /**
  * Enable drag and drop reordering of the multiview response table columns.
  * Only columns backed by questions (carrying a data-question-ids attribute) can be dragged.
- * When the order changes it is persisted through an AJAX call to ManageFormMultiviewConfig.jsp,
+ * When the order changes it is persisted through an AJAX POST to MultiviewForms.jsp (action doReorderMultiviewColumns),
  * updating the multiview_column_order_XX value of each impacted question.
+ * The call carries the CSRF token found in the data-reorder-token attribute of #multi-form-list. A token is used once:
+ * each response returns the token of the next call, kept in that attribute.
  *
  * @param {string} reorderUrl the JSP url handling the doReorderMultiviewColumns action
  */
@@ -18,6 +20,8 @@ function initMultiviewColumnDragAndDrop( reorderUrl ){
 	function persistColumnOrder(){
 		const params = new URLSearchParams();
 		params.append('action_doReorderMultiviewColumns', '1');
+		const tokenHolder = document.getElementById('multi-form-list');
+		params.append('token', tokenHolder ? tokenHolder.dataset.reorderToken || '' : '');
 		// The visible order of the columns becomes the new multiview_column_order value of each question
 		Array.from(headerRow.cells).forEach(function(th, position){
 			const ids = th.getAttribute('data-question-ids');
@@ -32,6 +36,14 @@ function initMultiviewColumnDragAndDrop( reorderUrl ){
 			method: 'POST',
 			headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
 			body: params.toString()
+		}).then(function(response){
+			return response.json();
+		}).then(function(json){
+			// Keep the token of the next reordering
+			const result = json && json.result;
+			if ( tokenHolder && result && result.token ) {
+				tokenHolder.dataset.reorderToken = result.token;
+			}
 		}).catch(function(){ /* silently ignore : order is best effort and will be recomputed on reload */ });
 	}
 
@@ -112,192 +124,159 @@ function redirectOnClick( element ){
     }
 }
 
-/**
- * Builds the link to a response, with the DOM: neither its label nor the identifier in its URL is read as HTML.
- */
-function createNavButton( url, label, iconClass, iconFirst ){
-	const link = document.createElement( 'a' );
-	link.className = 'btn btn-primary btn-flat';
-	link.href = url;
-	const icon = document.createElement( 'i' );
-	icon.className = iconClass;
-	if( iconFirst ){
-		link.append( icon, ' ', label );
-	} else {
-		link.append( label, ' ', icon );
-	}
-	return link;
-}
-
-/**
- * Adds the links to the previous and next responses of the current list; the labels are text.
- */
-function setNavButtons( idResp, labelPrev, labelNext ){
-	const respUrl=sessionStorage.getItem('multiview_base_url') + '&id_form_response=';
-	const item_list=sessionStorage.getItem('multiview_current_list');
-	const boxTool = document.querySelector('#info-box-header.boxTool');
-	if( boxTool && item_list )	{
-        var response_list=item_list.split(','), maxIdx=response_list.length - 1, currentIdx=response_list.indexOf(idResp);
-        if( currentIdx > -1 ){
-            if( currentIdx > 0 ){
-                boxTool.append( createNavButton( respUrl + encodeURIComponent( response_list[currentIdx - 1] ), labelPrev, 'bi bi-arrow-left', true ) );
-            }
-            if( currentIdx != maxIdx ){
-                boxTool.append( createNavButton( respUrl + encodeURIComponent( response_list[currentIdx + 1] ), labelNext, 'bi bi-arrow-right', false ) );
-            }
-        }
-	}
-}
-
-/**
- * Swaps the icon class of a toggle button: the button carries the name, its icon is decorative.
- */
-function setToggleIcon( toggle, iconAdded, iconRemoved ){
-	const icon = toggle ? toggle.querySelector( 'i' ) : null;
-	if ( icon ) {
-		icon.classList.add( iconAdded );
-		icon.classList.remove( iconRemoved );
-	}
-}
-
-function setToc( toc, tocBox, tocCompressToggle, tocSideToggle, tocExpandToggle ){
-	if (tocSideToggle && tocBox) {
-		tocSideToggle.addEventListener('click', function() {
-			if (tocBox.style.left === '85%'){
-				tocBox.style.left = '0';
-				setToggleIcon( tocExpandToggle, 'ti-layout-sidebar-right-expand', 'ti-layout-sidebar-left-expand' );
-				setToggleIcon( tocSideToggle, 'ti-arrow-right', 'ti-arrow-left' );
-				tocExpandToggle.style.left = '0';
-				localStorage.setItem('toc_side_state', '0');
-			} else {
-				tocBox.style.left='85%';
-				setToggleIcon( tocExpandToggle, 'ti-layout-sidebar-left-expand', 'ti-layout-sidebar-right-expand' );
-				setToggleIcon( tocSideToggle, 'ti-arrow-left', 'ti-arrow-right' );
-				tocExpandToggle.style.left = '98%';
-				localStorage.setItem('toc_side_state', '98%');
-			}
-		});
-	}
-	
-	if (tocCompressToggle) {
-		const tocState = localStorage.getItem('toc_multiview_state');
-		const tocSide = localStorage.getItem('toc_side_state');
-		if (tocExpandToggle){
-			tocExpandToggle.style.display = 'none';
-			tocExpandToggle.style.left = tocSide;
-			if (tocSide === '98%'){
-				tocBox.style.left='85%';
-				setToggleIcon( tocExpandToggle, 'ti-layout-sidebar-left-expand', 'ti-layout-sidebar-right-expand' );
-				setToggleIcon( tocSideToggle, 'ti-arrow-left', 'ti-arrow-right' );
-			} 
-		} 
-
-		// The focus follows the toggle that replaces the one hidden, on a click of the user only (not the restored state)
-		tocCompressToggle.addEventListener('click', function( e ) {
-			if (toc) toc.style.display = toc.style.display === 'none' ? '' : 'none';
-			tocCompressToggle.setAttribute( 'aria-expanded', toc && toc.style.display !== 'none' ? 'true' : 'false' );
-			if (tocExpandToggle) {
-				tocExpandToggle.style.display = '';
-				tocExpandToggle.setAttribute( 'aria-expanded', 'false' );
-				if ( e.isTrusted ) tocExpandToggle.focus();
-			}
-			localStorage.setItem('toc_multiview_state', 'expand');
-		});
-
-		if (tocExpandToggle) {
-			tocExpandToggle.addEventListener('click', function( e ) {
-				if (toc) toc.style.display = '';
-				this.style.display = 'none';
-				tocCompressToggle.setAttribute( 'aria-expanded', 'true' );
-				if ( e.isTrusted ) tocCompressToggle.focus();
-				localStorage.setItem('toc_multiview_state', 'compress');
-			});
+function setNavButtons( idResp ){
+	const baseUrl = sessionStorage.getItem('multiview_base_url');
+	const itemList = sessionStorage.getItem('multiview_current_list');
+	const nav = document.getElementById('response-nav');
+	if ( !nav || !baseUrl || !itemList ) return;
+	// The list holds the ids of the list page the user came from; offset and total place it in the whole result
+	const responseList = itemList.split(',');
+	const currentIdx = responseList.indexOf( idResp );
+	if ( currentIdx < 0 ) return;
+	const offset = parseInt( sessionStorage.getItem('multiview_offset'), 10 ) || 0;
+	const total = parseInt( sessionStorage.getItem('multiview_total'), 10 ) || responseList.length;
+	const respUrl = baseUrl + '&id_form_response=';
+	const icon = name => `<i class="ti ti-${name}" aria-hidden="true"></i>`;
+	const make = ( idx, html ) => {
+		const el = document.createElement( idx >= 0 && idx < responseList.length ? 'a' : 'span' );
+		el.className = 'btn btn-light';
+		if ( el.tagName === 'A' ) {
+			el.href = respUrl + encodeURIComponent( responseList[idx] );
+		} else {
+			el.classList.add('disabled');
+			el.setAttribute('aria-disabled', 'true');
 		}
-		
-		if (tocState === 'expand' && tocCompressToggle) {
-			tocCompressToggle.click();
-		}
-	}
-
+		el.innerHTML = html;
+		return el;
+	};
+	const prev = make( currentIdx - 1, icon('chevron-left') + ' ' );
+	prev.append( nav.dataset.labelPrevious || '' );
+	const position = document.createElement('span');
+	position.className = 'btn btn-light disabled text-body';
+	position.setAttribute('aria-current', 'page');
+	position.textContent = ( offset + currentIdx + 1 ) + ' / ' + total;
+	const next = make( currentIdx + 1, '' );
+	next.append( ( nav.dataset.labelNext || '' ) + ' ' );
+	next.insertAdjacentHTML( 'beforeend', icon('chevron-right') );
+	nav.replaceChildren( prev, position, next );
 }
 
 /**
- * Escapes a text read from the page (a title, an identifier) before it is put in HTML.
+ * Sticks a toolbar right under the page header when the header is sticky (response view), under the top bar otherwise
+ * (responses list, small screens). The header height depends on its title: it is measured instead of using a fixed offset
+ * @param {HTMLElement} toolbar the toolbar to stick
  */
-function escapeHtml( text ){
-	return String( text ).replace( /&/g, '&amp;' ).replace( /</g, '&lt;' ).replace( />/g, '&gt;' ).replace( /"/g, '&quot;' ).replace( /'/g, '&#39;' );
+function setStickyToolbar( toolbar ){
+	const header = document.getElementById('page-header');
+	const navbar = document.querySelector('.sticky-top');
+	const update = function() {
+		let top = navbar ? navbar.offsetHeight : 0;
+		if (header && getComputedStyle(header).position === 'sticky') {
+			top = (parseFloat(getComputedStyle(header).top) || 0) + header.offsetHeight;
+		}
+		// On the root: the response sidebar sticks at the same height
+		document.documentElement.style.setProperty('--forms-toolbar-top', top + 'px');
+	};
+	update();
+	if (window.ResizeObserver) {
+		const observer = new ResizeObserver(update);
+		if (header) observer.observe(header);
+		if (navbar) observer.observe(navbar);
+	}
+	window.addEventListener('resize', update);
 }
 
-function setStepsIndex(){
-	let stepList=document.querySelectorAll('#steps-content > .step'), stepLinks='<ul class="list-unstyled flex-grow-1">', active=true;
-	let stepLinksContent = '';
-	let isActive = true;
-	stepList.forEach(function(step) {
-		const pId = escapeHtml( step.id );
-		const t = escapeHtml( step.dataset.title || '' );
+/**
+ * Fills the step select placed above #steps-content: one option per step, plus one per group when a step has several,
+ * scrolls to the chosen one, and follows the reading position while the user scrolls
+ * @param {HTMLSelectElement} select the select to fill
+ */
+function setStepsIndex( select ){
+	// Where the content starts under the sticky header and toolbar
+	const toolbar = document.getElementById('response-toolbar');
+	const contentTop = function() { return toolbar ? toolbar.getBoundingClientRect().bottom + 8 : 30; };
+	const targets = [];
+	document.querySelectorAll('#steps-content > .step').forEach(function(step) {
+		targets.push({ el: step, label: step.dataset.title || '' });
 		const groups = step.querySelectorAll('.fieldset-group');
-		let listGroup = '';
 		if (groups.length > 1) {
-			listGroup = '<ul>';
 			groups.forEach(function(group) {
-				const gId = escapeHtml( group.id );
-				const gt = escapeHtml( group.querySelector('legend') ? group.querySelector('legend').textContent : '' );
-				listGroup += `<li tabindex="0"><a class="nav-link" href="#${gId}" title="${gt}"><span>${gt}</span></a></li>`;
+				const legend = group.querySelector('legend');
+				targets.push({ el: group, label: '\u00a0\u00a0\u2014 ' + (legend ? legend.textContent.trim() : '') });
 			});
-			listGroup += '</ul>';
 		}
-		const linkActive = isActive ? ' class="active"' : '';
-		stepLinksContent += `<li${linkActive} tabindex="0"><a class="nav-link" href="#${pId}" title="${t}"><span>${t}</span></a>${listGroup}</li>`;
-		isActive = false;
 	});
-	stepLinks = `<ul class="list-unstyled flex-grow-1">${stepLinksContent}</ul>`;
-	document.querySelector('#step-toc > .nav-pills').innerHTML = stepLinks + '</ul>';
-	document.body.setAttribute('data-bs-spy', 'scroll');
-	document.body.setAttribute('data-bs-target', '#step-toc');
-	document.body.setAttribute('data-bs-offset', '120');
-	bootstrap.ScrollSpy.getOrCreateInstance(document.body);
+	if (targets.length < 2) {
+		return false;
+	}
+	targets.forEach(function(target, index) {
+		select.add(new Option(target.label, index));
+	});
 
-	document.querySelectorAll('#step-toc .nav-pills .nav-link').forEach(function(link) {
-		link.addEventListener('click', function(e) {
-			e.preventDefault();
-			var elTarget = document.querySelector(this.getAttribute('href'));
-			if (elTarget) {
-				elTarget.classList.add('step-active');
-				window.scrollTo({
-					top: elTarget.getBoundingClientRect().top + window.scrollY - 30,
-					behavior: 'smooth'
-				});
-			}
-		});
+	let scrolling = false;
+	select.addEventListener('change', function() {
+		const target = targets[this.value];
+		if (target) {
+			scrolling = true;
+			window.scrollTo({ top: target.el.getBoundingClientRect().top + window.scrollY - contentTop( ), behavior: 'smooth' });
+			target.el.focus({ preventScroll: true });
+			window.addEventListener('scrollend', function() { scrolling = false; }, { once: true });
+			setTimeout(function() { scrolling = false; }, 1000);
+		}
 	});
+
+	// Keep the select on the step or group being read
+	let ticking = false;
+	window.addEventListener('scroll', function() {
+		if (scrolling || ticking) return;
+		ticking = true;
+		requestAnimationFrame(function() {
+			let current = 0;
+			const threshold = contentTop( ) + 40;
+			targets.forEach(function(target, index) {
+				if (target.el.offsetParent !== null && target.el.getBoundingClientRect().top <= threshold) current = index;
+			});
+			// At the bottom of the page the last steps never reach the top: keep a chosen one that is on screen
+			const chosen = targets[select.value];
+			if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2 && chosen && select.value > current
+				&& chosen.el.getBoundingClientRect().top < window.innerHeight) {
+				current = select.value;
+			}
+			select.value = current;
+			ticking = false;
+		});
+	}, { passive: true });
+	return true;
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-	// Set step index
-	const toc = document.getElementById('toc');
-	if( toc != null ){
-		const tocBox = document.getElementById('toc-box');
-		const tocCompressToggle = document.getElementById('toc-compress-toggle');
-		const tocSideToggle = document.getElementById('toc-side-toggle');
-		const tocExpandToggle = document.getElementById('toc-expand-toggle');
-		
-		if ( document.querySelectorAll('.fieldset-group').length > 1 ) {
-			setStepsIndex();
-			setToc( toc, tocBox, tocCompressToggle, tocSideToggle, tocExpandToggle );
-		} else {
-			toc.style.display = 'none';
-			tocExpandToggle.style.display = 'none';
-			
-		}
+	// Toolbars kept under the page header: the steps of a response, the filters of the responses list
+	document.querySelectorAll('.forms-sticky-toolbar').forEach(setStickyToolbar);
+
+	// Step index: a select above the steps of a response
+	const stepSelect = document.getElementById('step-toc-select');
+	if (stepSelect != null && setStepsIndex(stepSelect)) {
+		document.getElementById('step-toc').hidden = false;
 	}
 	
-	// The click on a whole row is a mouse shortcut: the first cell of each row holds the link to the response
+	// Sort links: the core sort macro ends them with #sort_<attribute>, which makes the page jump to the column
+	// header after the reload. The list has a single table, so the anchor is not needed to find the sorted column
+	// (admin-table-sort.js falls back to the sorted_attribute_name parameter): drop it, and drop it from an URL
+	// that already carries it.
+	document.querySelectorAll('#multi-form-list .lutece-table-sort a.dropdown-item').forEach(function(link) {
+		const href = link.getAttribute('href');
+		if (href && href.includes('#')) link.setAttribute('href', href.substring(0, href.indexOf('#')));
+	});
+	if (window.location.hash.startsWith('#sort_') && document.querySelector('#multi-form-list')) {
+		history.replaceState(null, '', window.location.pathname + window.location.search);
+		window.scrollTo(0, 0);
+	}
+
+	// Set link on whole tr
 	const multiFormRows = document.querySelectorAll("#multi-form-list tbody > tr");
 	multiFormRows.forEach(function(row) {
 		row.addEventListener('click', function(e) {
-			if ( e.target.closest( 'a, button, input, select, textarea' ) ) {
-				return;
-			}
+			if (e.target.closest('a, button, input, select, label')) return;
 			redirectOnClick(this);
 		});
 	});

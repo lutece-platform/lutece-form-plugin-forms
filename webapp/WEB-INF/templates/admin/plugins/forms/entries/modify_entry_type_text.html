@@ -1,5 +1,5 @@
 <#include "all_entry_commons.html" />
-<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
+<#assign placeholder = getFieldValueByCode(entry, "placeholder")!'' >
 <#assign config=getFieldByCode( entry, "text_config")>
 <#assign field_max_size=getFieldValueByCode( entry, "max_size")>
 <#assign val=getFieldValueByCode( entry, "max_size")>

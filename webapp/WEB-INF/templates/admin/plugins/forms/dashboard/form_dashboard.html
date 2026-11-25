@@ -2,96 +2,70 @@
 <#function linkToken url><#if url?contains('action=')><#return '&_csrftoken=' + (link_tokens[url?keep_after('action=')?keep_before('&')])!''></#if><#return ''></#function>
 <#-- Each posted action has its own number: the ids of its hidden inputs are unique in the page, the input macro defaulting the id to the name -->
 <#macro formActionItem url class><#if url?contains('action=')><#assign formActionIndex = ( formActionIndex!0 ) + 1 /><@tform action=url?keep_before('?') method='post' class='d-inline'><#list url?keep_after('?')?split('&') as param><#if param?contains('=')><@input type='hidden' id='forms_dashboard_action_${formActionIndex?c}_${param?keep_before("=")}' name=param?keep_before('=') value=param?keep_after('=') /></#if></#list><@input type='hidden' id='forms_dashboard_action_${formActionIndex?c}_csrftoken' name='_csrftoken' value=(link_tokens[url?keep_after('action=')?keep_before('&')])!'' /><@button type='submit' color='link' class=class><#nested></@button></@tform><#else><@link href=url class=class><#nested></@link></#if></#macro>
-<@adminDashboardWidget title='#i18n{forms.dashboard.formList}' id='forms_dashboard' url=url>
-<#if form_list?size gt 0>
-<@listGroup class='list-group-flush py-0' >
-<#list form_list as form>
-	<@listGroupItem class='p-0' >
-		<@card class='mb-1'>
-			<@row class='align-items-center'>
-				<@div class='col ps-0'>
-					<@h level=3 class='mb-0 d-flex align-items-center' params={"title": "#i18n{portal.util.labelModify} ${form.title}"}>
-						<#if !form.active><@icon style='times' class='text-danger fs-2' title='#i18n{portal.util.labelDisabled}' /><#else><@icon style='check' class='text-success fs-2' title='#i18n{portal.util.labelEnabled}' /></#if>
-						<@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}' label='${form.title}' class='d-inline-block text-truncate forms-mw-180' />
-					</@h>
-				</@div>
-				<@div class='col-auto d-flex align-items-center'>
-					<@tag class='mx-2 fs-5' title='#i18n{forms.dashboard.row_responses}'> ${form.currentNumberResponse}</@tag>
-					<#if form.actions?exists>
-						<#list form.actions as action>
-						<#if action.permission=='PARAM'>
-							<@aButton class='btn-sm me-1' href='${action.url}&id_form=${form.id}${linkToken(action.url)}' title='${action.name!}' hideTitle=['all'] buttonIcon='${action.iconUrl}' />
+<#assign createFormButton><@aButton href='jsp/admin/plugins/forms/ManageForms.jsp?view=createForm' size='sm' buttonIcon='plus' title='#i18n{portal.util.labelCreate}' /></#assign>
+<@adminDashboardWidget title='#i18n{forms.dashboard.formList}' id='forms_dashboard' url=url boxIcon='forms' iconColor='purple' headerActions=createFormButton flush=true>
+<#if form_list?has_content>
+<@listGroup class='list-group-flush'>
+	<#list form_list as form>
+	<#assign formStatus = form.active?then( '#i18n{portal.util.labelEnabled}', '#i18n{portal.util.labelDisabled}' ) />
+	<#assign responseCount>${form.currentNumberResponse} <#if form.currentNumberResponse gt 1>#i18n{forms.dashboard.labelResponses}<#else>#i18n{forms.dashboard.labelResponse}</#if></#assign><#assign responseCount = responseCount?markup_string />
+	<@listGroupItem>
+		<@row class='align-items-center g-2'>
+			<@columns class='col-auto'>
+				<@span class='status-dot ${form.active?then("status-green", "status-red")}' params={"title": formStatus}></@span>
+				<@span class='visually-hidden'>${formStatus}</@span>
+			</@columns>
+			<@columns class='col text-truncate'>
+				<@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}' class='text-reset fw-semibold' title='#i18n{portal.util.labelModify} ${form.title}' label=form.title />
+				<@div class='text-secondary small text-truncate'>${formStatus} · ${responseCount}</@div>
+			</@columns>
+			<@columns class='col-auto btn-actions'>
+				<#if form.actions?exists>
+					<#list form.actions as action>
+					<#if action.permission=='VIEW_FORM_RESPONSE'>
+						<#if form.currentNumberResponse gt 0>
+						<@link href='${action.url}&id_form=${form.id}${linkToken(action.url)}' class='btn-action' title='${action.name!}'><@icon style=action.iconUrl! /><@span class='visually-hidden'>${action.name!}</@span></@link>
+						<#else>
+						<#-- No response to show: a disabled action keeps the icons of every row aligned -->
+						<@span class='btn-action disabled opacity-25' params={"aria-hidden": "true"}><@icon style=action.iconUrl! /></@span>
 						</#if>
-						<#if action.permission=='VIEW_FORM_RESPONSE' && form.currentNumberResponse gt 0>
-							<@aButton class='btn-sm' href='${action.url}&id_form=${form.id}${linkToken(action.url)}' title='${action.name!}' hideTitle=['all'] buttonIcon='${action.iconUrl}' />
-						</#if>
-						</#list>
 					</#if>
-				</@div>
-				<@div class='col-auto'>
-					<@button type='button' class='btn-action' buttonIcon='dots-vertical fs-2' title='#i18n{forms.dashboard.labelFormActions} ${form.title}' hideTitle=['all'] dropdownMenu=true>
+					</#list>
+					<#list form.actions as action>
+					<#if action.permission=='PARAM'>
+						<@link href='${action.url}&id_form=${form.id}${linkToken(action.url)}' class='btn-action' title='${action.name!}'><@icon style=action.iconUrl! /><@span class='visually-hidden'>${action.name!}</@span></@link>
+					</#if>
+					</#list>
+				</#if>
+				<@div class='dropdown'>
+					<@link href='#' class='btn-action' title='#i18n{forms.dashboard.labelFormActions} ${form.title}' params={"data-bs-toggle": "dropdown", "aria-haspopup": "true", "aria-expanded": "false"}><@icon style='dots' /><@span class='visually-hidden'>#i18n{forms.dashboard.labelFormActions} ${form.title}</@span></@link>
+					<@div class='dropdown-menu dropdown-menu-end'>
 						<#if form.actions?exists>
 							<#list form.actions as action>
 								<#assign actionUrl=action.url />
-								<#if action.permission=='DELETE'>
-									<#assign actionClass='text-danger' />
-								<#else>
-									<#assign actionClass='' />
-								</#if>
 								<#if action.permission=='PUBLISH'>
-									<#assign actionUrl="jsp/admin/plugins/forms/ManageForms.jsp?view=modifyForm&id_form=${form.id}"/>
+									<#assign actionUrl="jsp/admin/plugins/forms/ManageForms.jsp?view=modifyForm"/>
 								</#if>
-                                <#assign separator = action.url?contains("?")?then("&", "?")>
-								<@formActionItem url='${actionUrl}${separator}id_form=${form.id}&token=${token!}' class='dropdown-item ${actionClass}'><@icon style=action.iconUrl! /> ${action.name!}</@formActionItem>
+								<#assign separator = actionUrl?contains("?")?then("&", "?")>
+								<@formActionItem url='${actionUrl}${separator}id_form=${form.id}&token=${token!}' class='dropdown-item${(action.permission=="DELETE")?then(" text-danger", "")}'><@icon style=action.iconUrl! class='me-2' />${action.name!}</@formActionItem>
 							</#list>
 						</#if>
-						<@link href='jsp/admin/plugins/forms/ManageFormResponse.jsp?view=stepView&id_form=${form.id}&init=true' label='#i18n{forms.manageForm.BOLink.label}' class='dropdown-item' />
+						<@div class='dropdown-divider'></@div>
+						<@link href='jsp/admin/plugins/forms/ManageFormResponse.jsp?view=stepView&id_form=${form.id}&init=true' class='dropdown-item'><@icon style='file-plus' class='me-2' />#i18n{forms.manageForm.BOLink.label}</@link>
 						<#if form.active>
 							<#assign inactiveBypass=''>
-							<#assign color='success'>
 						<#else>
 							<#assign inactiveBypass='&ts='+timestamp+'&token='+inactiveBypassTokens[form.id?string]>
-							<#assign color='warning'>
 						</#if>
-						<@link href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true${inactiveBypass}' label='#i18n{forms.manageForm.FOLink.label}' class='dropdown-item' target='_blank' />
-					</@button>
+						<@link href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true${inactiveBypass}' class='dropdown-item' target='_blank'><@icon style='external-link' class='me-2' />#i18n{forms.manageForm.FOLink.label}</@link>
+					</@div>
 				</@div>
-			</@row>
-		</@card>
-        <#--
-		<@row>
-			<@columns xs=12 md=8>
-				<@h level=3 class='d-inline-block truncate' attrs={'title': ( form.title ), 'style': "--tw:300px"}>
-					<#if !form.active><@icon style='times' class='text-danger' title='#i18n{portal.util.labelDisabled}' />	<#else>	<@icon style='check' class='text-success' title='#i18n{portal.util.labelEnabled}' /></#if>
-					<@tag class='mx-2 fs-5' title='#i18n{forms.dashboard.row_responses}'> ${form.currentNumberResponse}</@tag>
-					${form.title}
-				</@h>
-			</@columns>
-			<@columns xs=12 md=4 class='d-flex justify-content-end'>
-				<#if form.actions?exists>
-					<#assign color='primary' />
-					<#list form.actions?filter( action -> ( action.description=='forms.action.modify.description'  ) ) as action>
-						<#assign params='' />
-						<#assign class='' />
-						<@aButton href='${action.url}&id_form=${form.id}${linkToken(action.url)}' title='${action.name} ${action.description}' hideTitle=['all'] class=class color=color buttonIcon=action.iconUrl  params=params />
-					</#list>
-				</#if>
-				<@aButton href='jsp/admin/plugins/forms/ManageFormResponse.jsp?view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.BOLink.label} ${form.title}' buttonIcon='text-plus' hideTitle=['all'] class='btn btn-outline-secondary d-none d-xl-inline-block' />
-				<#if form.active>
-					<#assign inactiveBypass=''>
-					<#assign color='success'>
-				<#else>
-					<#assign inactiveBypass='&ts='+timestamp+'&token='+inactiveBypassTokens[form.id?string]>
-					<#assign color='warning'>
-				</#if>
-				<@aButton href='${prod_url}jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true${inactiveBypass}' title='#i18n{forms.manageForm.FOLink.label} ${form.title}' params='target="_blank"' buttonIcon='external-link' hideTitle=['all'] class='btn btn-outline-secondary d-none d-xl-inline-block' color=color />
 			</@columns>
 		</@row>
-		-->
 	</@listGroupItem>
-</#list>
+	</#list>
 </@listGroup>
 <#else>
-<@empty title='#i18n{portal.util.labelNoItem}' actionTitle='#i18n{forms.manageForm.buttonAdd}' actionUrl='jsp/admin/plugins/forms/ManageForms.jsp?view=createForm'/>
+<@div class='d-flex align-items-center gap-2 px-3 py-2 text-secondary small'><@icon style='info-circle' />#i18n{portal.util.labelNoItem}</@div>
 </#if>
 </@adminDashboardWidget>

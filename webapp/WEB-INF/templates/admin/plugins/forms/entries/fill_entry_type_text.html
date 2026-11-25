@@ -53,7 +53,7 @@
 <#assign confirmField=getFieldByCode( entry, "confirm_field")>
 <#if confirmField.value?boolean>
 	<#assign idName = buildEntryName( entry, entry_iteration_number )>
-	<@formGroup labelFor='${idName}_confirm_field' labelKey='${confirmField.title}' mandatory=entry.mandatory htmlRequired=false >
+	<@formGroup labelFor='${idName}_confirm_field' labelKey='${confirmField.title}' mandatory=entry.mandatory >
 		<#assign field_width=getFieldValueByCode( entry, "width")>
 		<#assign field_max_size=getFieldValueByCode( entry, "max_size")>
 		<#assign field=getFieldByCode( entry, "text_config")>

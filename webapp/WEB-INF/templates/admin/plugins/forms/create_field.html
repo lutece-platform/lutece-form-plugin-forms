@@ -1,7 +1,7 @@
 <@pageContainer>
     <@pageColumn>
 		<@pageHeader title='#i18n{forms.createField.title} : "${field.parentEntry.title}"' />
-		<@tform id='create_field_form' action='jsp/admin/plugins/forms/ModifyEntry.jsp' enctype="multipart/form-data" params={"target": "_top"}>
+		<@tform class='p-3' id='create_field_form' action='jsp/admin/plugins/forms/ModifyEntry.jsp' enctype="multipart/form-data" params={"target": "_top"}>
 			<@input type='hidden' name='id_step' value='${question.idStep}' />
 			<@input type='hidden' name='id_question' value='${question.id}' />
 			<@input type='hidden' name='id_entry' value='${id_entry}' />
@@ -19,16 +19,16 @@
 				<@input type='file' id='illustration_image'  name='illustration_image' />
 			</@formGroup>
 			<@formGroup>
-				<@checkBox labelFor='default_value' labelKey='#i18n{forms.createField.labelDefaultValue}' name='default_value' id='default_value' value='1' />
+				<@checkBox orientation='switch' labelKey='#i18n{forms.createField.labelDefaultValue}' name='default_value' id='default_value' value='1' />
 			</@formGroup>
 			<#if option_no_display_title>
 				<@formGroup>
-					<@checkBox labelFor='no_display_title' labelKey='#i18n{forms.createField.labelNoDisplayTitle}' name='no_display_title' id='no_display_title' value='1' checked=field.noDisplayTitle />
+					<@checkBox orientation='switch' labelKey='#i18n{forms.createField.labelNoDisplayTitle}' name='no_display_title' id='no_display_title' value='1' checked=field.noDisplayTitle />
 				</@formGroup>
 			</#if>
 			<@formGroup>
-				<@button type='submit' name='action_createField' buttonIcon='save' title='#i18n{forms.modify_entry.buttonSave}' class='form-validation' />
-				<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyQuestion&id_step=${question.idStep}&id_question=${question.id}' title='#i18n{forms.create_entry.buttonCancel}' buttonIcon='close' color='default' />
+				<@button type='submit' name='action_createField' buttonIcon='device-floppy' title='#i18n{forms.modify_entry.buttonSave}' class='form-validation' />
+				<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyQuestion&id_step=${question.idStep}&id_question=${question.id}' title='#i18n{forms.create_entry.buttonCancel}' buttonIcon='x' color='light' />
 			</@formGroup>
 		</@tform>
 	</@pageColumn>

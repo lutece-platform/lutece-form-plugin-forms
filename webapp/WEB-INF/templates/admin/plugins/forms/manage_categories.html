@@ -1,10 +1,12 @@
 <@pageContainer>
     <@pageColumn>
-		<@pageHeader title='#i18n{forms.manageFormCategory.title}' boxTools=true>
-         <@tform type='inline'>
-				<@formGroup labelFor='plugin_type' labelKey='#i18n{portal.system.manage_plugins.buttonFilter}' hideLabel=['all'] formStyle='inline'>
+		<#assign pageTitle><span class="avatar avatar-sm bg-purple-lt me-2"><@icon style='category' /></span>#i18n{forms.manageFormCategory.title}</#assign>
+		<@pageHeader title=pageTitle >
+			<#if form_category_list?has_content>
+			<@tform type='inline'>
+				<@formGroup labelFor='search_categories' labelKey='#i18n{portal.system.manage_plugins.buttonFilter}' hideLabel=['all'] formStyle='inline'>
 					<@inputGroup>
-						<@input type='text' name='search_forms' id='search_forms' placeHolder='#i18n{portal.system.manage_plugins.buttonFilter}' autoComplete="off" />
+						<@input type='text' name='search_categories' id='search_categories' placeHolder='#i18n{portal.system.manage_plugins.buttonFilter}' params={"autocomplete": "off"} />
 						<@button color='primary' title='#i18n{portal.system.manage_plugins.buttonFilter}' buttonIcon='filter' hideTitle=['all'] />
 					</@inputGroup>
 				</@formGroup>
@@ -32,12 +34,21 @@
         </@manageFeature>
     </@pageColumn>
 </@pageContainer>
+<#if form_category_list?has_content>
 <script type="module">
 import LuteceSearchList from './themes/shared/modules/luteceSearchList.js';
-const searchInput = document.querySelector("#search_forms");
-const searchElementList = document.querySelectorAll(".card");
+const searchInput = document.querySelector("#search_categories");
+const searchElementList = document.querySelectorAll("#categories-list .list-group-item");
 new LuteceSearchList( searchInput, searchElementList, {
-    searchableChild: [".searchable"],
-    highlight: true,
+	searchableChild: [".searchable"],
+	highlight: true,
+	persist: true,
+	persistKey: "lutece-admin-forms-categories-search",
+});
+document.querySelectorAll('[id^="category_"]').forEach( item => {
+	item.addEventListener('dblclick', function() {
+		window.location.href = 'jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=modifyCategory&id_category=' + this.id.replace('category_', '');
+	});
 });
 </script>
+</#if>

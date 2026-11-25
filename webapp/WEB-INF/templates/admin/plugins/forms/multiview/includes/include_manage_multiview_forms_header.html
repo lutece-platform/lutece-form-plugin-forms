@@ -1,21 +1,56 @@
+<#-- The form selector and the text search stay in the toolbar, every other filter goes into the filters modal -->
+<#assign primaryFilterNames = ['id_form','searched_text'] />
+<#assign primaryFilters = ( form_filter_list![] )?filter( f -> primaryFilterNames?seq_contains( f.parameterName!'' ) )?sort_by( 'parameterName' ) />
+<#assign secondaryFilters = ( form_filter_list![] )?filter( f -> !primaryFilterNames?seq_contains( f.parameterName!'' ) ) />
+<#assign activeSecondaryFilters = secondaryFilters?filter( f -> ( f.value!'' )?has_content && ( f.value!'' ) != '-1' )?size />
+<#-- The form selector and the text search stay in the toolbar, every other filter goes into the filters modal -->
+<#assign primaryFilterNames = ['id_form','searched_text'] />
+<#assign primaryFilters = ( form_filter_list![] )?filter( f -> primaryFilterNames?seq_contains( f.parameterName!'' ) )?sort_by( 'parameterName' ) />
+<#assign secondaryFilters = ( form_filter_list![] )?filter( f -> !primaryFilterNames?seq_contains( f.parameterName!'' ) ) />
+<#assign activeSecondaryFilters = secondaryFilters?filter( f -> ( f.value!'' )?has_content && ( f.value!'' ) != '-1' )?size />
 <@input type='hidden' name='current_selected_panel' value='${current_selected_panel!""}' />
-<#if form_filter_list?has_content><#list form_filter_list as form_filter>${( form_filter.template!'' )?no_esc}</#list></#if>
-<@formGroup class='forms-filter order-3' formStyle=''>
-	<@row>
-		<@columns>
-			<@button type='submit' title='#i18n{portal.util.labelFilter}' buttonIcon='filter-check' />
-		</@columns>
-		<@columns>	
-			<@button color='outline-danger' class='btn-reset-filter' title='#i18n{portal.util.labelDelete}' buttonIcon='filter-x' />
-		</@columns>
-	</@row>
-</@formGroup>
-<#if multiviewExportAction?? >
-	<@formGroup formStyle='inline' labelFor='format_export' class='forms-filter w-100 order-3 mt-2 pt-2 border-top border-secondary' labelKey='#i18n{forms.adminFeature.multiviewForms.export.buttonName}' groupStyle='addons' rows=2>
-		<@inputGroup>
-			<@select name='format_export' id='format_export' default_value='' items=format_export_list title='#i18n{forms.adminFeature.multiviewForms.export.buttonName}' disabled=!table_template?has_content  />
-			<@button type='submit' id='action_doExportResponses' name='action_doExportResponses' title='#i18n{forms.adminFeature.multiviewForms.export.buttonName}' hideTitle=['all'] disabled=!table_template?has_content buttonIcon='download' />
-		</@inputGroup>
-	</@formGroup>
+<#if multiviewExportAction??><@input type='hidden' name='format_export' id='format_export' value='' /></#if>
+<#-- The filters and the active filters stay under the top bar while the list scrolls; the filters modal stays out of it, a sticky block would trap it under its backdrop -->
+<@div id='multiview-toolbar' class='forms-sticky-toolbar'>
+<@row class='align-items-start g-3'>
+	<#list primaryFilters as form_filter>
+	<#-- A filter rendering only hidden fields (single form) takes no column -->
+	<#if ( form_filter.template!'' )?matches( '(?s).*<(select|textarea|input(?![^>]*type="hidden"))[^>]*>.*' )>
+	<@columns md=6 lg=4 class='forms-filter'>${(form_filter.template!'')?no_esc}</@columns>
+	<#else>
+	${(form_filter.template!'')?no_esc}
+	</#if>
+	</#list>
+	<@columns md=12 lg=4 class='mb-3'>
+		<#-- Same height as a field label, so the buttons line up with the inputs -->
+		<@div class='form-label invisible d-none d-lg-block' params={"aria-hidden": "true"}>&nbsp;</@div>
+		<@div class='d-flex flex-wrap gap-2'>
+		<#if secondaryFilters?has_content>
+		<@button color='light' title='#i18n{forms.multiviewForms.labelFilters}' buttonIcon='adjustments-horizontal' params={"data-bs-toggle": "modal", "data-bs-target": "#multiviewFiltersModal"}>
+			#i18n{forms.multiviewForms.labelFilters}<#if activeSecondaryFilters gt 0> <@tag color='primary' class='ms-1'>${activeSecondaryFilters}</@tag></#if>
+		</@button>
+		</#if>
+		<@button type='submit' title='#i18n{portal.util.labelSearch}' buttonIcon='search' />
+		</@div>
+	</@columns>
+</@row>
+<@div id='multiview-active-filters' class='d-none d-flex flex-wrap align-items-center gap-2 mb-3' params={"aria-live": "polite", "data-label-remove": "#i18n{forms.multiviewForms.labelRemoveFilter}", "data-label-all-forms": "#i18n{forms.filter.option.labelAllForms}", "data-label-select-all": "#i18n{forms.multiviewForms.form_filter.select_all}", "data-label-unselect-all": "#i18n{forms.multiviewForms.form_filter.unselect_all}"}>
+	<@span class='text-secondary small'>#i18n{forms.multiviewForms.labelActiveFilters}</@span>
+	<@span id='multiview-active-filters-list' class='d-flex flex-wrap gap-2'></@span>
+	<@button color='link' class='btn-reset-filter btn-sm px-1' title='#i18n{forms.multiviewForms.labelResetFilters}' />
+</@div>
+</@div>
+<#if secondaryFilters?has_content>
+<@modal id='multiviewFiltersModal' params={"tabindex": "-1", "data-bs-focus": "false", "aria-labelledby": "multiviewFiltersModalTitle"}>
+	<@modalHeader modalTitle='#i18n{forms.multiviewForms.labelFilters}' params={"id": "multiviewFiltersModalTitle"} />
+	<@modalBody>
+		<#list secondaryFilters as form_filter><@div class='forms-filter'>${(form_filter.template!'')?no_esc}</@div></#list>
+	</@modalBody>
+	<@modalFooter>
+		<@button color='link' class='btn-reset-filter me-auto' title='#i18n{forms.multiviewForms.labelResetFilters}' />
+		<@button type='submit' title='#i18n{forms.multiviewForms.labelApplyFilters}' buttonIcon='check' />
+	</@modalFooter>
+</@modal>
 </#if>
-<#if multiviewConfigAction??><@aButton name='btn_multiview_config' id='btn_multiview_config' color='outline-primary' class='w-100 order-4 mt-5 text-wrap' href='${multiviewConfigAction.url!}' title='${multiviewConfigAction.name}' buttonIcon='${multiviewConfigAction.iconUrl}' /></#if>
+${multiviewmap!''}
+${multiviewmap!''}

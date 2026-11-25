@@ -1,46 +1,52 @@
 <#include "/admin/plugins/forms/edit_form_tabs.html" />
+<#assign bc>
+<@formBreadCrumb><@breadcrumbItem>${form.title!}</@breadcrumbItem></@formBreadCrumb>
+</#assign>
 <@pageContainer>
-    <@pageColumn>
-		<@pageHeader title='${form.title!}' />
-			<@formBreadCrumb><@breadcrumbItem>${form.title!}</@breadcrumbItem></@formBreadCrumb>
-			<@formTabs tab='workflow' >
+	<@pageColumn>
+		<@pageHeader title='${form.title!}' breadcrumb=bc />
+		<@formTabs tab='workflow' >
 			<@tabContent>
 				<@tabPanel id="workflow" active=true>
-				<@tform class='form' method='post' name='modify_forms_questions' action='jsp/admin/plugins/forms/ManageFormWorkflowConfig.jsp'>
-				<@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
-				<@table id='list' headBody=true  class='table-striped is-fullwidth' params={"data-toggle": "table", "data-group-by": "true", "data-group-by-field": "step", "data-search": "true", "data-show-columns": "true"}>
-					<@tr>
-						<@th params={"data-field": "step"}>#i18n{forms.manage_question_response.step}</@th>
-						<@th params={"data-field": "title"}>#i18n{forms.manage_question_response.columnTitle}</@th>
-						<@th params={"data-field": "correct"}>#i18n{forms.create_entry.labelResponsesCorrection}</@th>
-						<@th params={"data-field": "complete"}>#i18n{forms.create_entry.labelResponsesComplete}</@th>
-					</@tr>
-					<@tableHeadBodySeparator />
-					<#list questionList as question>
-						<@tr>
-							<@td>${question.step.title!}</@td>
-							<@td>${question.title!}</@td>
-							<@td>
-								<@formGroup>
-									<#assign field_correct=getFieldValueByCode( question.entry, "used_in_correct_form_response")>
-									<@checkBox orientation='switch' name='used_in_correct_form_response_${question.id}' value='1' checked=(field_correct?has_content && field_correct?boolean) />
-								</@formGroup>
-							</@td>
-							<@td>
-								<@formGroup>
-									<#assign field_complete=getFieldValueByCode( question.entry, "used_in_complete_form_response")>
-									<@checkBox orientation='switch' name='used_in_complete_form_response_${question.id}' value='1' checked=(field_complete?has_content && field_complete?boolean) />
-								</@formGroup>
-							</@td>
-						</@tr>
-					</#list>
-				</@table>
-				<@bottomFormFixedButtons>
-					<@headerButton name='action_modifyWorkflowConfig' label='forms.modify_form.buttonValidate' />
-				</@bottomFormFixedButtons>
-			</@tform>
-			</@tabPanel>
-		</@tabContent>
+					<@tform class='form' method='post' name='modify_forms_questions' action='jsp/admin/plugins/forms/ManageFormWorkflowConfig.jsp'>
+						<@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
+						<#if questionList?has_content>
+							<#assign stepIds = [] />
+							<#list questionList as question><#if !stepIds?seq_contains(question.step.id)><#assign stepIds = stepIds + [ question.step.id ] /></#if></#list>
+							<#list stepIds as stepId>
+								<#assign stepQuestions = questionList?filter( q -> q.step.id == stepId ) />
+								<@formSection title=stepQuestions[0].step.title!?replace("- hidden","") subtitle='#i18n{forms.modify_form.section.workflow.subtitle}' bodyClass='p-0'>
+									<@table class='card-table table-vcenter' hover=true>
+										<@tr>
+											<@th>#i18n{forms.manage_question_response.columnTitle}</@th>
+											<@th class='w-1 text-nowrap'>#i18n{forms.create_entry.labelResponsesCorrection}</@th>
+											<@th class='w-1 text-nowrap'>#i18n{forms.create_entry.labelResponsesComplete}</@th>
+										</@tr>
+										<#list stepQuestions as question>
+											<#assign field_correct=getFieldValueByCode( question.entry, "used_in_correct_form_response")>
+											<#assign field_complete=getFieldValueByCode( question.entry, "used_in_complete_form_response")>
+											<@tr>
+												<@td>${question.title!}</@td>
+												<@td>
+													<@checkBox orientation='switch' name='used_in_correct_form_response_${question.id}' value='1' labelKey='#i18n{forms.create_entry.labelResponsesCorrection} : ${question.title!}' labelClass='visually-hidden' checked=(field_correct?has_content && field_correct?boolean) />
+												</@td>
+												<@td>
+													<@checkBox orientation='switch' name='used_in_complete_form_response_${question.id}' value='1' labelKey='#i18n{forms.create_entry.labelResponsesComplete} : ${question.title!}' labelClass='visually-hidden' checked=(field_complete?has_content && field_complete?boolean) />
+												</@td>
+											</@tr>
+										</#list>
+									</@table>
+								</@formSection>
+							</#list>
+							<@formActionsBar>
+								<@button type='submit' name='action_modifyWorkflowConfig' buttonIcon='device-floppy' title='#i18n{forms.modify_form.buttonValidate}' color='primary' />
+							</@formActionsBar>
+						<#else>
+							<@box><@empty title='#i18n{forms.manage_questions.action.noQuestions}' iconName='message-2-question' /></@box>
+						</#if>
+					</@tform>
+				</@tabPanel>
+			</@tabContent>
 		</@formTabs>
 	</@pageColumn>
 </@pageContainer>

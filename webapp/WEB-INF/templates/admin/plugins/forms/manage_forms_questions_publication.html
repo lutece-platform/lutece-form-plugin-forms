@@ -1,69 +1,66 @@
 <#include "/admin/plugins/forms/edit_form_tabs.html" />
+<#assign bc>
+<@formBreadCrumb><@breadcrumbItem>${form.title!}</@breadcrumbItem></@formBreadCrumb>
+</#assign>
 <@tform class='form' method='post' name='modify_forms_questions' action='jsp/admin/plugins/forms/ManageFormsQuestions.jsp'>
 <@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
 <@pageContainer>
-    <@pageColumn>
-		<@pageHeader title='${form.title!}' />
-		<@formBreadCrumb><@breadcrumbItem>${form.title!}</@breadcrumbItem></@formBreadCrumb>
+	<@pageColumn>
+		<@pageHeader title='${form.title!}' breadcrumb=bc />
 		<@formTabs tab="questions" >
 			<@tabContent>
 				<@tabPanel id='tabpanel' active=true>
-					<#-- The questions are grouped by step, in the order of the steps; the search and the sort by status are done by the script below (no external library) -->
-					<#assign stepTitles=[] />
-					<#list questionList as question>
-						<#assign stepTitle=question.step.title!?replace("- hidden","") />
-						<#if !stepTitles?seq_contains(stepTitle)><#assign stepTitles=stepTitles + [ stepTitle ] /></#if>
-					</#list>
-					<@formGroup labelFor='forms-publication-search' labelKey='#i18n{portal.util.labelSearch}'>
-						<@input type='search' name='forms_publication_search' id='forms-publication-search' autoComplete='off' />
-					</@formGroup>
-					<@table id='list' headBody=true class='table-striped mb-3'>
-						<@tr>
-							<@th>#i18n{forms.manage_question_response.columnTitle}</@th>
-							<@th id="forms-publication-status" params={"aria-sort": "none"}><button type="button" class="btn btn-link p-0" id="forms-publication-sort">#i18n{forms.manage_question_response.status} (Publi&eacute; / Non publi&eacute;) <i class="ti ti-arrows-sort" aria-hidden="true"></i></button></@th>
-						</@tr>
-						<@tableHeadBodySeparator />
-						<#list stepTitles as stepTitle>
-							<@tr class='forms-publication-group' params={"data-group": (stepTitle?index)}>
-								<@th scope='rowgroup' colspan=2>${stepTitle!}</@th>
-							</@tr>
-							<#list questionList as question>
-								<#if question.step.title!?replace("- hidden","") == stepTitle>
-								<@tr class='forms-publication-question' params={"data-group": (stepTitle?index), "data-order": (question?index)}>
-									<@td>${question.title!}</@td>
-									<@td>
-										<#assign status><#if question?has_content && question.published!>Publié<#else>Non publié</#if></#assign>
-										<@formGroup labelFor='published' labelKey=status>
-											<@checkBox orientation='switch' name='questionPublished' id='${question.id}' value='${question.id}' checked=(question?has_content && question.published!) />
-										</@formGroup>
-									</@td>
-								</@tr>
-								</#if>
-							</#list>
+					<#if questionList?has_content>
+						<#assign stepIds = [] />
+						<#list questionList as question><#if !stepIds?seq_contains(question.step.id)><#assign stepIds = stepIds + [ question.step.id ] /></#if></#list>
+						<#-- The search and the sort by status are done by the script below (no external library) -->
+						<@formGroup labelFor='forms-publication-search' labelKey='#i18n{portal.util.labelSearch}'>
+							<@input type='search' name='forms_publication_search' id='forms-publication-search' autoComplete='off' />
+						</@formGroup>
+						<#list stepIds as stepId>
+							<#assign stepQuestions = questionList?filter( q -> q.step.id == stepId ) />
+							<div class="forms-publication-group">
+							<@formSection title=stepQuestions[0].step.title!?replace("- hidden","") subtitle='#i18n{forms.modify_form.section.publication.subtitle}' bodyClass='p-0'>
+								<@table class='card-table table-vcenter' hover=true>
+									<@tr>
+										<@th>#i18n{forms.manage_question_response.columnTitle}</@th>
+										<@th class='w-1 text-nowrap forms-publication-status' params={"aria-sort": "none"}><button type="button" class="btn btn-link p-0 forms-publication-sort">#i18n{forms.modify_form.section.publication.published} <i class="ti ti-arrows-sort" aria-hidden="true"></i></button></@th>
+									</@tr>
+									<#list stepQuestions as question>
+										<@tr class='forms-publication-question' params={"data-order": "${question?index}"}>
+											<@td>${question.title!}</@td>
+											<@td>
+												<@checkBox orientation='switch' name='questionPublished' id='${question.id}' value='${question.id}' labelKey='${question.title!}' labelClass='visually-hidden' checked=(question?has_content && question.published!) />
+											</@td>
+										</@tr>
+									</#list>
+								</@table>
+							</@formSection>
+							</div>
 						</#list>
-					</@table> 
-					<@bottomFormFixedButtons>
-						<@headerButton name='action_modifyFormQuestions' label='forms.modify_form.buttonValidate' /> 
-					</@bottomFormFixedButtons>
+						<@formActionsBar>
+							<@button type='submit' name='action_modifyFormQuestions' buttonIcon='device-floppy' title='#i18n{forms.modify_form.buttonValidate}' color='primary' />
+						</@formActionsBar>
+					<#else>
+						<@box><@empty title='#i18n{forms.manage_questions.action.noQuestions}' iconName='message-2-question' /></@box>
+					</#if>
 				</@tabPanel>
 			</@tabContent>
 		</@formTabs>
-	</@pageColumn>		
-</@pageContainer>		
+	</@pageColumn>
+</@pageContainer>
 </@tform>
 <script>
 document.addEventListener( 'DOMContentLoaded', ( ) => {
-	const body = document.querySelector( '#list tbody' );
 	const search = document.getElementById( 'forms-publication-search' );
-	const sort = document.getElementById( 'forms-publication-sort' );
-	const status = document.getElementById( 'forms-publication-status' );
-	const groups = ( ) => body.querySelectorAll( 'tr.forms-publication-group' );
-	const questions = ( group ) => body.querySelectorAll( 'tr.forms-publication-question[data-group="' + group.dataset.group + '"]' );
+	if ( !search ) { return; }
+	const groups = ( ) => document.querySelectorAll( '.forms-publication-group' );
+	const questions = ( group ) => group.querySelectorAll( 'tr.forms-publication-question' );
 	// Search: a question is shown when its title or its step contains the text, a step is shown when one of its questions is
 	search.addEventListener( 'input', ( ) => {
 		const text = search.value.trim( ).toLowerCase( );
 		groups( ).forEach( ( group ) => {
-			const stepMatches = group.textContent.toLowerCase( ).includes( text );
+			const stepMatches = ( group.querySelector( '.card-title' )?.textContent || '' ).toLowerCase( ).includes( text );
 			let visible = 0;
 			questions( group ).forEach( ( row ) => {
 				const show = stepMatches || row.cells[0].textContent.toLowerCase( ).includes( text );
@@ -75,20 +72,20 @@ document.addEventListener( 'DOMContentLoaded', ( ) => {
 	} );
 	// Sort by status inside each step: published first, then not published, then back to the order of the form
 	let order = 'none';
-	sort.addEventListener( 'click', ( ) => {
+	document.querySelectorAll( '.forms-publication-sort' ).forEach( ( sort ) => sort.addEventListener( 'click', ( ) => {
 		order = order === 'none' ? 'descending' : ( order === 'descending' ? 'ascending' : 'none' );
-		status.setAttribute( 'aria-sort', order );
+		document.querySelectorAll( '.forms-publication-status' ).forEach( ( status ) => status.setAttribute( 'aria-sort', order ) );
+		const published = ( row ) => row.querySelector( 'input[type=checkbox]' ).checked ? 1 : 0;
 		groups( ).forEach( ( group ) => {
 			const rows = Array.from( questions( group ) );
-			const published = ( row ) => row.querySelector( 'input[type=checkbox]' ).checked ? 1 : 0;
 			rows.sort( ( a, b ) => {
 				if ( order === 'none' ) { return a.dataset.order - b.dataset.order; }
 				const diff = order === 'descending' ? published( b ) - published( a ) : published( a ) - published( b );
 				return diff !== 0 ? diff : a.dataset.order - b.dataset.order;
 			} );
-			group.after( ...rows );
+			rows[0]?.parentNode.append( ...rows );
 		} );
-	} );
+	} ) );
 } );
 </script>
 <@formsToastr infos=infos warnings=warnings errors=errors />
