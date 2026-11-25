@@ -2,7 +2,7 @@
     <@pageColumn>
 		<@pageHeader title='#i18n{forms.modifyField.title} : "${field.parentEntry.title}"' />
 		<@div id='modify-entry'>
-		<@tform id='modify_field_form' action='jsp/admin/plugins/forms/ModifyEntry.jsp' enctype="multipart/form-data" params={"target": "_top"}>
+		<@tform id='modify_field_form' boxed=true action='jsp/admin/plugins/forms/ModifyEntry.jsp' enctype="multipart/form-data" params={"target": "_top"}>
 		<@input type='hidden' name='id_step' value='${question.idStep}' />
 		<@input type='hidden' name='id_question' value='${question.id}' />
 		<@input type='hidden' name='id_entry' value='${id_entry}' />
@@ -10,10 +10,10 @@
 		<@fieldSet legend='#i18n{forms.modifyField.title} : "${field.parentEntry.title}"' hideLegend=['all']>
 			<@input type='hidden' name='id_field' value='${field.idField}' />
 			<@formGroup labelFor='title' labelKey='#i18n{forms.createField.labelTitle}' mandatory=true>
-				<@input type='text' name='title' id='title' inputSize=80 value='${field.title}' maxlength=255 />
+				<@input type='text' name='title' id='title' value='${field.title}' maxlength=255 />
 			</@formGroup>
 			<@formGroup labelFor='value' labelKey='#i18n{forms.createField.labelValue}' helpKey='#i18n{forms.createField.labelValue.help}'>
-				<@input type='text' name='value' id='value' inputSize=80 value='${field.value}' />
+				<@input type='text' name='value' id='value' value='${field.value}' />
 			</@formGroup>
 			<@formGroup labelFor='comment' labelKey='#i18n{forms.createField.labelComment}'>
 				<@input type='textarea' name='comment' id='comment'>${field.comment}</@input>

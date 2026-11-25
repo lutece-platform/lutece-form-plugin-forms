@@ -7,7 +7,7 @@
 			<@div class="d-flex align-items-center pe-2">
 				<a class="d-flex align-items-center gap-2 ps-3 py-2 flex-fill overflow-hidden text-reset text-decoration-none fb-step-link" href="jsp/admin/plugins/forms/ManageFormBuilder.jsp?view=builder&id_form=${form.id}&id_step=${stepItem.id}" data-step-id="${stepItem.id}">
 					<@span class='badge bg-secondary-lt'>${stepItem?counter}</@span>
-					<@span class='text-truncate flex-fill'>${stepItem.title!?replace('- hidden','')}</@span>
+					<@span class='flex-fill text-break'>${stepItem.title!?replace('- hidden','')}</@span>
 					<#if stepItem.initial><@tag color='green-lt' title='#i18n{forms.manage_steps.columnInitial}'>#i18n{forms.form_builder.step.initialShort}</@tag></#if>
 					<#if stepItem.final><@tag color='orange-lt' title='#i18n{forms.manage_steps.columnFinal}'>#i18n{forms.form_builder.step.finalShort}</@tag></#if>
 				</a>

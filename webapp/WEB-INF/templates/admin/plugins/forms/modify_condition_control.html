@@ -12,8 +12,7 @@
 		<@button type='submit' name='view_modifyConditionControl' value='validateQuestion' hideTitle=['all'] buttonIcon='check' />
 	</@inputGroup>
 </@formGroup>
-<#assign labelicon><@icon style='asterisk' /></#assign>
-<@formGroup labelKey='#i18n{forms.modify_control.labelValidator} ${labelicon}' helpKey='#i18n{forms.modify_control.labelValidator.help}' rows=2>
+<@formGroup labelKey='#i18n{forms.modify_control.labelValidator}' helpKey='#i18n{forms.modify_control.labelValidator.help}' mandatory=true rows=2>
 	<@inputGroup>
 		<@select name='validatorName' items=availableValidators default_value='${control.validatorName!}' />
 		<@button type='submit' name='view_modifyConditionControl' value='validateValidator' hideTitle=['all'] buttonIcon='check'/>

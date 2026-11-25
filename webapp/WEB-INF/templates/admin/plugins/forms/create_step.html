@@ -30,7 +30,7 @@
         </@formGroup>
     </@columns>
 </@row>
-<@formGroup labelFor='previousStep' labelKey='#i18n{forms.create_step.labelPreviousStep}' helpKey='#i18n{forms.create_step.labelPreviousStep.help}' hideLabel=['all'] >
+<@formGroup labelFor='previousStep' labelKey='#i18n{forms.create_step.labelPreviousStep}' helpKey='#i18n{forms.create_step.labelPreviousStep.help}' rows=2>
     <#assign step_default=step_list?map(step -> step.code?number)?max?c >
     <@select name='previousStep' items=step_list default_value=step_default />
 </@formGroup>

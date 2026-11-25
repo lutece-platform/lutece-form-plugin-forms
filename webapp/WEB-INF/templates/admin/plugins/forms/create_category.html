@@ -1,18 +1,17 @@
 <@pageContainer>
-    <@pageColumn>
-		<@pageHeader title='#i18n{forms.createFormCategory.title}' />
-		<@tform class='form' method='post' name='create_category' action='jsp/admin/plugins/forms/ManageFormsCategories.jsp'  params={"target": "_top"}>
-			<@formGroup labelFor='title' labelKey='#i18n{forms.create_form_category.labelName}' mandatory=true>
+	<@pageColumn>
+		<@pageHeader title='#i18n{forms.createFormCategory.title}'>
+			<@aButton href='jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=manageCategories' buttonIcon='arrow-left' title='#i18n{portal.util.labelBack}' color='light' />
+		</@pageHeader>
+		<@tform method='post' name='create_category' id='create_category' action='jsp/admin/plugins/forms/ManageFormsCategories.jsp' boxed=true>
+			<@formGroup labelFor='name' labelKey='#i18n{forms.create_form_category.labelName}' mandatory=true rows=2>
 				<@input type='text' name='name' id='name' value=category.name!'' maxlength=100 />
 			</@formGroup>
-			<@formGroup labelFor='title' labelKey='#i18n{forms.create_form_category.labelCode}' mandatory=true>
+			<@formGroup labelFor='code' labelKey='#i18n{forms.create_form_category.labelCode}' mandatory=true rows=2>
 				<@input type='text' name='code' id='code' value=category.code!'' maxlength=100 />
 			</@formGroup>
-			<@formGroup rows=2>
-				<@formsButton okAction='createCategory' viewAction='' />
-			</@formGroup>
+			<@formsButton okAction='createCategory' viewAction='manageCategories' />
 		</@tform>
 	</@pageColumn>
 </@pageContainer>
-<@formEditor /> 
 <@formsToastr infos=infos warnings=warnings errors=errors />

@@ -1,4 +1,10 @@
-<@tform class='p-3' method='post' id='move_composite' name='modify_form' action='jsp/admin/plugins/forms/ManageQuestions.jsp'>
+<#assign moveTitle><#if display.compositeType?lower_case == 'group'>#i18n{forms.moveComposite.group.title}<#else>#i18n{forms.moveComposite.question.title}</#if> : ${display_title!}</#assign>
+<@pageContainer>
+<@pageColumn>
+<@pageHeader title=moveTitle>
+	<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${display.stepId}' buttonIcon='arrow-left' title='#i18n{portal.util.labelBack}' color='light' />
+</@pageHeader>
+<@tform method='post' id='move_composite' name='modify_form' action='jsp/admin/plugins/forms/ManageQuestions.jsp' boxed=true>
 <@messages errors=errors![] />
 <@input type='hidden' id='id_display' name='id_display' value='${display.id}' />
 <@input type='hidden' id='stepValidated' name='stepValidated' value='${stepValidated?c}' />
@@ -6,20 +12,20 @@
 <@formGroup labelKey='#i18n{forms.moveComposite.step.label}' helpKey='#i18n{forms.moveComposite.step.label.help}' rows=2>
 	<@inputGroup>
 		<@select name='id_step' items=list_steps default_value='${id_step!}' />
-			<@button type='submit' name="view_moveComposite" value="validateStep" hideTitle=['all'] buttonIcon='check'/>
+			<@button type='submit' name="view_moveComposite" value="validateStep" title='#i18n{forms.moveComposite.buttonApply}' buttonIcon='check' color='outline-primary' />
 	</@inputGroup>
 </@formGroup>
 <@formGroup labelKey='#i18n{forms.moveComposite.group.label}' helpKey='#i18n{forms.moveComposite.group.label.help}' rows=2>
 	<@inputGroup>
 		<@select name='id_parent' items=list_groups default_value='${id_parent!}' />
-		<@button type='submit' name="view_moveComposite" value="validateGroup" hideTitle=['all'] buttonIcon='check'/>
+		<@button type='submit' name="view_moveComposite" value="validateGroup" title='#i18n{forms.moveComposite.buttonApply}' buttonIcon='check' color='outline-primary' />
 	</@inputGroup>
 </@formGroup>
 <#if groupValidated && ( list_columns![] )?size gt 1>
 <@formGroup labelKey='#i18n{forms.moveComposite.column.label}' helpKey='#i18n{forms.moveComposite.column.label.help}' rows=2>
 	<@inputGroup>
 		<@select name='display_column' items=list_columns default_value='${display_column!1}' />
-		<@button type='submit' name="view_moveComposite" value="validateColumn" hideTitle=['all'] buttonIcon='check'/>
+		<@button type='submit' name="view_moveComposite" value="validateColumn" title='#i18n{forms.moveComposite.buttonApply}' buttonIcon='check' color='outline-primary' />
 	</@inputGroup>
 </@formGroup>
 <#else>
@@ -29,7 +35,7 @@
 	<#if groupValidated==true>
 		<@inputGroup>
 			<@select name='displayOrder' items=list_positions default_value='${displayOrder!}' />
-			<@button type='submit' id='action_moveComposite' name='action_moveComposite' class='form-validation' buttonIcon='check' title='#i18n{portal.admin.message.buttonValidate}' hideTitle=['all'] />
+			<@button type='submit' id='action_moveComposite' name='action_moveComposite' class='form-validation' buttonIcon='check' title='#i18n{portal.admin.message.buttonValidate}' />
 		</@inputGroup>
 	<#else>
 		<@tag color='danger'>
@@ -38,3 +44,5 @@
 	</#if>
 </@formGroup>
 </@tform>
+</@pageColumn>
+</@pageContainer>

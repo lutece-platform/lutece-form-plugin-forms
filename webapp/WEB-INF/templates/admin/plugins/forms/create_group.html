@@ -8,9 +8,11 @@
 </#assign>
 <@pageContainer>
 	<@pageColumn>
-		<@pageHeader title='${stepTitle}' breadcrumb=bc />
+		<@pageHeader title='#i18n{forms.create_group.title}' breadcrumb=bc>
+			<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' buttonIcon='arrow-left' title='#i18n{portal.util.labelBack}' color='light' />
+		</@pageHeader>
 			<@div id='form_createGroup'>
-			<@tform class='p-3' method='post' name='create_group' id='create_group' action='jsp/admin/plugins/forms/ManageQuestions.jsp'>
+			<@tform method='post' name='create_group' id='create_group' boxed=true action='jsp/admin/plugins/forms/ManageQuestions.jsp'>
 			<@messages errors=errors />
 			<@input type='hidden' id='id_form' name='id_form' value='${step.idForm}' />
 			<@input type='hidden' id='id_step' name='id_step' value='${step.id}' />
@@ -68,7 +70,7 @@
 				</@formGroup>
 			</#if>
 			<@formGroup rows=2 >
-				<@formsButton okAction='createGroup' viewAction='' />
+				<@formsButton okAction='createGroup' viewAction='manageQuestions' />
 			</@formGroup>
 		</@tform>
 		</@div>
