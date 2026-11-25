@@ -61,8 +61,10 @@ import fr.paris.lutece.plugins.forms.service.FormDatabaseService;
 import fr.paris.lutece.plugins.forms.service.FormDisplayService;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
+import fr.paris.lutece.plugins.forms.service.FormsPlugin;
 import fr.paris.lutece.plugins.forms.service.IFormDatabaseService;
 import fr.paris.lutece.plugins.forms.service.IFormDisplayService;
+import fr.paris.lutece.plugins.forms.service.cache.FormsCacheService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.util.FormsEntryUtils;
 import fr.paris.lutece.plugins.forms.web.ICompositeDisplay;
@@ -82,12 +84,14 @@ import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.url.UrlItem;
+import fr.paris.lutece.util.sql.TransactionManager;
 
 /**
  * This class provides the user interface to manage Form features ( manage, create, modify, remove )
@@ -731,11 +735,35 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( _formDisplay.getFormId( ) ), FormsResourceIdService.PERMISSION_MODIFY,
                 request, null );
 
+        // committed on its own, before the siblings are renumbered : the writes that renumber them then empty the cache after the removal is
+        // visible, so that a page read while it was running cannot keep in cache a display whose question is gone
         getFormDisplayService( ).deleteDisplayAndDescendants( nIdDisplay );
 
-        List<FormDisplay> listFormDisplaySibling = getFormDatabaseService( ).getFormDisplayListByParent( _formDisplay.getStepId( ),
-                _formDisplay.getParentId( ) );
-        getFormDisplayService( ).rebuildDisplayPositionSequence( listFormDisplaySibling );
+        TransactionManager.beginTransaction( FormsPlugin.getPlugin( ) );
+
+        try
+        {
+            // the siblings are renumbered from the database under the lock of the step, like a move or a duplication into it : read from the
+            // cache, two removals in one group each wrote the positions of a group the other had already changed
+            getFormDatabaseService( ).lockStepForUpdate( _formDisplay.getStepId( ) );
+
+            List<FormDisplay> listFormDisplaySibling = getFormDatabaseService( ).readFormDisplayListByParentFromDatabase( _formDisplay.getStepId( ),
+                    _formDisplay.getParentId( ) );
+            getFormDisplayService( ).rebuildDisplayPositionSequence( listFormDisplaySibling );
+
+            TransactionManager.commitTransaction( FormsPlugin.getPlugin( ) );
+        }
+        catch( Exception e )
+        {
+            TransactionManager.rollBack( FormsPlugin.getPlugin( ) );
+            throw new AppException( "Forms : the positions of the step " + _formDisplay.getStepId( ) + " could not be renumbered after a removal", e );
+        }
+        finally
+        {
+            // a reader may have cached the positions read before the commit, or rows the rollback has undone
+            SpringContextService.<FormsCacheService> getBean( FormsCacheService.BEAN_NAME ).resetCache( );
+        }
+
         addInfo( INFO_DELETE_COMPOSITE_SUCCESSFUL, getLocale( ) );
         return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _formDisplay.getStepId( ) );
     }
@@ -864,7 +892,17 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
             return redirect( request, VIEW_MOVE_COMPOSITE, FormsConstants.PARAMETER_ID_DISPLAY, nIdDisplay );
         }
 
-        moveDisplay( _formDisplay, nIdStepTarget, nIdParentTarget, nDisplayOrderTarget );
+        try
+        {
+            moveDisplay( _formDisplay, nIdStepTarget, nIdParentTarget, nDisplayOrderTarget );
+        }
+        catch( AppException e )
+        {
+            AppLogService.error( e.getMessage( ), e );
+            addError( ERROR_OCCURED_MOVING_COMPOSITE, getLocale( ) );
+
+            return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _formDisplay.getStepId( ) );
+        }
 
         addInfo( INFO_MOVE_COMPOSITE_SUCCESSFUL, getLocale( ) );
 

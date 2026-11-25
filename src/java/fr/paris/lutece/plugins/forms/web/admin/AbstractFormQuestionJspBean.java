@@ -807,9 +807,58 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         int nIdOriginParent = _formDisplay.getParentId( );
         int nOriginDisplayOrder = _formDisplay.getDisplayOrder( );
 
-        // copied because getFormDisplayListByParent hands out the cached instance
+        TransactionManager.beginTransaction( FormsPlugin.getPlugin( ) );
+
+        try
+        {
+            // two moves, or a move and a duplication, into one step run one after the other : each rewrites the positions of a group the
+            // other has finished with. Both steps are locked, always in the same order, so that two moves between the same steps never wait
+            // for each other
+            getFormDatabaseService( ).lockStepForUpdate( Math.min( nIdOriginStep, nIdStepTarget ) );
+
+            if ( nIdOriginStep != nIdStepTarget )
+            {
+                getFormDatabaseService( ).lockStepForUpdate( Math.max( nIdOriginStep, nIdStepTarget ) );
+            }
+
+            moveDisplayInTransaction( formDisplayToMove, nIdOriginStep, nIdOriginParent, nIdStepTarget, nIdParentTarget, nDisplayOrderTarget );
+
+            TransactionManager.commitTransaction( FormsPlugin.getPlugin( ) );
+        }
+        catch( Exception e )
+        {
+            TransactionManager.rollBack( FormsPlugin.getPlugin( ) );
+            throw new AppException( "Forms : the move of the display " + formDisplayToMove.getId( ) + " failed", e );
+        }
+        finally
+        {
+            // a reader may have cached the positions read before the commit, or rows the rollback has undone
+            SpringContextService.<FormsCacheService> getBean( FormsCacheService.BEAN_NAME ).resetCache( );
+        }
+    }
+
+    /**
+     * Move the display within the transaction opened by moveDisplay, under the lock of the steps involved
+     *
+     * @param formDisplayToMove
+     *            the FormDisplay to be moved
+     * @param nIdOriginStep
+     *            the step the display comes from
+     * @param nIdOriginParent
+     *            the parent display the display comes from
+     * @param nIdStepTarget
+     *            the target Step identifier
+     * @param nIdParentTarget
+     *            the target Parent Display identifier (0 if root level of the step )
+     * @param nDisplayOrderTarget
+     *            the target position within parent
+     */
+    private void moveDisplayInTransaction( FormDisplay formDisplayToMove, int nIdOriginStep, int nIdOriginParent, int nIdStepTarget,
+            int nIdParentTarget, int nDisplayOrderTarget )
+    {
+        // read from the database, under the lock : the cache may not hold yet what another move just committed
         List<FormDisplay> listDisplayInTargetGroup = new ArrayList<>(
-                getFormDatabaseService( ).getFormDisplayListByParent( nIdStepTarget, nIdParentTarget ) );
+                getFormDatabaseService( ).readFormDisplayListByParentFromDatabase( nIdStepTarget, nIdParentTarget ) );
 
         formDisplayToMove.setParentId( nIdParentTarget );
 
@@ -842,7 +891,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         // the origin group
         if ( ( nIdOriginParent != nIdParentTarget ) || ( nIdOriginStep != nIdStepTarget ) )
         {
-            List<FormDisplay> listDisplayInOriginGroup = getFormDatabaseService( ).getFormDisplayListByParent( nIdOriginStep, nIdOriginParent );
+            List<FormDisplay> listDisplayInOriginGroup = getFormDatabaseService( ).readFormDisplayListByParentFromDatabase( nIdOriginStep, nIdOriginParent );
             getFormDisplayService( ).rebuildDisplayPositionSequence( listDisplayInOriginGroup );
         }
     }
