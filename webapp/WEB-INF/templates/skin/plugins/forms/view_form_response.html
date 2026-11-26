@@ -4,8 +4,8 @@
 	    <@cRow>
             <@cCol>
                 <#if errors?? && errors?size gt 0><#list errors as error><@cAlert type='danger' class='danger mt-m' title=error.message! /></#list></#if>
-                <#if warnings?? && warnings?size gt 0><#list warnings as warning><@cAlert type='warning' class='warning mt-m' title=warning.message! /></#list></#if>
-                <#if infos?? && infos?size gt 0><#list infos as info><@cAlert type='primary' class='primary mt-m' title=info.message! /></#list></#if>
+                <#if warnings?? && warnings?size gt 0><#list warnings as warning><@cAlert type='warning' class='warning mt-m' title=(warning?is_hash)?then(warning.message!'', warning) /></#list></#if>
+                <#if infos?? && infos?size gt 0><#list infos as info><@cAlert type='primary' class='primary mt-m' title=(info?is_hash)?then(info.message!'', info) /></#list></#if>
                 <#if dskey('portal.theme.site_property.forms.showResponseFormWarning.checkbox') == '1'>
                     <#assign labelInfoResponse = dskey('portal.theme.site_property.forms.labelInfoResponse')!'' />
                     <#-- the text typed in the site properties; dskey answers 'DS Value Missing' for a key that is not in the datastore -->

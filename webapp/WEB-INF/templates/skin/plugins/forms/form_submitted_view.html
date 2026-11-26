@@ -6,7 +6,7 @@
 	<#if (warnings![])?size gt 0 >
 		<#assign alertClass='warning' />
 		<#assign alertTitle='#i18n{portal.util.message.titleWarning}' />
-		<#assign alertText><#list warnings as warning ><#if warning.message??>${warning.message!' #i18n{portal.util.message.titleWarning} '}<br></#if></#list></#assign>
+		<#assign alertText><#list warnings as warning ><#assign warningText = (warning?is_hash)?then(warning.message!'', warning) /><#if warningText?has_content>${warningText}<br></#if></#list></#assign>
 	</#if>
 </#if>
 <@cContainer>
