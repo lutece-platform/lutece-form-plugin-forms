@@ -94,7 +94,6 @@
 
 				var currStep = document.querySelector('.step-current .step-content');
 				var hasCheckAdr = currStep ? currStep.querySelectorAll('.checkaddress').length : 0;
-				var btnSendStep = currStep ? currStep.querySelector('[name="action_doSaveStep"]') : null;
 
 				var jAdresseContainer = document.getElementById('${idName?js_string?no_esc}_autocomplete');
 				var jAdresse = jAdresseContainer ? jAdresseContainer.querySelector('.lutece-autocomplete-search-input') : null;
@@ -151,9 +150,17 @@
 						}
 					});
 
-					// Validate before submitting the form
-					if (btnSendStep) {
-						btnSendStep.addEventListener('click', function(e) {
+					// Validate before submitting the form: next step, summary or final save (the last step of a form has no
+					// action_doSaveStep button; the Enter key submits with the first button of the form). Going back to the
+					// previous step or saving a draft is not blocked.
+					var stepForm = jAdresse.form;
+					var checkedActions = [ 'action_doSaveStep', 'action_formResponseSummary', 'action_doSaveResponse' ];
+					if (stepForm) {
+						stepForm.addEventListener('submit', function(e) {
+							var action = e.submitter ? e.submitter.getAttribute('name') : null;
+							if ( action != null && checkedActions.indexOf( action ) < 0 ) {
+								return;
+							}
 							// Check if address has a value but wasn't selected from autocomplete
 							if ( jAdresse.value && !jAdresse.classList.contains('wssuggest') && addrInputValue != jAdresse.value && jAdresse.value.trim() !== '') {
 								e.preventDefault();
