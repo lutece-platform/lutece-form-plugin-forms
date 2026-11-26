@@ -313,6 +313,15 @@ public class FormXPage extends MVCApplication
         }
 
         Form form = FormHome.findByPrimaryKey( _currentStep.getIdForm( ) );
+
+        if ( form == null )
+        {
+            // The form was removed while its step was kept in the session
+            init( FormsConstants.DEFAULT_ID_VALUE );
+            SiteMessageService.setMessage( request, FormsConstants.MESSAGE_ERROR_NO_STEP, SiteMessage.TYPE_ERROR );
+            return null;
+        }
+
         checkAuthentication( form, request );
 
         LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
@@ -917,6 +926,13 @@ public class FormXPage extends MVCApplication
         else
         {
             form = FormHome.findByPrimaryKey( _currentStep.getIdForm( ) );
+
+            if ( form == null )
+            {
+                // The form was removed while its step was kept in the session
+                init( FormsConstants.DEFAULT_ID_VALUE );
+                throw new FormNotFoundException( );
+            }
         }
 
         if ( !form.isActive( ) && !bypassInactiveState( form, request ) )
