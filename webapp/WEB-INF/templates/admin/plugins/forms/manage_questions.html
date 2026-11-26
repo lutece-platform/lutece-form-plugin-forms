@@ -36,7 +36,7 @@
 				${composite.title!?replace('- hidden','')}
 			</label>
 			<div class="card-actions btn-list">
-				<@button type='button' buttonIcon='plus' title="#i18n{forms.manage_questions.buttonAdd}" hideTitle=['xs','sm'] params={"data-bs-toggle": "modal", "data-bs-target": "#fieldTypeModal-${idDisplay}"} /><@modal id="fieldTypeModal-${idDisplay}" size='sm' params={"aria-labelledby": "fieldTypeModal-${idDisplay}-title"}><@modalHeader modalTitle="#i18n{forms.manage_questions.buttonAdd}" id="fieldTypeModal-${idDisplay}-title" /><@modalBody><@questionTypeButtons /></@modalBody></@modal>
+				<@button type='button' buttonIcon='plus' title="#i18n{forms.manage_questions.buttonAdd}" hideTitle=['xs','sm'] params={"data-bs-toggle": "modal", "data-bs-target": "#fieldTypeModal-${idDisplay}"} /><@modal id="fieldTypeModal-${idDisplay}" size='sm' params={"aria-labelledby": "fieldTypeModal-${idDisplay}-title"}><@modalHeader modalTitle="#i18n{forms.manage_questions.buttonAdd}" /><@modalBody><@questionTypeButtons /></@modalBody></@modal>
 				<@aButton href="jsp/admin/plugins/forms/ManageQuestions.jsp?view=moveComposite&id_step=${step.id}&id_display=${idDisplay}" color="" class="btn-action" title="#i18n{forms.manage_questions.action.move}" buttonIcon="sort" hideTitle=['all'] />
 				<@aButton href="jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyGroup&id_step=${step.id}&id_group=${composite.formDisplay.compositeId}" color="" class="btn-action" title="#i18n{forms.manage_questions.action.updategroup.label}" buttonIcon="pencil" hideTitle=['all'] />
 				<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=getConfirmRemoveComposite&id_step=${step.id}&id_display=${idDisplay}' color='' class='btn-action text-danger' title='#i18n{forms.manage_questions.action.removeQuestion}' buttonIcon='trash' hideTitle=['all'] />
@@ -144,7 +144,7 @@
                      </@row>
                      <@row>
                         <@columns class='d-flex justify-content-center align-items-center'>
-                             <@button type='button' buttonIcon='plus' title="#i18n{forms.manage_questions.buttonAdd}" params={"data-bs-toggle": "modal", "data-bs-target": "#fieldTypeModal2"} /><@modal id="fieldTypeModal2" size='sm' params={"aria-labelledby": "fieldTypeModal2-title"}><@modalHeader modalTitle="#i18n{forms.manage_questions.buttonAdd}" id="fieldTypeModal2-title" /><@modalBody><@questionTypeButtons /></@modalBody></@modal>
+                             <@button type='button' buttonIcon='plus' title="#i18n{forms.manage_questions.buttonAdd}" params={"data-bs-toggle": "modal", "data-bs-target": "#fieldTypeModal2"} /><@modal id="fieldTypeModal2" size='sm' params={"aria-labelledby": "fieldTypeModal2-title"}><@modalHeader modalTitle="#i18n{forms.manage_questions.buttonAdd}" /><@modalBody><@questionTypeButtons /></@modalBody></@modal>
                         </@columns>
                     </@row>
                     </@tform>

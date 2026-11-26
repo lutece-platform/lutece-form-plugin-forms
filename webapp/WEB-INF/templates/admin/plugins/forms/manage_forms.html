@@ -24,7 +24,7 @@
         <#if permission_create_forms>
         <@modal id='import-json' params={"tabindex": "-1", "aria-labelledby": "import-json-title", "aria-hidden": "true"}>
             <@tform id='importJsonModal' method='post' name='upload_form' action='jsp/admin/plugins/forms/ManageForms.jsp' params={"enctype": "multipart/form-data"}>
-                <@modalHeader modalTitle='#i18n{forms.manageForm.buttonImport}' id='import-json-title' />
+                <@modalHeader modalTitle='#i18n{forms.manageForm.buttonImport}' />
                 <@modalBody>
                     <@input type='hidden' name='token' value='${token}' />
                     <@formGroup labelFor='json_file' labelKey='#i18n{forms.manageForm.labelImportFile}' helpKey='#i18n{forms.manageForm.labelImportFile.help}' mandatory=true rows=2>
