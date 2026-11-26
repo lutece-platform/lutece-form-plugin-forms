@@ -77,6 +77,7 @@ import fr.paris.lutece.portal.business.physicalfile.PhysicalFileHome;
 import fr.paris.lutece.portal.service.file.FileService;
 import fr.paris.lutece.portal.service.file.FileServiceException;
 import fr.paris.lutece.portal.service.file.IFileStoreServiceProvider;
+import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -119,6 +120,7 @@ public abstract class GenericFormsProvider {
 	private static final String MESSAGE_I18N_STATUS_UPDATE_DATE = "forms.marker.provider.url.detail.reponse.status_update_date";
 	private static final String MESSAGE_I18N_FORM = "forms.marker.provider.url.detail.reponse.form";
 	private static final String MESSAGE_I18N_FO_FILE_LINK = "forms.marker.provider.url.fo.file.link";
+	private static final String MESSAGE_I18N_GROUP_ALL_ITERATIONS = "forms.marker.provider.group.all_iterations";
 
 	/**
      * Provides forms values as model (map), responses of iterations are merged into one FormQuestionResponse identified by the question id.
@@ -134,7 +136,8 @@ public abstract class GenericFormsProvider {
     
     /**
      * Provides forms values as model (map). If mergeGroupedResponses is true, then responses of iterations are merged into one FormQuestionResponse identified
-     * by the question id, otherwise, responses of iterations are available with their question id and iteration number.
+     * by the question id, otherwise, responses of iterations are available with their question id and iteration number. The model also holds a
+     * <code>group_&lt;id&gt;</code> entry for each iterable group: the HTML of every iteration the user filled (see {@link GroupIterationsMarker}).
      *
      * @param formResponse
      * @param request
@@ -146,6 +149,12 @@ public abstract class GenericFormsProvider {
 		Map<String, Object> model = new HashMap<>( );
 
 		List<FormQuestionResponse> listFormQuestionResponse = FormQuestionResponseHome.getFormQuestionResponseListByFormResponse( formResponse.getId( ) );
+
+		// Group bookmarks: computed before the loop below, which, when it merges the iterations,
+		// puts the responses of every iteration into the response of the first one.
+		// Marked as HTML so that FreeMarker auto-escaping keeps them as they are.
+		model.putAll( GroupIterationsMarker.getMarkerModel( formResponse.getFormId( ), listFormQuestionResponse, I18nService.getDefaultLocale( ) ) );
+
 		Boolean bExportImageBase64 = AppPropertiesService.getPropertyBoolean( PROPERTY_EXPORT_IMAGES_IN_BASE64, false);
 
 		for ( FormQuestionResponse formQuestionResponse : listFormQuestionResponse )
@@ -331,18 +340,7 @@ public abstract class GenericFormsProvider {
 					}
 					else if( FormsConstants.MARK_GROUP.equals(composite.getCompositeType()) )
 					{
-						List<FormDisplay> listFormDisplayGroup = FormDisplayHome.getFormDisplayListByParent( composite.getStepId(), composite.getId() );
-						listFormDisplayGroup.sort( Comparator.comparingInt( FormDisplay::getDisplayOrder ) );
-
-						Group group = GroupHome.findByPrimaryKey( composite.getCompositeId() );
-
-						for ( FormDisplay compositeGroup : listFormDisplayGroup)
-						{
-							if( FormsConstants.MARK_QUESTION.equals(compositeGroup.getCompositeType()) )
-							{
-								descriptionMarkersList.addAll( buildMarkerForQuestion( QuestionHome.findByPrimaryKey( compositeGroup.getCompositeId() ) , group, bByQuestionCodes ));
-							}
-						}
+						descriptionMarkersList.addAll( buildMarkersForGroup( composite, bByQuestionCodes ) );
 					}
 				}
 			}
@@ -374,6 +372,50 @@ public abstract class GenericFormsProvider {
 		descriptionMarkersList.add( formTitleMarker );
 		descriptionMarkersList.add( markerFoFileUrl );
 
+		return descriptionMarkersList;
+	}
+
+	/**
+	 * Builds the markers of a group: the group bookmark when the group can be repeated, then the markers of its questions and of its sub-groups, in their
+	 * display order
+	 *
+	 * @param groupDisplay
+	 *            the display of the group
+	 * @param useQuestionCodes
+	 *            true to name the question markers after the question codes
+	 * @return the markers
+	 */
+	private static Collection<InfoMarker> buildMarkersForGroup( FormDisplay groupDisplay, boolean useQuestionCodes )
+	{
+		Collection<InfoMarker> descriptionMarkersList = new ArrayList<>( );
+		List<FormDisplay> listChildDisplay = FormDisplayHome.getFormDisplayListByParent( groupDisplay.getStepId( ), groupDisplay.getId( ) );
+		listChildDisplay.sort( Comparator.comparingInt( FormDisplay::getDisplayOrder ) );
+
+		Group group = GroupHome.findByPrimaryKey( groupDisplay.getCompositeId( ) );
+		boolean bIterable = GroupIterationsMarker.isIterable( group, listChildDisplay );
+
+		if ( bIterable )
+		{
+			// every iteration of the group, whatever their number
+			InfoMarker groupMarker = new InfoMarker( GroupIterationsMarker.MARK_GROUP_ITERATIONS + group.getId( ) );
+			groupMarker.setDescription( I18nService.getLocalizedString( MESSAGE_I18N_GROUP_ALL_ITERATIONS, new Object[] { group.getTitle( ) },
+					I18nService.getDefaultLocale( ) ) );
+			descriptionMarkersList.add( groupMarker );
+		}
+
+		for ( FormDisplay childDisplay : listChildDisplay )
+		{
+			if ( FormsConstants.MARK_QUESTION.equals( childDisplay.getCompositeType( ) ) )
+			{
+				// a group that is not repeated has a single marker by question
+				descriptionMarkersList.addAll( buildMarkerForQuestion( QuestionHome.findByPrimaryKey( childDisplay.getCompositeId( ) ), bIterable ? group : null,
+						useQuestionCodes ) );
+			}
+			else if ( FormsConstants.MARK_GROUP.equals( childDisplay.getCompositeType( ) ) )
+			{
+				descriptionMarkersList.addAll( buildMarkersForGroup( childDisplay, useQuestionCodes ) );
+			}
+		}
 		return descriptionMarkersList;
 	}
 

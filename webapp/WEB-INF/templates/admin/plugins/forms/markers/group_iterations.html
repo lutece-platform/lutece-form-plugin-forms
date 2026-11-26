@@ -1,0 +1,5 @@
+<#-- Value of the group_<id> bookmark, inserted inside a paragraph: inline HTML only.
+     Model: group, iterations (each one with lines: question, value, richText, html). -->
+<#list iterations as iteration>
+<#if !iteration?is_first><br><br></#if><strong>${group.title!} (${iteration?counter})</strong><#list iteration.lines as line><br>${line.question!} : <#if line.richText>${line.html}<#else><#list (line.value!)?split("\r?\n", "r") as part><#if !part?is_first><br></#if>${part}</#list></#if></#list>
+</#list>
