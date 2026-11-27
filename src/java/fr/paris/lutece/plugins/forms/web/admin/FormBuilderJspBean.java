@@ -37,8 +37,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -55,6 +57,7 @@ import fr.paris.lutece.plugins.forms.service.FormBuilderService;
 import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
 import fr.paris.lutece.plugins.forms.service.StepService;
 import fr.paris.lutece.plugins.forms.service.json.IStepTemplateProvider;
+import fr.paris.lutece.plugins.forms.service.json.StepTemplatePreview;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.util.FormsEntryUtils;
 import fr.paris.lutece.plugins.forms.web.builder.FormBuilderRenderer;
@@ -125,6 +128,8 @@ public class FormBuilderJspBean extends AbstractJspBean
     private static final String MARK_BUILDER_TOKEN = "builder_token";
     private static final String MARK_STEP_TEMPLATES = "step_templates";
     private static final String MARK_TEMPLATE_PROVIDER = "template_provider";
+    private static final String MARK_STEP_TEMPLATE_DESCRIPTIONS = "step_template_descriptions";
+    private static final String MARK_STEP_TEMPLATE_PREVIEWS = "step_template_previews";
 
     private static final String MESSAGE_MOVED = "forms.form_builder.message.moved";
     private static final String MESSAGE_PLACED = "forms.form_builder.message.created";
@@ -195,6 +200,7 @@ public class FormBuilderJspBean extends AbstractJspBean
         model.put( MARK_BUILDER_TOKEN, _securityTokenHandler.resolveTokenValue( request ) );
         model.put( MARK_STEP_TEMPLATES, getStepTemplates( ) );
         model.put( MARK_TEMPLATE_PROVIDER, _stepService.getStepTemplateProvider( ) != null );
+        putStepTemplatePreviews( model );
         model.put( FormsConstants.MARK_PROD_URL, AppPathService.getProdUrl( request ) );
 
         return getPage( PROPERTY_PAGE_TITLE, TEMPLATE_BUILDER, model );
@@ -354,6 +360,21 @@ public class FormBuilderJspBean extends AbstractJspBean
         {
             throw new FormBuilderException( FormBuilderService.ERROR_STEP_NOT_IMPORTED );
         }
+    }
+
+    /**
+     * Puts in the model the descriptions and the previews (thumbnail and fields) of the step templates offered by the template dialog
+     *
+     * @param model
+     *            The model of the builder page
+     */
+    private void putStepTemplatePreviews( Models model )
+    {
+        IStepTemplateProvider provider = _stepService.getStepTemplateProvider( );
+        Map<String, String> mapDescriptions = provider != null ? provider.getStepTemplateDescriptions( ) : null;
+        Map<String, StepTemplatePreview> mapPreviews = provider != null ? provider.getStepTemplatePreviews( ) : null;
+        model.put( MARK_STEP_TEMPLATE_DESCRIPTIONS, mapDescriptions != null ? mapDescriptions : Collections.emptyMap( ) );
+        model.put( MARK_STEP_TEMPLATE_PREVIEWS, mapPreviews != null ? mapPreviews : Collections.emptyMap( ) );
     }
 
     /**

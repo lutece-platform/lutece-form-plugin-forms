@@ -116,7 +116,8 @@
 	</@tform>
 </@modal>
 <#if template_provider??>
-	<@modal id='importTemplateModal' size='lg'>
+<#include "/admin/plugins/forms/step_template_choice.html" />
+	<@modal id='importTemplateModal' size='xl'>
 		<@tform method='post' name='upload_template_form' action='jsp/admin/plugins/forms/ManageSteps.jsp'>
 			<@modalHeader modalTitle='#i18n{forms.manage_steps.buttonImportTemplate}' />
 			<@modalBody>
@@ -124,20 +125,11 @@
 				<@input type='hidden' name='id_form' value='${form.id}' />
 				<#if template_provider.stepTemplateList?has_content>
 					<#assign templateDescriptions = template_provider.stepTemplateDescriptions!{} />
+					<#assign templatePreviews = template_provider.stepTemplatePreviews!{} />
 					<@row class='g-2'>
 						<#list template_provider.stepTemplateList?sort_by("name") as item>
-							<#assign templateDescription = templateDescriptions[item.code]!'' />
-							<@columns xs=6 md=4>
-								<label class="form-imagecheck mb-0 w-100 h-100">
-									<input name="id_template" type="radio" value="${item.code}" class="form-imagecheck-input" required<#if templateDescription?has_content> aria-describedby="template_description_${item.code}"</#if> />
-									<span class="form-imagecheck-figure d-flex flex-column align-items-center gap-2 p-3 h-100">
-										<@icon style='list-details' class='fs-1 text-secondary' />
-										<span class="text-center fw-bold text-wrap">${item.name!}</span>
-										<#if templateDescription?has_content>
-										<span id="template_description_${item.code}" class="text-center text-secondary small text-wrap">${templateDescription}</span>
-										</#if>
-									</span>
-								</label>
+							<@columns xs=12 md=6>
+								<@stepTemplateChoice item=item inputName='id_template' idPrefix='template' description=templateDescriptions[item.code]!'' preview=templatePreviews[item.code]!'' required=true />
 							</@columns>
 						</#list>
 					</@row>

@@ -90,20 +90,15 @@
 	</@modalFooter>
 </@modal>
 <#if template_provider>
-	<@modal id='fb-template-modal' size='lg'>
+<#include "/admin/plugins/forms/step_template_choice.html" />
+	<@modal id='fb-template-modal' size='xl'>
 		<@modalHeader modalTitle='#i18n{forms.manage_steps.buttonImportTemplate}' />
 		<@modalBody>
 			<#if step_templates?has_content>
 				<@row class='g-2'>
 					<#list step_templates as item>
-						<@columns xs=6 md=4>
-							<label class="form-imagecheck mb-0 w-100">
-								<input name="fb_template" type="radio" value="${item.code}" class="form-imagecheck-input" />
-								<span class="form-imagecheck-figure d-flex flex-column align-items-center gap-2 p-3">
-									<@icon style='list-details' class='fs-1 text-secondary' />
-									<span class="text-center fw-bold text-wrap">${item.name!}</span>
-								</span>
-							</label>
+						<@columns xs=12 md=6>
+							<@stepTemplateChoice item=item inputName='fb_template' idPrefix='fb_template' description=(step_template_descriptions[item.code])!'' preview=(step_template_previews[item.code])!'' />
 						</@columns>
 					</#list>
 				</@row>
