@@ -12,16 +12,10 @@
 }
 
 /* View response */
+/* Stuck right under the top bar: its height, measured by forms-multiview.js, depends on the admin theme layout */
 .forms-response #page-header{
     position: sticky;
-    top: 112px;
-    z-index: 100;
-    background-color: var(--tblr-bg-surface-secondary);
-}
-
-.forms-response #page-header + nav{
-	position: sticky;
-    top: 162px;
+    top: var(--forms-header-top, 56px);
     z-index: 100;
     background-color: var(--tblr-bg-surface-secondary);
 }
