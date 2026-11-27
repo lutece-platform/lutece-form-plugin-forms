@@ -29,7 +29,10 @@ ${breadcrumb_template}
 							<@checkBox orientation='switch' labelKey='#i18n{forms.create_entry.labelMandatory}' name='mandatory' id='mandatory' value='1' checked=isFormsParamChecked('mandatory',list_param_default_values) />
 						</@formGroup>
 						<@formGroup labelFor='file_max_size' labelKey='#i18n{forms.create_entry.labelFileMaxSize}' mandatory=true>
-							<@input type='text' name='file_max_size' id='file_max_size' value=getName('file_max_size',list_param_default_values) />
+							<@inputGroup>
+								<@input type='text' name='file_max_size' id='file_max_size' value=getName('file_max_size',list_param_default_values) />
+								<@inputGroupItem id='file_max_size_pretty' type='text'></@inputGroupItem>
+							</@inputGroup>
 						</@formGroup>
 						<@formGroup labelFor='max_files' labelKey='#i18n{forms.create_entry.labelMaxFiles}' mandatory=true>
 							<@input type='text' name='max_files' id='max_files' value=getName('max_files',list_param_default_values) maxlength=2 />
@@ -71,6 +74,9 @@ ${breadcrumb_template}
 document.addEventListener('DOMContentLoaded', function() {
 	const fileSizeInput = document.getElementById('file_max_size');
 	const fileSizePretty = document.getElementById('file_max_size_pretty');
+	if ( !fileSizeInput || !fileSizePretty ) {
+		return;
+	}
 	
 	function updateFileSize() {
 		const byteSize = fileSizeInput.value;
