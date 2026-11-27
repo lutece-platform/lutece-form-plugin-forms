@@ -1,0 +1,65 @@
+<#--
+Macro: stepTemplateChoice
+Description: a step template to choose in a template selector: a radio card with the thumbnail of the step, its name, its description and the list of
+its fields (each question with the icon and the name of its type, the groups in bold). Without a preview from the provider, an icon stands for the
+thumbnail and no field is listed.
+Parameters:
+- item (ReferenceItem, required): the template (code, name) from IStepTemplateProvider.getStepTemplateList
+- inputName (string, required): the name of the radio input
+- idPrefix (string, required): prefix of the ids of the description and of the field list, unique on the page
+- description (string, optional): the description of the template
+- preview (StepTemplatePreview, optional): the preview of the template from IStepTemplateProvider.getStepTemplatePreviews
+- required (boolean, optional): the radio input is required
+Snippet:
+    <@stepTemplateChoice item=item inputName='id_template' idPrefix='template' description=descriptions[item.code]!'' preview=previews[item.code]!'' required=true />
+-->
+<#macro stepTemplateChoice item inputName idPrefix description='' preview='' required=false>
+<#local hasPreview = preview?has_content && preview?is_hash />
+<#local describedBy = [] />
+<#if description?has_content><#local describedBy = describedBy + [ idPrefix + '_description_' + item.code ] /></#if>
+<#if hasPreview && preview.fields?has_content><#local describedBy = describedBy + [ idPrefix + '_fields_' + item.code ] /></#if>
+<label class="form-imagecheck mb-0 w-100 h-100">
+	<input name="${inputName}" type="radio" value="${item.code}" class="form-imagecheck-input"<#if required> required</#if><#if describedBy?has_content> aria-describedby="${describedBy?join(' ')}"</#if> />
+	<span class="form-imagecheck-figure d-flex gap-3 p-3 h-100 text-start">
+		<@stepTemplatePreviewContent item=item description=description preview=preview idPrefix=idPrefix />
+	</span>
+</label>
+</#macro>
+
+<#--
+Macro: stepTemplatePreviewContent
+Description: the preview of a step template without the radio card around it: the thumbnail of the step (an icon without preview), its name, its
+description, its number of questions and the list of its fields. For a selector built another way (a drop-down list and a preview of the chosen template).
+Parameters:
+- item (ReferenceItem, required): the template (code, name)
+- description (string, optional): the description of the template
+- preview (StepTemplatePreview, optional): the preview of the template
+- idPrefix (string, optional): prefix of the ids of the description and of the field list; no id when empty (a preview copied in several places)
+Snippet:
+    <@stepTemplatePreviewContent item=item description=descriptions[item.code]!'' preview=previews[item.code]!'' />
+-->
+<#macro stepTemplatePreviewContent item description='' preview='' idPrefix=''>
+<#local hasPreview = preview?has_content && preview?is_hash />
+	<#if hasPreview && preview.thumbnailUrl?has_content>
+	<img src="${preview.thumbnailUrl}" alt="" aria-hidden="true" loading="lazy" width="120" class="flex-shrink-0 align-self-start rounded" />
+	<#else>
+	<@icon style='list-details' class='fs-1 text-secondary flex-shrink-0' />
+	</#if>
+	<span class="d-flex flex-column gap-1 flex-fill overflow-hidden">
+		<span class="fw-bold text-wrap">${item.name!}</span>
+		<#if description?has_content>
+		<span<#if idPrefix?has_content> id="${idPrefix}_description_${item.code}"</#if> class="text-secondary small text-wrap">${description}</span>
+		</#if>
+		<#if hasPreview>
+		<#local count = preview.questionCount />
+		<span class="badge bg-secondary-lt align-self-start">${count} <#if count gt 1>#i18n{forms.manage_steps.labelTemplateQuestions}<#else>#i18n{forms.manage_steps.labelTemplateQuestion}</#if></span>
+		<#if preview.fields?has_content>
+		<span<#if idPrefix?has_content> id="${idPrefix}_fields_${item.code}"</#if> class="d-block small" role="list">
+			<#list preview.fields as field>
+			<span role="listitem" class="d-block position-relative text-truncate<#if field.group> fw-semibold mt-1</#if><#if field.depth gt 0> ps-${[ field.depth * 2, 4 ]?min}</#if>"><#if field.iconName?has_content><@icon style=field.iconName class='me-1 text-secondary' /></#if>${field.title!}<#if field.mandatory> <span class="text-danger" aria-hidden="true">*</span></#if><#if field.typeTitle?has_content><span class="visually-hidden"> (${field.typeTitle})</span></#if></span>
+			</#list>
+		</span>
+		</#if>
+		</#if>
+	</span>
+</#macro>

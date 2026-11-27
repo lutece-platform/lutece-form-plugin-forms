@@ -62,6 +62,17 @@ public interface IStepTemplateProvider
     }
 
     /**
+     * Get the previews of the available Step Templates, shown in the template selector: a thumbnail and the list of the fields of each step
+     * 
+     * @return the previews keyed by the code of the template in {@link #getStepTemplateList()}; an empty map when the provider has none, the selector
+     *         then shows an icon
+     */
+    default Map<String, StepTemplatePreview> getStepTemplatePreviews( )
+    {
+        return Collections.emptyMap( );
+    }
+
+    /**
      * Get the step template data.
      * 
      * @param idTemplate
