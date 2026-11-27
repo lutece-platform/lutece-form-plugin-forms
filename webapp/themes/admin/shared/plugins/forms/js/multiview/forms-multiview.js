@@ -178,8 +178,10 @@ function setStickyToolbar( toolbar ){
 	const navbar = document.querySelector('.sticky-top');
 	const update = function() {
 		let top = navbar ? navbar.offsetHeight : 0;
+		// The page header sticks right under the top bar, whose height depends on the admin layout
+		document.documentElement.style.setProperty('--forms-header-top', top + 'px');
 		if (header && getComputedStyle(header).position === 'sticky') {
-			top = (parseFloat(getComputedStyle(header).top) || 0) + header.offsetHeight;
+			top += header.offsetHeight;
 		}
 		// On the root: the response sidebar sticks at the same height
 		document.documentElement.style.setProperty('--forms-toolbar-top', top + 'px');
