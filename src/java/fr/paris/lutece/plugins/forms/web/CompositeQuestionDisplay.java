@@ -294,7 +294,9 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                     }
                 }
 
-                listOtherStepControl.forEach( mapControlValidator::remove );
+                // the map is keyed by the copies made for rendering, and a control has no equality of its own : they are matched by identifier
+                mapControlValidator.keySet( ).removeIf(
+                        controlForDisplay -> listOtherStepControl.stream( ).anyMatch( control -> control.getId( ) == controlForDisplay.getId( ) ) );
 
                 _model.put(FormsConstants.MARK_LIST_CONTROL, new ArrayList<>( mapControlValidator.keySet( ) ));
                 _model.put( FormsConstants.MARK_LIST_VALIDATOR, new ArrayList<>( mapControlValidator.values( ) ) );
