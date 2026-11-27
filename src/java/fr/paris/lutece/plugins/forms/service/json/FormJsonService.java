@@ -184,6 +184,7 @@ public class FormJsonService extends AbstractFormJsonService
 
         // what the import cannot carry, gathered as it runs and shown to whoever asked for it
         List<String> listReport = new ArrayList<>( );
+        int nControls = controlList.size( );
 
         TransactionManager.beginTransaction( FormsPlugin.getPlugin( ) );
 
@@ -197,6 +198,7 @@ public class FormJsonService extends AbstractFormJsonService
             importFormDisplay( newIdForm, formDisplayList, controlList );
             importTransitions( transitionList, controlList );
             importControls( controlList, controlMappingList, controlGroupList );
+            reportControlsLost( nControls - controlList.size( ), locale, listReport );
             importFormExportConfig( newIdForm, formExportConfigList );
 
             TransactionManager.commitTransaction( FormsPlugin.getPlugin( ) );
@@ -284,6 +286,15 @@ public class FormJsonService extends AbstractFormJsonService
             }
 
             return 0;
+        }
+
+        // a code is not unique : importing into the instance the form came from, which is what duplicating it does, finds the very category it
+        // was in, and only then does the first category bearing that code stand for it
+        FormCategory categorySameId = FormCategoryHome.findByPrimaryKey( category.getId( ) );
+
+        if ( categorySameId != null && StringUtils.equals( categorySameId.getCode( ), category.getCode( ) ) )
+        {
+            return categorySameId.getId( );
         }
 
         for ( FormCategory categoryHere : FormCategoryHome.getFormCategoryList( ) )

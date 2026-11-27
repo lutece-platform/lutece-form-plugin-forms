@@ -40,6 +40,7 @@ import fr.paris.lutece.plugins.forms.business.ControlGroup;
 import fr.paris.lutece.plugins.forms.business.ControlGroupHome;
 import fr.paris.lutece.plugins.forms.business.ControlHome;
 import fr.paris.lutece.plugins.forms.business.ControlMapping;
+import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
 import fr.paris.lutece.plugins.forms.business.Group;
@@ -176,6 +177,12 @@ public class FormDatabaseService implements IFormDatabaseService
     public List<Control> getControlByQuestion( int nIdQuestion )
     {
         return ControlHome.getControlByQuestion( nIdQuestion );
+    }
+
+    @Override
+    public List<Control> getConditionalControlsByTarget( int nIdFormDisplay )
+    {
+        return ControlHome.getControlByControlTargetAndType( nIdFormDisplay, ControlType.CONDITIONAL );
     }
 
     @Override

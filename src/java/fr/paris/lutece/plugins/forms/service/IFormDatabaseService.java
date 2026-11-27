@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import fr.paris.lutece.plugins.forms.business.Control;
@@ -248,6 +249,18 @@ public interface IFormDatabaseService
      * @return the requested Control list
      */
     List<Control> getControlByQuestion( int nIdQuestion );
+
+    /**
+     * Loads the conditions that decide whether a display is shown
+     *
+     * @param nIdFormDisplay
+     *            the display id
+     * @return the conditional controls targeting that display, none when this database keeps no such conditions
+     */
+    default List<Control> getConditionalControlsByTarget( int nIdFormDisplay )
+    {
+        return new ArrayList<>( );
+    }
 
     /**
      * Return the FormDisplay associated to the given parameters
