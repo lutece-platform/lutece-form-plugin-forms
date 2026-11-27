@@ -73,8 +73,10 @@ public interface IFormWorkflowService
      * Removes the workflow resources of form responses in every workflow, enabled or not : a form whose workflow was changed keeps the resources of its
      * responses in the former one
      *
+     * @param nIdForm
+     *            the identifier of the form the responses belong to
      * @param listIdFormResponse
      *            the identifiers of the form responses
      */
-    void removeResourcesOfResponses( List<Integer> listIdFormResponse );
+    void removeResourcesOfResponses( int nIdForm, List<Integer> listIdFormResponse );
 }
