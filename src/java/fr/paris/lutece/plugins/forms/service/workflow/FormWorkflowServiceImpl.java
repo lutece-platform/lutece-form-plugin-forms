@@ -43,6 +43,10 @@ import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.WorkflowFilter;
+import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
+import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceWorkflowService;
+import fr.paris.lutece.plugins.workflowcore.service.resource.ResourceHistoryService;
+import fr.paris.lutece.plugins.workflowcore.service.resource.ResourceWorkflowService;
 import fr.paris.lutece.plugins.workflowcore.service.workflow.IWorkflowService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.business.user.AdminUser;
@@ -120,7 +124,7 @@ public class FormWorkflowServiceImpl implements IFormWorkflowService
      * {@inheritDoc}
      */
     @Override
-    public void removeResourcesOfResponses( List<Integer> listIdFormResponse )
+    public void removeResourcesOfResponses( int nIdForm, List<Integer> listIdFormResponse )
     {
         WorkflowService workflowService = WorkflowService.getInstance( );
 
@@ -131,6 +135,8 @@ public class FormWorkflowServiceImpl implements IFormWorkflowService
 
         // the workflows of the core service are the enabled ones only : the former workflow of a form may be disabled
         IWorkflowService workflowCoreService = SpringContextService.getBean( fr.paris.lutece.plugins.workflowcore.service.workflow.WorkflowService.BEAN_SERVICE );
+        IResourceHistoryService resourceHistoryService = SpringContextService.getBean( ResourceHistoryService.BEAN_SERVICE );
+        IResourceWorkflowService resourceWorkflowService = SpringContextService.getBean( ResourceWorkflowService.BEAN_SERVICE );
 
         for ( Workflow workflow : workflowCoreService.getListWorkflowsByFilter( new WorkflowFilter( ) ) )
         {
@@ -139,7 +145,15 @@ public class FormWorkflowServiceImpl implements IFormWorkflowService
             {
                 List<Integer> listChunk = new ArrayList<>(
                         listIdFormResponse.subList( nStart, Math.min( nStart + REMOVAL_CHUNK_SIZE, listIdFormResponse.size( ) ) ) );
-                workflowService.doRemoveWorkFlowResourceByListId( listChunk, FormResponse.RESOURCE_TYPE, workflow.getId( ) );
+
+                // the removal loads every task of the workflow and visits each history : it only runs on a workflow that holds some of these
+                // responses, either as a resource or through a history left after the resource went
+                if ( !resourceWorkflowService.getListIdStateByListId( listChunk, workflow.getId( ), FormResponse.RESOURCE_TYPE, nIdForm ).isEmpty( )
+                        || !resourceHistoryService.getListHistoryIdByListIdResourceId( listChunk, FormResponse.RESOURCE_TYPE, workflow.getId( ) )
+                                .isEmpty( ) )
+                {
+                    workflowService.doRemoveWorkFlowResourceByListId( listChunk, FormResponse.RESOURCE_TYPE, workflow.getId( ) );
+                }
             }
         }
     }

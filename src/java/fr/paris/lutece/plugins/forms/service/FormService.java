@@ -408,7 +408,7 @@ public class FormService
 
         FormHome.remove( nIdForm );
 
-        _formWorkflowService.removeResourcesOfResponses( listIdFormResponse );
+        _formWorkflowService.removeResourcesOfResponses( nIdForm, listIdFormResponse );
     }
 
     /**
