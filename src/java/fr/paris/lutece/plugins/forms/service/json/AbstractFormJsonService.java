@@ -87,6 +87,10 @@ public abstract class AbstractFormJsonService
 {
     /** {0} the title of the question, {1} how many of its answers lost their link */
     protected static final String MESSAGE_IMPORT_REFERENCE_LIST_LOST = "forms.import.report.referenceListLost";
+    /** {0} the number of conditions and controls left out */
+    protected static final String MESSAGE_IMPORT_CONTROLS_LOST = "forms.import.report.controlsLost";
+    /** {0} the number of conditions and controls that lost some of their questions */
+    protected static final String MESSAGE_IMPORT_CONTROLS_NARROWED = "forms.import.report.controlsNarrowed";
 
     private static final String PROPERTY_COPY_STEP_TITLE = "forms.copyStep.title";
     private static final String QUESTION_CODE_PREFIX = "question_";
@@ -160,6 +164,13 @@ public abstract class AbstractFormJsonService
         List<FormDisplay> formDisplayList = getAllFormDisplays( idForm, idStep );
         jsonData.setFormDisplayList( formDisplayList.stream( ).filter( fd -> fd.getStepId( ) == idStep ).collect( Collectors.toList( ) ) );
 
+        // the controls are gathered from the questions they depend on : a condition showing a display of this step that depends on questions of
+        // other steps only is not among them, and the import says so rather than giving an unconditional display without a word
+        Set<Integer> setIdControl = controlList.stream( ).map( Control::getId ).collect( Collectors.toSet( ) );
+        jsonData.setControlsLeftOut( (int) jsonData.getFormDisplayList( ).stream( )
+                .flatMap( fd -> _formDatabaseService.getConditionalControlsByTarget( fd.getId( ) ).stream( ) )
+                .filter( control -> setIdControl.add( control.getId( ) ) ).count( ) );
+
         return jsonData;
     }
 
@@ -187,6 +198,9 @@ public abstract class AbstractFormJsonService
         List<ControlGroup> controlGroupList = jsonData.getControlGroupList( );
         List<FormDisplay> formDisplayList = jsonData.getFormDisplayList( );
 
+        // every control the import does not create is reported : those the export already left out, and those dropped on the way
+        int nControls = controlList.size( ) + jsonData.getControlsLeftOut( );
+
         dropTransitionControls( controlList );
 
         Object [ ] tabSTepTitleCopy = {
@@ -208,6 +222,7 @@ public abstract class AbstractFormJsonService
             importGroups( groupList, formDisplayList );
             importFormDisplay( idForm, formDisplayList, controlList );
             importControls( controlList, controlMappingList, controlGroupList );
+            reportControlsLost( nControls - controlList.size( ), locale, listReport );
 
             TransactionManager.commitTransaction( FormsPlugin.getPlugin( ) );
 
@@ -315,6 +330,24 @@ public abstract class AbstractFormJsonService
         listReport.add( I18nService.getLocalizedString( strKey, tabEscapedArgs, locale ) );
     }
 
+    /**
+     * Notes the conditions and controls the import left out, whose questions or display are not part of it.
+     *
+     * @param nControlsLost
+     *            the number of controls left out
+     * @param locale
+     *            the administrator's locale
+     * @param listReport
+     *            what the import gathers as it runs
+     */
+    protected void reportControlsLost( int nControlsLost, Locale locale, List<String> listReport )
+    {
+        if ( nControlsLost > 0 )
+        {
+            report( listReport, MESSAGE_IMPORT_CONTROLS_LOST, locale, nControlsLost );
+        }
+    }
+
     protected void importQuestions( int newIdForm, List<Question> questionList, List<Control> controlList, List<ControlMapping> controlMappingList,
             List<FormDisplay> formDisplayList, List<FormExportConfig> formExportConfigList, Locale locale, List<String> listReport )
     {
@@ -368,7 +401,12 @@ public abstract class AbstractFormJsonService
 
             mapIdQuestions.put( oldIdQuestion, newIdQuestion );
         }
-        updateControlWithNewQuestion( controlMappingList, controlList, mapIdQuestions, mapIdFields );
+        int nControlsNarrowed = updateControlWithNewQuestion( controlMappingList, controlList, mapIdQuestions, mapIdFields );
+
+        if ( nControlsNarrowed > 0 )
+        {
+            report( listReport, MESSAGE_IMPORT_CONTROLS_NARROWED, locale, nControlsNarrowed );
+        }
         updateFormDisplayWithNewQuestion( formDisplayList, mapIdQuestions );
         if ( CollectionUtils.isNotEmpty( formExportConfigList ) )
         {
@@ -616,10 +654,13 @@ public abstract class AbstractFormJsonService
         }
     }
 
-    private void updateControlWithNewQuestion( List<ControlMapping> controlMappingList, List<Control> controlList, Map<Integer, Integer> mapIdQuestions,
+    private int updateControlWithNewQuestion( List<ControlMapping> controlMappingList, List<Control> controlList, Map<Integer, Integer> mapIdQuestions,
                                                Map<Integer, Integer> mapIdFields)
     {
         controlList.removeIf( control -> isControlUnresolved( control, mapIdQuestions ) );
+
+        // a control kept with fewer questions than it had now checks only those, and may decide otherwise
+        int nControlsNarrowed = 0;
 
         for ( Control control : controlList )
         {
@@ -637,6 +678,11 @@ public abstract class AbstractFormJsonService
                 }
             }
             control.setListIdQuestion( newSetId );
+
+            if ( oldSetId != null && newSetId.size( ) < oldSetId.size( ) )
+            {
+                nControlsNarrowed++;
+            }
 
             if ( ControlType.VALIDATION.getLabel( ).equals( control.getControlType( ) ) )
             {
@@ -659,6 +705,8 @@ public abstract class AbstractFormJsonService
         {
             controlMapping.setIdQuestion( mapIdQuestions.get( controlMapping.getIdQuestion( ) ) );
         }
+
+        return nControlsNarrowed;
     }
 
     /**

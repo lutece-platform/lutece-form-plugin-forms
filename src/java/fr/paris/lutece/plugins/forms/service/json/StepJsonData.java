@@ -54,6 +54,7 @@ public class StepJsonData
     private List<Control> _controlList;
     private List<ControlGroup> _controlGroupList;
     private List<ControlMapping> _controlMappingList;
+    private int _nControlsLeftOut;
 
     /**
      * @return the step
@@ -172,5 +173,22 @@ public class StepJsonData
     public void setControlMappingList( List<ControlMapping> controlMappingList )
     {
         _controlMappingList = new ArrayList<>( controlMappingList );
+    }
+
+    /**
+     * @return the number of conditions of the step the export could not carry : they depend on questions of other steps only
+     */
+    public int getControlsLeftOut( )
+    {
+        return _nControlsLeftOut;
+    }
+
+    /**
+     * @param nControlsLeftOut
+     *            the number of conditions of the step the export could not carry
+     */
+    public void setControlsLeftOut( int nControlsLeftOut )
+    {
+        _nControlsLeftOut = nControlsLeftOut;
     }
 }
