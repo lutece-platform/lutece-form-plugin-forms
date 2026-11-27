@@ -909,6 +909,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
             duplicatedEntry.setCode( generateAvailableQuestionCode( duplicatedEntry.getIdEntry( ) ) );
 
             getFormDatabaseService( ).updateEntry( duplicatedEntry );
+            copyDownloadableFile( duplicatedEntry );
 
             List<Control> listQuestionControl = getFormDatabaseService( ).getControlByQuestion( question.getId( ) );
 
@@ -1222,6 +1223,39 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
 
             getFormDatabaseService( ).createMappingControl( controlCopy.getId( ), nIdQuestion, controlMapping.getValue( ) );
         }
+    }
+
+    /**
+     * Gives a duplicated entry its own copy of the downloadable file of a comment.
+     *
+     * The copied field keeps the key of its source : removing the file from the copy, or removing the copy, deleted the file of the source. The field
+     * is kept even when no file is found under that key, the fields of the copy being paired with those of the source by rank afterwards.
+     *
+     * @param duplicatedEntry
+     *            the copied entry
+     */
+    private void copyDownloadableFile( Entry duplicatedEntry )
+    {
+        Entry entryCopy = getFormDatabaseService( ).findEntryByPrimaryKey( duplicatedEntry.getIdEntry( ) );
+        Field fieldFile = entryCopy != null ? entryCopy.getFieldByCode( IEntryTypeService.FIELD_DOWNLOADABLE_FILE ) : null;
+
+        if ( fieldFile == null )
+        {
+            return;
+        }
+
+        String strKeyCopy = FormsEntryUtils.copyDownloadableFile( fieldFile, false );
+
+        if ( strKeyCopy == null )
+        {
+            AppLogService.error( "Forms duplication : the file {} of the entry {} is not found, its copy cannot get its own", fieldFile.getValue( ),
+                    duplicatedEntry.getIdEntry( ) );
+
+            return;
+        }
+
+        fieldFile.setValue( strKeyCopy );
+        getFormDatabaseService( ).updateField( fieldFile );
     }
 
     /**

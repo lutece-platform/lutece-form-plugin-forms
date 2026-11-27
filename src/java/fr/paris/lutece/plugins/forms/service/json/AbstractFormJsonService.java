@@ -75,6 +75,8 @@ import fr.paris.lutece.plugins.forms.service.cache.FormsCacheService;
 import fr.paris.lutece.plugins.forms.service.IFormDatabaseService;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
+import fr.paris.lutece.plugins.forms.util.FormsEntryUtils;
 import fr.paris.lutece.plugins.referencelist.business.ReferenceItem;
 import fr.paris.lutece.plugins.referencelist.business.ReferenceItemHome;
 import fr.paris.lutece.portal.service.i18n.I18nService;
@@ -90,6 +92,8 @@ public abstract class AbstractFormJsonService
 
     private static final String PROPERTY_COPY_STEP_TITLE = "forms.copyStep.title";
     private static final String QUESTION_CODE_PREFIX = "question_";
+    /** {0} the title of the question whose file was not carried over */
+    protected static final String MESSAGE_IMPORT_FILE_LOST = "forms.import.report.fileLost";
 
     protected final IFormDatabaseService _formDatabaseService;
     protected ObjectMapper _objectMapper;
@@ -348,6 +352,22 @@ public abstract class AbstractFormJsonService
                 {
                     field.setLinkedItem( null );
                     nLinkDropped++;
+                }
+
+                if ( IEntryTypeService.FIELD_DOWNLOADABLE_FILE.equals( field.getCode( ) ) )
+                {
+                    // the imported field holds the key of the file it was exported with : the copy gets a file of its own, and a key designating
+                    // no such file here is not kept
+                    String strKeyCopy = FormsEntryUtils.copyDownloadableFile( field, true );
+
+                    if ( strKeyCopy == null )
+                    {
+                        report( listReport, MESSAGE_IMPORT_FILE_LOST, locale, question.getTitle( ) );
+
+                        continue;
+                    }
+
+                    field.setValue( strKeyCopy );
                 }
 
                 _formDatabaseService.createField( field );
